@@ -287,4 +287,12 @@ app_server <- function(input, output, session) {
       rapbase::makeAutoReportTab(session, type = "dispatchment")
   })
 
+
+  # Eksport  #
+  rapbase::exportUCServer("deformitetExport", "deformitet")
+  ## veileding
+  rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
+
+
+
 }
