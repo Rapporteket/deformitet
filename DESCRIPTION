@@ -1,4 +1,4 @@
-Package: Deformitet
+Package: deformitet
 Type: Package
 Title: Ryggkirurgi - Deformitet på Rapporteket
 Version: 1.2.0
@@ -10,7 +10,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-8564-255X")),
     person(given = "Stein-Kato",
            family = "Lindberg",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "stein-kato.lindberg@helse-nord.no",
            comment = c(ORCID = "0000-0001-6088-255X")))
 Description: Applikasjon for Ryggkirurgiregisteret - Deformitet
@@ -22,8 +22,7 @@ Imports:
   rapbase,
   shiny,
   shinyalert,
-  ggplot,
-  dplyr
+  ggplot2
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

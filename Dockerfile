@@ -14,4 +14,4 @@ RUN R -e "remotes::install_local(list.files(pattern = \"*.tar.gz\"))" \
 
 EXPOSE 3838
 
-CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); rapRegTemplate::run_app()"]
+CMD ["R", "-e", "options(shiny.port = 3838,shiny.host = \"0.0.0.0\"); deformitet::run_app()"]
