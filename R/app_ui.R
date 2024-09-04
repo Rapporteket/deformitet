@@ -127,6 +127,17 @@ app_ui <- function() {
                            shiny::uiOutput("dispatchmentContent")
                          )
                        )
+      ),
+      shiny::tabPanel(
+        "Eksport",
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::exportUCInput("deformitetExport")
+          ),
+          shiny::mainPanel(
+            rapbase::exportGuideUI("deformitetExportGuide")
+          )
+        )
       )
 
     ) # navbarPage
