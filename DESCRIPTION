@@ -10,7 +10,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-8564-255X")),
     person(given = "Stein-Kato",
            family = "Lindberg",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "stein-kato.lindberg@helse-nord.no",
            comment = c(ORCID = "0000-0001-6088-255X")))
 Description: Applikasjon for Ryggkirurgiregisteret - Deformitet
@@ -22,15 +22,15 @@ Imports:
   rapbase,
   shiny,
   shinyalert,
-  ggplot,
+  ggplot2,
   dplyr
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
-URL: http://github.com/Rapporteket/Deformitet
-BugReports: http://github.com/Rapporteket/Deformitet/issues
+RoxygenNote: 7.3.2
+URL: http://github.com/Rapporteket/deformitet
+BugReports: http://github.com/Rapporteket/deformitet/issues
 Suggests: 
     testthat
