@@ -19,7 +19,7 @@ app_server <- function(input, output, session) {
             rapbase::getUserRole(session), sep = ", "))
   output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
   userInfo <-
-    rapbase::howWeDealWithPersonalData(session, callerPkg = "rapRegTemplate")
+    rapbase::howWeDealWithPersonalData(session, callerPkg = "deformitet")
   shiny::observeEvent(input$userInfo, {
     shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
                type = "", imageUrl = "rap/logo.svg",
@@ -30,7 +30,7 @@ app_server <- function(input, output, session) {
   # Veiledning
   output$veiledning <- shiny::renderUI({
     rapbase::renderRmd(
-      system.file("veiledning.Rmd", package = "rapRegTemplate"),
+      system.file("veiledning.Rmd", package = "deformitet"),
       outputType = "html_fragment"
     )
   })
@@ -53,7 +53,7 @@ app_server <- function(input, output, session) {
   ## vis
   output$samlerapport <- shiny::renderUI({
     rapbase::renderRmd(
-      system.file("samlerapport.Rmd", package = "rapRegTemplate"),
+      system.file("samlerapport.Rmd", package = "deformitet"),
       outputType = "html_fragment",
       params = list(type = "html",
                     var = input$varS,
@@ -69,7 +69,7 @@ app_server <- function(input, output, session) {
     },
     content = function(file) {
       srcFile <-
-        normalizePath(system.file("samlerapport.Rmd", package = "rapRegTemplate"))
+        normalizePath(system.file("samlerapport.Rmd", package = "deformitet"))
       fn <- rapbase::renderRmd(srcFile, outputType = input$formatS,
                                params = list(type = input$formatS,
                                              var = input$varS,
