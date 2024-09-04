@@ -10,7 +10,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-8564-255X")),
     person(given = "Stein-Kato",
            family = "Lindberg",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "stein-kato.lindberg@helse-nord.no",
            comment = c(ORCID = "0000-0001-6088-255X")))
 Description: Applikasjon for Ryggkirurgiregisteret - Deformitet
@@ -22,7 +22,8 @@ Imports:
   rapbase,
   shiny,
   shinyalert,
-  ggplot2
+  ggplot,
+  dplyr
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
