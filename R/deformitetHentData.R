@@ -9,6 +9,7 @@
 #'                   patientform
 #'                   surgeonfollowup
 #'                   surgeonform
+#' @export
 deformitetHentTabell <- function(tabellnavn = "surgeonform") {
   registryName <- "deformitet"
   dbType <- "mysql"

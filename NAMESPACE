@@ -3,6 +3,7 @@
 export("%>%")
 export(app_server)
 export(app_ui)
+export(deformitetHentTabell)
 export(getFakeRegData)
 export(getRegData)
 export(makeHist)
