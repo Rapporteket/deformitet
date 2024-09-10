@@ -8,7 +8,7 @@
 #' @export
 
 app_server <- function(input, output, session) {
-  rapbase::appLogger(session = session, msg = 'Starter NORGAST')
+  rapbase::appLogger(session = session, msg = 'Starter Deformitet')
   reshID <- rapbase::getUserReshId(session)
   userRole <- rapbase::getUserRole(session)
 
