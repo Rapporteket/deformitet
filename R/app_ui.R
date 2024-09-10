@@ -78,27 +78,6 @@ app_ui <- function() {
                          )
                        )
       ),
-      # shiny::tabPanel("Abonnement"
-      #                  ,
-      #                  shiny::sidebarLayout(
-      #                    shiny::sidebarPanel(width = 3,
-      #                      shiny::selectInput("subscriptionRep", "Rapport:",
-      #                                  c("Samlerapport1", "Samlerapport2")),
-      #                      shiny::selectInput("subscriptionFreq", "Frekvens:",
-      #                                  list("\u212brlig" = "\u212brlig-year",
-      #                                       Kvartalsvis = "Kvartalsvis-quarter",
-      #                                       "M\u00e5nedlig" = "M\u00e5nedlig-month",
-      #                                       Ukentlig = "Ukentlig-week",
-      #                                       Daglig = "Daglig-DSTday"),
-      #                                  selected = "M\u00e5nedlig-month"),
-      #                      shiny::actionButton("subscribe", "Bestill",
-      #                                   icon = shiny::icon("paper-plane"))
-      #                    ),
-      #                    shiny::mainPanel(
-      #                      shiny::uiOutput("subscriptionContent")
-      #                    )
-      #                  )
-      # ),
       shiny::tabPanel(
         shiny::span("Abonnement",
                     title="Bestill tilsending av rapporter p\u00e5 e-post"),
@@ -111,23 +90,6 @@ app_ui <- function() {
           )
         )
       ),
-      # shiny::tabPanel("Utsending"
-      #                  ,
-      #                  shiny::sidebarLayout(
-      #                    shiny::sidebarPanel(width = 3,
-      #                      shiny::uiOutput("report"),
-      #                      shiny::uiOutput("freq"),
-      #                      shiny::textInput("email", "Epostmottakere:"),
-      #                      shiny::uiOutput("editEmail"),
-      #                      shiny::htmlOutput("recipients"),
-      #                      shiny::tags$hr(),
-      #                      shiny::uiOutput("makeDispatchment")
-      #                    ),
-      #                    shiny::mainPanel(
-      #                      shiny::uiOutput("dispatchmentContent")
-      #                    )
-      #                  )
-      # ),
       shiny::tabPanel(
         "Utsending",
         shiny::sidebarLayout(
