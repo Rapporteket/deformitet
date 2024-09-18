@@ -2,6 +2,13 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 
+# Neste steg:
+# Legge inn kommentarer og forklaringer på funksjonene
+# Få til andelstabeller og vise dem
+# Legge inn moduler
+# Vi må lage samlerapport - tekst til dette
+# Kort forklaring om deformitetsregisteret
+
 regdata <- deformitet::les_og_flate_ut()
 
 ui <- fluidPage(
@@ -16,8 +23,8 @@ ui <- fluidPage(
         inputId = "x_var",
         label = "Variabel:",
         choices = c("BMI-kategori" = "BMI_CATEGORY"),
-        selected = "BMI_CATEGORY"
-      ),
+        selected = "BMI_CATEGORY")),
+
       # # Select color
       # selectInput(
       #   inputId = "color",
@@ -35,16 +42,18 @@ ui <- fluidPage(
       plotOutput(outputId = "barplot"))
     )
   )
-)
 # Define server ----------------------------------------------------------------
 
 server <- function(input, output, session) {
   output$barplot <- renderPlot({
-    gg_makeHist2()################### hit er jeg kommet! Jeg legger in funksjonen her :)
-    ggplot(data = movies, aes_string(x = input$x, y = input$y, color = input$z)) + # input list from the UI!
-      geom_point(alpha = input$alpha)
+    deformitet::gg_makeHist(regdata, input$x_var, input$x_var, input$x_var, input$x_var)
   })
 }
+#
+# navn = gg_makeHist2(regdata, BMI_CATEGORY)
+# navn + xlab("BMI")+
+#   ggtitle("Fordeling av")+
+#   theme(plot.title = element_text(size = 14, face ="bold", hjust = 0.5 , vjust = 1.5))
 
 # Create a Shiny app object ----------------------------------------------------
 

@@ -1,28 +1,17 @@
-
-#' ggplot2 function for use in Rapporteket
-#' the function creates bar plots
+#' Make plots by hospital
 #'
-#' @param data dataframe from which output is to be made
-#' @param x_var defining which variable in the data frame to be used to plot (on the x-axis)
-#' @param makeTable Logical that if TRUE function will return a data frame
-#' containing the bin borders and count within each bin
 #'
-#' @return a graphical object or data frame
-#' @export
 #'
-#' @examples
-#' gg_makeHist(data = regdata, x_var = BMI_CATEGORY) # provide without quotationmarks
 
-
-gg_makeHist <- function(data, x_var, q, w, l){
+gg_bar_by_hos <- function(data, x_var, q, w, l){
 
   plot.data = data %>%
     dplyr::select({{x_var}})
 
   colnames(plot.data) = "z"
 
-    plot =
-      ggplot2::ggplot(plot.data, aes(     # opens ggplot
+  plot =
+    ggplot2::ggplot(plot.data, aes(     # opens ggplot
       x = z))+                            # varies by input
 
     geom_bar(                             # opens bar-plot
@@ -36,7 +25,7 @@ gg_makeHist <- function(data, x_var, q, w, l){
     ylab("Antall")+                        # title of y-axis ## DETTE BØR BLI ANDELL ETTER HVERT!! ##
 
     geom_text(label = paste(l, "\n ", w),
-              x = "Alvorlig undervekt",
+              x = "Bergen",
               y = 140, color = "#003087",
               family = "mono",
               fontface = "plain",
@@ -45,11 +34,7 @@ gg_makeHist <- function(data, x_var, q, w, l){
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
 
-    return(plot)
+  return(plot)
 }
 
-# gg_makeHist(regdata, BMI_CATEGORY, "BMI-kategori", "BMI-kategori", " ")
-
-
-
-
+# gg_bar_by_hos(regdata, CENTRESHORTNAME, "Fordeling på sykehus", "Sykehus", " ")
