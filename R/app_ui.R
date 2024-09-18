@@ -30,19 +30,18 @@ app_ui <- function() {
                        ,
                        shiny::sidebarLayout(
                          shiny::sidebarPanel(width = 3,
-                           shiny::selectInput(inputId = "var",
-                                       label = "Variabel:",
-                                       c("mpg", "disp", "hp", "drat", "wt", "qsec")),
-                           shiny::sliderInput(inputId = "bins",
-                                       label = "Antall grupper:",
-                                       min = 1,
-                                       max = 10,
-                                       value = 5)
+                           shiny::selectInput(inputId = "x_var",
+                                       label = "Variabel:","BMI_CATEGORY")
+                           # shiny::sliderInput(inputId = "bins",
+                           #             label = "Antall grupper:",
+                           #             min = 1,
+                           #             max = 10,
+                           #             value = 5)
                          ),
                          shiny::mainPanel(
                            shiny::tabsetPanel(
                              shiny::tabPanel("Figur", shiny::plotOutput("distPlot")),
-                             shiny::tabPanel("Tabell", shiny::tableOutput("distTable"))
+                             # shiny::tabPanel("Tabell", shiny::tableOutput("distTable"))
                            )
                          )
                        )

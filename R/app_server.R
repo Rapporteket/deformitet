@@ -13,7 +13,7 @@ app_server <- function(input, output, session) {
   userRole <- rapbase::getUserRole(session)
 
   # Last inn data
-  regData <- getFakeRegData()
+  regdata <- deformitet::les_og_flate_ut()
 
   # Brukerinformasjon i menylinja (navbar)
   output$appUserName <-
@@ -42,14 +42,20 @@ app_server <- function(input, output, session) {
   # Figur og tabell
   # Figur
    output$distPlot <- shiny::renderPlot({
-    makeHist(df = regData, var = input$var, bins = input$bins)
+    gg_makeHist(data = regdata,
+                x_var = input$x_var)
+     + xlab(input$x_var)
+     + ggtitle("Fordeling av", paste(inputId))
+     + theme(plot.title = element_text(size = 14, face ="bold", hjust = 0.5 , vjust = 1.5))
+
+
    })
 
-  # Tabell
-  output$distTable <- shiny::renderTable({
-    makeHist(df = regData, var = input$var, bins = input$bins,
-             makeTable = TRUE)
-  })
+  # # Tabell
+  # output$distTable <- shiny::renderTable({
+  #   makeHist(df = regData, var = input$var, bins = input$bins,
+  #            makeTable = TRUE)
+  # })
 
 
   # Samlerapport
