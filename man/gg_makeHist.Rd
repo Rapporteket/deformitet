@@ -5,7 +5,7 @@
 \title{ggplot2 function for use in Rapporteket
 the function creates bar plots}
 \usage{
-gg_makeHist(data, x_var)
+gg_makeHist(data, x_var, q, w, l)
 }
 \arguments{
 \item{data}{dataframe from which output is to be made}

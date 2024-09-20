@@ -83,22 +83,71 @@ get_n <- function(data, var_hosp, hosp){
 
 get_n(regdata, CENTRESHORTNAME, Bergen)
 
-f <- regdata %>%
-  select(CENTRESHORTNAME, GENDER) %>%
-  summarise(gender = n(), .by = c(CENTRESHORTNAME, GENDER)) %>%
-  mutate(total = sum(gender), .by = CENTRESHORTNAME)
+make_table <- function(data, my_var, my_var2){
 
-s <- regdata %>%
-  select(CENTRESHORTNAME, GENDER, BMI_CATEGORY) %>%
-  summarise(bmi = n(), .by = c(BMI_CATEGORY, CENTRESHORTNAME, GENDER))
+  data$GENDER <- as.character(data$GENDER)
+
+  data <- data %>%
+    mutate(GENDER = recode(GENDER, "1" = "Mann", "2" = "Kvinne"))
+
+  by_my_var <- data %>%
+    select(CENTRESHORTNAME, {{my_var}}) %>%
+    summarise(num_by_my_var = n(), .by = c(CENTRESHORTNAME, {{my_var}})) %>%
+    mutate(total = sum(num_by_my_var), .by = CENTRESHORTNAME)
+
+  by_my_var2 <- regdata %>%
+    select(CENTRESHORTNAME, {{my_var}}, {{my_var2}}) %>%
+    summarise(my_var2_name = n(), .by = c({{my_var2}}, CENTRESHORTNAME, {{my_var}}))
+
+
+  by_my_vars <- left_join(by_my_var, by_my_var2) %>%
+    drop_na({{my_var2}}) %>%
+    pivot_wider(names_from = {{my_var}}, names_sep = "_", values_from = c(num_by_my_var, my_var2_name)) %>%
+    replace(is.na(.), 0) %>%
+    mutate(total_my_var2 = my_var2_name_mann + my_var2_name_kvinne, .by = CENTRESHORTNAME) %>%
+
+    mutate(prop_by_hosp = total_my_var2/total, .by = CENTRESHORTNAME) %>%
+    mutate(prec_by_hosp = prop_by_hosp*100, .by = CENTRESHORTNAME) %>%
+
+    mutate(prop_my_var2_mann = my_var2_name_mann/num_by_my_var_mann, .by = CENTRESHORTNAME) %>%
+    mutate(prop_my_var2_kvinne = my_var2_name_kvinne/num_by_my_var_kvinne, .by =CENTRESHORTNAME) %>%
+    mutate(prec_my_var2_mann = prop_my_var2_mann*100, .by = CENTRESHORTNAME) %>%
+    mutate(prec_my_var2_kvinne= prop_my_var2_kvinne*100, .by =CENTRESHORTNAME) %>%
+    replace(is.na(.), 0)
+
+
+  return(by_my_vars)
+}
+
+make_table(regdata, GENDER, BMI_CATEGORY)
+
+
+# f <- regdata %>%
+#   select(CENTRESHORTNAME, GENDER) %>%
+#   summarise(num_by_gender = n(), .by = c(CENTRESHORTNAME, GENDER)) %>%
+#   mutate(total = sum(num_by_gender), .by = CENTRESHORTNAME)
+
+# s <- regdata %>%
+#   select(CENTRESHORTNAME, GENDER, BMI_CATEGORY) %>%
+#   summarise(bmi = n(), .by = c(BMI_CATEGORY, CENTRESHORTNAME, GENDER))
 
 d <- left_join(f, s) %>%
   drop_na(BMI_CATEGORY) %>%
-  pivot_wider(names_from = GENDER, names_sep = "_", values_from = c(gender, bmi)) %>%
+  pivot_wider(names_from = GENDER, names_sep = "_", values_from = c(num_by_gender, bmi)) %>%
   replace(is.na(.), 0) %>%
-  mutate(prop_bmi1 = bmi_1/total, .by = CENTRESHORTNAME) %>%
-  mutate(prop_bmi2 = bmi_2/total, .by =CENTRESHORTNAME) %>%
-  mutate(prec_bmi1 = bmi_1/total*100, .by = CENTRESHORTNAME) %>%
-  mutate(prec_bmi2 = bmi_2/total*100, .by =CENTRESHORTNAME)
+  mutate(total_bmi = bmi_mann + bmi_kvinne, .by = CENTRESHORTNAME) %>%
+
+  mutate(prop_by_hosp = total_bmi/total, .by = CENTRESHORTNAME) %>%
+  mutate(prec_by_hosp = prop_by_hosp*100, .by = CENTRESHORTNAME) %>%
+
+  mutate(prop_bmi_mann = bmi_mann/num_by_gender_mann, .by = CENTRESHORTNAME) %>%
+  mutate(prop_bmi_kvinne = bmi_kvinne/num_by_gender_kvinne, .by =CENTRESHORTNAME) %>%
+  mutate(prec_bmi_mann = prop_bmi_mann*100, .by = CENTRESHORTNAME) %>%
+  mutate(prec_bmi_kvinne= prop_bmi_kvinne*100, .by =CENTRESHORTNAME) %>%
+  replace(is.na(.), 0)
 
 
+regdata <- regdata %>%
+  mutate(GENDER = recode(GENDER, "1" = "mann", "2" = "kvinne"))
+
+unique(regdata$GENDER)
