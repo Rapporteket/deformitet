@@ -13,141 +13,116 @@ navn + xlab("BMI")+
   ggtitle("Fordeling av")+
   theme(plot.title = element_text(size = 14, face ="bold", hjust = 0.5 , vjust = 1.5))
 
-# Working with tables and making tables by proportions
+#### PREPVARS ####
 
-test = function(data, x){
-  data %>%
-    dplyr::group_by("x") %>%
-    mutate(total = n())
-}
+# FOR GENDER:
+# 1. Turn into character
+regdata$GENDER <- as.character(regdata$GENDER)
 
-test(regdata, BMI_CATEGORY)
-
-make_table = function(data, x){
-  data %>%
-    dplyr::select(CENTRESHORTNAME, GENDER, {{x}}) %>%
-    tidyr::drop_na({{x}}) %>%
-    dplyr::group_by(CENTRESHORTNAME, GENDER, {{x}}) %>%
-    dplyr::summarise(total = n()) %>%
-    ungroup() %>%
-    mutate(rate = total/sum(total),
-           perc = rate*100) %>%
-    group_by(CENTRESHORTNAME, {{x}}, GENDER) %>%
-    pivot_wider(names_from = GENDER, names_sep = ".", values_from = c(rate, perc, total)) %>%
-    replace(is.na(.), 0) %>%
-    rename("rate mann" = rate.1,
-           "rate kvinne" = rate.2,
-           "prosent mann" = perc.1,
-           "prosent kvinne" = perc.2,
-           "n mann" = total.1,
-           "n kvinne" = total.2) %>%
-    mutate("total rate" = `rate mann` + `rate kvinne`,
-           "total prosent" = `prosent mann` + `prosent kvinne`,
-           "total n" = `n mann` + `n kvinne`)
-}
-
-make_table_by_hosp = function(data, x){
-    data %>%
-    dplyr::select(CENTRESHORTNAME, GENDER, {{x}}) %>%
-    tidyr::drop_na({{x}}) %>%
-    dplyr::group_by(CENTRESHORTNAME, GENDER, {{x}}) %>%
-    dplyr::summarise(total = n()) %>%
-    tidyr::pivot_wider(names_from = CENTRESHORTNAME, values_from = total)
-
-    # ungroup() %>%
-    # mutate(rate = total/sum(total),
-    #        perc = rate*100) %>%
-    # group_by(CENTRESHORTNAME, {{x}}, GENDER) %>%
-    # pivot_wider(names_from = GENDER, names_sep = ".", values_from = c(rate, perc, total)) %>%
-    # replace(is.na(.), 0) %>%
-    # rename("rate mann" = rate.1,
-    #        "rate kvinne" = rate.2,
-    #        "prosent mann" = perc.1,
-    #        "prosent kvinne" = perc.2,
-    #        "n mann" = total.1,
-    #        "n kvinne" = total.2) %>%
-    # mutate("total rate" = `rate mann` + `rate kvinne`,
-    #        "total prosent" = `prosent mann` + `prosent kvinne`,
-    #        "total n" = `n mann` + `n kvinne`)
-}
-
-make_table_by_hosp(regdata, BMI_CATEGORY)
-
-
-get_n <- function(data, var_hosp, hosp){
-  data %>%
-    filter({{var_hosp}} == "hosp") %>%
-    summarise(n = n())
-  return(n)
-}
-
-get_n(regdata, CENTRESHORTNAME, Bergen)
-
-make_table <- function(data, my_var, my_var2){
-
-  data$GENDER <- as.character(data$GENDER)
-
-  data <- data %>%
-    mutate(GENDER = recode(GENDER, "1" = "Mann", "2" = "Kvinne"))
-
-  by_my_var <- data %>%
-    select(CENTRESHORTNAME, {{my_var}}) %>%
-    summarise(num_by_my_var = n(), .by = c(CENTRESHORTNAME, {{my_var}})) %>%
-    mutate(total = sum(num_by_my_var), .by = CENTRESHORTNAME)
-
-  by_my_var2 <- regdata %>%
-    select(CENTRESHORTNAME, {{my_var}}, {{my_var2}}) %>%
-    summarise(my_var2_name = n(), .by = c({{my_var2}}, CENTRESHORTNAME, {{my_var}}))
-
-
-  by_my_vars <- left_join(by_my_var, by_my_var2) %>%
-    drop_na({{my_var2}}) %>%
-    pivot_wider(names_from = {{my_var}}, names_sep = "_", values_from = c(num_by_my_var, my_var2_name)) %>%
-    replace(is.na(.), 0) %>%
-    mutate(total_my_var2 = my_var2_name_mann + my_var2_name_kvinne, .by = CENTRESHORTNAME) %>%
-
-    mutate(prop_by_hosp = total_my_var2/total, .by = CENTRESHORTNAME) %>%
-    mutate(prec_by_hosp = prop_by_hosp*100, .by = CENTRESHORTNAME) %>%
-
-    mutate(prop_my_var2_mann = my_var2_name_mann/num_by_my_var_mann, .by = CENTRESHORTNAME) %>%
-    mutate(prop_my_var2_kvinne = my_var2_name_kvinne/num_by_my_var_kvinne, .by =CENTRESHORTNAME) %>%
-    mutate(prec_my_var2_mann = prop_my_var2_mann*100, .by = CENTRESHORTNAME) %>%
-    mutate(prec_my_var2_kvinne= prop_my_var2_kvinne*100, .by =CENTRESHORTNAME) %>%
-    replace(is.na(.), 0)
-
-
-  return(by_my_vars)
-}
-
-make_table(regdata, GENDER, BMI_CATEGORY)
-
-
-# f <- regdata %>%
-#   select(CENTRESHORTNAME, GENDER) %>%
-#   summarise(num_by_gender = n(), .by = c(CENTRESHORTNAME, GENDER)) %>%
-#   mutate(total = sum(num_by_gender), .by = CENTRESHORTNAME)
-
-# s <- regdata %>%
-#   select(CENTRESHORTNAME, GENDER, BMI_CATEGORY) %>%
-#   summarise(bmi = n(), .by = c(BMI_CATEGORY, CENTRESHORTNAME, GENDER))
-
-d <- left_join(f, s) %>%
-  drop_na(BMI_CATEGORY) %>%
-  pivot_wider(names_from = GENDER, names_sep = "_", values_from = c(num_by_gender, bmi)) %>%
-  replace(is.na(.), 0) %>%
-  mutate(total_bmi = bmi_mann + bmi_kvinne, .by = CENTRESHORTNAME) %>%
-
-  mutate(prop_by_hosp = total_bmi/total, .by = CENTRESHORTNAME) %>%
-  mutate(prec_by_hosp = prop_by_hosp*100, .by = CENTRESHORTNAME) %>%
-
-  mutate(prop_bmi_mann = bmi_mann/num_by_gender_mann, .by = CENTRESHORTNAME) %>%
-  mutate(prop_bmi_kvinne = bmi_kvinne/num_by_gender_kvinne, .by =CENTRESHORTNAME) %>%
-  mutate(prec_bmi_mann = prop_bmi_mann*100, .by = CENTRESHORTNAME) %>%
-  mutate(prec_bmi_kvinne= prop_bmi_kvinne*100, .by =CENTRESHORTNAME) %>%
-  replace(is.na(.), 0)
-
-
+# 2. Rename rows:
 regdata <- regdata %>%
   mutate(GENDER = recode(GENDER, "1" = "mann", "2" = "kvinne"))
 
-unique(regdata$GENDER)
+
+#
+
+##### MAKE TABLE #####
+
+make_table <- function(data, my_var, my_var2, my_var3, my_var4) {
+  # my_var = gender
+  # my_var2 = hvilken variabel hurhelst
+  # my_var3 = hvilket kjønn du vil se for
+  # my_var4 = tilhørigheten din
+
+  data <- data %>%
+
+    select(CENTRESHORTNAME, {{my_var}}, {{my_var2}}) %>%
+
+    mutate(Sykehus = ifelse(CENTRESHORTNAME == {{my_var4}}, paste(CENTRESHORTNAME), "resten"))
+
+  # make a df with summary statistics by hospital and my_var
+
+
+  by_my_var <- data %>%
+
+    select(Sykehus, {{my_var}}) %>%
+
+    summarise(n = n(), .by = c(Sykehus, {{my_var}})) %>%
+
+    mutate(total = sum(n), .by = Sykehus)
+
+
+  # make a df with summary statistics by hospital, my_var and my_var2
+
+
+  by_my_var2 <- data %>%
+
+    select(Sykehus, {{my_var}}, {{my_var2}}) %>%
+
+    summarise(my_var2_name = n(), .by = c({{my_var2}}, Sykehus, {{my_var}}))
+
+
+  # merge the dfs and calculate proportions
+
+  by_my_vars <- left_join(by_my_var, by_my_var2) %>%
+
+    drop_na({{my_var2}}) %>% # drop nas
+
+    pivot_wider(names_from = {{my_var}}, names_sep = "_",
+                values_from = c(n, my_var2_name)) %>%
+
+    replace(is.na(.), 0) %>%
+
+    # make by-hospital proportions for my_var2
+
+    mutate(total_my_var2 = my_var2_name_mann + my_var2_name_kvinne,
+           .by = Sykehus) %>%
+
+    mutate(prop_by_hosp = total_my_var2/total, .by = Sykehus) %>%
+
+    mutate(prec_by_hosp = prop_by_hosp*100, .by = Sykehus) %>%
+
+    # make by-hospital and by my_var proportions for my_var2
+
+    mutate(prop_my_var2_mann = my_var2_name_mann/n_mann,
+           .by = Sykehus) %>%
+
+    mutate(prop_my_var2_kvinne = my_var2_name_kvinne/n_kvinne,
+           .by =Sykehus) %>%
+
+    mutate(prec_my_var2_mann = prop_my_var2_mann*100, .by = Sykehus) %>%
+
+    mutate(prec_my_var2_kvinne= prop_my_var2_kvinne*100, .by =Sykehus) %>%
+
+    replace(is.na(.), 0)    # again replace nas with 0
+
+  mann <- by_my_vars %>%
+    select("Sykehus", {{my_var2}}, ends_with("mann"))
+
+  kvinne <- by_my_vars %>%
+    select("Sykehus", {{my_var2}}, ends_with("kvinne"))
+
+  begge <- by_my_vars %>%
+    select(!ends_with("mann")) # må legge til at verken kvinne eller mann skal returneres!!
+
+
+  ifelse(my_var3 == "mann", return(mann), ifelse(my_var3 == "kvinne", return(kvinne), return(begge)))
+
+}
+
+
+### TEST ###
+# run this to test that the function works
+make_table(regdata, GENDER, BMI_CATEGORY, "fds", "Bergen")
+
+
+d %>%
+  select(all_of(my_table))
+
+my_table <- c("Sykehus", "BMI_CATEGORY", grep("mann", names(d), value = TRUE))
+
+d %>%
+  select(my_table)
+
+by_my_vars <- by_my_vars %>%
+  select(my_table)

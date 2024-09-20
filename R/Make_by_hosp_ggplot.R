@@ -24,7 +24,7 @@ gg_bar_by_hos <- function(data, x_var, q, w, l){
     xlab(q)+                              # title of x-axis
     ylab("Antall")+                        # title of y-axis ## DETTE BØR BLI ANDELL ETTER HVERT!! ##
 
-    geom_text(label = paste(l, "\n ", w),
+    geom_text(label = paste(l, "\n ", w),  # se om jeg kan legge dette i margins!
               x = "Bergen",
               y = 140, color = "#003087",
               family = "mono",

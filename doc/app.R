@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(bslib)
 
 # Neste steg:
 # Legge inn kommentarer og forklaringer på funksjonene
@@ -39,7 +40,12 @@ ui <- fluidPage(
 
     # Output: Show scatterplot
     mainPanel(
-      plotOutput(outputId = "barplot"))
+      navset_card_underline(
+        title = "Visualiseringer",
+        nav_panel("Figur", plotOutput(outputId = "barplot")),
+        nav_panel("Tabell", tableOutput(outputId = "table"))
+      ))
+  #     plotOutput(outputId = "barplot"))
     )
   )
 # Define server ----------------------------------------------------------------
@@ -48,6 +54,10 @@ server <- function(input, output, session) {
   output$barplot <- renderPlot({
     deformitet::gg_makeHist(regdata, input$x_var, input$x_var, input$x_var, input$x_var)
   })
+  # ,
+  # output$table <- renderTable({
+  #   deformitet::make_table(regdata, input$x_var, input$x_var, input$x_var, input$x_var)
+  # })
 }
 #
 # navn = gg_makeHist2(regdata, BMI_CATEGORY)

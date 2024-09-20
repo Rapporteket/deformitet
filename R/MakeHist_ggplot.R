@@ -1,13 +1,11 @@
-
-#' ggplot2 function for use in Rapporteket
-#' the function creates bar plots
+#' ggplot2 function for use in Rapporteket the function creates bar plots
 #'
 #' @param data dataframe from which output is to be made
 #' @param x_var defining which variable in the data frame to be used to plot (on the x-axis)
 #' @param makeTable Logical that if TRUE function will return a data frame
 #' containing the bin borders and count within each bin
 #'
-#' @return a graphical object or data frame
+#' @return a graphical object
 #' @export
 #'
 #' @examples

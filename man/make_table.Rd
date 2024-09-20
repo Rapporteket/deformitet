@@ -6,7 +6,7 @@
 and by choice of two variable - intention is to use "GENDER" given the set up
 of the shiny application + one choice of variable (e.g., BMI_CATEGORY)}
 \usage{
-make_table(data, my_var, my_var2)
+make_table(data, my_var, my_var2, my_var3)
 }
 \arguments{
 \item{data}{: data frame}
@@ -16,6 +16,12 @@ gender: both, men, women}
 
 \item{my_var2}{: the variable chosen from the long drop down menu with all variables
 that you can want to see proportion analyses for}
+
+\item{my_var3}{: the variable you want to select table by (i.e., mann, kvinne, begge)
+
+Takes a data frame and (i) preforms selections based on input; (ii)
+calculates proportions and percentages; (iii) builds a new functions selecting
+certain columns and; (iv) returns a data frame}
 }
 \value{
 a data frame
@@ -24,9 +30,4 @@ a data frame
 Table function for calculating proportions by hospital
 and by choice of two variable - intention is to use "GENDER" given the set up
 of the shiny application + one choice of variable (e.g., BMI_CATEGORY)
-}
-\examples{
-takes a data frame and (i) preforms selections based on input; (ii)
-calculates proportions and percentages; (iii) returns a data frame
-
 }

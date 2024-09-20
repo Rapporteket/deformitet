@@ -2,8 +2,7 @@
 % Please edit documentation in R/MakeHist_ggplot.R
 \name{gg_makeHist}
 \alias{gg_makeHist}
-\title{ggplot2 function for use in Rapporteket
-the function creates bar plots}
+\title{ggplot2 function for use in Rapporteket the function creates bar plots}
 \usage{
 gg_makeHist(data, x_var, q, w, l)
 }
@@ -16,11 +15,10 @@ gg_makeHist(data, x_var, q, w, l)
 containing the bin borders and count within each bin}
 }
 \value{
-a graphical object or data frame
+a graphical object
 }
 \description{
-ggplot2 function for use in Rapporteket
-the function creates bar plots
+ggplot2 function for use in Rapporteket the function creates bar plots
 }
 \examples{
 gg_makeHist(data = regdata, x_var = BMI_CATEGORY) # provide without quotationmarks
