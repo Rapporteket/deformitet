@@ -18,6 +18,8 @@
 
 # Valg: "Kjønn"; "Sykehus"; "Alder"; "BMI_kategori" ; "Diff_prosent_kurve"; "Kurve_pre"; "Kurve_post";
 
+# regdata <- regdata %>% mutate(Var = ifelse(Var == "X", "sant", "usant"))
+
 regdata <- deformitet::les_og_flate_ut()
 
 deformitet_prep <- function(data, var){

@@ -6,6 +6,13 @@
 # 4: add other plot functions?
 
 
+
+### TIDENES KODE: mutate(Komplikasjonstype = ifelse(Komplikasjonstype != "0", "0", "1")) ###
+
+
+
+
+
 # example to run the ggplot plot function to test if it works (bar plot - histogram with one discrete variable)
 
 navn = gg_makeHist2(regdata, BMI_CATEGORY)
