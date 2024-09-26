@@ -120,79 +120,104 @@ regdata <- regdata %>%
                         breaks = c(0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 1000),
                         labels = c("1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5", "6", "> 6"))) #TROR IKKE JEG VIL HA LABELS HER
 
-############ JEG TROR IKKE DET FUNGERER Å LEGGE TIL BREAKS UTEN LABELS #########################
-# EVT prøv: labels = NULL????
-
 
 # (viii) FOR BLODTAP:
 # a. Make groups (for easier visualization)
 regdata <- regdata %>%
-  mutate(Blodtap = cut(PER_BLOOD_LOSS_VALUE,
-                        breaks = c(0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500))) ## HAR LYST PÅ MINDRE GRUPPER HER PGA FÅ REGISTRERINGER
+  mutate(Blodtap_100 = cut(PER_BLOOD_LOSS_VALUE,
+                       breaks = c(1, 99, 199, 299, 399, 499, 599, 699, 799, 899, 999, 1099, 1199, 1299, 1399, 1499, 2000),
+                       labels = c("< 100", "100-199", "200-299", "300-399", "400-499", "500-599", "600-699", "700-799", "800-899", "900-999", "1000-1099", "1100-1199", "1200-1299", "1300-1399", "1400-1499", "> 1500")))
+
+regdata <- regdata %>%
+  mutate(Blodtap_200 = cut(PER_BLOOD_LOSS_VALUE,
+                           breaks = c(1, 199, 399, 599, 799, 999, 1199, 1399, 1599, 2000),
+                           labels = c("< 200", "200-399", "400-599", "600-799", "800-999", "1000-1199", "1200-1399", "1400-1599", "> 1600")))
+
 
 # (ix) FOR SRS22
 # MAIN FORM
 regdata <- regdata %>%
   mutate(SRS22_total = cut(SRS22_MAIN_SCORE,
-                           breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5))) # Jeg synes disse gir mening
+                           breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                           labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
+
 
 # FUNCTION
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
   mutate(SRS22_function = cut(SRS22_FUNCTION_SCORE,
-                           breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                              breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                              labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_function_3mnd = cut(SRS22_FUNCTION_SCORE_patient3mths,
-                              breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                   breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                   labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_function_12mnd = cut(SRS22_FUNCTION_SCORE_patient12mths,
-                                   breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_function_60mnd = cut(SRS22_FUNCTION_SCORE_patient60mths,
-                                    breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5))) # Jeg synes disse gir mening
+                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # PAIN
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
   mutate(SRS22_pain = cut(SRS22_PAIN_SCORE,
-                              breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_pain_3mnd = cut(SRS22_PAIN_SCORE_patient3mths,
-                          breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_pain_12mnd = cut(SRS22_PAIN_SCORE_patient12mths,
-                          breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_pain_60mnd = cut(SRS22_PAIN_SCORE_patient60mths,
-                          breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5))) # Jeg synes disse gir mening
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # SELF IMAGE
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
   mutate(SRS22_self_image = cut(SRS22_SELFIMAGE_SCORE,
-                          breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_self_image_3mnd = cut(SRS22_SELFIMAGE_SCORE_patient3mths,
-                               breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                     breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                     labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_self_image_12mnd = cut(SRS22_SELFIMAGE_SCORE_patient12mths,
-                                breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_self_image_60mnd = cut(SRS22_SELFIMAGE_SCORE_patient60mths,
-                                breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)))
+                                      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # MENTAL HEALTH
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
   mutate(SRS22_mental_health = cut(SRS22_MENTALHEALTH_SCORE,
-                          breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                   breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                   labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_mental_health_3mnd = cut(SRS22_MENTALHEALTH_SCORE_patient3mths,
-                               breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_mental_health_12mnd = cut(SRS22_MENTALHEALTH_SCORE_patient12mths,
-                                breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_mental_health_60mnd = cut(SRS22_MENTALHEALTH_SCORE_patient60mths,
-                                breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5))) # Jeg synes disse gir mening
+                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # SRS22 - SATISFACTION (21 og 21) - from patient followup
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
   mutate(SRS22_satisfaction_3mnd = cut(SRS22_SATISFACTION_SCORE,
-                                        breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                       breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                       labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_satisfaction_12mnd = cut(SRS22_SATISFACTION_SCORE_patient12mths,
-                                         breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
          SRS22_satisfaction_60mnd = cut(SRS22_SATISFACTION_SCORE_patient60mths,
-                                         breaks = c(1, 2, 2.5, 3, 3.5, 4, 4.5, 5)),
+                                        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
+                                        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
 
          # Question 22
          SRS22_spm21_3mnd = cut(SRS22_21,
@@ -222,16 +247,20 @@ regdata <- regdata %>%
 # (xi) FOR HELSETILSTAND
 regdata <- regdata %>%
   mutate(Helsetilstand = cut(HELSETILSTAND_SCALE,
-                             breaks = c(0, 15, 30, 45, 60, 75, 90, 100)),
+                             breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                             labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")),
          # 3-6 mnd
          Helsetilstand_3mnd = cut(HEALTH_CONDITION_SCALE,
-                                  breaks = c(0, 15, 30, 45, 60, 75, 90, 100)),
+                                  breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                                  labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")),
          # 12 mnd
          Helsetilstand_12mnd = cut(HEALTH_CONDITION_SCALE_patient12mths,
-                                   breaks = c(0, 15, 30, 45, 60, 75, 90, 100)),
+                                   breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                                   labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")),
          # 60 mnd
          Helsetilstand_60mnd = cut(HEALTH_CONDITION_SCALE_patient60mths,
-                                   breaks = c(0, 15, 30, 45, 60, 75, 90, 100)),)
+                                   breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                                   labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")))
 
 
 # (xii) FOR KOMPLIKASJONER
@@ -244,7 +273,8 @@ return(regdata)
 
  }
 
-rm(regdata)
+
+
 
 
 
