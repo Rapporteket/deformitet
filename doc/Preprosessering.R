@@ -82,6 +82,11 @@ regdata <- regdata %>%
                           breaks = c(0, 9, 19, 29, 39, 110),
                           labels = c("0-9", "10-19", "20-29", "30-39", "> 40")))
 
+# b. FOR KURVE-DIFFERANSE PROSENT:
+regdata <- regdata %>%
+  mutate(Diff_prosent_kurve = (((PRE_MAIN_CURVE - POST_MAIN_CURVE)/PRE_MAIN_CURVE)*100))
+
+
 # (vi) FOR LIGGETID:
 # a. Transform to numeric
 regdata$BED_DAYS_POSTOPERATIVE <- as.numeric(regdata$BED_DAYS_POSTOPERATIVE)
@@ -116,7 +121,7 @@ regdata <- regdata %>%
          -my_time_mins2, -my_start, -my_end)
 
 regdata <- regdata %>%
-  mutate(kniv_tid = cut(kniv_tid,
+  mutate(Knivtid = cut(kniv_tid,
                         breaks = c(0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360, 1000),
                         labels = c("1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5", "6", "> 6"))) #TROR IKKE JEG VIL HA LABELS HER
 
@@ -145,77 +150,77 @@ regdata <- regdata %>%
 # FUNCTION
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
-  mutate(SRS22_function = cut(SRS22_FUNCTION_SCORE,
+  mutate(SRS22_funksjon = cut(SRS22_FUNCTION_SCORE,
                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_function_3mnd = cut(SRS22_FUNCTION_SCORE_patient3mths,
+         SRS22_funksjon_3mnd = cut(SRS22_FUNCTION_SCORE_patient3mths,
                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_function_12mnd = cut(SRS22_FUNCTION_SCORE_patient12mths,
+         SRS22_funksjon_12mnd = cut(SRS22_FUNCTION_SCORE_patient12mths,
                                     breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                     labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_function_60mnd = cut(SRS22_FUNCTION_SCORE_patient60mths,
+         SRS22_funksjon_60mnd = cut(SRS22_FUNCTION_SCORE_patient60mths,
                                     breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                     labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # PAIN
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
-  mutate(SRS22_pain = cut(SRS22_PAIN_SCORE,
+  mutate(SRS22_smerte = cut(SRS22_PAIN_SCORE,
                           breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                           labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_pain_3mnd = cut(SRS22_PAIN_SCORE_patient3mths,
+         SRS22_smerte_3mnd = cut(SRS22_PAIN_SCORE_patient3mths,
                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_pain_12mnd = cut(SRS22_PAIN_SCORE_patient12mths,
+         SRS22_smerte_12mnd = cut(SRS22_PAIN_SCORE_patient12mths,
                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_pain_60mnd = cut(SRS22_PAIN_SCORE_patient60mths,
+         SRS22_smerte_60mnd = cut(SRS22_PAIN_SCORE_patient60mths,
                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # SELF IMAGE
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
-  mutate(SRS22_self_image = cut(SRS22_SELFIMAGE_SCORE,
+  mutate(SRS22_selvbilde = cut(SRS22_SELFIMAGE_SCORE,
                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_self_image_3mnd = cut(SRS22_SELFIMAGE_SCORE_patient3mths,
+         SRS22_selvbilde_3mnd = cut(SRS22_SELFIMAGE_SCORE_patient3mths,
                                      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_self_image_12mnd = cut(SRS22_SELFIMAGE_SCORE_patient12mths,
+         SRS22_selvbilde_12mnd = cut(SRS22_SELFIMAGE_SCORE_patient12mths,
                                       breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                       labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_self_image_60mnd = cut(SRS22_SELFIMAGE_SCORE_patient60mths,
+         SRS22_selvbilde_60mnd = cut(SRS22_SELFIMAGE_SCORE_patient60mths,
                                       breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                       labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # MENTAL HEALTH
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
-  mutate(SRS22_mental_health = cut(SRS22_MENTALHEALTH_SCORE,
+  mutate(SRS22_mhelse = cut(SRS22_MENTALHEALTH_SCORE,
                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_mental_health_3mnd = cut(SRS22_MENTALHEALTH_SCORE_patient3mths,
+         SRS22_mhelse_3mnd = cut(SRS22_MENTALHEALTH_SCORE_patient3mths,
                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_mental_health_12mnd = cut(SRS22_MENTALHEALTH_SCORE_patient12mths,
+         SRS22_mhelse_12mnd = cut(SRS22_MENTALHEALTH_SCORE_patient12mths,
                                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_mental_health_60mnd = cut(SRS22_MENTALHEALTH_SCORE_patient60mths,
+         SRS22_mhelse_60mnd = cut(SRS22_MENTALHEALTH_SCORE_patient60mths,
                                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
 
 # SRS22 - SATISFACTION (21 og 21) - from patient followup
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
 regdata <- regdata %>%
-  mutate(SRS22_satisfaction_3mnd = cut(SRS22_SATISFACTION_SCORE,
+  mutate(SRS22_fornoyd_3mnd = cut(SRS22_SATISFACTION_SCORE,
                                        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_satisfaction_12mnd = cut(SRS22_SATISFACTION_SCORE_patient12mths,
+         SRS22_fornoyd_12mnd = cut(SRS22_SATISFACTION_SCORE_patient12mths,
                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
-         SRS22_satisfaction_60mnd = cut(SRS22_SATISFACTION_SCORE_patient60mths,
+         SRS22_fornoyd_60mnd = cut(SRS22_SATISFACTION_SCORE_patient60mths,
                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")),
 
@@ -268,6 +273,7 @@ regdata <- regdata %>%
 regdata$PROCEDURE_COMPLICATIONS <- as.character(regdata$PROCEDURE_COMPLICATIONS)
 regdata <- regdata %>%
   mutate(Komplikasjoner_3mnd = recode(PROCEDURE_COMPLICATIONS, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+
 
 return(regdata)
 

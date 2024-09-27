@@ -16,6 +16,18 @@
 #'@returns a data frame
 #'@export
 
+
+# Getting the variables I need
+
+res= prep(regdata, Kurve_pre)
+
+# Unpacking the list
+
+df <- data.frame(res[1])
+
+gg_data <- data.frame(res[2])
+
+
 #### MAKE TABLE FUNCTION ####
 
 
