@@ -7,18 +7,38 @@
 regdata <- pre_pros(regdata)
 
 
-prep <- function(regdata, var){
+prep <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2){
   var <- dplyr::enquo(var)
+  var_kjønn <- dplyr::enquo(var_kjønn)
+  time1 <- dplyr::enquo(time1)
+  time2 <- dplyr::enquo(time2)
 
-  # (iii) BMI
+
+  # Filter based on gender choices
+  regdata <- regdata %>%
+    filter(Kjønn == case_when(as_name(var_kjønn) == "kvinne" ~ "kvinne",
+                              as_name(var_kjønn) == "mann" ~ "mann",
+                              as_name(var_kjønn) != "kvinne" | as_name(var_kjønn) != "mann" ~ Kjønn))
+
+  # Filter based on surgery date
+  regdata <- regdata %>%
+    filter(between(SURGERY_DATE, as.Date({{time1}}), as.Date({{time2}})))
+
+
+  # Filter based on age groups - using column "Alder_num" in which Alder
+  # is not given as factor but as an integer
+  regdata <- regdata %>%
+    filter(between(Alder_num, {{alder1}}, {{alder2}}))
+
+
 gg_data <- data.frame(title = "")
 
-# kan legge inn i df de der jeg skal fjerne NA (Y) og så kan jeg først sjekke det og så ta bort NA
 
 
+
+# Remove NA on the variable of interest
 regdata <- regdata %>%
     filter(!is.na({{var}}))
-
 
 gg_data <- gg_data %>%
 
@@ -186,9 +206,7 @@ return(list(my_data, gg_data))
 
 }
 
-
-res= prep(regdata, Kurve_pre)
-
-
+# Test to see if it works:
+# res= prep(regdata, Kurve_pre, "mann", "2023-01-09", "2023-01-20", 10, 20)
 
 

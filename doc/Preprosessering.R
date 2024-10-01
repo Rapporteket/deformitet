@@ -42,9 +42,12 @@ regdata <- regdata %>%
 
 # b. Divide into age groups (defined by registry)
 regdata$Alder <- as.numeric(regdata$Alder)
+regdata$Alder_num <- as.integer(regdata$Alder)
+
+
 regdata$Alder <- cut(regdata$Alder,
                      breaks = c(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21),
-                     labels = c("0-9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20+"))
+                     labels = c("<9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20+"))
 
 
 # (iii) FOR BMI:
@@ -276,11 +279,6 @@ regdata <- regdata %>%
 
 
 return(regdata)
-
  }
-
-
-
-
 
 
