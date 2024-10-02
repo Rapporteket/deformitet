@@ -12,13 +12,15 @@ prep <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2){
   var_kjønn <- dplyr::enquo(var_kjønn)
   time1 <- dplyr::enquo(time1)
   time2 <- dplyr::enquo(time2)
+  alder1 <- dplyr::enquo(alder1)
+  alder2 <- dplyr::enquo(alder2)
 
 
   # Filter based on gender choices
   regdata <- regdata %>%
-    filter(Kjønn == case_when(as_name(var_kjønn) == "kvinne" ~ "kvinne",
-                              as_name(var_kjønn) == "mann" ~ "mann",
-                              as_name(var_kjønn) != "kvinne" | as_name(var_kjønn) != "mann" ~ Kjønn))
+    dplyr::filter(Kjønn == dplyr::case_when(rlang::as_name(var_kjønn) == "kvinne" ~ "kvinne",
+                                            rlang::as_name(var_kjønn) == "mann" ~ "mann",
+                                            rlang::as_name(var_kjønn) != "kvinne" | rlang::as_name(var_kjønn) != "mann" ~ Kjønn))
 
   # Filter based on surgery date
   regdata <- regdata %>%
@@ -32,8 +34,6 @@ prep <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2){
 
 
 gg_data <- data.frame(title = "")
-
-
 
 
 # Remove NA on the variable of interest
@@ -116,6 +116,11 @@ gg_data <- gg_data %>%
                            as_name(var) == "Helsetilstand_3mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 3-6 måneders oppfølging",
                            as_name(var) == "Helsetilstand_12mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 12 måneders oppfølging",
                            as_name(var) == "Helsetilstand_60mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 5 års oppfølging",
+
+
+
+                           # KOMPLIKASJONER
+                           as_name(var) == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging"
                            ),
 
          #### Legge inn tittel på lab ####
@@ -191,6 +196,12 @@ gg_data <- gg_data %>%
                            as_name(var) == "Helsetilstand_3mnd" ~ "Helsetilstandsskår (1-5), 3-6 måneders oppfølging",
                            as_name(var) == "Helsetilstand_12mnd" ~ "Helsetilstandsskår (1-5), 12 måneders oppfølging",
                            as_name(var) == "Helsetilstand_60mnd" ~ "Helsetilstandsskår (1-5), 5 års oppfølging",
+
+
+
+                          # KOMPLIKASJONER
+                          as_name(var) == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging"
+
          ))
 
 
@@ -200,7 +211,7 @@ gg_data <- gg_data %>%
 
 
 my_data <- regdata %>%
-  select(Sykehus, Kjønn, {{var}})
+  select(Sykehus, {{var}})
 
 return(list(my_data, gg_data))
 

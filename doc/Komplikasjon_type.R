@@ -2,7 +2,7 @@
 
 regdata <- pre_pros(regdata)
 
-kompl_data <- function(regdata){
+kompl_data <- function(regdata, reshID){
 
   kompl <- regdata %>%
     select(PATIENT_ID,
@@ -42,10 +42,40 @@ kompl_data <- function(regdata){
 
   kompl <- kompl %>%
     mutate(Komplikasjonstype = replace_na(Komplikasjonstype, "ukjent")) %>%
-    filter(Komplikasjonstype != "ukjent") %>%
-    mutate(Komplikasjonstype = recode(Komplikasjonstype, "0" = "ingen"))
+    filter(Komplikasjonstype != "ukjent")
 
-  kompl_df <- as.data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype))
+  kompl <- kompl %>%
+    filter(Komplikasjonstype != "0")
+
+  # %>%
+  #   mutate(Komplikasjonstype = recode(Komplikasjonstype, "0" = "ingen"))
+
+  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype))
+
+  kompl_df <- kompl_df %>%
+    rename(Sykehus = Var1,
+           Komplikasjonstype = Var2,
+           antall = Freq)
+
+  kompl_df <- kompl_df %>%
+    mutate(Sykehus  = case_when(as_name(reshID) == "Bergen" ~ recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
+                                as_name(reshID) == "Riksen" ~ recode(Sykehus, "Bergen" = "Resten", "St.Olav" = "Resten"),
+                                as_name(reshID) == "St.Olav" ~ recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
+                                TRUE ~ Sykehus))
+
+
+  kompl_df <- kompl_df %>%
+    group_by(Sykehus) %>%
+    mutate(n = sum(antall),
+           andel = antall/n,
+           prosent = andel*100)
+
+
 
   return(kompl_df)
 }
+
+
+kompl <- kompl_data(regdata, "Bergen")
+
+

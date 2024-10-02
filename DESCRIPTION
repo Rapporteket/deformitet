@@ -23,7 +23,9 @@ Imports:
   shiny,
   shinyalert,
   ggplot2,
-  dplyr
+  dplyr,
+  rlang,
+  tidyr
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
