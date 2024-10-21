@@ -4,31 +4,8 @@ library(dplyr)
 library(rlang)
 library(tidyr)
 library(bslib)
+library(DT)
 
-
-
-# Få inn data
-regdata <- deformitet::les_og_flate_ut()
-
-# Preprosessering
-
-
-# PrepVar
-# Input needed:
-  # res= prep(regdata, Kurve_pre, "mann", "2023-01-09", "2023-01-20", 10, 20)
-# Output : list with small df (based on choices) and gg-data
-
-# MakeTable
-# Input needed:
-  # data set which is data frame 1 one from the list made by PrepVar
-  # reshId
-# Output : table which calculates rates and percentages
-
-# MaaePlot_gg
-# Input needed:
-  # data made by MakeTable
-  # + also gg-data
-  # + also data of choices made by user
 
 
 # The app itself
@@ -58,7 +35,7 @@ ui <- fluidPage(
                     "Alder" = "Alder",
                     "Pre-operativ kurve" = "Kurve_pre",
                     "Post-operativ kurve" = "Kurve_post",
-                    "Prosent korreksjon kurve" = "Diff_kurve_prosent",
+                    "Prosent korreksjon kurve" = "Diff_prosent_kurve",
                     "Liggetid" = "Liggetid",
                     "Knvitid" = "Knivtid",
                     "Blodtap pr. 100 ml" = "Blodtap_100",
@@ -83,9 +60,10 @@ ui <- fluidPage(
                     "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
                     #"SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                     #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
-                    "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd"
+                    "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
+                    "Komplikasjonstyper" = "Komplikasjonstype"
                     ),
-        selected = "BMI_CATEGORY"),
+        selected = "BMI_kategori"),
 
 
       selectInput(
@@ -112,7 +90,14 @@ ui <- fluidPage(
         min = 0,
         max = 100,
         value = c(10, 20),
-        dragRange = TRUE)
+        dragRange = TRUE),
+
+      selectInput(
+        inputId = "reshId_var",
+        label = "Enhet",
+        choices = c("Bergen", "Riksen", "St.Olav"),
+        selected = "Bergen"
+      )
 
 
       ),
@@ -123,7 +108,7 @@ ui <- fluidPage(
       navset_card_underline(
         title = "Visualiseringer",
         nav_panel("Figur", plotOutput(outputId = "plot")),
-        nav_panel("Tabell", tableOutput(outputId = "table"))
+        nav_panel("Tabell", DTOutput(outputId = "table"))
       ))
   #     plotOutput(outputId = "barplot"))
     )
@@ -132,59 +117,69 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-  #
-  regdata <- pre_pros(regdata)
+  # Read in data:
+  regdata <- deformitet::les_og_flate_ut()
 
-  # PrepVar
+  # Clean and tidy data:
+  regdata <- deformitet::pre_pros(regdata)
 
-  # Problemet ligger her! Den får ikke til å sjekke disse tingene osv.
-  # Jeg tror det er det noe feil i logikken (Y)
-  prep_var_reactive <- reactive({
-    prep(
-      regdata = regdata,
-      var = input$x_var,
-      var_kjønn = input$kjønn_var,
-      time1 = input$date[1],
-      time2 = input$date[2],
-      alder1 = input$alder_var[1],
-      alder2 = input$alder_var[2])
+  # Prepare data based on UI choices
+  prepVar_reactive <- reactive({
+    deformitet::prepVar(regdata, input$x_var, input$kjønn_var, input$date[1], input$date[2], input$alder_var[1], input$alder_var[2])
   })
 
-  df_reactive <- reactive({
-    df <- data.frame(prep_var_reactive()[1])
+  # Unpack part of list - data
+  data_reactive <- reactive({
+    data <- data.frame(prepVar_reactive()[1])
   })
 
+  # Unpack part of list - gg-data
   gg_data_reactive <- reactive({
-    gg_data <- data.frame(prep_var_reactive()[2])
+    gg_data <- data.frame(prepVar_reactive()[2])
+  })
+
+  # Make table of komplikasjonstyper
+  kompl_reactive <- reactive({
+    deformitet::kompl_data(regdata, input$reshId_var)
+  })
+
+  # Make table
+  table_reactive <- reactive({
+    deformitet::makeTable(data_reactive(), input$reshId_var)
+  })
+
+  my_data_reactive <- reactive({
+    x <- format(input$date, "%d/%m/%y")
+    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
   })
 
 
-  output$table <- renderTable()
-#
-#   # Make table
-#   tabell_reactive <- reactive({
-#     df <- df_reactive()
-#     make_table(
-#       data = df,
-#       reshID = "Bergen"
-#     )
-#   })
-#
-#   output$plot<- renderPlot({
-#     data <- tabell_reactive()
-#     gg_data <- gg_data_reactive()
-#     MakePlot_gg(data)
-#   })
-  # ,
-  # output$table <- renderTable({
-  #   deformitet::make_table(regdata, input$x_var, input$x_var, input$x_var, input$x_var)
-  # })
+  # Print table
+  output$table <- DT::renderDataTable({
+    if(input$x_var == "Komplikasjonstype"){
+      datatable(kompl_reactive())}
+    else{datatable(table_reactive(),
+              colnames = c("Sykehus", input$x_var, "antall per var", "antall per sykehus", "andel", "prosent"))
+  }
+  })
+
+  # Print figure
+
+  output$plot <- renderPlot({
+    if(input$x_var == "Komplikasjonstype"){
+      gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype", "xlab" = "Komplikasjonstype"))
+      deformitet::makePlot_gg(kompl_reactive(), gg_kompl, my_data_reactive())
+      }
+    else{
+      gg_data <- data.frame(gg_data_reactive())
+      deformitet::makePlot_gg(table_reactive(), gg_data, my_data_reactive())
+      }
+    })
+
+
+
 }
-#
-# navn = gg_makeHist2(regdata, BMI_CATEGORY)
-# navn + xlab("BMI")+
-#   ggtitle("Fordeling av")+
-#   theme(plot.title = element_text(size = 14, face ="bold", hjust = 0.5 , vjust = 1.5))
+
 
 # Create a Shiny app object ----------------------------------------------------
 

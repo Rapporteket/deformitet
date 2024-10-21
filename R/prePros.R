@@ -1,3 +1,9 @@
+#' @title Preprosessering
+#'
+#' @export
+#'
+
+
 ##### FIX VARIABLES #####
 # Pre-processing of variables before they're being prepared (PrepVar) for table-
 # making (makeTable) and plotting (makeHistPlot_gg)
@@ -17,7 +23,9 @@
 # "HEALTH_CONDITION_SCALE"
 # (xii) komplikasjoner - de ulike komplikasjonstypene
 
-regdata <- deformitet::les_og_flate_ut()
+
+
+# regdata <- deformitet::les_og_flate_ut()
 
 pre_pros <- function(regdata){
 
@@ -87,7 +95,11 @@ regdata <- regdata %>%
 
 # b. FOR KURVE-DIFFERANSE PROSENT:
 regdata <- regdata %>%
-  mutate(Diff_prosent_kurve = (((PRE_MAIN_CURVE - POST_MAIN_CURVE)/PRE_MAIN_CURVE)*100))
+  mutate(Diff_prosent_kurve = (((PRE_MAIN_CURVE - POST_MAIN_CURVE)/PRE_MAIN_CURVE)*100),
+         Diff_prosent_kurve = round(Diff_prosent_kurve, digits = 0),
+         Diff_prosent_kurve = cut(Diff_prosent_kurve,
+                                  breaks = c(0, 45, 55, 65, 75, 80, 85, 90, 95, 105),
+                                  labels = c("0-44", "45-54", "55-64", "65-74", "75-79", "80-84", "85-89", "90-94", "95-100")))
 
 
 # (vi) FOR LIGGETID:
