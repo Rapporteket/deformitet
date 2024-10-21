@@ -25,7 +25,8 @@ Imports:
   ggplot2,
   dplyr,
   rlang,
-  tidyr
+  tidyr,
+  usethis
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

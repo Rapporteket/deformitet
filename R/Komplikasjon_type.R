@@ -1,6 +1,12 @@
+#' @title Komplikasjonstyper
+#'
+#'
+#' @export
+
+
 # Making a function that returns a table of complications
 
-regdata <- pre_pros(regdata)
+
 
 kompl_data <- function(regdata, reshID){
 
@@ -52,6 +58,10 @@ kompl_data <- function(regdata, reshID){
 
   kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype))
 
+  # kompl_df <- kompl_df %>%
+  #   group_by(kompl$Sykehus, kompl$Komplikasjonstype, .drop=FALSE) %>%
+  #   tally(name = "Antall")
+
   kompl_df <- kompl_df %>%
     rename(Sykehus = Var1,
            Komplikasjonstype = Var2,
@@ -63,19 +73,36 @@ kompl_data <- function(regdata, reshID){
                                 as_name(reshID) == "St.Olav" ~ recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
                                 TRUE ~ Sykehus))
 
+  kompl_df <- kompl_df %>%
+    pivot_wider(names_from = Sykehus, values_from = antall, values_fn = list)
+
 
   kompl_df <- kompl_df %>%
-    group_by(Sykehus) %>%
-    mutate(n = sum(antall),
-           andel = antall/n,
-           prosent = andel*100)
+    tidyr::unnest_wider(Resten, names_sep = ".") %>%
+    tidyr::unnest_wider(case_when(as_name(reshID) == "Bergen" ~ "Bergen",
+                                  as_name(reshID) == "Riksen" ~ "Riksen",
+                                  as_name(reshID) == "St.Olav" ~ "St.Olav"), names_sep = "") %>%
+    mutate(Resten = Resten.1+Resten.2) %>%
+    select(-Resten.1, -Resten.2)
 
+
+  ####### IKKE FERDIG HER ##########
+
+
+    pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "Antall")
+
+  # kompl_df <- kompl_df %>%
+  #   group_by(Sykehus, .drop=FALSE) %>%
+  #   mutate(Antall_pr_Sykehus = sum(Antall)) %>%
+  #   group_by(Sykehus, Komplikasjonstype, .drop=FALSE) %>%
+  #   mutate(Andel = Antall/Antall_pr_Sykehus,
+  #          Prosent = Andel*100)
+  #
+  # kompl_df$Sykehus <- sub("1", "", kompl_df$Sykehus)
 
 
   return(kompl_df)
 }
 
-
-kompl <- kompl_data(regdata, "Bergen")
-
+g <- kompl_data(regdata, "St.Olav")
 

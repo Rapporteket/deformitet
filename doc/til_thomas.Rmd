@@ -1,0 +1,163 @@
+---
+title: "Deformitet enkle figurer"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-10-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Loading libraries
+```{r, include = FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(rapbase)
+library(deformitet)
+```
+
+Loading in data
+```{r, include = FALSE}
+
+regdata <- deformitet::les_og_flate_ut()
+data <- deformitet::pre_pros(regdata)
+
+```
+
+# Figurer
+## Alder
+
+```{r, include = FALSE}
+# Load in data 
+data_age <- deformitet::prepVar(data, "Alder", "begge", "2023-01-02", "2024-09-02", 0, 100)
+
+data_age1 <- data.frame(data_age[1])
+
+# Make table
+data_age1_tbl <- deformitet::makeTable(data_age1, "") 
+
+```
+
+### Alder - hele landet
+
+```{r}
+# Make figures 
+# "Hele landet"
+data %>% 
+  ggplot(aes(x = Alder)) +
+  geom_bar(fill = "#6CACE4")+
+  
+  theme_bw()+
+  ylab("Antall")
+
+```
+
+### Alder - pr sykehus 
+
+```{r}
+
+data_age1_tbl %>% 
+  ggplot(aes(x = Alder, y = andel, fill = Sykehus)) +
+  geom_col()+
+  scale_fill_manual(values = c("#6CACE4", "#BFCED6", "#003087"))+ 
+  
+  ylab("Andel")+
+  theme_bw()
+
+```
+
+
+### Variasjoner av samme figur
+```{r}
+data_age1_tbl %>% 
+  ggplot(aes(x = prosent, y = Alder)) +
+  geom_col(fill = "#6CACE4")+
+  
+  theme_bw()+
+  xlab("Prosentandel")+
+  facet_wrap("Sykehus")
+
+```
+
+```{r}
+data_age1_tbl %>% 
+  ggplot(aes(x = Alder, y = prosent)) +
+  geom_col(fill = "#6CACE4")+
+  
+  theme_bw()+
+  ylab("Prosentandel")+
+  facet_wrap("Sykehus")
+
+```
+
+
+## Kjønn
+```{r, include = FALSE}
+# Load in data 
+data_kjønn <- deformitet::prepVar(data, "Kjønn", "begge", "2023-01-02", "2024-09-02", 0, 100)
+
+data_kjønn1 <- data.frame(data_kjønn[1])
+
+# Make table
+data_kjønn1_tbl <- deformitet::makeTable(data_kjønn1, "") 
+
+```
+
+### Kjønn - hele landet
+```{r}
+# Make figures 
+# "Hele landet"
+data %>% 
+  ggplot(aes(x = Kjønn)) +
+  geom_bar(fill = "#6CACE4")+
+  
+  theme_bw()+
+  ylab("Antall")
+
+```
+
+
+### Kjønn - pr sykehus
+```{r}
+# "Pr sykehus"
+data_kjønn1_tbl %>% 
+  ggplot(aes(x = Kjønn, y = andel, fill = Sykehus)) +
+  geom_col()+
+  
+  theme_bw()+
+  ylab("Andel")+
+  scale_fill_manual(values = c("#6CACE4", "#BFCED6", "#003087"))
+
+```
+
+## Antall
+```{r}
+data %>% 
+  ggplot(aes(x = Sykehus))+
+  geom_bar(fill = "#6CACE4")+
+  
+  ylab("Antall")+
+  theme_bw()
+```
+
+### Antall + kjønn
+```{r}
+data %>% 
+  ggplot(aes(x = Sykehus, fill = Kjønn))+
+  geom_bar()+
+  
+  scale_fill_manual(values = c("#6CACE4", "#003087"))+
+  ylab("Antall")+
+  theme_bw()
+```
+
+
+## Div andre figurer
+
+
+
+
+

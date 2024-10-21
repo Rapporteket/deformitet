@@ -1,40 +1,36 @@
-# New table function based on PrepVar
-
-# First - load in the data and prep it
-res= prep(regdata, Blodtap_100, "kvinne", "2023-01-02", "2024-09-02", 10, 20)
-
-# Unpacking the list that is returned by prep()
-
-df <- data.frame(res[1])
-
-gg_data <- data.frame(res[2])
+#' @title makeTable
+#'
+#' @export
 
 
-make_table <- function(data, reshID){
+# New table function based on prepVar
 
+
+makeTable <- function(data, var_reshID){
 
 # Make "me vs. the rest" in the table based on the reshID of the user
   data <- data %>%
-    mutate(Sykehus  = case_when(as_name(reshID) == "Bergen" ~ recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
-                                as_name(reshID) == "Riksen" ~ recode(Sykehus, "Bergen" = "Resten", "St.Olav" = "Resten"),
-                                as_name(reshID) == "St.Olav" ~ recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
-                                TRUE ~ Sykehus))
+    dplyr::mutate(Sykehus = dplyr::case_when({{var_reshID}} == "Bergen" ~ dplyr::recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
+                                            {{var_reshID}} == "Riksen" ~ dplyr::recode(Sykehus, "Bergen" = "Resten", "St.Olav" = "Resten"),
+                                            {{var_reshID}} == "St.Olav" ~ dplyr::recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
+                                            TRUE ~ Sykehus))
 
   a <- data %>%
-    group_by(Sykehus, data[2], .drop = FALSE) %>%
-    tally(name = "antall_pr_var")
+    dplyr::group_by(Sykehus, data[2], .drop = FALSE) %>%
+    dplyr::tally(name = "antall_pr_var")
 
   b <- data %>%
-    group_by(Sykehus) %>%
-    count(name = "antall_pr_sykh")
+    dplyr::group_by(Sykehus) %>%
+    dplyr::count(name = "antall_pr_sykh")
 
-  c <- left_join(a, b)
+  c <- dplyr::left_join(a, b)
 
   my_table <- c %>%
-    mutate(andel = antall_pr_var/antall_pr_sykh,
-           prosent = andel*100)
+    dplyr::mutate(andel = antall_pr_var/antall_pr_sykh,
+                  prosent = andel*100)
 
   return(my_table)
+
 }
 
 
