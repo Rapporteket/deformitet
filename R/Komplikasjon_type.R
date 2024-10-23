@@ -11,7 +11,7 @@
 kompl_data <- function(regdata, reshID){
 
   kompl <- regdata %>%
-    select(PATIENT_ID,
+    dplyr::select(PATIENT_ID,
            Sykehus,
            Komplikasjoner_3mnd,
            COMPLICATIONS_BLEEDING,
@@ -25,7 +25,7 @@ kompl_data <- function(regdata, reshID){
            COMPLICATIONS_NUMBNESS,
            COMPLICATIONS_PAIN,
            COMPLICATIONS_OTHER) %>%
-    mutate(Blødning = case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
+    dplyr::mutate(Blødning = case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
            UVI = case_match(COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
            Lunge = case_match(COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
            DVT = case_match(COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
@@ -40,18 +40,18 @@ kompl_data <- function(regdata, reshID){
 
 
   kompl <- kompl %>%
-    select(PATIENT_ID, Sykehus, Blødning, UVI, Lunge, DVT, Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
+    dplyr::select(PATIENT_ID, Sykehus, Blødning, UVI, Lunge, DVT, Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
 
   kompl <- kompl %>%
-    pivot_longer(!c(PATIENT_ID, Sykehus), names_to = "type", values_to = "Komplikasjonstype") %>%
-    select(-type)
+    tidyr::pivot_longer(!c(PATIENT_ID, Sykehus), names_to = "type", values_to = "Komplikasjonstype") %>%
+    dplyr::select(-type)
 
   kompl <- kompl %>%
-    mutate(Komplikasjonstype = replace_na(Komplikasjonstype, "ukjent")) %>%
-    filter(Komplikasjonstype != "ukjent")
+    dplyr::mutate(Komplikasjonstype = replace_na(Komplikasjonstype, "ukjent")) %>%
+    dplyr::filter(Komplikasjonstype != "ukjent")
 
   kompl <- kompl %>%
-    filter(Komplikasjonstype != "0")
+    dplyr::filter(Komplikasjonstype != "0")
 
   # %>%
   #   mutate(Komplikasjonstype = recode(Komplikasjonstype, "0" = "ingen"))
@@ -63,33 +63,33 @@ kompl_data <- function(regdata, reshID){
   #   tally(name = "Antall")
 
   kompl_df <- kompl_df %>%
-    rename(Sykehus = Var1,
+    dplyr::rename(Sykehus = Var1,
            Komplikasjonstype = Var2,
            antall = Freq)
 
   kompl_df <- kompl_df %>%
-    mutate(Sykehus  = case_when(as_name(reshID) == "Bergen" ~ recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
-                                as_name(reshID) == "Riksen" ~ recode(Sykehus, "Bergen" = "Resten", "St.Olav" = "Resten"),
-                                as_name(reshID) == "St.Olav" ~ recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
+    dplyr::mutate(Sykehus  = dplyr::case_when(as_name(reshID) == "Bergen" ~ dplyr::recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
+                                rlang::as_name(reshID) == "Riksen" ~ dplyr::recode(Sykehus, "Bergen" = "Resten", "St.Olav" = "Resten"),
+                                rlang::as_name(reshID) == "St.Olav" ~ dplyr::recode(Sykehus, "Bergen" = "Resten", "Riksen" = "Resten"),
                                 TRUE ~ Sykehus))
 
   kompl_df <- kompl_df %>%
-    pivot_wider(names_from = Sykehus, values_from = antall, values_fn = list)
+    tidyr::pivot_wider(names_from = Sykehus, values_from = antall, values_fn = list)
 
 
   kompl_df <- kompl_df %>%
     tidyr::unnest_wider(Resten, names_sep = ".") %>%
-    tidyr::unnest_wider(case_when(as_name(reshID) == "Bergen" ~ "Bergen",
-                                  as_name(reshID) == "Riksen" ~ "Riksen",
-                                  as_name(reshID) == "St.Olav" ~ "St.Olav"), names_sep = "") %>%
-    mutate(Resten = Resten.1+Resten.2) %>%
-    select(-Resten.1, -Resten.2)
+    tidyr::unnest_wider(dplyr::case_when(rlang::as_name(reshID) == "Bergen" ~ "Bergen",
+                                         rlang::as_name(reshID) == "Riksen" ~ "Riksen",
+                                         rlang::as_name(reshID) == "St.Olav" ~ "St.Olav"), names_sep = "") %>%
+    dplyr::mutate(Resten = Resten.1+Resten.2) %>%
+    dplyr::select(-Resten.1, -Resten.2)
 
 
   ####### IKKE FERDIG HER ##########
 
 
-    pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "Antall")
+    tidyr::pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "Antall")
 
   # kompl_df <- kompl_df %>%
   #   group_by(Sykehus, .drop=FALSE) %>%
@@ -103,6 +103,4 @@ kompl_data <- function(regdata, reshID){
 
   return(kompl_df)
 }
-
-g <- kompl_data(regdata, "St.Olav")
 
