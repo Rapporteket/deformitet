@@ -10,26 +10,26 @@ library(shinyjs)
 
 # The app itself
 
+# Rapporteket graphics
 shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
 ui <-
 
-
-  shiny::tagList(
-    shiny::navbarPage(
-      title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))),
+  shiny::tagList( # Needed for "about the user" tags
+    shiny::navbarPage( # type of page
+      title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))), # add the logo
                   "Rapporteket for deformitet"),
       windowTitle = "Rapporteket for deformitet",
-      theme = "rap/bootstrap.css",
+      theme = "rap/bootstrap.css", # theme of app
       id = "tabs",
 
 
-      shiny::tabPanel(
+      shiny::tabPanel( # New tab (first tab)
         title = "Startside",
         shiny::mainPanel(
           width = 12,
-          shiny::htmlOutput("veiledning", inline = TRUE),
-          rapbase:::appNavbarUserWidget(
+          shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
+          rapbase:::appNavbarUserWidget( # get info about the user. See server for the input
             user = shiny::uiOutput("appUserName"),
             organization = shiny::uiOutput("appOrgName"),
             addUserInfo = TRUE
@@ -37,7 +37,7 @@ ui <-
         )
       ),
 
-      shiny::tabPanel(
+      shiny::tabPanel( # New tab
         title = "Fordelingsfigur og -tabell",
         shiny::sidebarLayout(
 
@@ -140,16 +140,11 @@ ui <-
             )
           ),
 
-shiny::tabPanel(
-  title = "Startside",
+###### KOMMET HIT! LAGE MODUL FOR DATADUMP ######
+shiny::tabPanel( # New tab
+  title = "Datautvalg",
   shiny::mainPanel(
-    width = 12,
-    shiny::htmlOutput("veiledning", inline = TRUE),
-    rapbase:::appNavbarUserWidget(
-      user = shiny::uiOutput("appUserName"),
-      organization = shiny::uiOutput("appOrgName"),
-      addUserInfo = TRUE
-    )
+    width = 12
   )
 )
 
