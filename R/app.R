@@ -1,14 +1,9 @@
-library(shiny)
-library(ggplot2)
-library(dplyr)
-library(rlang)
-library(tidyr)
-library(bslib)
-library(DT)
-library(shinyjs)
 
+source("global.R")
 
 # The app itself
+
+
 
 # Rapporteket graphics
 shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
@@ -17,6 +12,8 @@ ui <-
 
   shiny::tagList( # Needed for "about the user" tags
     shiny::navbarPage( # type of page
+
+      ###### Graphics ----------------------------------------------------------
       title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))), # add the logo
                   "Rapporteket for deformitet"),
       windowTitle = "Rapporteket for deformitet",
@@ -24,7 +21,8 @@ ui <-
       id = "tabs",
 
 
-      shiny::tabPanel( # New tab (first tab)
+      ###### New tab -----------------------------------------------------------
+      shiny::tabPanel( # First tab
         title = "Startside",
         shiny::mainPanel(
           width = 12,
@@ -37,19 +35,22 @@ ui <-
         )
       ),
 
-      shiny::tabPanel( # New tab
+
+      ###### New tab -----------------------------------------------------------
+      shiny::tabPanel( # Second tab
         title = "Fordelingsfigur og -tabell",
         shiny::sidebarLayout(
 
           # Inputs: select variables to plot
           shiny::sidebarPanel(
             width = 3,
-#
-#       # Select variable for x-axis
-          selectInput(
-            inputId = "x_var",
-            label = "Variabel:",
-            choices = c("Helsetilstand" = "Helsetilstand",
+
+
+            # Select variable for x-axis
+            selectInput( # First select
+              inputId = "x_var",
+              label = "Variabel:",
+              choices = c("Helsetilstand" = "Helsetilstand",
                         "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
                         #"Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
                         #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
@@ -91,36 +92,36 @@ ui <-
                         "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
                         "Komplikasjonstyper" = "Komplikasjonstype"
                         ),
-            selected = "BMI_kategori"),
+              selected = "BMI_kategori"),
 
 
-        selectInput(
-          inputId = "kjønn_var",
-          label = "Utvalg basert på kjønn",
-          choices = c("begge", "mann", "kvinne"),
-          selected = "begge"),
+            selectInput( # second select
+              inputId = "kjønn_var",
+              label = "Utvalg basert på kjønn",
+              choices = c("begge", "mann", "kvinne"),
+              selected = "begge"),
 
 
-        dateRangeInput(
-          inputId = "date",
-          label = "Tidsintervall:",
-          start = "2023-01-02",
-          end = "2024-09-02",
-          min = "2023-01-01",
-          max = "2025-09-02",
-          format = "mm/dd/yy",
-          separator = " - "),
+            dateRangeInput( # third select
+              inputId = "date",
+              label = "Tidsintervall:",
+              start = "2023-01-02",
+              end = "2024-09-02",
+              min = "2023-01-01",
+              max = "2025-09-02",
+              format = "mm/dd/yy",
+              separator = " - "),
 
 
-        sliderInput(
-          inputId = "alder_var",
-          label = "Aldersintervall:",
-          min = 0,
-          max = 100,
-          value = c(10, 20),
-          dragRange = TRUE),
+            sliderInput( # fourth select
+              inputId = "alder_var",
+              label = "Aldersintervall:",
+              min = 0,
+              max = 100,
+              value = c(10, 20),
+              dragRange = TRUE),
 
-        selectInput(
+        selectInput( # fifth select
           inputId = "reshId_var",
           label = "Enhet",
           choices = c("Bergen", "Riksen", "St.Olav"),
@@ -140,82 +141,74 @@ ui <-
             )
           ),
 
-###### KOMMET HIT! LAGE MODUL FOR DATADUMP ######
-shiny::tabPanel( # New tab
+  ##### New tab ----------------------------------------------------------------
+shiny::tabPanel( # third tab
   title = "Datautvalg",
-  shiny::mainPanel(
-    width = 12
-  )
-)
-
+  shiny::fluidPage(
+    module_datadump_UI(
+    id = "module_1")
+    ))
 ))
-
 
 # # Define server ----------------------------------------------------------------
 #
 server <- function(input, output, session) {
-#
-#   # Read in data:
-#   regdata <- deformitet::les_og_flate_ut()
-#
-#   # Clean and tidy data:
-#   regdata <- deformitet::pre_pros(regdata)
-#
-#   # Prepare data based on UI choices
-#   prepVar_reactive <- reactive({
-#     deformitet::prepVar(regdata, input$x_var, input$kjønn_var, input$date[1], input$date[2], input$alder_var[1], input$alder_var[2])
-#   })
-#
-#   # Unpack part of list - data
-#   data_reactive <- reactive({
-#     data <- data.frame(prepVar_reactive()[1])
-#   })
-#
-#   # Unpack part of list - gg-data
-#   gg_data_reactive <- reactive({
-#     gg_data <- data.frame(prepVar_reactive()[2])
-#   })
-#
-#   # Make table of komplikasjonstyper
-#   kompl_reactive <- reactive({
-#     deformitet::kompl_data(regdata, input$reshId_var)
-#   })
-#
-#   # Make table
-#   table_reactive <- reactive({
-#     deformitet::makeTable(data_reactive(), input$reshId_var)
-#   })
-#
-#   my_data_reactive <- reactive({
-#     x <- format(input$date, "%d/%m/%y")
-#     my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
-#   })
-#
-#
-#   # Print table
-#   output$table <- DT::renderDataTable({
-#     if(input$x_var == "Komplikasjonstype"){
-#       datatable(kompl_reactive())}
-#     else{datatable(table_reactive(),
-#               colnames = c("Sykehus", input$x_var, "antall per var", "antall per sykehus", "andel", "prosent"))
-#   }
-#   })
-#
-#   # Print figure
-#
-#   output$plot <- renderPlot({
-#     if(input$x_var == "Komplikasjonstype"){
-#       gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype", "xlab" = "Komplikasjonstype"))
-#       deformitet::makePlot_gg(kompl_reactive(), gg_kompl, my_data_reactive())
-#       }
-#     else{
-#       gg_data <- data.frame(gg_data_reactive())
-#       deformitet::makePlot_gg(table_reactive(), gg_data, my_data_reactive())
-#       }
-#     })
-#
-#
-#
+
+  # Prepare data based on UI choices
+  prepVar_reactive <- reactive({
+    deformitet::prepVar(regdata, input$x_var, input$kjønn_var, input$date[1], input$date[2], input$alder_var[1], input$alder_var[2])
+    })
+
+  # Unpack part of list - data
+  data_reactive <- reactive({
+    data <- data.frame(prepVar_reactive()[1])
+  })
+
+  # Unpack part of list - gg-data
+  gg_data_reactive <- reactive({
+    gg_data <- data.frame(prepVar_reactive()[2])
+  })
+
+  # Make table of komplikasjonstyper
+  kompl_reactive <- reactive({
+    deformitet::kompl_data(regdata, input$reshId_var)
+  })
+
+  # Make table
+  table_reactive <- reactive({
+    deformitet::makeTable(data_reactive(), input$reshId_var)
+  })
+
+  my_data_reactive <- reactive({
+    x <- format(input$date, "%d/%m/%y")
+    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
+  })
+
+
+  # Print table
+  output$table <- DT::renderDataTable({
+    if(input$x_var == "Komplikasjonstype"){
+      datatable(kompl_reactive())}
+    else{datatable(table_reactive(),
+              colnames = c("Sykehus", input$x_var, "antall per var", "antall per sykehus", "andel", "prosent"))
+  }
+  })
+
+  # Print figure
+
+  output$plot <- renderPlot({
+    if(input$x_var == "Komplikasjonstype"){
+      gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype", "xlab" = "Komplikasjonstype"))
+      deformitet::makePlot_gg(kompl_reactive(), gg_kompl, my_data_reactive())
+      }
+    else{
+      gg_data <- data.frame(gg_data_reactive())
+      deformitet::makePlot_gg(table_reactive(), gg_data, my_data_reactive())
+      }
+    })
+
+
+
   output$appUserName <- shiny::renderText(
     paste(rapbase::getUserFullName(session),
           rapbase::getUserRole(session), sep = ",")
@@ -238,6 +231,16 @@ server <- function(input, output, session) {
       outputType = "html_fragment"
     )
   })
+
+  output$d1 <- shiny::downloadHandler(
+    filename = function() {
+      paste('datadump_utvalg', Sys.Date(), '.csv', sep = "")
+    },
+    content = function(con){
+      write.csv(regdata, con)
+    }
+  )
+
   }
 #
 
