@@ -8,6 +8,7 @@
 # Loading libraries ------------------------------------------------------------
 
 library(shiny)
+library(rapbase)
 library(ggplot2)
 library(dplyr)
 library(rlang)
@@ -22,11 +23,6 @@ library(shinyjs)
 # Colors and themes ------------------------------------------------------------
 
 # Data -------------------------------------------------------------------------
-#### Read in data:
-regdata <- deformitet::les_og_flate_ut()
-
-#### Clean and tidy data:
-regdata <- deformitet::pre_pros(regdata)
 
 # App states -------------------------------------------------------------------
 
@@ -34,4 +30,4 @@ regdata <- deformitet::pre_pros(regdata)
 
 # Modules ----------------------------------------------------------------------
 
-source("modules/module_datadump.R")
+

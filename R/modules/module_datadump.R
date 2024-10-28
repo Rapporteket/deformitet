@@ -1,6 +1,7 @@
 
 ### Module for creating data based on selection criteria
 
+#'@export
 module_datadump_UI <- function(id){
   ns <- NS(id)
   tagList(
@@ -37,7 +38,6 @@ module_datadump_UI <- function(id){
 
 
 #'@export
-
 module_datadump_server <- function(id){
   moduleServer(
     id,

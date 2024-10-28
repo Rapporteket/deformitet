@@ -1,17 +1,24 @@
 
-source("global.R")
+source("/home/rstudio/deformitet/R/global.R")
+source("/home/rstudio/deformitet/R/modules/module_datadump.R")
+
+#'@export
+hallo <- function(){
+  print("hallo")
+}
+
+deformitet:::hallo()
 
 # The app itself
-
-
 
 # Rapporteket graphics
 shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
+
 ui <-
 
   shiny::tagList( # Needed for "about the user" tags
-    shiny::navbarPage( # type of page
+    shiny::navbarPage(# type of page
 
       ###### Graphics ----------------------------------------------------------
       title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))), # add the logo
@@ -136,23 +143,29 @@ ui <-
         nav_panel("Figur", plotOutput(outputId = "plot")),
         nav_panel("Tabell", DTOutput(outputId = "table"))
       ))
+    )
   #     plotOutput(outputId = "barplot"))
 
-            )
-          ),
+            ),
 
   ##### New tab ----------------------------------------------------------------
 shiny::tabPanel( # third tab
   title = "Datautvalg",
   shiny::fluidPage(
     module_datadump_UI(
-    id = "module_1")
-    ))
+      id = "module_1")
+  ))
 ))
 
 # # Define server ----------------------------------------------------------------
 #
 server <- function(input, output, session) {
+
+  #### Read in data:
+  regdata <- les_og_flate_ut()
+
+  #### Clean and tidy data:
+  regdata <- deformitet::pre_pros(regdata)
 
   # Prepare data based on UI choices
   prepVar_reactive <- reactive({
@@ -174,44 +187,43 @@ server <- function(input, output, session) {
     deformitet::kompl_data(regdata, input$reshId_var)
   })
 
-  # Make table
-  table_reactive <- reactive({
-    deformitet::makeTable(data_reactive(), input$reshId_var)
-  })
+# Make table
+table_reactive <- reactive({
+  deformitet::makeTable(data_reactive(), input$reshId_var)
+})
 
-  my_data_reactive <- reactive({
-    x <- format(input$date, "%d/%m/%y")
-    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
-  })
+my_data_reactive <- reactive({
+  x <- format(input$date, "%d/%m/%y")
+  my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
+})
 
-
-  # Print table
-  output$table <- DT::renderDataTable({
-    if(input$x_var == "Komplikasjonstype"){
-      datatable(kompl_reactive())}
-    else{datatable(table_reactive(),
-              colnames = c("Sykehus", input$x_var, "antall per var", "antall per sykehus", "andel", "prosent"))
+output$table <- DT::renderDataTable({
+  if(input$x_var == "Komplikasjonstype"){
+    kompl_reactive()
   }
-  })
+  else{datatable(table_reactive(),
+    colnames = c("Sykehus", input$x_var, "antall per var", "antall per sykehus", "andel", "prosent"))}
+})
 
-  # Print figure
 
-  output$plot <- renderPlot({
-    if(input$x_var == "Komplikasjonstype"){
-      gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype", "xlab" = "Komplikasjonstype"))
-      deformitet::makePlot_gg(kompl_reactive(), gg_kompl, my_data_reactive())
-      }
-    else{
-      gg_data <- data.frame(gg_data_reactive())
-      deformitet::makePlot_gg(table_reactive(), gg_data, my_data_reactive())
-      }
-    })
+
+# Print figure
+
+output$plot <- renderPlot({
+  if(input$x_var != "Komplikasjonstype"){
+  gg_data <- data.frame(gg_data_reactive())
+  deformitet::makePlot_gg(table_reactive(), gg_data, my_data_reactive())
+  }
+  else{
+    gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype", "xlab" = "Komplikasjonstype"))
+    deformitet::makePlot_gg(kompl_reactive(), gg_kompl, my_data_reactive())}
+})
 
 
 
   output$appUserName <- shiny::renderText(
     paste(rapbase::getUserFullName(session),
-          rapbase::getUserRole(session), sep = ",")
+          rapbase::getUserRole(session), sep = ", ")
   )
 
   output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
@@ -232,6 +244,12 @@ server <- function(input, output, session) {
     )
   })
 
+  userRole <- rapbase::getUserRole(session)
+
+  if(userRole == "accessLevel"){
+    shiny::hideTab(inputId = "tabs", target = "Datautvalg", session = getDefaultReactiveDomain())
+  }
+
   output$d1 <- shiny::downloadHandler(
     filename = function() {
       paste('datadump_utvalg', Sys.Date(), '.csv', sep = "")
@@ -240,9 +258,7 @@ server <- function(input, output, session) {
       write.csv(regdata, con)
     }
   )
-
-  }
-#
+}
 
 # Create a Shiny app object ----------------------------------------------------
 
