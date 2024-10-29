@@ -2,12 +2,6 @@
 source("/home/rstudio/deformitet/R/global.R")
 source("/home/rstudio/deformitet/R/modules/module_datadump.R")
 
-#'@export
-hallo <- function(){
-  print("hallo")
-}
-
-deformitet:::hallo()
 
 # The app itself
 
