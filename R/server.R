@@ -9,7 +9,7 @@
 
 app_server <- function(input, output, session) {
 
-######## WAITING GRAPHICS-------------------------------------------------------
+  ######## WAITING GRAPHICS-------------------------------------------------------
   # Call the waitress
   waitress <- Waitress$new(
     "nav",
@@ -24,7 +24,7 @@ app_server <- function(input, output, session) {
   waitress$close()
 
 
-######## USER INFO--------------------------------------------------------------
+  ######## USER INFO--------------------------------------------------------------
   # Render small header with user info
 
   output$appUserName <- shiny::renderText(
@@ -45,8 +45,8 @@ app_server <- function(input, output, session) {
                            html = TRUE, confirmButtonText = rapbase::opOptOutOk())
   })
 
-################################################################################
-##### TAB: Startside ###########################################################
+  ################################################################################
+  ##### TAB: Startside ###########################################################
 
   # Veiledning
   output$veiledning <- shiny::renderUI({
@@ -57,10 +57,10 @@ app_server <- function(input, output, session) {
   })
 
 
-################################################################################
-##### TAB: Fordelingsfigur og -tabell ##########################################
+  ################################################################################
+  ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-######### DATA TIDYING----------------------------------------------------------
+  ######### DATA TIDYING----------------------------------------------------------
   #### Read in data:
   regdata <- les_og_flate_ut()
 
@@ -154,16 +154,20 @@ app_server <- function(input, output, session) {
                               my_data_reactive())}
   })
 
-################################################################################
-##### TAB: Nestlasting av datadump #############################################
+  ################################################################################
+  ##### TAB: Nestlasting av datadump #############################################
 
   userRole <- rapbase::getUserRole(session) # define userRole
 
   if(userRole != "SC"){ # hide tab is userRole is not SC
     shiny::hideTab(
       inputId = "tabs", # saying its the tabs part of the page that should be hidden
-      target = "Datautvalg", # saying its the tab with "Datautvalg"
-      session = getDefaultReactiveDomain())
+      target = "Datautvalg" # saying its the tab with "Datautvalg"
+    )
+    shiny::hideTab(
+      inputId = "tabs", # saying its the tabs part of the page that should be hidden
+      target = "Eksport" # saying its the tab with "Datautvalg"
+    )
   }
 
   output$d1 <- shiny::downloadHandler( # output = downloadHandler
@@ -174,5 +178,14 @@ app_server <- function(input, output, session) {
       write.csv(regdata, con) # content is the non aggregated, fully processed data)
     }
   )
+
+  # Eksport  ###################################################################
+  # brukerkontroller
+
+  rapbase::exportUCServer("deformitetExport", "deformitet")
+
+  ## veileding
+  rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
+
 }
 

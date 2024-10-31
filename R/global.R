@@ -25,7 +25,7 @@ library(waiter)
 
 # Data -------------------------------------------------------------------------
 
-source("/deformitet/R/modules/module_datadump.R")
+# source("/deformitet/R/modules/module_datadump.R")
 
 
 # App states -------------------------------------------------------------------

@@ -16,10 +16,10 @@ app_ui <- function() {
       theme = "rap/bootstrap.css", # theme of app
       id = "tabs",
 
-################################################################################
-######## TAB user info----------------------------------------------------------
+      ################################################################################
+      ######## TAB user info----------------------------------------------------------
 
-##### Startside (info about Rapporteket and the registry)-----------------------
+      ##### Startside (info about Rapporteket and the registry)-----------------------
 
       shiny::tabPanel( # First tab
         title = "Startside",
@@ -35,10 +35,10 @@ app_ui <- function() {
         )
       ),
 
-################################################################################
-##### TAB: Fordelingsfigur og -tabell ##########################################
+      ################################################################################
+      ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-### Fordelingsfigur og -tabell--------------------------------------------------
+      ### Fordelingsfigur og -tabell--------------------------------------------------
 
       shiny::tabPanel( # Second tab
         title = "Fordelingsfigur og -tabell",
@@ -132,28 +132,40 @@ app_ui <- function() {
             )),
 
 
-            # Output: Show plot
-            mainPanel(
-              bslib::navset_card_underline(
-                title = "Visualiseringer",
-                bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-                bslib::nav_panel("Tabell", DTOutput(outputId = "table"))
-              ))
+          # Output: Show plot
+          mainPanel(
+            bslib::navset_card_underline(
+              title = "Visualiseringer",
+              bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
+              bslib::nav_panel("Tabell", DTOutput(outputId = "table"))
+            ))
+        )
+        #     plotOutput(outputId = "barplot"))
+      ),
+
+      ################################################################################
+      ##### TAB: Nestlasting av datadump #############################################
+
+      ##### download ---------------------------------------------------------------
+
+      shiny::tabPanel( # third tab
+        title = "Datautvalg",
+        shiny::fluidPage(
+          module_datadump_UI(
+            id = "module_1")
+        )
+      ),
+      shiny::tabPanel(
+        "Eksport",
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::exportUCInput("deformitetExport")
+          ),
+          shiny::mainPanel(
+            rapbase::exportGuideUI("deformitetExportGuide")
           )
-          #     plotOutput(outputId = "barplot"))
-        ),
-
-################################################################################
-##### TAB: Nestlasting av datadump #############################################
-
-  ##### download ---------------------------------------------------------------
-
-        shiny::tabPanel( # third tab
-          title = "Datautvalg",
-          shiny::fluidPage(
-            module_datadump_UI(
-              id = "module_1")
-          ))
+        )
+      )
 
 
     ) # navbarPage
