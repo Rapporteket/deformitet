@@ -29,7 +29,8 @@ Imports:
   usethis,
   dplyr,
   shinyjs,
-  bslib
+  bslib,
+  waiter
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

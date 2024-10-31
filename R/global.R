@@ -16,6 +16,7 @@ library(tidyr)
 library(bslib)
 library(DT)
 library(shinyjs)
+library(waiter)
 
 
 # Config -----------------------------------------------------------------------
@@ -23,6 +24,9 @@ library(shinyjs)
 # Colors and themes ------------------------------------------------------------
 
 # Data -------------------------------------------------------------------------
+
+source("/deformitet/R/modules/module_datadump.R")
+
 
 # App states -------------------------------------------------------------------
 
