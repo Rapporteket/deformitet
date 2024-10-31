@@ -137,7 +137,7 @@ app_ui <- function() {
             bslib::navset_card_underline(
               title = "Visualiseringer",
               bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-              bslib::nav_panel("Tabell", DTOutput(outputId = "table"))
+              bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
             ))
         )
         #     plotOutput(outputId = "barplot"))

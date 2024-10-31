@@ -4,7 +4,5 @@
 #' @export
 
 run_app <- function() {
-  library(deformitet)
   shiny::shinyApp(ui = app_ui, server = app_server)
 }
-

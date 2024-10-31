@@ -32,7 +32,7 @@ pre_pros <- function(regdata){
 
 # FOR NAVN PÅ SYKEHUS:
 regdata <- regdata %>%
-  rename(Sykehus = CENTRESHORTNAME,
+  dplyr::rename(Sykehus = CENTRESHORTNAME,
          Kjønn = GENDER)
 
 # (i) FOR KJØNN:

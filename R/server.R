@@ -9,6 +9,13 @@
 
 app_server <- function(input, output, session) {
 
+  library(deformitet)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(DT)
+
+
   ######## WAITING GRAPHICS-------------------------------------------------------
   # Call the waitress
 #  waitress <- waiter::Waitress$new(
@@ -21,7 +28,7 @@ app_server <- function(input, output, session) {
 #    Sys.sleep(.2) # the amount of wait time
 #  }
 
-  waitress$close()
+  # waitress$close()
 
 
   ######## USER INFO--------------------------------------------------------------
