@@ -11,15 +11,15 @@ app_server <- function(input, output, session) {
 
   ######## WAITING GRAPHICS-------------------------------------------------------
   # Call the waitress
-  waitress <- Waitress$new(
-    "nav",
-    theme = "overlay")$
-    start()
+#  waitress <- waiter::Waitress$new(
+#    "nav",
+#    theme = "overlay")$
+#    start()
 
-  for (i in 1:10){
-    waitress$inc(10) # increase by 10%
-    Sys.sleep(.2) # the amount of wait time
-  }
+#  for (i in 1:10){
+#    waitress$inc(10) # increase by 10%
+#    Sys.sleep(.2) # the amount of wait time
+#  }
 
   waitress$close()
 

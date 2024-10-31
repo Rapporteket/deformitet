@@ -23,7 +23,7 @@ app_ui <- function() {
 
       shiny::tabPanel( # First tab
         title = "Startside",
-        useWaitress(color = "#003087"),
+        # waiter::useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
