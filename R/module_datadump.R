@@ -4,7 +4,7 @@
 #'@export
 module_datadump_UI <- function(id){
   ns <- NS(id)
-  tagLisdeft(
+  tagList(
     dateRangeInput( # first select - var1
       inputId = "date",
       label = "Tidsintervall:",

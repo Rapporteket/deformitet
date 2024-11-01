@@ -12,6 +12,7 @@
 app_server <- function(input, output, session) {
 
   library(deformitet)
+  library(shiny)
   library(rapbase)
   library(dplyr)
   library(tidyr)
@@ -157,7 +158,7 @@ app_server <- function(input, output, session) {
       inputId = "tabs", # saying its the tabs part of the page that should be hidden
       target = "Datautvalg" # saying its the tab with "Datautvalg"
     )
-    shint::hideTab(
+    shiny::hideTab(
       inputId = "tabs",
       target = "Eksport"
     )
