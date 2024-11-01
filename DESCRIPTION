@@ -17,7 +17,7 @@ Description: Applikasjon for Ryggkirurgiregisteret - Deformitet
 Depends:
   R (>= 3.5.0)
 Imports:
-  DT,
+  DT, 
   magrittr,
   rapbase,
   shiny,
@@ -28,9 +28,7 @@ Imports:
   tidyr,
   usethis,
   dplyr,
-  shinyjs,
   bslib,
-  waiter
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

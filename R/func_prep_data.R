@@ -10,12 +10,15 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                                               {{var_kjønn}} == "mann" ~ "mann",
                                               {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn))
 
+  # Add filter on surgery date--------------------------------------------------
+
     data <- data %>%
       dplyr::filter(dplyr::between(SURGERY_DATE, as.Date({{time1}}), as.Date({{time2}})))
 
+  # Add filter on age-----------------------------------------------------------
 
-    # Filter based on age groups - using column "Alder_num" in which Alder
-    # is not given as factor but as an integer
+    # Using column "Alder_num" in which alder is given as an integer
+
     data <- data %>%
       dplyr::filter(dplyr::between(Alder_num, {{alder1}}, {{alder2}}))
 
@@ -25,7 +28,8 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
 
     gg_data <- data.frame(title = "")
 
-    #### Legge inn tittel på plot ####
+  # Add good titles on each variable--------------------------------------------
+
     gg_data <- gg_data %>%
       dplyr::mutate(title = dplyr::case_when({{var}} == "BMI_kategori" ~ "Andel operasjoner fordelt på BMI-kategorier",
 
@@ -100,7 +104,8 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                                            # KOMPLIKASJONER
                                            {{var}} == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging"
     ),
-    #### Legge inn tittel på lab ####
+
+# Add title for label in plot (specifically xlab in ggplot)---------------------
 
     xlab = dplyr::case_when({{var}} == "BMI_kategori" ~ "BMI-kategorier",
 
@@ -177,12 +182,11 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
 
     ))
 
-    # SELECT AND RETURN
-    # Select and return the column of interest
+#### Select and return the column of interest-----------------------------------
 
     my_data <- data %>%
-      select(Sykehus, {{var}})
+      dplyr::select(Sykehus, {{var}})
 
-    return(list(my_data, gg_data))
+    return(list(my_data, gg_data)) # returns a list (the list is unpacked in UI)
 
 }

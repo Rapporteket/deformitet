@@ -3,6 +3,8 @@
 #' @return A shiny app ui object
 #' @export
 
+## LEGG INN EKSPORT I UI-biten
+
 app_ui <- function() {
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
@@ -23,7 +25,6 @@ app_ui <- function() {
 
       shiny::tabPanel( # First tab
         title = "Startside",
-        useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
@@ -137,10 +138,10 @@ app_ui <- function() {
               bslib::navset_card_underline(
                 title = "Visualiseringer",
                 bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-                bslib::nav_panel("Tabell", DTOutput(outputId = "table"))
-              ))
+                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
+              )
+              )
           )
-          #     plotOutput(outputId = "barplot"))
         ),
 
 ################################################################################
@@ -151,9 +152,21 @@ app_ui <- function() {
         shiny::tabPanel( # third tab
           title = "Datautvalg",
           shiny::fluidPage(
-            module_datadump_UI(
+            deformitet::module_datadump_UI(
               id = "module_1")
-          ))
+          )),
+
+        shiny::tabPanel( # fourth tab
+          title = "Eksport",
+          shiny::sidebarLayout(
+            shiny::sidebarPanel(
+              rapbase::exportUCInput("deformitetExport")
+            ),
+            shiny::mainPanel(
+              rapbase::exportGuideUI("deformitetExportGuide")
+            )
+          )
+        )
 
 
     ) # navbarPage

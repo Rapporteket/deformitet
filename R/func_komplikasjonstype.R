@@ -23,17 +23,29 @@ kompl_data <- function(regdata, Sykehus){
                   COMPLICATIONS_NUMBNESS,
                   COMPLICATIONS_PAIN,
                   COMPLICATIONS_OTHER) %>%
-    dplyr::mutate(Blødning = case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
-           UVI = case_match(COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
-           Lunge = case_match(COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
-           DVT = case_match(COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
-           Emboli = case_match(COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
-           Inf_over = case_match(COMPLICATIONS_INFECTION_WOUND, 1 ~ "inf_over", 0 ~ "0"),
-           Inf_dyp = case_match(COMPLICATIONS_INFECTION_DEEP, 1 ~ "inf_dyp", 0 ~ "0"),
-           Inf_reop = case_match(COMPLICATIONS_INFECTION_REOP, 1 ~ "inf_reop", 0 ~ "0"),
-           Lam = case_match(COMPLICATIONS_NUMBNESS, 1 ~"lam", 0 ~ "0"),
-           Smerte = case_match(COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
-           Annet = case_match(COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0"))
+
+    dplyr::mutate(Blødning =
+                    dplyr::case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
+                  UVI =
+                    dplyr::case_match(COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
+                  Lunge =
+                    dplyr::case_match(COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
+                  DVT =
+                    dplyr::case_match(COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
+                  Emboli =
+                    dplyr::case_match(COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
+                  Inf_over =
+                    dplyr::case_match(COMPLICATIONS_INFECTION_WOUND, 1 ~ "inf_over", 0 ~ "0"),
+                  Inf_dyp =
+                    dplyr::case_match(COMPLICATIONS_INFECTION_DEEP, 1 ~ "inf_dyp", 0 ~ "0"),
+                  Inf_reop =
+                    dplyr::case_match(COMPLICATIONS_INFECTION_REOP, 1 ~ "inf_reop", 0 ~ "0"),
+                  Lam =
+                    dplyr::case_match(COMPLICATIONS_NUMBNESS, 1 ~"lam", 0 ~ "0"),
+                  Smerte =
+                    dplyr::case_match(COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
+                  Annet =
+                    dplyr::case_match(COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0"))
 
 
 
@@ -45,7 +57,7 @@ kompl_data <- function(regdata, Sykehus){
     dplyr::select(-type)
 
   kompl <- kompl %>%
-    dplyr::mutate(Komplikasjonstype = replace_na(Komplikasjonstype, "ukjent")) %>%
+    dplyr::mutate(Komplikasjonstype = tidyr::replace_na(Komplikasjonstype, "ukjent")) %>%
     dplyr::filter(Komplikasjonstype != "ukjent")
 
   kompl <- kompl %>%
@@ -55,8 +67,8 @@ kompl_data <- function(regdata, Sykehus){
 
   kompl_df <- kompl_df %>%
     dplyr::rename(Sykehus = Var1,
-           Komplikasjonstype = Var2,
-           antall = Freq)
+                  Komplikasjonstype = Var2,
+                  antall = Freq)
 
   kompl_df <- kompl_df %>%
     dplyr::mutate(Sykehus  = dplyr::case_when({{Sykehus}} == "Bergen" ~ dplyr::recode(Sykehus, "Riksen" = "Resten", "St.Olav" = "Resten"),
@@ -82,10 +94,10 @@ kompl_data <- function(regdata, Sykehus){
 
     kompl_df$Sykehus <- sub("1", "", kompl_df$Sykehus)
     y <- kompl_df %>%
-      group_by(Sykehus, .drop=FALSE) %>%
-      mutate(antall_pr_Sykehus = sum(antall)) %>%
-      group_by(Sykehus, Komplikasjonstype, .drop=FALSE) %>%
-      mutate(andel = antall/antall_pr_Sykehus,
+      dplyr::group_by(Sykehus, .drop=FALSE) %>%
+      dplyr::mutate(antall_pr_Sykehus = sum(antall)) %>%
+      dplyr::group_by(Sykehus, Komplikasjonstype, .drop=FALSE) %>%
+      dplyr::mutate(andel = antall/antall_pr_Sykehus,
              prosent = andel*100)
 
     y$andel <- round(y$andel, 3)

@@ -7,25 +7,19 @@
 #' @return A shiny app server object
 #' @export
 
+### + eksport i Server
+
 app_server <- function(input, output, session) {
 
-######## WAITING GRAPHICS-------------------------------------------------------
-  # Call the waitress
-  waitress <- Waitress$new(
-    "nav",
-    theme = "overlay")$
-    start()
-
-  for (i in 1:10){
-    waitress$inc(10) # increase by 10%
-    Sys.sleep(.2) # the amount of wait time
-  }
-
-  waitress$close()
-
+  library(deformitet)
+  library(rapbase)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(DT)
 
 ######## USER INFO--------------------------------------------------------------
-  # Render small header with user info
+  # Render small header with user info≠
 
   output$appUserName <- shiny::renderText(
     paste(rapbase::getUserFullName(session),
@@ -62,7 +56,7 @@ app_server <- function(input, output, session) {
 
 ######### DATA TIDYING----------------------------------------------------------
   #### Read in data:
-  regdata <- les_og_flate_ut()
+  regdata <- deformitet::les_og_flate_ut()
 
   #### Clean and tidy data:
 
@@ -118,7 +112,6 @@ app_server <- function(input, output, session) {
   })
 
 
-
   ########## DISPLAY DATA-------------------------------------------------------
 
   ## TABLE
@@ -162,8 +155,12 @@ app_server <- function(input, output, session) {
   if(userRole != "SC"){ # hide tab is userRole is not SC
     shiny::hideTab(
       inputId = "tabs", # saying its the tabs part of the page that should be hidden
-      target = "Datautvalg", # saying its the tab with "Datautvalg"
-      session = getDefaultReactiveDomain())
+      target = "Datautvalg" # saying its the tab with "Datautvalg"
+    )
+    shint::hideTab(
+      inputId = "tabs",
+      target = "Eksport"
+    )
   }
 
   output$d1 <- shiny::downloadHandler( # output = downloadHandler
@@ -174,5 +171,17 @@ app_server <- function(input, output, session) {
       write.csv(regdata, con) # content is the non aggregated, fully processed data)
     }
   )
+
+################################################################################
+###### TAB: Exporting data #####################################################
+
+  # Brukerkontroller
+
+  rapbase::exportUCServer("deformitetExport", "deformitet")
+
+  # Veiledning
+
+  rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
+
 }
 
