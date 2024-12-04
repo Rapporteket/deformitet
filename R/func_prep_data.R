@@ -4,40 +4,56 @@
 #' @export
 #'
 
-prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
+prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op){
+
+  # Filter by gender
+
   data <- data %>%
-      dplyr::filter(Kjønn == dplyr::case_when({{var_kjønn}} == "kvinne" ~ "kvinne",
-                                              {{var_kjønn}} == "mann" ~ "mann",
-                                              {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn))
+    dplyr::filter(Kjønn == dplyr::case_when({{var_kjønn}} == "kvinne" ~ "kvinne",
+                                            {{var_kjønn}} == "mann" ~ "mann",
+                                            {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn))
+
+  # Filter by operation type
+
+  data <- data %>%
+    dplyr::filter(dplyr::case_when({{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
+                                   {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
+                                   {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
   # Add filter on surgery date--------------------------------------------------
 
-    data <- data %>%
-      dplyr::filter(dplyr::between(SURGERY_DATE, as.Date({{time1}}), as.Date({{time2}})))
+  data <- data %>%
+    dplyr::filter(dplyr::between(SURGERY_DATE,
+                                 as.Date({{time1}}),
+                                 as.Date({{time2}})))
 
   # Add filter on age-----------------------------------------------------------
 
-    # Using column "Alder_num" in which alder is given as an integer
+  # Using column "Alder_num" in which alder is given as an integer
 
-    data <- data %>%
-      dplyr::filter(dplyr::between(Alder_num, {{alder1}}, {{alder2}}))
+  data <- data %>%
+    dplyr::filter(dplyr::between(Alder_num,
+                                 {{alder1}},
+                                 {{alder2}}))
 
 
-    data <- data %>%
-      tidyr::drop_na({{var}})
+  # data <- data %>%
+  #   tidyr::drop_na({{var}})
 
-    gg_data <- data.frame(title = "")
+  gg_data <- data.frame(title = "")
+
 
   # Add good titles on each variable--------------------------------------------
 
-    gg_data <- gg_data %>%
-      dplyr::mutate(title = dplyr::case_when({{var}} == "BMI_kategori" ~ "Andel operasjoner fordelt på BMI-kategorier",
+  gg_data <- gg_data %>%
+    dplyr::mutate(title = dplyr::case_when({{var}} == "BMI_kategori" ~ "Andel operasjoner fordelt på BMI-kategorier",
 
                                            # ALDER:
                                            {{var}} == "Alder" ~ "Andel operasjoner fordelt på aldersgrupper",
 
                                            # KURVE:
-                                           {{var}} == "Kurve_pre" ~ "Andel operasjoner fordel på pre-operativ kurve",
+                                           {{var}} == "PRE_MAIN_CURVE" ~ "Andel operasjoner fordelt på pre-operativ kurve",
+                                           {{var}} == "Kurve_pre" ~ "Andel operasjoner fordelt på pre-operativ kurve",
                                            {{var}} == "Kurve_post" ~ "Andel operasjoner fordelt på post-operativ kurve",
                                            {{var}} == "Diff_prosent_kurve" ~ "Andel operasjoner fordelt på prosentvis korreksjon i kurve",
 
@@ -84,14 +100,14 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                                            {{var}} == "SRS22_fornoyd_60mnd" ~ "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: spm 21 - hvor fornøyd?
-                                           {{var}} == "SRS22_spm21_3mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Er du fornøyd med resultatet av behandlingen?' ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_spm21_12mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Er du fornøyd med resultatet av behandlingen?' ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_spm21_60mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Er du fornøyd med resultatet av behandlingen?' ved 5 års oppfølging",
+                                           {{var}} == "SRS22_spm21_3mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 3-6 måneders oppfølging",
+                                           {{var}} == "SRS22_spm21_12mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 12 måneders oppfølging",
+                                           {{var}} == "SRS22_spm21_60mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 5 års oppfølging",
 
                                            # SRS22: spm 22 - på nytt?
-                                           {{var}} == "SRS22_spm22_3mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Ville du ønsket samme behandling på nytt?' ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_spm22_12mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Ville du ønsket samme behandling på nytt?' ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_spm22_60mnd" ~ "Andel operasjoner fordelt på spørsmålet: 'Ville du ønsket samme behandling på nytt?' ved 5 års oppfølging",
+                                           {{var}} == "SRS22_spm22_3mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 3-6 måneders oppfølging",
+                                           {{var}} == "SRS22_spm22_12mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 12 måneders oppfølging",
+                                           {{var}} == "SRS22_spm22_60mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 5 års oppfølging",
 
                                            # EQ5D
 
@@ -102,10 +118,12 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                                            {{var}} == "Helsetilstand_60mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 5 års oppfølging",
 
                                            # KOMPLIKASJONER
-                                           {{var}} == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging"
+                                           {{var}} == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging",
+
+                                           {{var}} == "Andel operasjoner" ~ "Andel operasjoner"
     ),
 
-# Add title for label in plot (specifically xlab in ggplot)---------------------
+    # Add title for label in plot (specifically xlab in ggplot)---------------------
 
     xlab = dplyr::case_when({{var}} == "BMI_kategori" ~ "BMI-kategorier",
 
@@ -113,6 +131,7 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                             {{var}} == "Alder" ~ "Aldersgrupper",
 
                             # KURVE:
+                            {{var}} == "PRE_MAIN_CURVE" ~ "Pre-operativ kurve",
                             {{var}} == "Kurve_pre" ~ "Pre-operativ kurve",
                             {{var}} == "Kurve_post" ~ "Post-operativ kurve",
                             {{var}} == "Diff_prosent_kurve" ~ "Post-operativ prosent korreksjon",
@@ -178,15 +197,29 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2){
                             {{var}} == "Helsetilstand_60mnd" ~ "Helsetilstandsskår (1-5), 5 års oppfølging",
 
                             # KOMPLIKASJONER
-                            {{var}} == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging"
+                            {{var}} == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging",
+
+                            {{var}} == "Andel operasjoner" ~ "Andel operasjoner"
 
     ))
 
-#### Select and return the column of interest-----------------------------------
 
-    my_data <- data %>%
-      dplyr::select(Sykehus, {{var}})
+  #### Select and return the column of interest-----------------------------------
 
-    return(list(my_data, gg_data)) # returns a list (the list is unpacked in UI)
+
+my_data <- data %>%
+    dplyr::select(c("Sykehus",
+                    "CENTREID",
+                    {{var}},
+                    "Kjønn",
+                    "CURRENT_SURGERY"))
+
+
+  return(list(my_data, gg_data)) # returns a list (the list is unpacked in UI)
 
 }
+
+# Test of the function
+### x <- prepVar(my_data, "SRS22_spm22_3mnd", "kvinne", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+# Inspect returned data frame (object 1 in list):
+### x[1]

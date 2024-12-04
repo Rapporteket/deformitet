@@ -130,7 +130,22 @@ app_ui <- function() {
               label = "Enhet",
               choices = c("Bergen", "Riksen", "St.Olav"),
               selected = "Bergen"
-            )),
+            ),
+
+            radioButtons( # sixth select
+              inputId = "type_op",
+              label = "Type operasjon",
+              choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
+              selected = "Primæroperasjon"
+            ),
+
+            radioButtons( # seventh select
+              inputId = "type_view",
+              label = "Vis rapport for:",
+              choices = c("Hele landet" = 0,
+                          "Egen avd. mot resten av landet" = 1,
+                          "Egen avd." = 2))
+            ),
 
 
             # Output: Show plot
@@ -145,29 +160,41 @@ app_ui <- function() {
         ),
 
 ################################################################################
+##### TAB: Kvalitetsindikatorer ################################################
+
+shiny:: tabPanel(
+  title = "Kvalitetsindikatorer",
+  deformitet::module_kvalitetsindikator_UI("kval1")
+),
+
+
+################################################################################
 ##### TAB: Nestlasting av datadump #############################################
 
-  ##### download ---------------------------------------------------------------
+##### download ---------------------------------------------------------------
 
-        shiny::tabPanel( # third tab
-          title = "Datautvalg",
-          shiny::fluidPage(
-            deformitet::module_datadump_UI(
-              id = "module_1")
-          )),
+shiny::tabPanel( # fourth tab
+  title = "Datautvalg",
+  shiny::fluidPage(
+    deformitet::module_datadump_UI(
+      id = "module_1")
+  )),
 
-        shiny::tabPanel( # fourth tab
-          title = "Eksport",
-          shiny::sidebarLayout(
-            shiny::sidebarPanel(
-              rapbase::exportUCInput("deformitetExport")
-            ),
-            shiny::mainPanel(
-              rapbase::exportGuideUI("deformitetExportGuide")
-            )
-          )
-        )
 
+################################################################################
+##### TAB: Eksport av data #####################################################
+
+shiny::tabPanel( # fifth tab
+  title = "Eksport",
+  shiny::sidebarLayout(
+    shiny::sidebarPanel(
+      rapbase::exportUCInput("deformitetExport")
+    ),
+    shiny::mainPanel(
+      rapbase::exportGuideUI("deformitetExportGuide")
+    )
+  )
+)
 
     ) # navbarPage
   ) # tagList

@@ -4,7 +4,7 @@
 \alias{prepVar}
 \title{Simple function}
 \usage{
-prepVar(data, var, var_kjønn, time1, time2, alder1, alder2)
+prepVar(data, var, var_kjønn, time1, time2, alder1, alder2, type_op)
 }
 \description{
 Simple function

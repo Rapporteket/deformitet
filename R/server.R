@@ -20,7 +20,10 @@ app_server <- function(input, output, session) {
   library(DT)
 
 ######## USER INFO--------------------------------------------------------------
-  # Render small header with user info≠
+
+  userRole = "SC"
+  #### MÅ VISES IGJEN NÅR JEG IKKE DRIVER MED FALSKE DATA ####
+##Render small header with user info
 
   output$appUserName <- shiny::renderText(
     paste(rapbase::getUserFullName(session),
@@ -63,6 +66,18 @@ app_server <- function(input, output, session) {
 
   regdata <- deformitet::pre_pros(regdata)
 
+  ######## FAKE DATA ###########
+
+  ### regdata <- readRDS("../dev/fake_data_deformitet.rds")
+
+  # regdata <- reactive({
+  #   file <- "dev/fake_data_deformitet.rds"
+  #   readRDS(file)
+  # })
+  # my_data <- readRDS("dev/fake_data_deformitet.rds")
+  #
+  # regdata <- my_data
+
   # Prepare data based on UI choices
 
   prepVar_reactive <- reactive({
@@ -73,14 +88,20 @@ app_server <- function(input, output, session) {
       input$date[1],
       input$date[2],
       input$alder_var[1],
-      input$alder_var[2])
+      input$alder_var[2],
+      input$type_op
+      )
   })
 
   # Make data frame where UI choices are stored
 
+
+  ### I SHOULD TAKE OUT THE "ME" VS "THE REST"
+  ### ALSO DOCUMENT ALL ACCESS EACH USER ROLE HAS
+
   my_data_reactive <- reactive({
     x <- format(input$date, "%d/%m/%y")
-    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2]))
+    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
   })
   # prepVar() returns a list
 
@@ -109,7 +130,7 @@ app_server <- function(input, output, session) {
   ### Komplikasjonstyper is aggregated separately from the rest of the variables
 
   kompl_reactive <- reactive({
-    deformitet::kompl_data(regdata, input$reshId_var)
+    test <- deformitet::kompl_data(regdata, input$reshId_var)
   })
 
 
@@ -117,7 +138,7 @@ app_server <- function(input, output, session) {
 
   ## TABLE
 
-  output$table <- DT::renderDataTable({
+  output$table <- DT::renderDT({
     if(input$x_var == "Komplikasjonstype"){ # if "komplikasjonstype is chosen, use kompl_reactive
       kompl_reactive()
     }
@@ -147,11 +168,17 @@ app_server <- function(input, output, session) {
                               gg_kompl,
                               my_data_reactive())}
   })
+################################################################################
+##### TAB: Kvalitetsindikatorer ################################################
+
+
+  deformitet::module_kvalitetsindikator_server("kval1")
+
 
 ################################################################################
 ##### TAB: Nestlasting av datadump #############################################
 
-  userRole <- rapbase::getUserRole(session) # define userRole
+  #userRole <- rapbase::getUserRole(session) # define userRole
 
   if(userRole != "SC"){ # hide tab is userRole is not SC
     shiny::hideTab(

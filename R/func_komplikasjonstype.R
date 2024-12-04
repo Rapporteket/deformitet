@@ -4,13 +4,14 @@
 
 # Making a function that returns a table of complications
 
-
+####### MÅ LEGGE INN NOE FUNKSJONALITET HER PÅ KJØNN #####################
 
 kompl_data <- function(regdata, Sykehus){
 
   kompl <- regdata %>%
     dplyr::select(PATIENT_ID,
                   Sykehus,
+                  Kjønn,
                   Komplikasjoner_3mnd,
                   COMPLICATIONS_BLEEDING,
                   COMPLICATIONS_UTI,
@@ -50,10 +51,10 @@ kompl_data <- function(regdata, Sykehus){
 
 
   kompl <- kompl %>%
-    dplyr::select(PATIENT_ID, Sykehus, Blødning, UVI, Lunge, DVT, Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
+    dplyr::select(PATIENT_ID, Sykehus, Kjønn, Blødning, UVI, Lunge, DVT, Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
 
   kompl <- kompl %>%
-    tidyr::pivot_longer(!c(PATIENT_ID, Sykehus), names_to = "type", values_to = "Komplikasjonstype") %>%
+    tidyr::pivot_longer(!c(PATIENT_ID, Sykehus, Kjønn), names_to = "type", values_to = "Komplikasjonstype") %>%
     dplyr::select(-type)
 
   kompl <- kompl %>%
@@ -63,11 +64,12 @@ kompl_data <- function(regdata, Sykehus){
   kompl <- kompl %>%
     dplyr::filter(Komplikasjonstype != "0")
 
-  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype))
+  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjønn))
 
   kompl_df <- kompl_df %>%
     dplyr::rename(Sykehus = Var1,
                   Komplikasjonstype = Var2,
+                  Kjønn = Var3,
                   antall = Freq)
 
   kompl_df <- kompl_df %>%
@@ -89,10 +91,25 @@ kompl_data <- function(regdata, Sykehus){
       dplyr::mutate(Resten = Resten.1+Resten.2) %>%
       dplyr::select(-Resten.1, -Resten.2)
 
-    kompl_df <- kompl_df %>%
-      tidyr::pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "antall")
+
+### women
+    kompl_df_kvinne <- kompl_df %>%
+      dplyr::filter(Kjønn == "kvinne") %>%
+      dplyr::select(-Kjønn) %>%
+      tidyr::pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "antall") %>%
+      dplyr::mutate(Kjønn = "kvinne")
+
+### men
+    kompl_df_menn<- kompl_df %>%
+      dplyr::filter(Kjønn == "mann") %>%
+      dplyr::select(-Kjønn) %>%
+      tidyr::pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "antall") %>%
+      dplyr::mutate(Kjønn = "mann")
+
+    kompl_df <- dplyr::full_join(kompl_df_kvinne, kompl_df_menn)
 
     kompl_df$Sykehus <- sub("1", "", kompl_df$Sykehus)
+
     y <- kompl_df %>%
       dplyr::group_by(Sykehus, .drop=FALSE) %>%
       dplyr::mutate(antall_pr_Sykehus = sum(antall)) %>%
@@ -127,7 +144,9 @@ kompl_data <- function(regdata, Sykehus){
   g <- y %>%
     dplyr::relocate(Sykehus, .before = Komplikasjonstype)
 
-  return(g)
+  return(kompl_df)
 }
 
+# test
+## g <- kompl_data(regdata, "Bergen")
 
