@@ -220,6 +220,6 @@ my_data <- data %>%
 }
 
 # Test of the function
-### x <- prepVar(my_data, "SRS22_spm22_3mnd", "kvinne", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## x <- prepVar(regdata, "SRS22_spm22_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 # Inspect returned data frame (object 1 in list):
-### x[1]
+## x[1]

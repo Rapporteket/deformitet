@@ -47,7 +47,7 @@ module_kvalitetsindikator_UI <- function(id){
                            shiny::downloadButton(ns("download_fig"), "Last ned figur")),
           bslib::nav_panel("Tabell",
                            DT::DTOutput(outputId = ns("kval_table")),
-                           shiny::downloadButton(ns("download_tbl"), "Last ned tabell"))
+                           shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2"))
           #bslib::nav_panel("Over tid", plotOutput(outputID = "kval_over_tid"))
         )))
   )}
@@ -59,8 +59,6 @@ module_kvalitetsindikator_server <- function(id){
   moduleServer(
     id,
     function(input, output, session){
-
-      regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
       date1_reactive <- reactive({
         date1 <- min(regdata$SURGERY_DATE)

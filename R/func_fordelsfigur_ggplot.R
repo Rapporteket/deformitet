@@ -27,6 +27,8 @@ makePlot_gg <- function(data, gg_data, data_var) {
     dplyr::filter(Sykehus == "Resten")
 
 
+
+
   table1 <- table1 %>%
     dplyr::mutate(Sykehus = paste(table1[1,1], "n:", table1[1,4]))
 
@@ -36,6 +38,8 @@ makePlot_gg <- function(data, gg_data, data_var) {
 
 
   label = c(paste(table1[1,1],"n:", table1[1,4]), paste(table2[1,1], "n:", table2[1,4]))
+
+
 
 
   # Making plot
