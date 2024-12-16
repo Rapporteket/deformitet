@@ -128,8 +128,8 @@ app_ui <- function() {
             selectInput( # fifth select
               inputId = "reshId_var",
               label = "Enhet",
-              choices = c("Bergen", "Riksen", "St.Olav"),
-              selected = "Bergen"
+              choices = c("Haukeland", "Rikshospitalet", "St.Olav"),
+              selected = "Haukeland"
             ),
 
             radioButtons( # sixth select

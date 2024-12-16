@@ -13,18 +13,18 @@ makeTable <- function(data, var_reshID){
   ###### I DONT WANT THE ME VS REST VIEW ########
 
   data <- data %>%
-    dplyr::mutate(Sykehus = dplyr::case_when({{var_reshID}} == "Bergen" ~
+    dplyr::mutate(Sykehus = dplyr::case_when({{var_reshID}} == "Haukeland" ~
                                                dplyr::recode(Sykehus,
-                                                             "Riksen" = "Resten",
+                                                             "Rikshospitalet" = "Resten",
                                                              "St.Olav" = "Resten"),
-                                             {{var_reshID}} == "Riksen" ~
+                                             {{var_reshID}} == "Rikshospitalet" ~
                                                dplyr::recode(Sykehus,
-                                                             "Bergen" = "Resten",
+                                                             "Haukeland" = "Resten",
                                                              "St.Olav" = "Resten"),
                                              {{var_reshID}} == "St.Olav" ~
                                                dplyr::recode(Sykehus,
-                                                             "Bergen" = "Resten",
-                                                             "Riksen" = "Resten"),
+                                                             "Haukeland" = "Resten",
+                                                             "Rikshospitalet" = "Resten"),
                                                  TRUE ~ Sykehus))
 
 

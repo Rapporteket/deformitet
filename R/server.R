@@ -7,7 +7,7 @@
 #' @return A shiny app server object
 #' @export
 
-### + eksport i Server
+### + eksport i server
 
 app_server <- function(input, output, session) {
 
@@ -18,6 +18,7 @@ app_server <- function(input, output, session) {
   library(tidyr)
   library(ggplot2)
   library(DT)
+  library(bslib)
 
 ######## USER INFO--------------------------------------------------------------
 
@@ -68,15 +69,7 @@ app_server <- function(input, output, session) {
 
   ######## FAKE DATA ###########
 
-  ### regdata <- readRDS("../dev/fake_data_deformitet.rds")
-
-  # regdata <- reactive({
-  #   file <- "dev/fake_data_deformitet.rds"
-  #   readRDS(file)
-  # })
-  # my_data <- readRDS("dev/fake_data_deformitet.rds")
-  #
-  # regdata <- my_data
+  #regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
   # Prepare data based on UI choices
 

@@ -55,6 +55,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     ##### FACETING #############################################################
 
+
   ggplot2::facet_wrap(~Sykehus)
 
 

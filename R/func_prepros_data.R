@@ -28,7 +28,12 @@ pre_pros <- function(regdata){
 # SYKEHUS:
 regdata <- regdata %>%
   dplyr::rename(Sykehus = CENTRESHORTNAME,
-                Kjønn = GENDER)
+                Kjønn = GENDER)  %>%
+  dplyr::mutate(Sykehus =
+                  dplyr::recode(Sykehus,
+                                "Bergen" = "Haukeland",
+                                "Riksen" = "Rikshospitalet"))
+
 
 # (i) FOR KJØNN:
 # a. Turn into character
@@ -159,7 +164,6 @@ regdata <- regdata %>%
   dplyr::mutate(SRS22_total = cut(SRS22_MAIN_SCORE,
                                   breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 4.9, 6),
                                   labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5", "> 5")))
-
 
 # FUNCTION
   # Preop; 3-6 mnd; 12 mnd; 60 mnd

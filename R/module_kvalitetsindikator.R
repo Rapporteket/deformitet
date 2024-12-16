@@ -60,6 +60,14 @@ module_kvalitetsindikator_server <- function(id){
     id,
     function(input, output, session){
 
+      #### Read in data:
+      regdata <- deformitet::les_og_flate_ut()
+
+      #### Clean and tidy data:
+
+      regdata <- deformitet::pre_pros(regdata)
+
+
       date1_reactive <- reactive({
         date1 <- min(regdata$SURGERY_DATE)
       })
@@ -119,6 +127,7 @@ module_kvalitetsindikator_server <- function(id){
       })
 
       output$kval_plot <- renderPlot({
+        #ggplot2::ggsave("test.test.pdf", kval_plot(), width = 2.5, length = 1.5, unit = "mm")
         kval_plot()
       })
 
@@ -144,7 +153,7 @@ module_kvalitetsindikator_server <- function(id){
           paste("Figur_", input$kval_var,"_", Sys.Date(), ".pdf", sep = "")
         },
         content = function(file){
-          pdf(file)
+          pdf(file, onefile = TRUE, width = 15, height = 9)
           plot(kval_plot())
           dev.off()
         }
