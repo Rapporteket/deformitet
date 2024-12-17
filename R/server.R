@@ -69,7 +69,13 @@ app_server <- function(input, output, session) {
 
   ######## FAKE DATA ###########
 
-  #regdata <- readRDS("../dev/fake_data_deformitet.rds")
+  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+  #
+  # regdata <- regdata %>%
+  #   dplyr::mutate(Sykehus =
+  #                   dplyr::recode(Sykehus,
+  #                                 "Bergen" = "Haukeland",
+  #                                 "Riksen" = "Rikshospitalet"))
 
   # Prepare data based on UI choices
 
@@ -88,8 +94,6 @@ app_server <- function(input, output, session) {
 
   # Make data frame where UI choices are stored
 
-
-  ### I SHOULD TAKE OUT THE "ME" VS "THE REST"
   ### ALSO DOCUMENT ALL ACCESS EACH USER ROLE HAS
 
   my_data_reactive <- reactive({

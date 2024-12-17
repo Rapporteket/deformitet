@@ -9,53 +9,76 @@
 ################################################################################
 ################## MAKING PLOT--------------------------------------------------
 
-makePlot_gg <- function(data, gg_data, data_var) {
+makePlot_gg <- function(data, gg_data, data_var, choice_var) {
 
   #### TIDYING DATA -------
+
 
   table <- data.frame(data)
 
   table <- table %>%
     dplyr::rename(var = colnames(table[2]))
 
-  # Split data into two tables - resten vs. valgt enhet
 
-  table1 <- table %>%
-    dplyr::filter(Sykehus != "Resten")
+  # Split data into two tables - alle vs. valgt enhet
 
-  table2 <- table %>%
-    dplyr::filter(Sykehus == "Resten")
+  if (choice_var == "hele landet"){
+    ## browser() ==> sett inn for å sjekke koden
+    table1 <- table %>%
+      dplyr::filter(Sykehus != "Alle")
 
+    table2 <- table %>%
+      dplyr::filter(Sykehus == "Alle")
 
+    table1 <- table1 %>%
+      dplyr::mutate(Sykehus = paste(table1[,1], "n:", table1[,3]))
 
+    table2 <- table2 %>%
+      dplyr::mutate(Sykehus = paste(table2[,1], "n:", table2[,3]))
 
-  table1 <- table1 %>%
-    dplyr::mutate(Sykehus = paste(table1[1,1], "n:", table1[1,4]))
+    label = c(paste(table1[,1],"n:", table1[,3]), paste(table2[,1], "n:", table2[,3]))
+  }
 
+  else{
+    table <- table %>%
+    dplyr::rename(var = colnames(table[2])) %>%
+    dplyr::mutate(Sykehus = paste(table[,1], "n:", table[,3]))
 
-  table2 <- table2 %>%
-    dplyr::mutate(Sykehus = paste(table2[1,1], "n:", table2[1,4]))
-
-
-  label = c(paste(table1[1,1],"n:", table1[1,4]), paste(table2[1,1], "n:", table2[1,4]))
-
-
+    label = paste(table[,1],"n:", table[,3])
+  }
 
 
   # Making plot
 
-  plot = ggplot() +
+  fig_plot = ggplot()
 
     # Columns for hospital user belongs to
 
-    ggplot2::geom_col(data = table1, aes(x = var, y = andel, color = Sykehus), fill = "#6CACE4")+
-
     # Point for "resten"
 
-    ggplot2::geom_point(data= table2, aes(x= var, y = andel, color = Sykehus), shape = 23, fill = "#003087", size = 2.5)+
+  if (choice_var == "hele landet"){ # => med sammenligning
+    fig_plot = fig_plot+
+      ggplot2::geom_col(data = table2, aes(x = var, y = Prosent,
+                                           color = Sykehus), fill = "#6CACE4")+
+      ggplot2::geom_point(data= table1, aes(x= var, y = Prosent,
+                                            color = Sykehus), shape = 23,
+                          fill = "#003087", size = 2.5)+
+
+      ggplot2::scale_color_manual(values = # adding chosen colors
+                                    c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
+  }
+
+  if (choice_var != "hele landet"){ # => hvert sykehus, egen enhet og hele landet uten sammenligning
+    fig_plot = fig_plot+
+      ggplot2::geom_col(data = table, aes(x = var, y = Prosent, fill = Sykehus), alpha = .9)+
+      ggplot2::facet_wrap(~Sykehus)+
+
+      ggplot2::scale_fill_manual(values = # adding chosen colors
+                                    c("#6CACE4", "#ADDFB3", "#87189D"))
+  }
 
     # Change names of labels
-
+  fig_plot = fig_plot +
     ggplot2::xlab(gg_data$xlab)+
     ggplot2::ylab("Andel")+
     ggplot2::labs(title = gg_data$title,
@@ -64,28 +87,25 @@ makePlot_gg <- function(data, gg_data, data_var) {
                                    data_var[5,], "-", data_var[6,]))+
 
 
-    ggplot2::theme_light()+ # light theme
+    ggplot2::theme_bw()+ # light theme
 
     ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
-                                               face = "italic"))+
-
-
-    ggplot2::scale_color_manual(values = # adding chosen colors
-                                  c("#6CACE4", "#6CACE4", "#003087"))
+                                               face = "italic"))
 
 
 
-  return(plot)
+  return(fig_plot)
 
 }
 
 
 ### Testkode for å sjekke om funksjonen fungerer -------------------------------
 
-# data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
-# d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
-#
-#
-# makePlot_gg(table, gg_data, data_var_fff)
+data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
+d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
+
+
+makePlot_gg(d, gg_data, data_var_fff, "egen enhet")
+d <- makeTable(f, 103240, "egen enhet")
 
 

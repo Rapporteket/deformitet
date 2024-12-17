@@ -60,12 +60,20 @@ module_kvalitetsindikator_server <- function(id){
     id,
     function(input, output, session){
 
-      #### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
+      # #### Read in data:
+      # regdata <- deformitet::les_og_flate_ut()
+      #
+      # #### Clean and tidy data:
+      #
+      # regdata <- deformitet::pre_pros(regdata)
 
-      #### Clean and tidy data:
+      regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
-      regdata <- deformitet::pre_pros(regdata)
+      regdata <- regdata %>%
+        dplyr::mutate(Sykehus =
+                        dplyr::recode(Sykehus,
+                                      "Bergen" = "Haukeland",
+                                      "Riksen" = "Rikshospitalet"))
 
 
       date1_reactive <- reactive({

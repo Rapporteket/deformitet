@@ -128,7 +128,7 @@ app_ui <- function() {
             selectInput( # fifth select
               inputId = "reshId_var",
               label = "Enhet",
-              choices = c("Haukeland", "Rikshospitalet", "St.Olav"),
+              choices = c("Haukeland" = 103240, "Rikshospitalet" = 102467, "St.Olav" = 111961),
               selected = "Haukeland"
             ),
 

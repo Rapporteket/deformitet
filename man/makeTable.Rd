@@ -4,7 +4,7 @@
 \alias{makeTable}
 \title{makeTable}
 \usage{
-makeTable(data, var_reshID)
+makeTable(data, var_reshID, choice_var)
 }
 \description{
 makeTable

@@ -4,7 +4,7 @@
 \alias{makePlot_gg}
 \title{Make gg_plot for fordelingsfirgurer og -tabeller}
 \usage{
-makePlot_gg(data, gg_data, data_var)
+makePlot_gg(data, gg_data, data_var, choice_var)
 }
 \description{
 Make gg_plot for fordelingsfirgurer og -tabeller
