@@ -51,3 +51,7 @@ rsconnect/
 .DS_Store/
 
 dev/
+
+# sql-files
+*.sql
+*.sql.*
