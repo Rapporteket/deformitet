@@ -11,7 +11,7 @@ services:
   dev:
     depends_on:
       - db
-    image: rapporteket/deformitet-dev:weekly
+    image: rapporteket/deformitet-dev:main
     volumes:
       - ~/.ssh:/home/rstudio/.ssh
       - ~/.gitconfig:/home/rstudio/.gitconfig
@@ -28,6 +28,7 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASS: root
+    platform: linux/amd64
 
   adminer:
     depends_on:

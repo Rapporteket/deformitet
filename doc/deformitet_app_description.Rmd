@@ -1,0 +1,36 @@
+---
+title: "deformitet_app_description"
+author: "Ingrid Bondevik"
+date: "2024-10-30"
+output: html_document
+---
+
+# Description of the Rapporteket app for Deformitet
+Structure of the app:
+The app is build functionally. That means that each larger portion of code is
+wrapped in a function. The function is written in its own script called
+function_name.R. This function is called in a module script. Called
+module_name.R.
+
+There are modules for each new tab in the app, e.g., module_datadump. These are
+sourced through the global.R file. Per the standard for Shiny modules, 
+the ui and the server functions are written in the same file. The modules are
+saved in a folder in the R folder called "modules". 
+
+In order for the app to work properly, the app part is separated into two files:
+ui.R and server.R. These are called and run through app.R. This structure of the 
+app automatically runs global.R in which libraries are loaded and modules are
+sourced.
+
+In general, snake case is used.
+
+## Using this structure in other apps 
+In order to use the structure of the Deformitet app in other projects you need
+to have an R folder in which you have split the app into separate files called
+ui.R, server.R, global.R and app.R. These files need to be called exactly this
+in order for Shiny to recognize these as the building blocks for the app.
+
+
+
+
+
