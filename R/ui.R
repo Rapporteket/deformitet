@@ -45,7 +45,6 @@ app_ui <- function() {
         #                   "St.Olav")
         #     )
         #   )
-
         )
       ),
 
@@ -69,13 +68,13 @@ app_ui <- function() {
               label = "Variabel:",
               choices = c("Helsetilstand" = "Helsetilstand",
                           "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
-                          #"Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
+                          "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
                           #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
                           "SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
-                          #"SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
+                          "SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
                           #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
                           "SRS22 'Fornøyd med resultatet?' 3-6 mnd" =  "SRS22_spm21_3mnd",
-                          #"SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
+                          "SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
                           #"SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
                           "BMI-kategori" = "BMI_kategori",
                           "Alder" = "Alder",
@@ -89,22 +88,22 @@ app_ui <- function() {
                           "SRS22 totalscore" = "SRS22_total",
                           "SRS22 funksjon ved innleggelse" = "SRS22_funksjon",
                           "SRS22 funksjon, 3-6 mnd" = "SRS22_funksjon_3mnd",
-                          #"SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
+                          "SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
                           #"SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
                           "SRS22 smerte ved innleggelse" = "SRS22_smerte",
                           "SRS22 smerte, 3-6 mnd" = "SRS22_smerte_3mnd",
-                          #"SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
+                          "SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
                           #"SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
                           "SRS22 selvbilde ved innleggelse" = "SRS22_selvbilde",
                           "SRS22 selvbilde, 3-6 mnd" = "SRS22_selvbilde_3mnd",
-                          #"SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
+                          "SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
                           #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
                           "SRS22 mental helse ved innleggelse" = "SRS22_mhelse",
                           "SRS22 mental helse, 3-6 mnd" = "SRS22_mhelse_3mnd",
-                          #"SRS22 mental helse, 12 mdn" = "SRS22_mhelse_12mnd",
+                          "SRS22 mental helse, 12 mdn" = "SRS22_mhelse_12mnd",
                           #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
                           "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
-                          #"SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
+                          "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                           #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
                           "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
                           "Komplikasjonstyper" = "Komplikasjonstype"
