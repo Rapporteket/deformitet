@@ -61,21 +61,21 @@ app_server <- function(input, output, session) {
 
 ######### DATA TIDYING----------------------------------------------------------
   #### Read in data:
-  regdata <- deformitet::les_og_flate_ut()
-
-  #### Clean and tidy data:
-
-  regdata <- deformitet::pre_pros(regdata)
+  # regdata <- deformitet::les_og_flate_ut()
+  #
+  # #### Clean and tidy data:
+  #
+  # regdata <- deformitet::pre_pros(regdata)
 
   ######## FAKE DATA ###########
 
-  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
-  #
-  # regdata <- regdata %>%
-  #   dplyr::mutate(Sykehus =
-  #                   dplyr::recode(Sykehus,
-  #                                 "Bergen" = "Haukeland",
-  #                                 "Riksen" = "Rikshospitalet"))
+regdata <- readRDS("../dev/fake_data_deformitet.rds")
+
+regdata <- regdata %>%
+  dplyr::mutate(Sykehus =
+                  dplyr::recode(Sykehus,
+                                "Bergen" = "Haukeland",
+                                "Riksen" = "Rikshospitalet"))
 
   # Prepare data based on UI choices
 
@@ -120,7 +120,7 @@ app_server <- function(input, output, session) {
   #Aggregate data in table format
 
   table_reactive <- reactive({
-    deformitet::makeTable(data_reactive(), input$reshId_var)
+    deformitet::makeTable(data_reactive(), input$reshId_var, input$type_view)
   })
 
   # Make table of komplikasjonstyper
@@ -139,13 +139,16 @@ app_server <- function(input, output, session) {
     if(input$x_var == "Komplikasjonstype"){ # if "komplikasjonstype is chosen, use kompl_reactive
       kompl_reactive()
     }
-    else{datatable(table_reactive(), # else use table_reactive
-                   colnames = c("Sykehus",
-                                input$x_var,
-                                "antall per var",
-                                "antall per sykehus",
-                                "andel",
-                                "prosent"))}
+    else{datatable(table_reactive())
+
+                   # , # else use table_reactive
+                   # colnames = c("Sykehus",
+                   #              input$x_var,
+                   #              "antall per var",
+                   #              "antall per sykehus",
+                   #              "andel",
+                   #              "prosent"))
+      }
   })
 
 
@@ -156,14 +159,16 @@ app_server <- function(input, output, session) {
       gg_data <- data.frame(gg_data_reactive())
       deformitet::makePlot_gg(table_reactive(),
                               gg_data,
-                              my_data_reactive())
+                              my_data_reactive(),
+                              input$type_view)
     }
     else{
       gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype",
                                "xlab" = "Komplikasjonstype"))
       deformitet::makePlot_gg(kompl_reactive(),
                               gg_kompl,
-                              my_data_reactive())}
+                              my_data_reactive(),
+                              input$type_view)}
   })
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################

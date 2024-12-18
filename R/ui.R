@@ -33,6 +33,19 @@ app_ui <- function() {
             organization = shiny::uiOutput("appOrgName"),
             addUserInfo = TRUE
           )
+        #   ),
+        # conditionalPanel(
+        #   condition = userRole == "SC",
+        #   shiny::sidebarPanel(
+        #     selectInput(
+        #       inputId = "enhetsvalg",
+        #       label = "Enhetsvalg",
+        #       choices = c("Rikshospitalet" = ,
+        #                   "Haukeland",
+        #                   "St.Olav")
+        #     )
+        #   )
+
         )
       ),
 
@@ -142,9 +155,11 @@ app_ui <- function() {
             radioButtons( # seventh select
               inputId = "type_view",
               label = "Vis rapport for:",
-              choices = c("Hele landet" = 0,
-                          "Egen avd. mot resten av landet" = 1,
-                          "Egen avd." = 2))
+              choices = c("Hele landet" = "hele landet",
+                          "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                          "Hver enhet" = "hver enhet",
+                          "Egen avdeling" = "egen avdeling"
+                          ))
             ),
 
 

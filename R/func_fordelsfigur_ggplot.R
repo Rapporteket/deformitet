@@ -65,7 +65,7 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
                           fill = "#003087", size = 2.5)+
 
       ggplot2::scale_color_manual(values = # adding chosen colors
-                                    c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
+                                  c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
   }
 
   if (choice_var != "hele landet"){ # => hvert sykehus, egen enhet og hele landet uten sammenligning
@@ -74,7 +74,7 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
       ggplot2::facet_wrap(~Sykehus)+
 
       ggplot2::scale_fill_manual(values = # adding chosen colors
-                                    c("#6CACE4", "#ADDFB3", "#87189D"))
+                                    c("#6CACE4", "#ADDFB3", "#87189D", "black"))
   }
 
     # Change names of labels
@@ -101,11 +101,11 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
 
 ### Testkode for å sjekke om funksjonen fungerer -------------------------------
 
-data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
-d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
+# data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
+# d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
 
 
-makePlot_gg(d, gg_data, data_var_fff, "egen enhet")
-d <- makeTable(f, 103240, "egen enhet")
+# makePlot_gg(d, gg_data, data_var_fff, "egen enhet")
+# d <- makeTable(f, 103240, "egen enhet")
 
 
