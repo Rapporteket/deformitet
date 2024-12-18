@@ -69,6 +69,9 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
 
                                            # SRS22:total
                                            {{var}} == "SRS22_total" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved innleggelse",
+                                           {{var}} == "SRS22_total_3mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} == "SRS22_total_12mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} == "SRS22_total_60mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: funksjon
                                            {{var}} == "SRS22_funksjon" ~ "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved innleggelse",
