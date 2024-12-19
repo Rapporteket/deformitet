@@ -109,7 +109,11 @@ app_ui <- function() {
                           "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                           #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
                           "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                          "Komplikasjonstyper" = "Komplikasjonstype"
+                          "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
+                          #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
+                          "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+                          "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+                          #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
               ),
               selected = "BMI_kategori"),
 

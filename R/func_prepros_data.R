@@ -305,9 +305,17 @@ regdata <- regdata %>%
 # (xii) FOR KOMPLIKASJONER
   # Procedure complications as indicated by patient
 regdata$PROCEDURE_COMPLICATIONS <- as.character(regdata$PROCEDURE_COMPLICATIONS)
+regdata$PROCEDURE_COMPLICATIONS_patient12mths <- as.character(regdata$PROCEDURE_COMPLICATIONS_patient12mths)
+regdata$PROCEDURE_COMPLICATIONS_patient60mths <- as.character(regdata$PROCEDURE_COMPLICATIONS_patient60mths)
 
 regdata <- regdata %>%
   dplyr::mutate(Komplikasjoner_3mnd = recode(PROCEDURE_COMPLICATIONS, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+
+regdata <- regdata %>%
+  dplyr::mutate(Komplikasjoner_12mnd = recode(PROCEDURE_COMPLICATIONS_patient12mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+
+regdata <- regdata %>%
+  dplyr::mutate(Komplikasjoner_60mnd = recode(PROCEDURE_COMPLICATIONS_patient60mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
 
 return(regdata)

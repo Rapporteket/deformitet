@@ -122,6 +122,9 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
 
                                            # KOMPLIKASJONER
                                            {{var}} == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging",
+                                           {{var}} == "Komplikasjoner_12mnd" ~ "Andel komplikasjoner pr. operasjon ved 12 måneders oppfølging",
+                                           {{var}} == "Komplikasjoner_60mnd" ~ "Andel komplikasjoner pr. operasjon ved 5 års oppfølging",
+
 
                                            {{var}} == "Andel operasjoner" ~ "Andel operasjoner"
     ),
@@ -201,6 +204,8 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
 
                             # KOMPLIKASJONER
                             {{var}} == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging",
+                            {{var}} == "Komplikasjoner_12mnd" ~ "Selvrapportert komplikasjon, 12 måneders oppfølging",
+                            {{var}} == "Komplikasjoner_60mnd" ~ "Selvrapportert komplikasjon, 5 års oppfølging",
 
                             {{var}} == "Andel operasjoner" ~ "Andel operasjoner"
 
