@@ -61,16 +61,11 @@ kval_count <- function(data, var, kjønn, type_op){
   ######################### Calculate andeler ####################################
 
   magnus <- jak %>%
-    dplyr::mutate(andel_per_syk_kjønn =
-                    dplyr::case_when({{var}} == "Andel operasjoner" ~
-                                       round(antall_kval_syk_kjønn/per_syk*100, 2),
-                                     TRUE ~
-                                       round(antall_kval_syk_kjønn/per_syk_kjønn*100, 2))) %>%
-    dplyr::mutate(andel_per_syk = dplyr::case_when({{var}} == "Andel operasjoner" ~
-                                                     round(antall_kval_syk/alle*100, 2),
-                                                   TRUE ~
-                                                     round(antall_kval_syk/per_syk*100, 2)))
-
+    dplyr::mutate(
+      andel_per_syk_kjønn =
+        round(antall_kval_syk_kjønn/per_syk_kjønn*100, 2),
+      andel_per_syk =
+        round(antall_kval_syk/per_syk*100, 2))
 
 
   ######### Pivot data to get gender like so: F, M, aggregated over both #########

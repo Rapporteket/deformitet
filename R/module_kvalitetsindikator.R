@@ -16,8 +16,7 @@ module_kvalitetsindikator_UI <- function(id){
                     "Pre-operativ kurve" = "PRE_MAIN_CURVE",
                     #"Prosent korreksjon kurve" = "Diff_prosent_kurve",
                     "Liggetid" = "Liggetid",
-                    "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                    "Andel operasjoner"
+                    "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd"
         ),
         selected = "SRS22_spm22_3mnd"),
 
