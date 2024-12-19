@@ -35,7 +35,7 @@ kval_count <- function(data, var, kjønn, type_op){
 
   kval <- data %>%
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
-                                     PRE_MAIN_CURVE > 50,
+                                     PRE_MAIN_CURVE > 70,
                                    {{var}} == "Komplikasjoner_3mnd" ~
                                      Komplikasjoner_3mnd == "Ja",
                                    {{var}} == "Liggetid" ~
