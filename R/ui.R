@@ -176,7 +176,7 @@ app_ui <- function() {
                 bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
                 bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
               )
-              )
+            )
           )
         ),
 

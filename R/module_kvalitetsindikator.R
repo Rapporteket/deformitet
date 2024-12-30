@@ -48,8 +48,22 @@ module_kvalitetsindikator_UI <- function(id){
                            DT::DTOutput(outputId = ns("kval_table")),
                            shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2"))
           #bslib::nav_panel("Over tid", plotOutput(outputID = "kval_over_tid"))
-        )))
-  )}
+        ),
+        bslib::navset_card_underline(
+          title = h4("Slik er kvalitetsindikatoren regnet ut:"),
+          bslib::card_header(
+            tags$em(
+              shiny::textOutput(
+                outputId = ns("text_header")))),
+          bslib::card_body(
+            p(
+              shiny::textOutput(
+                outputId = ns("text_body"))))
+        )
+      )
+    )
+  )
+}
 
 
 #' @export
@@ -138,7 +152,6 @@ module_kvalitetsindikator_server <- function(id){
         kval_plot()
       })
 
-
       ##### TABLE ####################################################################
 
       output$kval_table <- DT::renderDT({datatable(kval_df_reactive(),
@@ -175,6 +188,23 @@ module_kvalitetsindikator_server <- function(id){
         }
       )
 
+      output$text_header <- renderText({
+        dplyr::case_match(input$kval_var,
+                          "SRS22_spm22_3mnd" ~ "SRS22 'Samme behandling på nytt?' 3-6 mnd:",
+                          "PRE_MAIN_CURVE"~ "Pre-operativ kurve:",
+                          "Liggetid" ~ "Liggetid:",
+                          "Komplikasjoner_3mnd" ~ "Komplikasjoner 3-6 mnd:")
+      })
+
+      output$text_body <- renderText({
+        dplyr::case_match(input$kval_var,
+                          "SRS22_spm22_3mnd" ~ "Antall pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte *100",
+                          "PRE_MAIN_CURVE"~ "Antall pasienter med preoperativ kurve > 70 grader / antall opererte *100",
+                          "Liggetid" ~ "Antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100",
+                          "Komplikasjoner_3mnd" ~ "Antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100")
+      })
     })
 }
+
+
 

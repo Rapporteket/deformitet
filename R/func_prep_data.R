@@ -6,6 +6,7 @@
 
 prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op){
 
+
   # Filter by gender
 
   data <- data %>%

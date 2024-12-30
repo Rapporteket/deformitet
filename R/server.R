@@ -77,6 +77,16 @@ regdata <- regdata %>%
                                 "Bergen" = "Haukeland",
                                 "Riksen" = "Rikshospitalet"))
 
+regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+                                levels =c("Alvorlig undervekt\n < 16",
+                                          "Undervekt\n (16-17)",
+                                          "Mild undervekt\n (17-18,5)",
+                                          "Normal\n (18,5-25)",
+                                          "Overvekt\n (25-30)",
+                                          "Moderat fedme\n, klasse I (30-35)",
+                                          "Fedme, klasse II \n (35-40)",
+                                          "Fedme, klasse III \n (40-50)"))
+
   # Prepare data based on UI choices
 
   prepVar_reactive <- reactive({
@@ -170,6 +180,7 @@ regdata <- regdata %>%
                               my_data_reactive(),
                               input$type_view)}
   })
+
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
 
