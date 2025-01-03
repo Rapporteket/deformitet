@@ -109,5 +109,5 @@ kval_count <- function(data, var, kjønn, type_op){
 }
 
 # testing:
-## kval <-  kval_count(regdata, "Andel operasjoner", "jj", "Begge")
+## kval <-  kval_count(regdata, "PRE_MAIN_CURVE", "jj", "Begge")
 
