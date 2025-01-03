@@ -11,6 +11,7 @@ module_kvalitetsindikator_UI <- function(id){
         inputId = ns("kval_var"),
         label = "Velg Kvalitetsindikator:",
         choices = c("SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
+                    "SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
                     #"SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
                     #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
                     "Pre-operativ kurve" = "PRE_MAIN_CURVE",
@@ -124,12 +125,14 @@ module_kvalitetsindikator_server <- function(id){
             title = dplyr::case_match(
               input$kval_var,
               "SRS22_spm22_3mnd" ~ "Pasienter som har svar at de ønsker samme behandling på nytt (3-6 mnd)",
+              "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder"),
             xlab = dplyr::case_match(
               input$kval_var,
               "SRS22_spm22_3mnd" ~ "'Definitivt ja' og 'sannsynligvis ja' til samme behandling på nytt (3-6 mnd)",
+              "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd")
@@ -207,6 +210,7 @@ module_kvalitetsindikator_server <- function(id){
       output$text_header <- renderText({
         dplyr::case_match(input$kval_var,
                           "SRS22_spm22_3mnd" ~ "SRS22 'Samme behandling på nytt?' 3-6 mnd:",
+                          "SRS22_spm21_3mnd" ~ "SRS22 'Fornøyd med behandlingen?' 3-6 mnd:",
                           "PRE_MAIN_CURVE"~ "Pre-operativ kurve:",
                           "Liggetid" ~ "Liggetid:",
                           "Komplikasjoner_3mnd" ~ "Komplikasjoner 3-6 mnd:")
@@ -215,71 +219,89 @@ module_kvalitetsindikator_server <- function(id){
       output$text_body <- renderText({
         dplyr::case_when(input$kjønn_var == "begge" ~
                            dplyr::case_match(input$kval_var,
-                                                       "SRS22_spm22_3mnd" ~
-                                                         paste0("Figuren viser fordelingen av andel pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte *100", "<br/>"),
-                                                       "PRE_MAIN_CURVE"~
-                                                         paste0("Figuren viser fordelingen av andel pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter med preoperativ kurve > 70 grader / antall opererte *100", "<br/>"),
-                                                       "Liggetid" ~
-                                                         paste0("Figuren viser fordelingen av andel pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100", "<br/>"),
-                                                       "Komplikasjoner_3mnd" ~
-                                                         paste0("Figuren viser fordelingen av andel pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>")),
+                                             "SRS22_spm22_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' / antall opererte *100", "<br/>"),
+                                             "SRS22_spm21_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' / antall opererte *100", "<br/>"),
+                                             "PRE_MAIN_CURVE"~
+                                               paste0("Figuren viser fordelingen av andel pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter med preoperativ kurve > 70 grader / antall opererte *100", "<br/>"),
+                                             "Liggetid" ~
+                                               paste0("Figuren viser fordelingen av andel pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100", "<br/>"),
+                                             "Komplikasjoner_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>")),
 
                           input$kjønn_var == "mann"~
                            dplyr::case_match(input$kval_var,
-                                                      "SRS22_spm22_3mnd" ~
-                                                        paste0("Figuren viser fordelingen av andel mannlige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte menn *100", "<br/>"),
-                                                      "PRE_MAIN_CURVE"~
-                                                        paste0("Figuren viser fordelingen av andel mannlige pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter med preoperativ kurve > 70 grader / antall opererte menn *100", "<br/>"),
-                                                      "Liggetid" ~
-                                                        paste0("Figuren viser fordelingen av andel mannlige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte menn *100", "<br/>"),
-                                                      "Komplikasjoner_3mnd" ~
-                                                        paste0("Figuren viser fordelingen av andel mannlige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>")),
+                                             "SRS22_spm22_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel mannlige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' / antall opererte menn *100", "<br/>"),
+                                             "SRS22_spm21_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel mannlige pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' / antall opererte menn *100", "<br/>"),
+                                             "PRE_MAIN_CURVE"~
+                                               paste0("Figuren viser fordelingen av andel mannlige pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter med preoperativ kurve > 70 grader / antall opererte menn *100", "<br/>"),
+                                             "Liggetid" ~
+                                               paste0("Figuren viser fordelingen av andel mannlige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte menn *100", "<br/>"),
+                                             "Komplikasjoner_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel mannlige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>")),
 
                          input$kjønn_var == "kvinne" ~
                            dplyr::case_match(input$kval_var,
-                                                      "SRS22_spm22_3mnd" ~
-                                                        paste0("Figuren viser fordelingen av andel kvinnelige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte kvinner * 100", "<br/>"),
-                                                      "PRE_MAIN_CURVE"~
-                                                        paste0("Figuren viser fordelingen av andel kvinnelige pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter med preoperativ kurve > 70 grader / antall opererte kvinner *100", "<br/>"),
-                                                      "Liggetid" ~
-                                                        paste0("Figuren viser fordelingen av andel kvinnelige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte kvinner *100", "<br/>"),
-                                                      "Komplikasjoner_3mnd" ~
-                                                        paste0("Figuren viser fordelingen av andel kvinnelige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>")),
+                                             "SRS22_spm22_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel kvinnelige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som svarte 'definitivt ja' eller 'sannsynligvis ja' / antall opererte kvinner * 100", "<br/>"),
+                                             "SRS22_spm21_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel kvinnelige pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som svarte 'svært godt fornøyd' eller 'ganske fornøyd' / antall opererte kvinner * 100", "<br/>"),
+                                             "PRE_MAIN_CURVE"~
+                                               paste0("Figuren viser fordelingen av andel kvinnelige pasienter som hadde pre-operativ kurve over 70 grader på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter med preoperativ kurve > 70 grader / antall opererte kvinner *100", "<br/>"),
+                                             "Liggetid" ~
+                                               paste0("Figuren viser fordelingen av andel kvinnelige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte kvinner *100", "<br/>"),
+                                             "Komplikasjoner_3mnd" ~
+                                               paste0("Figuren viser fordelingen av andel kvinnelige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>")),
 
                          input$kjønn_var == "nei" ~
                            dplyr::case_match(input$kval_var,
-                                                        "SRS22_spm22_3mnd" ~
-                                                          paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
-                                                                 andel kvinnelige pasienter og andel mannlige pasienter som svarte
-                                                                 'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene.
-                                                                 For hvert sykehus er hver andel regnet ut slik:", "<br/>",
-                                                                 "antall pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte * 100", "<br/>",
-                                                                 "antall kvinnelige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte kvinner * 100", "<br/>",
-                                                                 "antall mannlige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte menn * 100", "<br/>"),
-                                                        "PRE_MAIN_CURVE"~
-                                                          paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
-                                                                 andel kvinnelige pasienter og andel mannlige pasienter som hadde
-                                                                 pre-operativ kurve over 70 grader på de ulike sykehusene.
-                                                                 For hvert sykehus er hver andel regnet ut slik:", "<br/>",
-                                                                 "antall pasienter med preoperativ kurve > 70 grader / antall opererte *100", "<br/>",
-                                                                 "antall kvinnelige pasienter med preoperativ kurve > 70 grader / antall opererte kvinner *100", "<br/>",
-                                                                 "antall mannlige pasienter med preoperativ kurve > 70 grader / antall opererte menn *100", "<br/>"),
-                                                        "Liggetid" ~
-                                                          paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
-                                                                 andel kvinnelige pasienter og andel mannlige pasienter med
-                                                                 post-operativ liggetid på 7 eller flere dager på de ulike sykehusene.
-                                                                 For hvert sykehus er hver andel regnet ut slik:", "<br/>",
-                                                                 "antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100", "<br/>",
-                                                                 "antall kvinnelige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte kvinner *100", "<br/>",
-                                                                 "antall mannlige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte menn *100", "<br/>"),
-                                                        "Komplikasjoner_3mnd" ~
-                                                          paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
-                                                                 andel kvinnelige pasienter og andel mannlige pasienter som
-                                                                 rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene.
-                                                                 For hvert sykehus er hver andel regnet ut slik:", "<br/>",
-                                                                 "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>",
-                                                                 "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>",
-                                                                 "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"))
+                                             "SRS22_spm22_3mnd" ~
+                                             paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
+                                             andel kvinnelige pasienter og andel mannlige pasienter som svarte
+                                             'definitivt ja' eller 'sannsynligvis ja' på de ulike sykehusene.
+                                                    For hvert sykehus er hver andel regnet ut slik:", "<br/>",
+                                                    "antall pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte * 100", "<br/>",
+                                                    "antall kvinnelige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte kvinner * 100", "<br/>",
+                                                    "antall mannlige pasienter som svarte 'definitivt ja' og 'sannsynligvis ja' / antall opererte menn * 100", "<br/>"),
+
+                                             "SRS22_spm21_3mnd" ~
+                                               paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
+                                             andel kvinnelige pasienter og andel mannlige pasienter som svarte
+                                             'svært godt fornøyd' eller 'ganske fornøyd' på de ulike sykehusene.
+                                                    For hvert sykehus er hver andel regnet ut slik:", "<br/>",
+                                                      "antall pasienter som svarte 'svært godt fornøyd' og 'ganske fornøyd' / antall opererte * 100", "<br/>",
+                                                      "antall kvinnelige pasienter som svarte 'svært godt fornøyd' og 'ganske fornøyd' / antall opererte kvinner * 100", "<br/>",
+                                                      "antall mannlige pasienter som svarte 'svært godt fornøyd' og 'ganske fornøyd' / antall opererte menn * 100", "<br/>"),
+
+                                             "PRE_MAIN_CURVE"~
+                                             paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
+                                             andel kvinnelige pasienter og andel mannlige pasienter som hadde
+                                             pre-operativ kurve over 70 grader på de ulike sykehusene.
+                                                    For hvert sykehus er hver andel regnet ut slik:", "<br/>",
+                                                    "antall pasienter med preoperativ kurve > 70 grader / antall opererte *100", "<br/>",
+                                                    "antall kvinnelige pasienter med preoperativ kurve > 70 grader / antall opererte kvinner *100", "<br/>",
+                                                    "antall mannlige pasienter med preoperativ kurve > 70 grader / antall opererte menn *100", "<br/>"),
+
+                                             "Liggetid" ~
+                                             paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
+                                             andel kvinnelige pasienter og andel mannlige pasienter med
+                                             post-operativ liggetid på 7 eller flere dager på de ulike sykehusene.
+                                                    For hvert sykehus er hver andel regnet ut slik:", "<br/>",
+                                                    "antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100", "<br/>",
+                                                    "antall kvinnelige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte kvinner *100", "<br/>",
+                                                    "antall mannlige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte menn *100", "<br/>"),
+
+                                             "Komplikasjoner_3mnd" ~
+                                             paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
+                                             andel kvinnelige pasienter og andel mannlige pasienter som
+                                             rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene.
+                                                    For hvert sykehus er hver andel regnet ut slik:", "<br/>",
+                                                    "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>",
+                                                    "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>",
+                                                    "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"))
         )
         })
     })

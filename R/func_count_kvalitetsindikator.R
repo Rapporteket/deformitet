@@ -43,6 +43,9 @@ kval_count <- function(data, var, kjønn, type_op){
                                    {{var}} == "SRS22_spm22_3mnd" ~
                                      SRS22_spm22_3mnd == "Definitivt ja" |
                                      SRS22_spm22_3mnd == "Sannsynligvis ja",
+                                   {{var}} == "SRS22_spm21_3mnd" ~
+                                     SRS22_spm21_3mnd == "Ganske fornøyd" |
+                                     SRS22_spm21_3mnd == "Svært godt fornøyd",
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
     dplyr::group_by(Sykehus, Kjønn) %>%
