@@ -8,6 +8,8 @@
 
 kval_count <- function(data, var, kjønn, type_op){
 
+
+
   ##### Other filtertings as data set grows ####################################
   # Her kan jeg legge inn andre filter - alder, tidsrom osv. etter hvert som
   # datasettet vokser
@@ -46,19 +48,22 @@ kval_count <- function(data, var, kjønn, type_op){
                                    {{var}} == "SRS22_spm21_3mnd" ~
                                      SRS22_spm21_3mnd == "Ganske fornøyd" |
                                      SRS22_spm21_3mnd == "Svært godt fornøyd",
+                                   {{var}} == "CURRENT_SURGERY" ~
+                                     CURRENT_SURGERY == 2,
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
     dplyr::group_by(Sykehus, Kjønn) %>%
     dplyr::count(name = "antall_kval_syk_kjønn") %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Sykehus) %>%
-    dplyr::mutate(antall_kval_syk = sum(antall_kval_syk_kjønn))
+    dplyr::ungroup()
 
 
   ##### Join data with counts based on kvalitetsindikator ########################
   ###### with data based on whole data set #######################################
 
-  jak <- dplyr::left_join(my_tiny_data, kval)
+  jak <- dplyr::left_join(my_tiny_data, kval) %>%
+    replace(is.na(.), 0) %>%
+    dplyr::group_by(Sykehus) %>%
+    dplyr::mutate(antall_kval_syk = sum(antall_kval_syk_kjønn))
 
 
   ######################### Calculate andeler ####################################
