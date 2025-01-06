@@ -90,14 +90,16 @@ module_kvalitetsindikator_server <- function(id){
     id,
     function(input, output, session){
 
-      # #### Read in data:
-      # regdata <- deformitet::les_og_flate_ut()
-      #
-      # #### Clean and tidy data:
-      #
-      # regdata <- deformitet::pre_pros(regdata)
+      #### Read in data:
+      regdata <- deformitet::les_og_flate_ut()
 
-      regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      #### Clean and tidy data:
+
+      regdata <- deformitet::pre_pros(regdata)
+
+      # FAKE DATA:
+
+      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
       regdata <- regdata %>%
         dplyr::mutate(Sykehus =
@@ -146,14 +148,16 @@ module_kvalitetsindikator_server <- function(id){
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
-              "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder"),
+              "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder",
+              "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"),
             xlab = dplyr::case_match(
               input$kval_var,
               "SRS22_spm22_3mnd" ~ "'Definitivt ja' og 'sannsynligvis ja' til samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
-              "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd")
+              "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd",
+              "CURRENT_SURGERY" ~ "Reoperasjonsrate")
             )
       })
 

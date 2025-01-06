@@ -73,15 +73,15 @@ regdata <- regdata %>%
     "Fedme, klasse II" = "Fedme, klasse II \n (35-40)",
     "Fedme, klasse III" = "Fedme, klasse III \n (40-50)")))
 
-regdata$BMI_kategori <- ordered(BMI_kategori, levels =
-                                "Alvorlig undervekt\n < 16",
-                                "Undervekt\n (16-17)",
-                                "Mild undervekt\n (17-18,5)",
-                                "Normal\n (18,5-25)",
-                                "Overvekt\n (25-30)",
-                                "Moderat fedme\n, klasse I (30-35)",
-                                "Fedme, klasse II \n (35-40)",
-                                "Fedme, klasse III \n (40-50)")
+regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+                                levels =c("Alvorlig undervekt\n < 16",
+                                          "Undervekt\n (16-17)",
+                                          "Mild undervekt\n (17-18,5)",
+                                          "Normal\n (18,5-25)",
+                                          "Overvekt\n (25-30)",
+                                          "Moderat fedme\n, klasse I (30-35)",
+                                          "Fedme, klasse II \n (35-40)",
+                                          "Fedme, klasse III \n (40-50)"))
 
 
 # (iv) FOR PRE-OPERATIV KURVE:
@@ -330,5 +330,4 @@ regdata <- regdata %>%
 
 return(regdata)
  }
-
 

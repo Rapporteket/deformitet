@@ -165,7 +165,7 @@ app_ui <- function() {
               choices = c("Hele landet" = "hele landet",
                           "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
                           "Hver enhet" = "hver enhet",
-                          "Egen avdeling" = "egen avdeling"
+                          "Egen enhet" = "egen enhet"
                           ))
             ),
 

@@ -95,5 +95,5 @@ makeTable <- function(data, var_reshID, choice_var){
 
 
 # Test to see if it works:
-## g <- makeTable(f, 103240, "hele landet, uten sammenligning")
+## g <- makeTable(rr, 103240, "enhet")
 
