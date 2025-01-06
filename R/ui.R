@@ -18,13 +18,14 @@ app_ui <- function() {
       theme = "rap/bootstrap.css", # theme of app
       id = "tabs",
 
-################################################################################
-######## TAB user info----------------------------------------------------------
+      ################################################################################
+      ######## TAB user info----------------------------------------------------------
 
-##### Startside (info about Rapporteket and the registry)-----------------------
+      ##### Startside (info about Rapporteket and the registry)-----------------------
 
       shiny::tabPanel( # First tab
         title = "Startside",
+        # waiter::useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
@@ -48,10 +49,10 @@ app_ui <- function() {
         )
       ),
 
-################################################################################
-##### TAB: Fordelingsfigur og -tabell ##########################################
+      ################################################################################
+      ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-### Fordelingsfigur og -tabell--------------------------------------------------
+      ### Fordelingsfigur og -tabell--------------------------------------------------
 
       shiny::tabPanel( # Second tab
         title = "Fordelingsfigur og -tabell",
@@ -189,33 +190,19 @@ shiny:: tabPanel(
 ),
 
 
-################################################################################
-##### TAB: Nestlasting av datadump #############################################
+      ################################################################################
+      ##### TAB: Nestlasting av datadump #############################################
 
 ##### download ---------------------------------------------------------------
+      ##### download ---------------------------------------------------------------
 
-shiny::tabPanel( # fourth tab
-  title = "Datautvalg",
-  shiny::fluidPage(
-    deformitet::module_datadump_UI(
-      id = "module_1")
-  )),
+        shiny::tabPanel( # third tab
+          title = "Datautvalg",
+          shiny::fluidPage(
+            module_datadump_UI(
+              id = "module_1")
+          ))
 
-
-################################################################################
-##### TAB: Eksport av data #####################################################
-
-shiny::tabPanel( # fifth tab
-  title = "Eksport",
-  shiny::sidebarLayout(
-    shiny::sidebarPanel(
-      rapbase::exportUCInput("deformitetExport")
-    ),
-    shiny::mainPanel(
-      rapbase::exportGuideUI("deformitetExportGuide")
-    )
-  )
-)
 
     ) # navbarPage
   ) # tagList

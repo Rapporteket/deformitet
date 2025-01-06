@@ -12,6 +12,13 @@
 app_server <- function(input, output, session) {
 
   library(deformitet)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(DT)
+
+
+  library(deformitet)
   library(shiny)
   library(rapbase)
   library(dplyr)
@@ -44,8 +51,8 @@ app_server <- function(input, output, session) {
                            html = TRUE, confirmButtonText = rapbase::opOptOutOk())
   })
 
-################################################################################
-##### TAB: Startside ###########################################################
+  ################################################################################
+  ##### TAB: Startside ###########################################################
 
   # Veiledning
   output$veiledning <- shiny::renderUI({
@@ -56,10 +63,10 @@ app_server <- function(input, output, session) {
   })
 
 
-################################################################################
-##### TAB: Fordelingsfigur og -tabell ##########################################
+  ################################################################################
+  ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-######### DATA TIDYING----------------------------------------------------------
+  ######### DATA TIDYING----------------------------------------------------------
   #### Read in data:
   # regdata <- deformitet::les_og_flate_ut()
   #
@@ -188,8 +195,8 @@ regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
   deformitet::module_kvalitetsindikator_server("kval1")
 
 
-################################################################################
-##### TAB: Nestlasting av datadump #############################################
+  ################################################################################
+  ##### TAB: Nestlasting av datadump #############################################
 
   #userRole <- rapbase::getUserRole(session) # define userRole
 
