@@ -16,15 +16,8 @@ app_server <- function(input, output, session) {
   library(tidyr)
   library(ggplot2)
   library(DT)
-
-
-  library(deformitet)
   library(shiny)
   library(rapbase)
-  library(dplyr)
-  library(tidyr)
-  library(ggplot2)
-  library(DT)
   library(bslib)
 
 ######## USER INFO--------------------------------------------------------------
