@@ -91,15 +91,15 @@ module_kvalitetsindikator_server <- function(id){
     function(input, output, session){
 
       #### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
-
-      #### Clean and tidy data:
-
-      regdata <- deformitet::pre_pros(regdata)
+      # regdata <- deformitet::les_og_flate_ut()
+      #
+      # #### Clean and tidy data:
+      #
+      # regdata <- deformitet::pre_pros(regdata)
 
       # FAKE DATA:
 
-      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
       regdata <- regdata %>%
         dplyr::mutate(Sykehus =
@@ -137,19 +137,20 @@ module_kvalitetsindikator_server <- function(id){
 
 
       # Make gg-data for plot
-      gg_data <- data.frame(title = "")
+      gg_data <- data.frame(title = "") # Jeg skal legge alt dette inn i en funksjon
 
       gg_data_reactive <- reactive({
         gg_data <- gg_data %>%
           dplyr::mutate(
             title = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ "Pasienter som har svar at de ønsker samme behandling på nytt (3-6 mnd)",
+              "SRS22_spm22_3mnd" ~ "Pasienter som har svart at de ønsker samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder",
               "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"),
+
             xlab = dplyr::case_match(
               input$kval_var,
               "SRS22_spm22_3mnd" ~ "'Definitivt ja' og 'sannsynligvis ja' til samme behandling på nytt (3-6 mnd)",
@@ -157,8 +158,36 @@ module_kvalitetsindikator_server <- function(id){
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd",
-              "CURRENT_SURGERY" ~ "Reoperasjonsrate")
-            )
+              "CURRENT_SURGERY" ~ "Reoperasjonsrate"),
+
+            yintercept = dplyr::case_match(
+              input$kval_var,
+              "SRS22_spm22_3mnd" ~ 70,
+              "SRS22_spm21_3mnd" ~ 70,
+              "PRE_MAIN_CURVE"~ 50,
+              "Liggetid" ~ 10,
+              "Komplikasjoner_3mnd" ~ 10,
+              "CURRENT_SURGERY" ~ 5)
+
+            # y_green = dplyr::case_match(
+            #   input$kval_var,
+            #   "SRS22_spm22_3mnd" ~ c(70, 100),
+            #   "SRS22_spm21_3mnd" ~ c(70, 100),
+            #   "PRE_MAIN_CURVE"~ c(50, 100),
+            #   "Liggetid" ~ c(0, 10),
+            #   "Komplikasjoner_3mnd" ~ c(0, 10),
+            #   "CURRENT_SURGERY" ~ c(0,5)),
+            #
+            # y_red = dplyr::case_match(
+            #   input$kval_var,
+            #   "SRS22_spm22_3mnd" ~ c(0,70),
+            #   "SRS22_spm21_3mnd" ~ c(0,70),
+            #   "PRE_MAIN_CURVE"~ c(0, 50),
+            #   "Liggetid" ~ c(10,50),
+            #   "Komplikasjoner_3mnd" ~ c(10, 50),
+            #   "CURRENT_SURGERY" ~ c(5, 25)),
+
+          )
       })
 
 

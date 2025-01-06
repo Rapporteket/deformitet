@@ -20,7 +20,24 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     ggplot2::ggplot(aes(x = Kjønn, y = andel_per_syk, fill = Kjønn))+
 
+    # ggplot2::annotate("rect", ######### DENNE KAN HELLER BRUKES "OVER TID"...
+    #                   xmin = -Inf,
+    #                   xmax = Inf,
+    #                   ymin = gg_data$y_green[1], ymax = gg_data$y_green[2] , fill = "#ADDFB3",
+    #                   alpha = .2)+
+    #
+    # ggplot2::annotate("rect", ######### DENNE KAN HELLER BRUKES "OVER TID"...
+    #                   xmin = -Inf,
+    #                   xmax = Inf,
+    #                   ymin = gg_data$y_red[1], ymax = gg_data$y_red[2] , fill = "red",
+    #                   alpha = .2)+
+
+
     ggplot2::geom_col(alpha = .7)+
+
+    ggplot2::geom_hline(yintercept = gg_data$yintercept, linetype = "dashed", color = "#87189D")+
+
+    # ggplot2::geom_rect(aes(ymin = 0, ymax = 5, xmin = x_start, xmax = x_end), alpha = .5)+
 
     ggplot2::scale_y_continuous(breaks = c(10,20,30,40,50,60,70,80,90,100))+
 
@@ -42,6 +59,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
                         fill = "#BFCED6", color = "#003087", fontface = "italic",
                         position = position_dodge(.9), vjust = -.2, size = 3,
                         alpha = .8)+
+
 
     ##### THEME AND COLOURS ####################################################
 
@@ -66,11 +84,8 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 }
 
 
-# bla <- data.frame(d_var)
 # Test to see if it works:
-# kval_plot(kval, gg_data, bla, "no")
-
-
-
-
+## kval_plot(kval, gg_data, bla, "no")
+## required dataframe
+## bla <- data.frame(d_var)
 

@@ -201,7 +201,19 @@ shiny:: tabPanel(
           shiny::fluidPage(
             module_datadump_UI(
               id = "module_1")
-          ))
+          )),
+
+shiny::tabPanel(
+  title = "Eksport",
+  shiny::sidebarLayout(
+    shiny::sidebarPanel(
+      rapbase::exportUCInput("deformitetExport")
+    ),
+    shiny::mainPanel(
+      rapbase::exportGuideUI("deformitetExportGuide")
+    )
+  )
+)
 
 
     ) # navbarPage

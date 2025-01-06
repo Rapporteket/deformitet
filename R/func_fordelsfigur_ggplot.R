@@ -79,17 +79,6 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
                                     c("#6CACE4", "#ADDFB3", "#87189D", "black"))
   }
 
-  # if (choice_var == "egen enhet"){ # egen enhet
-  #   table <- table %>%
-  #     filter(CENTREID == reshID) %>%
-  #   fig_plot = fig_plot +
-  #     ggplot2::geom_col(data = table, aes(x = var, y = Prosent, fill = Sykehus), alpha = .9)+
-  #     ggplot2::facet_wrap(~Sykehus)+
-  #
-  #     ggplot2::scale_fill_manual(values = # adding chosen colors
-  #                                  c("#6CACE4", "#ADDFB3", "#87189D", "black"))
-  # }
-
 
     # Change names of labels
   fig_plot = fig_plot +

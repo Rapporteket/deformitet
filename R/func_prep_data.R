@@ -229,7 +229,7 @@ my_data <- data %>%
 }
 
 # Test of the function
-## x <- prepVar(f, "SRS22_spm22_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## x <- prepVar(regdata, "SRS22_spm22_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 # Inspect returned data frame (object 1 in list):
 ## rr <- data.frame(x[1])
 ## gg_data <- data.frame(x[2])
