@@ -199,7 +199,7 @@ shiny:: tabPanel(
         shiny::tabPanel( # third tab
           title = "Datautvalg",
           shiny::fluidPage(
-            module_datadump_UI(
+            deformitet::module_datadump_UI(
               id = "module_1")
           )),
 

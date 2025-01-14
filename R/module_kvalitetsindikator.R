@@ -1,6 +1,6 @@
 ####### MODULE FOR KVALITETSINDIKATORER ########################################
-
-#' @export
+#'@title kvalitetsindikator UI
+#'@export
 
 module_kvalitetsindikator_UI <- function(id){
   ns <- NS(id)
@@ -83,7 +83,7 @@ module_kvalitetsindikator_UI <- function(id){
 }
 
 
-#' @export
+#'@export
 
 module_kvalitetsindikator_server <- function(id){
   moduleServer(
@@ -91,15 +91,15 @@ module_kvalitetsindikator_server <- function(id){
     function(input, output, session){
 
       #### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
+      #regdata <- deformitet::les_og_flate_ut()
       #
       # #### Clean and tidy data:
       #
-      regdata <- deformitet::pre_pros(regdata)
+      #regdata <- deformitet::pre_pros(regdata)
 
       # FAKE DATA:
 
-      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
       regdata <- regdata %>%
         dplyr::mutate(Sykehus =

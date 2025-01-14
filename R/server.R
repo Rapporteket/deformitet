@@ -61,15 +61,15 @@ app_server <- function(input, output, session) {
 
   ######### DATA TIDYING----------------------------------------------------------
   #### Read in data:
-  regdata <- deformitet::les_og_flate_ut()
+  #regdata <- deformitet::les_og_flate_ut()
   #
   # #### Clean and tidy data:
   #
-  regdata <- deformitet::pre_pros(regdata)
+  #regdata <- deformitet::pre_pros(regdata)
 
   ######## FAKE DATA ###########
 
-  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+  regdata <- readRDS("../dev/fake_data_deformitet.rds")
 
   ## General cleaning
   regdata <- regdata %>%
