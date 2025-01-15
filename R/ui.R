@@ -3,6 +3,8 @@
 #' @return A shiny app ui object
 #' @export
 
+## LEGG INN EKSPORT I UI-biten
+
 app_ui <- function() {
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
@@ -32,6 +34,18 @@ app_ui <- function() {
             organization = shiny::uiOutput("appOrgName"),
             addUserInfo = TRUE
           )
+        #   ),
+        # conditionalPanel(
+        #   condition = userRole == "SC",
+        #   shiny::sidebarPanel(
+        #     selectInput(
+        #       inputId = "enhetsvalg",
+        #       label = "Enhetsvalg",
+        #       choices = c("Rikshospitalet" = ,
+        #                   "Haukeland",
+        #                   "St.Olav")
+        #     )
+        #   )
         )
       ),
 
@@ -55,13 +69,13 @@ app_ui <- function() {
               label = "Variabel:",
               choices = c("Helsetilstand" = "Helsetilstand",
                           "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
-                          #"Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
+                          "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
                           #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
                           "SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
-                          #"SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
+                          "SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
                           #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
                           "SRS22 'Fornøyd med resultatet?' 3-6 mnd" =  "SRS22_spm21_3mnd",
-                          #"SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
+                          "SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
                           #"SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
                           "BMI-kategori" = "BMI_kategori",
                           "Alder" = "Alder",
@@ -72,28 +86,35 @@ app_ui <- function() {
                           "Knvitid" = "Knivtid",
                           "Blodtap pr. 100 ml" = "Blodtap_100",
                           "Blodtap pr. 200 ml" = "Blodtap_200",
-                          "SRS22 totalscore" = "SRS22_total",
-                          "SRS22 funksjon ved innleggelse" = "SRS22_funksjon",
+                          "SRS22 totalscore preoperativt" = "SRS22_total",
+                          "SRS22 totalscore 3-6 mnd" = "SRS22_total_3mnd",
+                          "SRS22 totalscore 12 mnd" = "SRS22_total_12mnd",
+                          #"SRS22 totalscore 5 år" = "SRS22_total_60mnd",
+                          "SRS22 funksjon preoperativt" = "SRS22_funksjon",
                           "SRS22 funksjon, 3-6 mnd" = "SRS22_funksjon_3mnd",
-                          #"SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
+                          "SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
                           #"SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
-                          "SRS22 smerte ved innleggelse" = "SRS22_smerte",
+                          "SRS22 smerte preoperativt" = "SRS22_smerte",
                           "SRS22 smerte, 3-6 mnd" = "SRS22_smerte_3mnd",
-                          #"SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
+                          "SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
                           #"SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
-                          "SRS22 selvbilde ved innleggelse" = "SRS22_selvbilde",
+                          "SRS22 selvbilde preoperativt" = "SRS22_selvbilde",
                           "SRS22 selvbilde, 3-6 mnd" = "SRS22_selvbilde_3mnd",
-                          #"SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
+                          "SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
                           #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
-                          "SRS22 mental helse ved innleggelse" = "SRS22_mhelse",
+                          "SRS22 mental helse preoperativt" = "SRS22_mhelse",
                           "SRS22 mental helse, 3-6 mnd" = "SRS22_mhelse_3mnd",
-                          #"SRS22 mental helse, 12 mdn" = "SRS22_mhelse_12mnd",
+                          "SRS22 mental helse, 12 mdn" = "SRS22_mhelse_12mnd",
                           #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
                           "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
-                          #"SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
+                          "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                           #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
                           "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                          "Komplikasjonstyper" = "Komplikasjonstype"
+                          "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
+                          #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
+                          "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+                          "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+                          #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
               ),
               selected = "BMI_kategori"),
 
@@ -127,45 +148,72 @@ app_ui <- function() {
             selectInput( # fifth select
               inputId = "reshId_var",
               label = "Enhet",
-              choices = c("Bergen", "Riksen", "St.Olav"),
-              selected = "Bergen"
-            )),
+              choices = c("Haukeland" = 103240, "Rikshospitalet" = 102467, "St.Olav" = 111961),
+              selected = "Haukeland"
+            ),
+
+            radioButtons( # sixth select
+              inputId = "type_op",
+              label = "Type operasjon",
+              choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
+              selected = "Primæroperasjon"
+            ),
+
+            radioButtons( # seventh select
+              inputId = "type_view",
+              label = "Vis rapport for:",
+              choices = c("Hele landet" = "hele landet",
+                          "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                          "Hver enhet" = "hver enhet",
+                          "Egen enhet" = "egen enhet"
+                          ))
+            ),
 
 
-          # Output: Show plot
-          mainPanel(
-            bslib::navset_card_underline(
-              title = "Visualiseringer",
-              bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-              bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
-            ))
-        )
-        #     plotOutput(outputId = "barplot"))
-      ),
+            # Output: Show plot
+            mainPanel(
+              bslib::navset_card_underline(
+                title = "Visualiseringer",
+                bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
+                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
+              )
+            )
+          )
+        ),
+
+################################################################################
+##### TAB: Kvalitetsindikatorer ################################################
+
+shiny:: tabPanel(
+  title = "Kvalitetsindikatorer",
+  deformitet::module_kvalitetsindikator_UI("kval1")
+),
+
 
       ################################################################################
       ##### TAB: Nestlasting av datadump #############################################
 
+##### download ---------------------------------------------------------------
       ##### download ---------------------------------------------------------------
 
-      shiny::tabPanel( # third tab
-        title = "Datautvalg",
-        shiny::fluidPage(
-          module_datadump_UI(
-            id = "module_1")
-        )
-      ),
-      shiny::tabPanel(
-        "Eksport",
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::exportUCInput("deformitetExport")
-          ),
-          shiny::mainPanel(
-            rapbase::exportGuideUI("deformitetExportGuide")
-          )
-        )
-      )
+        shiny::tabPanel( # third tab
+          title = "Datautvalg",
+          shiny::fluidPage(
+            deformitet::module_datadump_UI(
+              id = "module_1")
+          )),
+
+shiny::tabPanel(
+  title = "Eksport",
+  shiny::sidebarLayout(
+    shiny::sidebarPanel(
+      rapbase::exportUCInput("deformitetExport")
+    ),
+    shiny::mainPanel(
+      rapbase::exportGuideUI("deformitetExportGuide")
+    )
+  )
+)
 
 
     ) # navbarPage
