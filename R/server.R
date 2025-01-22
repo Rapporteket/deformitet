@@ -19,6 +19,7 @@ app_server <- function(input, output, session) {
   library(shiny)
   library(rapbase)
   library(bslib)
+  library(shinyWidgets)
 
 ######## USER INFO--------------------------------------------------------------
 

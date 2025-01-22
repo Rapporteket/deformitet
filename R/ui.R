@@ -136,7 +136,7 @@ app_ui <- function() {
               format = "mm/dd/yy",
               separator = " - "),
 
-
+            shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
             sliderInput( # fourth select
               inputId = "alder_var",
               label = "Aldersintervall:",
