@@ -181,6 +181,11 @@ app_server <- function(input, output, session) {
 
   deformitet::module_kvalitetsindikator_server("kval1")
 
+  ################################################################################
+  ##### TAB: Sammenligning #####################################################
+
+
+  deformitet::module_sammenligning_server("sam1")
 
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################

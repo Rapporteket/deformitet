@@ -197,7 +197,7 @@ shiny::tabPanel(
 
 shiny::tabPanel(
   title = "Sammenligning",
-  deformitet::module_sammenligning_UI("sam")
+  deformitet::module_sammenligning_UI("sam1")
 ),
 
 

@@ -6,7 +6,7 @@
 
 returns a dataframe with conditional labels}
 \usage{
-make_labels(data1, data2)
+make_labels(data1, data2, comp1, comp2)
 }
 \description{
 Make labels

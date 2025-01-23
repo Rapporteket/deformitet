@@ -6,7 +6,7 @@
 
 Returns a list of data frames}
 \usage{
-check_small_sample(var1, var2)
+check_small_sample(data, var1, var2)
 }
 \description{
 Check for small sample size

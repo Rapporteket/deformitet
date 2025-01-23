@@ -4,14 +4,14 @@
 #'
 #'@export
 
-check_small_sample <- function (var1, var2) {
+check_small_sample <- function (data, var1, var2) {
 
   # Remove NAs and add sample count
-  data1 <- regdata %>%
+  data1 <- data %>%
     dplyr::filter(!is.na(.data[[var1]])) %>%
     dplyr::add_count(name = "count_var1")
 
-  data2 <- regdata %>%
+  data2 <- data %>%
     dplyr::filter(!is.na(.data[[var2]])) %>%
     add_count(name = "count_var2")
 
@@ -33,7 +33,12 @@ check_small_sample <- function (var1, var2) {
 }
 
 # nolint start
-## g <- check_small_sample("SRS22_MAIN_SCORE", "SRS22_FULL_SCORE") # vi returnerer ei liste
+## SJEKK AT DET FUNGERER:
+
+## f <- check_small_sample(g, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE") # vi returnerer ei liste
+## plot_data1 <- data.frame(f[1])
+## plot_data2 <- data.frame(f[2])
+
 ## g[[2]]$SRS22_FULL_SCORE_patient12mths # sjekk at the fungerer
 # nolint end
 
@@ -43,9 +48,9 @@ check_small_sample <- function (var1, var2) {
 #'
 #'@export
 
-make_labels <- function (data1, data2) {
+make_labels <- function (data1, data2, comp1, comp2) {
   labels = data.frame(var1 = 0,
-                      var1 = 0,
+                      var2 = 0,
                       ggtitle = "",
                       ggcaption = "")
 
@@ -64,7 +69,7 @@ make_labels <- function (data1, data2) {
   if (labels$var1[1] < 20) {
     labels$ggtitle <- paste0("For få observasjoner i ", comp2)
   } else {
-    labels$ggtitle <- paste0("Sammenligning av ", comp1, "og ", comp2)
+    labels$ggtitle <- paste0("Sammenligning av ", comp1, " og ", comp2)
   }
 
   ## Conditional ggcaption
@@ -77,7 +82,7 @@ make_labels <- function (data1, data2) {
 
 # nolint start
 ## check that it works
-## labels <- labels(plot_data1, plot_data2)
+## labels <- make_labels(plot_data1, plot_data2, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
 # nolint end
 
 #'@title Plot for comparison
@@ -86,7 +91,7 @@ make_labels <- function (data1, data2) {
 #'
 #'@export
 
-comparison_plot <- function(data1, data2, labels, comp1, comp2) {
+comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
 
   # Make a new data frame with count of observations for var1 and var2
   # Add conditional ggtitle and ggcaption
@@ -96,20 +101,18 @@ comparison_plot <- function(data1, data2, labels, comp1, comp2) {
   sam_plot = ggplot2::ggplot()
 
   sam_plot = sam_plot +
-    # Comp 1:
-    ggplot2::geom_histogram(data = data1, binwidth = .3,
-                            aes(x = .data[[comp1]], color = "før"),
-                            fill = "#003087", alpha = .3) +
-
+  # Comp 1:
+    ggplot2::geom_histogram(data = data1, binwidth = .3, aes(x = .data[[comp1]], color = "før"),
+                            fill = "#6CACE4", alpha = .2) +
     # Comp2 2:
-    ggplot2::geom_histogram(data = data2, binwidth = .3,
-                            aes(x = .data[[comp2]], color = "etter"),
-                            fill = "#6CACE4", alpha = .4) +
+    ggplot2::geom_histogram(data = data2, binwidth = .3, aes(x = .data[[comp2]], color = "etter"),
+                                fill = "#003087", alpha = .2) +
+
 
     ggplot2::theme(legend.position = "right")+
     ggplot2::guides(color = guide_legend(""))+
 
-    ggplot2::scale_color_manual(values = c("før" = "#003087", "etter" = "#6CACE4"),
+    ggplot2::scale_color_manual(values = c("før" = "#6CACE4", "etter" = "#003087"),
                                 limits = c("før", "etter"),
                                 labels = c(paste0("Før (n= ", labels$var1, ")"),
                                            paste0("Etter (n= ", labels$var2, ")")))+
@@ -130,6 +133,68 @@ comparison_plot <- function(data1, data2, labels, comp1, comp2) {
 }
 
 # nolint start
-## p <-  comparison_plot(plot_data1, plot_data2, labels, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
+## p <-  comparison_plot(plot_data1, plot_data2, labels, "Helsetilstand", "Helsetilstand_3mnd")
 ## p
 # nolint end
+
+#'@title Plot for comparison
+#'
+#'returns a plot
+#'
+#'@export
+
+comparison_plot_discrete <- function(data1, data2, labels, comp1, comp2) {
+
+  # Make a new data frame with count of observations for var1 and var2
+  # Add conditional ggtitle and ggcaption
+  # This function needs two dataframes to exist in advance -
+  # plot_data1 and plot_data2
+
+  sam_plot = ggplot2::ggplot()
+
+  sam_plot = sam_plot +
+    # Comp 1:
+    ggplot2::geom_bar(data = data1, aes(x = .data[[comp1]], color = "før"),
+                        fill = "#6CACE4", alpha = .3) +
+
+    # Comp2 :
+    ggplot2::geom_bar(data = data2, aes(x = .data[[comp2]], color = "etter"),
+                      fill = "#003087", alpha = .3) +
+
+    ggplot2::theme(legend.position = "right")+
+    ggplot2::guides(color = guide_legend(""))+
+
+    ggplot2::scale_color_manual(values = c("før" = "#6CACE4", "etter" = "#003087"),
+                                limits = c("før", "etter"),
+                                labels = c(paste0("Før (n= ", labels$var1, ")"),
+                                           paste0("Etter (n= ", labels$var2, ")")))+
+    ggplot2::xlab("Fordeling") +
+    ggplot2::ylab("Andel pasienter")+
+    ggplot2::labs(
+      title = labels$ggtitle,
+      caption = labels$ggcaption)+
+
+    ggplot2::theme_light()+
+    ggplot2::theme(plot.title = element_text(size = 10,
+                                             face = "bold"),
+                   plot.caption = element_text(size = 12,
+                                               face = "italic", color = "#87189D"))
+
+  return(sam_plot)
+
+}
+
+# nolint start
+##
+##p <-  comparison_plot_discrete(plot_data1, plot_data2, labels, "Kurve_pre", "Kurve_post")
+##p
+## p
+# nolint end
+
+#' #'ætitle Sammenligningstabell
+#' #'
+#' #'æexport
+#'
+#' tabell_sam <- function (data1, data2, comp1, comp2) {
+#'   data <- dplyr::full_join(data1, data2
+#' }
