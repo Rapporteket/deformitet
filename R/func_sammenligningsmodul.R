@@ -133,7 +133,7 @@ comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
 }
 
 # nolint start
-## p <-  comparison_plot(plot_data1, plot_data2, labels, "Helsetilstand", "Helsetilstand_3mnd")
+## p <-  comparison_plot_continuous(plot_data1, plot_data2, labels, "PRE_MAIN_CURVE", "POST_MAIN_CURVE")
 ## p
 # nolint end
 
@@ -191,10 +191,69 @@ comparison_plot_discrete <- function(data1, data2, labels, comp1, comp2) {
 ## p
 # nolint end
 
-#' #'ætitle Sammenligningstabell
-#' #'
-#' #'æexport
+#'@title Sammenligningstabell
 #'
-#' tabell_sam <- function (data1, data2, comp1, comp2) {
-#'   data <- dplyr::full_join(data1, data2
-#' }
+#'@export
+
+tabell_sam <- function (data, comp1, comp2) {
+
+  comp1 <- enquo(comp1)
+  comp2 <- enquo(comp2)
+
+  data <- data %>%
+    dplyr::filter(!is.na(.data[[comp1]]))
+
+  data <- data %>%
+    dplyr::filter(!is.na(.data[[comp2]])) %>%
+    dplyr::select(Sykehus, Kjønn, !!comp1, !!comp2) %>%
+    dplyr::mutate(diff_pre_post = .data[[comp1]] - .data[[comp2]]) %>%
+    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::summarise(mean_diff = mean(diff_pre_post)) %>%
+    dplyr::mutate(mean_diff = round(mean_diff,3))
+
+}
+
+# nolint start
+## SJEKK AT DET FUNGERER:
+##
+##
+## f <- tabell_sam(regdata, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
+# nolint end
+
+#'@title Sammenligningstabell - grupper av faktorer
+#'
+#'@export
+
+tabell_sam_discrete <- function(data, comp1, comp2) {
+
+  comp1 <- enquo(comp1)
+  comp2 <- enquo(comp2)
+
+  data <- data %>%
+    dplyr::filter(!is.na(.data[[comp1]]))
+
+  data <- data %>%
+    dplyr::filter(!is.na(.data[[comp2]])) %>%
+    dplyr::select(Sykehus, Kjønn, !!comp1, !!comp2)
+
+  data_post <- data %>%
+    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::rename(var := !!comp2) %>%
+    dplyr::count(var, name = "count_post")
+
+  data_pre <- data %>%
+    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::rename(var := !!comp1) %>%
+    dplyr::count(var, name = "count_pre")
+
+
+  data <- dplyr::full_join(data_pre, data_post)
+
+  return (data)
+}
+
+# nolint start
+## SJEKK AT DET FUNGERER:
+## f <- tabell_sam_discrete(regdata, "Helsetilstand", "Helsetilstand_3mnd")
+# nolint end
+

@@ -2,15 +2,7 @@
 #'
 #' @export
 
-utvalg_basic <- function (data, gender, tid1, tid2, alder1, alder2) {
-
-  # = regdata,
-  #                         gender = "kvinne",
-  #                         type_op = "Begge",
-  #                         tid1 = min(regdata$SURGERY_DATE),
-  #                         tid2 = max(regdata$SURGERY_DATE),
-  #                         alder1 = min(regdata$Alder_num),
-  #                         alder2 = max(regdata$Alder_num)) {
+utvalg_basic <- function (data, gender, type_op, tid1, tid2, alder1, alder2) {
 
 
   # Filter by gender
@@ -22,11 +14,10 @@ utvalg_basic <- function (data, gender, tid1, tid2, alder1, alder2) {
 
   # Filter by operation type
 
-  # data <- data %>%
-  #   dplyr::filter(CURRENT_SURGERY == dplyr::case_when({{type_op}} == "Primæroperasjon" ~ 1,
-  #                                                     {{type_op}} == "Reoperasjon" ~ 2,
-  #                                                     {{type_op}} != "Primæroperasjon" |
-  #                                                       {{type_op}} != "Reoperasjon" ~ CURRENT_SURGERY))
+  data <- data %>%
+    dplyr::filter(dplyr::case_when({{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
+                                   {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
+                                   {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
 # Add filter on surgery date--------------------------------------------------
 

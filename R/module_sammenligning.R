@@ -16,7 +16,7 @@ module_sammenligning_UI <- function (id) {
                       "SRS22 mental helse 3mnd" = "SRS22_MENTALHEALTH_SCORE_patient3mths",
                       "SRS22 smerte" = "SRS22_PAIN_SCORE",
                       "SRS22 smerte 3mnd" = "SRS22_PAIN_SCORE_patient3mths",
-                      "Pre-operativ kurve" = "Kurve_pre",
+                      "Pre-operativ kurve" = "PRE_MAIN_CURVE",
                       "Helsetilstand" = "Helsetilstand",
                       "Helsetilstand 3mnd" = "Helsetilstand_3mnd"),
           selected = "SRS22_MAIN_SCORE"),
@@ -57,11 +57,11 @@ module_sammenligning_UI <- function (id) {
       ),
 
       conditionalPanel(
-        condition = "input.comp1 == 'Kurve_pre'",
+        condition = "input.comp1 == 'PRE_MAIN_CURVE'",
         ns = ns,
         selectInput(ns("comp3"),
                     label = "Velg variabel 2 (etter operasjon - 3-60 mnd oppfølging):",
-                    choices = c("Post-operativ kurve" = "Kurve_post"))
+                    choices = c("Post-operativ kurve" = "POST_MAIN_CURVE"))
 
       ),
 
@@ -110,7 +110,7 @@ module_sammenligning_UI <- function (id) {
         ),
 
       radioButtons( # sixth select
-        inputId = "type_op",
+        inputId = ns("type_op"),
         label = "Type operasjon",
         choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
         selected = "Primæroperasjon"
@@ -171,7 +171,7 @@ module_sammenligning_server <- function (id) {
       data_sam_reactive <- reactive({
         x <- deformitet::utvalg_basic(regdata,
                                  input$gender_var,
-                                 #input$type_op)
+                                 input$type_op,
                                  input$date[1],
                                  input$date[2],
                                  input$alder_var[1],
@@ -182,7 +182,7 @@ module_sammenligning_server <- function (id) {
 #
       data_sam_reactive2 <- reactive({
 
-        if(input$comp1 == "Kurve_pre") {
+        if(input$comp1 == "PRE_MAIN_CURVE") {
           deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp3)
         }
         if (input$comp1 == "Helsetilstand" ||
@@ -212,13 +212,13 @@ module_sammenligning_server <- function (id) {
 
       sam_plot <- reactive({
 
-        if (input$comp1 == "Kurve_pre") {
+        if (input$comp1 == "PRE_MAIN_CURVE") {
 
-          deformitet::comparison_plot_discrete(data_sam1(),
-                                               data_sam2(),
-                                               data_sam_labels(),
-                                               input$comp1,
-                                               input$comp3)
+          deformitet::comparison_plot_continuous(data_sam1(),
+                                                 data_sam2(),
+                                                 data_sam_labels(),
+                                                 input$comp1,
+                                                 input$comp3)
         } else {
           if (input$comp1 == "Helsetilstand" ||
               input$comp1 == "Helsetilstand_3mnd") {
@@ -244,7 +244,33 @@ module_sammenligning_server <- function (id) {
 
       ### MAKE TABLE ###########################################################
 
-      output$sam_table <- DT::renderDT({datatable(data_sam2(),
+      sam_table <- reactive({
+
+        if (input$comp1 == "PRE_MAIN_CURVE") {
+
+          deformitet::tabell_sam(regdata,
+                                 input$comp1,
+                                 input$comp3)
+        } else {
+          if (input$comp1 == "Helsetilstand" ||
+              input$comp1 == "Helsetilstand_3mnd") {
+
+            deformitet::tabell_sam_discrete(regdata,
+                                            input$comp1,
+                                            input$comp4)
+          } else {
+            deformitet::tabell_sam(regdata,
+                                  input$comp1,
+                                  input$comp2)
+          }
+        }
+      })
+
+      output$sam_table <- DT::renderDT({datatable(sam_table(),
+                                                  extensions = 'Buttons',
+                                                  options = list(
+                                                    dom = 'Bfrtip',
+                                                    buttons = c('copy', 'csv', 'excel','pdf')),
                                                   class = 'white-space:nowrap compact')
       })
 
