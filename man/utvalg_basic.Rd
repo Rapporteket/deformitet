@@ -4,7 +4,7 @@
 \alias{utvalg_basic}
 \title{Utvalgsfunksjon}
 \usage{
-utvalg_basic(data, gender, type_op, tid1, tid2, alder1, alder2)
+utvalg_basic(data, unit, gender, type_op, tid1, tid2, alder1, alder2)
 }
 \description{
 Utvalgsfunksjon

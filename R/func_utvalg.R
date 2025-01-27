@@ -2,7 +2,15 @@
 #'
 #' @export
 
-utvalg_basic <- function (data, gender, type_op, tid1, tid2, alder1, alder2) {
+utvalg_basic <- function (data, unit, gender, type_op, tid1, tid2, alder1, alder2) {
+
+  # Filter by unit
+
+  data <- data %>%
+    dplyr::filter(dplyr::case_when({{unit}} == 103240 ~ CENTREID == 103240,
+                                   {{unit}} == 102467 ~ CENTREID == 102467,
+                                   {{unit}} == 111961 ~ CENTREID == 111961,
+                                   {{unit}} == "alle" ~ CENTREID %in% c(103240, 102467, 111961)))
 
 
   # Filter by gender
@@ -43,5 +51,6 @@ return (data)
 # nolint start
 ## TEST AT DET FUNGERER:
 ##
-## g <- utvalg_basic(regdata, "mm") #, "Begge", "2023-01-01", "2024-12-01", 1, 100)
+##
+##g <- utvalg_basic(regdata, 111961, "m", "Begge", "2023-01-01", "2024-12-01", 1, 100)
 # nolint end
