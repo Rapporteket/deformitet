@@ -170,12 +170,13 @@ module_sammenligning_server <- function (id) {
 
       data_sam_reactive <- reactive({
         x <- deformitet::utvalg_basic(regdata,
-                                 input$gender_var,
-                                 input$type_op,
-                                 input$date[1],
-                                 input$date[2],
-                                 input$alder_var[1],
-                                 input$alder_var[2])
+                                      "alle",
+                                      input$gender_var,
+                                      input$type_op,
+                                      input$date[1],
+                                      input$date[2],
+                                      input$alder_var[1],
+                                      input$alder_var[2])
       })
 
       #### CHECK FOR SMALL SAMPLE SIZE IN CHOSEN VARIABLES #####################

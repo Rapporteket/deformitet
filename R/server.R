@@ -20,7 +20,6 @@ app_server <- function(input, output, session) {
   library(rapbase)
   library(bslib)
   library(shinyWidgets)
-  library(NHSRplotthedots)
 
 ######## USER INFO--------------------------------------------------------------
 
@@ -187,12 +186,6 @@ app_server <- function(input, output, session) {
 
 
   deformitet::module_sammenligning_server("sam1")
-
-  ################################################################################
-  ##### TAB: SPC #################################################################
-
-  deformitet::module_spc_server("spc")
-
 
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################
