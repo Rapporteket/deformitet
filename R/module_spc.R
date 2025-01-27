@@ -124,7 +124,7 @@ module_spc_server <- function (id) {
       spc_plot_reactive <- reactive({
         deformitet::spc_function(data_spc_reactive(),
                                  value,
-                                 time_period,
+                                 tidsperiode,
                                  direction_reactive(),
                                  input$var)
       })
