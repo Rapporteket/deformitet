@@ -4,9 +4,9 @@
 #'@export
 module_datadump_UI <- function(id){
   ns <- NS(id)
-  tagList(
-    fluidPage(
-      sidebarPanel(
+  shiny::tagList(
+    shiny::fluidPage(
+      shiny::sidebarPanel(
 
         selectInput(
           inputId = ns("choice_datadump"),
@@ -46,44 +46,46 @@ module_datadump_UI <- function(id){
             inputId = ns("skjema_type"),
             label = "Data fra: ",
             choices = c("Pasientskjema",
-                        "Kirurgskjema",
-                        "Kirurgskjema oppfølging")
+                        "Kirurgskjema")
           )),
 
-        downloadButton(
-          outputId= ns("d1"),
-          label = "Download",
-          class = "btn-lg btn-success")
-      ),
+        shiny::downloadButton(ns("download_data"), "Last ned data")
+        ),
+
 
       mainPanel(
-        class = "p-3 mb-2 bg-light text-dark",
-        bslib::card(
-          bslib::card_header(
-            h1("Her kan et utvalg av data fra registeret lastes ned")
-            ),
-          bslib::card_body(
-            h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
+        bslib::navset_card_underline(
+          bslib::nav_panel("Info",
+            bslib::card(
+              bslib::card_header(
+                h2("Her kan et utvalg av data fra registeret lastes ned")
+                ),
+              bslib::card_body(
+              h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
               data som allerede tilhører brukerens enhet (allerede journalført data,
-              dvs. ikke PROM)"),
-            h3("Datasett basert på utvalg"),
-            p("Dersom 'Datasett basert på utvalg' velges vil flere valg bli
+                 dvs. ikke PROM)"),
+              h3("Datasett basert på utvalg"),
+              p("Dersom 'Datasett basert på utvalg' velges vil flere valg bli
               tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra -
               aldersintervall, tidsintervall, pasientens kjønn. Instillingene som er satt
               som default inkluderer hele datasettet. Dersom ingen av instillingene endres
               vil brukeren laste ned all data som er tilgjengelig for denne brukeren."),
-            h3("Datasett basert på skjematype"),
-            p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å laste ned et datasett fra hvert eller
-              flere av skjemaene som registeret sender inn. Det vil også her være mulig å begrense utvalget.",
-              tags$br(),
-              tags$br(),
-              "- Pasient ved operasjon: informasjon om pasientene ved operasjon",
-              tags$br(),
-              "- Kirurg ved operasjon: informasjon registert av kirurg ved operasjon",
-              tags$br(),
-              "- Oppfølging kirurgi: informasjon registeret av kirurg ved oppfølging - 3mnd, 12mnd og 60mnd")
-
+              h3("Datasett basert på skjematype"),
+              p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å laste ned et datasett fra hvert eller
+                flere av skjemaene som registeret sender inn. Det vil også her være mulig å begrense utvalget.",
+                tags$br(),
+                tags$br(),
+                "- Pasient: informasjon om pasientene ved operasjon. Superbrukere har også tilgang til oppfølgingsskjema (PROM - 3, 12 og 60 mnd)",
+                tags$br(),
+                "- Kirurg ved operasjon: informasjon registert av kirurg ved operasjon og oppfølging")
+              )
             )
+          ),
+          bslib::nav_panel("Forhåndsvisning",
+            bslib::card(
+              bslib::card_header(
+                h3("Her er en forhåndsvisning av tabellen som lastes ned"),
+                DT::DTOutput(outputId = ns("datadump")))))
         )
       )
     )
@@ -97,7 +99,8 @@ module_datadump_server <- function(id){
     id,
     function(input, output, session){
 
-      reshID == "103240"
+      reshID = rapbase::getUserReshId(session)
+      userRole = rapbase::getUserRole(session)
 
       # do the cleaning
 
@@ -116,31 +119,43 @@ module_datadump_server <- function(id){
         })
       }
 
-      if(choice_datadump == "Datasett basert på skjematype og utvalg"){
-        if(skjema_type == "Pasientskjema"){
-          select_datadump_reactive <- reactive({
+      colnames_surgeonform <- colnames(deformitet::deformitetHentTabell("surgeonform"))
+      colnames_surgeonfollowup <- colnames(deformitet::deformitetHentTabell("surgeonfollowup"))
+
+      colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
+
+      select_datadump_reactive <- reactive ({
+        if (input$skjema_type == "Pasientskjema"){
+          data <- clean_datadump_reactive() %>%
+            select(-any_of(colnames))
+          } else {
             data <- clean_datadump_reactive() %>%
-              select()### SOMETHING
-          })
+              select(any_of(colnames))
+            }
+        })
+
+      output$datadump <- DT::renderDT({datatable(clean_datadump_reactive(),
+                                                 extensions = 'Buttons',
+                                                 options = list(
+                                                   dom = 'Bfrtip',
+                                                   buttons = c('copy', 'csv', 'excel','pdf')),
+                                                 class = 'white-space:nowrap compact')
+      })
+
+
+      output$download_data <- downloadHandler(
+        filename = function() {
+          paste('data-', Sys.Date(), '.csv', sep = '')
+        },
+        content = function(file) {
+          if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
+            write.csv(select_datadump_reactive(), file)
+          } else {
+            write.csv(clean_datadump_reactive(), file)
           }
-          else{
-            if(skjema_type == "Kirurgiskjema"){
-              select_datadump_reactive <- reactive({
-                data <- clean_datadump_reactive() %>%
-                  select()### SOMETHING
-            })
-            }
-            else{
-              select_datadump_reactive <- reactive({
-              data <- clean_datadump_reactive() %>%
-                select()
-              })
-            }
         }
-      }
-    })
+      )
+    }
+  )
 }
-
-
-
 

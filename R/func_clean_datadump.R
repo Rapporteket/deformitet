@@ -7,9 +7,11 @@
 
 clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b, user_role) {
   # data = regdata
-  # var1 = dato for operasjon
+  # var1a-var1b = dato for operasjon
   # var 2 = kjønn
-  # var 3 = alder
+  # var3a-3b = alder
+  # user_role
+  # resh_ID
 
 
   data <- data %>%
