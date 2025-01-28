@@ -83,8 +83,7 @@ module_sammenligning_UI <- function (id) {
         label = "Dele på kjønn?",
         choices = c("kvinne" = "kvinne",
                     "mann" = "mann",
-                    "begge" = "begge",
-                    "se alle fordelinger" = "nei"),
+                    "begge" = "begge"),
         selected = "begge"
         ),
 
@@ -99,7 +98,7 @@ module_sammenligning_UI <- function (id) {
         separator = " - "
         ),
 
-      shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
+      #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
       sliderInput( # fifth select
         inputId = ns("alder_var"),
         label = "Aldersintervall:",
@@ -138,33 +137,36 @@ module_sammenligning_server <- function (id) {
     id,
     function(input, output, session){
 
-      #### Read in data:
-      #regdata <- deformitet::les_og_flate_ut()
-      #
-      # #### Clean and tidy data:
-      #
-      #regdata <- deformitet::pre_pros(regdata)
+      ### Read in data:
+      regdata <- deformitet::les_og_flate_ut()
+
+      #### Clean and tidy data:
+
+      regdata <- deformitet::pre_pros(regdata)
+
+      # nolint start
 
       # FAKE DATA:
 
-      regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      #
+      # regdata <- regdata %>%
+      #   dplyr::mutate(Sykehus =
+      #                   dplyr::recode(Sykehus,
+      #                                 "Bergen" = "Haukeland",
+      #                                 "Riksen" = "Rikshospitalet"))
+      #
+      # regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+      #                                 levels =c("Alvorlig undervekt\n < 16",
+      #                                           "Undervekt\n (16-17)",
+      #                                           "Mild undervekt\n (17-18,5)",
+      #                                           "Normal\n (18,5-25)",
+      #                                           "Overvekt\n (25-30)",
+      #                                           "Moderat fedme\n, klasse I (30-35)",
+      #                                           "Fedme, klasse II \n (35-40)",
+      #                                           "Fedme, klasse III \n (40-50)"))
 
-      regdata <- regdata %>%
-        dplyr::mutate(Sykehus =
-                        dplyr::recode(Sykehus,
-                                      "Bergen" = "Haukeland",
-                                      "Riksen" = "Rikshospitalet"))
-
-      regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                      levels =c("Alvorlig undervekt\n < 16",
-                                                "Undervekt\n (16-17)",
-                                                "Mild undervekt\n (17-18,5)",
-                                                "Normal\n (18,5-25)",
-                                                "Overvekt\n (25-30)",
-                                                "Moderat fedme\n, klasse I (30-35)",
-                                                "Fedme, klasse II \n (35-40)",
-                                                "Fedme, klasse III \n (40-50)"))
-
+      # nolint end
 
       ##### MAKE BASIC UTVALG ##################################################
 
@@ -243,37 +245,41 @@ module_sammenligning_server <- function (id) {
         sam_plot()
       })
 
+      # nolint start
+
       ### MAKE TABLE ###########################################################
 
-      sam_table <- reactive({
+      # sam_table <- reactive({
+      #
+      #   if (input$comp1 == "PRE_MAIN_CURVE") {
+      #
+      #     deformitet::tabell_sam(regdata,
+      #                            input$comp1,
+      #                            input$comp3)
+      #   } else {
+      #     if (input$comp1 == "Helsetilstand" ||
+      #         input$comp1 == "Helsetilstand_3mnd") {
+      #
+      #       deformitet::tabell_sam_discrete(regdata,
+      #                                       input$comp1,
+      #                                       input$comp4)
+      #     } else {
+      #       deformitet::tabell_sam(regdata,
+      #                             input$comp1,
+      #                             input$comp2)
+      #     }
+      #   }
+      # })
+      #
+      # output$sam_table <- DT::renderDT({datatable(sam_table(),
+      #                                             extensions = 'Buttons',
+      #                                             options = list(
+      #                                               dom = 'Bfrtip',
+      #                                               buttons = c('copy', 'csv', 'excel','pdf')),
+      #                                             class = 'white-space:nowrap compact')
+      # })
 
-        if (input$comp1 == "PRE_MAIN_CURVE") {
-
-          deformitet::tabell_sam(regdata,
-                                 input$comp1,
-                                 input$comp3)
-        } else {
-          if (input$comp1 == "Helsetilstand" ||
-              input$comp1 == "Helsetilstand_3mnd") {
-
-            deformitet::tabell_sam_discrete(regdata,
-                                            input$comp1,
-                                            input$comp4)
-          } else {
-            deformitet::tabell_sam(regdata,
-                                  input$comp1,
-                                  input$comp2)
-          }
-        }
-      })
-
-      output$sam_table <- DT::renderDT({datatable(sam_table(),
-                                                  extensions = 'Buttons',
-                                                  options = list(
-                                                    dom = 'Bfrtip',
-                                                    buttons = c('copy', 'csv', 'excel','pdf')),
-                                                  class = 'white-space:nowrap compact')
-      })
+      # nolint end
 
       output$download_sam_plot <-  downloadHandler(
         filename = function(){

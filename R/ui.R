@@ -34,18 +34,6 @@ app_ui <- function() {
             organization = shiny::uiOutput("appOrgName"),
             addUserInfo = TRUE
           )
-        #   ),
-        # conditionalPanel(
-        #   condition = userRole == "SC",
-        #   shiny::sidebarPanel(
-        #     selectInput(
-        #       inputId = "enhetsvalg",
-        #       label = "Enhetsvalg",
-        #       choices = c("Rikshospitalet" = ,
-        #                   "Haukeland",
-        #                   "St.Olav")
-        #     )
-        #   )
         )
       ),
 
@@ -136,7 +124,7 @@ app_ui <- function() {
               format = "mm/dd/yy",
               separator = " - "),
 
-            shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
+            #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
             sliderInput( # fourth select
               inputId = "alder_var",
               label = "Aldersintervall:",

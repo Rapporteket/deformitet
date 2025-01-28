@@ -11,6 +11,11 @@
 
 app_server <- function(input, output, session) {
 
+
+ # resh = rapbase::getUserReshId()
+
+
+
   library(dplyr)
   library(deformitet)
   library(tidyr)
@@ -19,7 +24,7 @@ app_server <- function(input, output, session) {
   library(shiny)
   library(rapbase)
   library(bslib)
-  library(shinyWidgets)
+  #library(shinyWidgets)
 
 ######## USER INFO--------------------------------------------------------------
 
@@ -61,33 +66,33 @@ app_server <- function(input, output, session) {
   ##### TAB: Fordelingsfigur og -tabell ##########################################
 
   ######### DATA TIDYING----------------------------------------------------------
-  #### Read in data:
-  #regdata <- deformitet::les_og_flate_ut()
+  ### Read in data:
+  regdata <- deformitet::les_og_flate_ut()
+
+  #### Clean and tidy data:
+
+  regdata <- deformitet::pre_pros(regdata)
+
+  # ######## FAKE DATA ###########
   #
-  # #### Clean and tidy data:
+  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
   #
-  #regdata <- deformitet::pre_pros(regdata)
-
-  ######## FAKE DATA ###########
-
-  regdata <- readRDS("../dev/fake_data_deformitet.rds")
-
-  ## General cleaning
-  regdata <- regdata %>%
-    dplyr::mutate(Sykehus =
-                    dplyr::recode(Sykehus,
-                                  "Bergen" = "Haukeland",
-                                  "Riksen" = "Rikshospitalet"))
-
-  regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                  levels =c("Alvorlig undervekt\n < 16",
-                                            "Undervekt\n (16-17)",
-                                            "Mild undervekt\n (17-18,5)",
-                                            "Normal\n (18,5-25)",
-                                            "Overvekt\n (25-30)",
-                                            "Moderat fedme\n, klasse I (30-35)",
-                                            "Fedme, klasse II \n (35-40)",
-                                            "Fedme, klasse III \n (40-50)"))
+  # ## General cleaning
+  # regdata <- regdata %>%
+  #   dplyr::mutate(Sykehus =
+  #                   dplyr::recode(Sykehus,
+  #                                 "Bergen" = "Haukeland",
+  #                                 "Riksen" = "Rikshospitalet"))
+  #
+  # regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+  #                                 levels =c("Alvorlig undervekt\n < 16",
+  #                                           "Undervekt\n (16-17)",
+  #                                           "Mild undervekt\n (17-18,5)",
+  #                                           "Normal\n (18,5-25)",
+  #                                           "Overvekt\n (25-30)",
+  #                                           "Moderat fedme\n, klasse I (30-35)",
+  #                                           "Fedme, klasse II \n (35-40)",
+  #                                           "Fedme, klasse III \n (40-50)"))
 
   # Prepare data based on UI choices
 
@@ -190,27 +195,8 @@ app_server <- function(input, output, session) {
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################
 
-  #userRole <- rapbase::getUserRole(session) # define userRole
 
-  if(userRole != "SC"){ # hide tab is userRole is not SC
-    shiny::hideTab(
-      inputId = "tabs", # saying its the tabs part of the page that should be hidden
-      target = "Datautvalg" # saying its the tab with "Datautvalg"
-    )
-    shiny::hideTab(
-      inputId = "tabs",
-      target = "Eksport"
-    )
-  }
-
-  output$d1 <- shiny::downloadHandler( # output = downloadHandler
-    filename = function() {
-      paste('datadump_utvalg', Sys.Date(), '.csv', sep = "") # make file name
-    },
-    content = function(con){
-      write.csv(regdata, con) # content is the non aggregated, fully processed data)
-    }
-  )
+  deformitet::module_datadump_server("module_1")
 
 ################################################################################
 ###### TAB: Exporting data #####################################################
