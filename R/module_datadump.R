@@ -99,6 +99,38 @@ module_datadump_server <- function(id){
     id,
     function(input, output, session){
 
+      ### Read in data:
+      regdata <- deformitet::les_og_flate_ut()
+
+      #### Clean and tidy data:
+
+      regdata <- deformitet::pre_pros(regdata)
+
+      # nolint start
+
+      # FAKE DATA:
+
+      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      #
+      # regdata <- regdata %>%
+      #   dplyr::mutate(Sykehus =
+      #                   dplyr::recode(Sykehus,
+      #                                 "Bergen" = "Haukeland",
+      #                                 "Riksen" = "Rikshospitalet"))
+      #
+      # regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+      #                                 levels =c("Alvorlig undervekt\n < 16",
+      #                                           "Undervekt\n (16-17)",
+      #                                           "Mild undervekt\n (17-18,5)",
+      #                                           "Normal\n (18,5-25)",
+      #                                           "Overvekt\n (25-30)",
+      #                                           "Moderat fedme\n, klasse I (30-35)",
+      #                                           "Fedme, klasse II \n (35-40)",
+      #                                           "Fedme, klasse III \n (40-50)"))
+
+      # nolint end
+
+
       reshID = rapbase::getUserReshId(session)
       userRole = rapbase::getUserRole(session)
 
@@ -108,14 +140,12 @@ module_datadump_server <- function(id){
         clean_datadump_reactive <- reactive({
           data <- deformitet::clean_datadump(regdata, input$date[1], input$date[2], input$kjønn_var, input$alder_var[1], input$alder_var[2])
         })
-      }
-
-      else{
+      } else {
         clean_datadump_reactive <- reactive({
           data <- deformitet::clean_datadump(regdata, input$date[1], input$date[2], input$kjønn_var, input$alder_var[1], input$alder_var[2])
           data <- data %>%
-            select(-contains(c("mths", "mnd"))) %>%
-            filter(CENTREID == reshID)
+            dplyr::select(-contains(c("mths", "mnd"))) %>%
+            dplyr::filter(CENTREID == reshID)
         })
       }
 
@@ -127,19 +157,29 @@ module_datadump_server <- function(id){
       select_datadump_reactive <- reactive ({
         if (input$skjema_type == "Pasientskjema"){
           data <- clean_datadump_reactive() %>%
-            select(-any_of(colnames))
+            dplyr::select(-any_of(colnames))
           } else {
             data <- clean_datadump_reactive() %>%
-              select(any_of(colnames))
+              dplyr::select(any_of(colnames))
             }
         })
 
-      output$datadump <- DT::renderDT({datatable(clean_datadump_reactive(),
-                                                 extensions = 'Buttons',
-                                                 options = list(
-                                                   dom = 'Bfrtip',
-                                                   buttons = c('copy', 'csv', 'excel','pdf')),
-                                                 class = 'white-space:nowrap compact')
+      output$datadump <- DT::renderDT({
+        if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
+          table <- DT::datatable(select_datadump_reactive(),
+                                 extensions = 'Buttons',
+                                 options = list(
+                                   dom = 'Bfrtip',
+                                   buttons = c('copy', 'csv', 'excel','pdf')),
+                                 class = 'white-space:nowrap compact')
+        } else {
+            table <- DT::datatable(clean_datadump_reactive(),
+                                   extensions = 'Buttons',
+                                   options = list(
+                                     dom = 'Bfrtip',
+                                     buttons = c('copy', 'csv', 'excel','pdf')),
+                                   class = 'white-space:nowrap compact')
+            }
       })
 
 
@@ -158,4 +198,3 @@ module_datadump_server <- function(id){
     }
   )
 }
-
