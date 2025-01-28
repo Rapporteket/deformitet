@@ -119,9 +119,7 @@ module_sammenligning_UI <- function (id) {
         bslib::navset_card_underline(
           bslib::nav_panel("Figur",
                            shiny::plotOutput(outputId = ns("sam_plot")),
-                           shiny::downloadButton(ns("download_sam_plot"), "Last ned figur")),
-          bslib::nav_panel("Tabell",
-                           DT::DTOutput(outputId = ns("sam_table")))
+                           shiny::downloadButton(ns("download_sam_plot"), "Last ned figur"))
         )
       )
     )

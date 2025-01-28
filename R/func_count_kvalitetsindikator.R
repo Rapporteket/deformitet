@@ -42,9 +42,6 @@ kval_count <- function(data, var, kjønn, type_op){
                                      Komplikasjoner_3mnd == "Ja",
                                    {{var}} == "Liggetid" ~
                                      Liggetid == "> 7"| Liggetid == "7",
-                                   {{var}} == "SRS22_spm22_3mnd" ~
-                                     SRS22_spm22_3mnd == "Definitivt ja" |
-                                     SRS22_spm22_3mnd == "Sannsynligvis ja",
                                    {{var}} == "SRS22_spm21_3mnd" ~
                                      SRS22_spm21_3mnd == "Ganske fornøyd" |
                                      SRS22_spm21_3mnd == "Svært godt fornøyd",

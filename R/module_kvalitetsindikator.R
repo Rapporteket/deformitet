@@ -10,10 +10,9 @@ module_kvalitetsindikator_UI <- function(id){
       selectInput( # First select
         inputId = ns("kval_var"),
         label = "Velg Kvalitetsindikator:",
-        choices = c("SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
-                    "SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
-                    #"SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
-                    #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
+        choices = c("SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
+                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 12 mnd" = "SRS22_spm21_12mnd",
+                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 60 mnd" = "SRS22_spm21_60mnd",
                     "Pre-operativ kurve" = "PRE_MAIN_CURVE",
                     #"Prosent korreksjon kurve" = "Diff_prosent_kurve",
                     "Liggetid" = "Liggetid",
@@ -148,7 +147,6 @@ module_kvalitetsindikator_server <- function(id){
           dplyr::mutate(
             title = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ "Pasienter som har svart at de ønsker samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
@@ -157,7 +155,6 @@ module_kvalitetsindikator_server <- function(id){
 
             xlab = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ "'Definitivt ja' og 'sannsynligvis ja' til samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
@@ -166,7 +163,6 @@ module_kvalitetsindikator_server <- function(id){
 
             yintercept = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ 70,
               "SRS22_spm21_3mnd" ~ 70,
               "PRE_MAIN_CURVE"~ 50,
               "Liggetid" ~ 10,
