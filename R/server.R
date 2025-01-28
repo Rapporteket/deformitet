@@ -14,8 +14,6 @@ app_server <- function(input, output, session) {
 
  # resh = rapbase::getUserReshId()
 
-
-
   library(dplyr)
   library(deformitet)
   library(tidyr)
@@ -28,27 +26,11 @@ app_server <- function(input, output, session) {
 
 ######## USER INFO--------------------------------------------------------------
 
-  userRole = "SC"
-  #### MÅ VISES IGJEN NÅR JEG IKKE DRIVER MED FALSKE DATA ####
-##Render small header with user info
+  userRole = rapbase::getUserRole(session)
 
-  output$appUserName <- shiny::renderText(
-    paste(rapbase::getUserFullName(session),
-          rapbase::getUserRole(session), sep = ", ")
-  )
 
-  output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
-
-  # Make pop-up with "Dette vet Rapporteket om deg:"
-
-  userInfo <- rapbase::howWeDealWithPersonalData(session,
-                                                 callerPkg = "deformitet")
-  shiny::observeEvent(input$userInfo, {
-    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-                           type = "", imageUrl = "rap/logo.svg",
-                           closeOnEsc = True, closeOnClickOutside = TRUE,
-                           html = TRUE, confirmButtonText = rapbase::opOptOutOk())
-  })
+  rapbase::navbarWidgetServer("deformitetNavbarWidget", "deformitet",
+                              caller = "deformitet")
 
   ################################################################################
   ##### TAB: Startside ###########################################################

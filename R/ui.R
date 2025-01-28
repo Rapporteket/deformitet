@@ -25,15 +25,10 @@ app_ui <- function() {
 
       shiny::tabPanel( # First tab
         title = "Startside",
-        # waiter::useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
-          shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
-          rapbase:::appNavbarUserWidget( # get info about the user. See server for the input
-            user = shiny::uiOutput("appUserName"),
-            organization = shiny::uiOutput("appOrgName"),
-            addUserInfo = TRUE
-          )
+          shiny::htmlOutput("veiledning", inline = TRUE),
+          rapbase::navbarWidgetInput("deformitetNavbarWidget")
         )
       ),
 
