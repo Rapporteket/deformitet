@@ -24,6 +24,9 @@
 
 pre_pros <- function(regdata){
 
+  regdata <- regdata %>%
+    dplyr::select(-starts_with("USERCOMMENT"))
+
 
 # SYKEHUS:
 regdata <- regdata %>%
