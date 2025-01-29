@@ -25,27 +25,10 @@ app_ui <- function() {
 
       shiny::tabPanel( # First tab
         title = "Startside",
-        # waiter::useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
-          shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
-          rapbase:::appNavbarUserWidget( # get info about the user. See server for the input
-            user = shiny::uiOutput("appUserName"),
-            organization = shiny::uiOutput("appOrgName"),
-            addUserInfo = TRUE
-          )
-        #   ),
-        # conditionalPanel(
-        #   condition = userRole == "SC",
-        #   shiny::sidebarPanel(
-        #     selectInput(
-        #       inputId = "enhetsvalg",
-        #       label = "Enhetsvalg",
-        #       choices = c("Rikshospitalet" = ,
-        #                   "Haukeland",
-        #                   "St.Olav")
-        #     )
-        #   )
+          shiny::htmlOutput("veiledning", inline = TRUE),
+          rapbase::navbarWidgetInput("deformitetNavbarWidget")
         )
       ),
 
@@ -136,7 +119,7 @@ app_ui <- function() {
               format = "mm/dd/yy",
               separator = " - "),
 
-
+            #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
             sliderInput( # fourth select
               inputId = "alder_var",
               label = "Aldersintervall:",
@@ -184,14 +167,24 @@ app_ui <- function() {
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
 
-shiny:: tabPanel(
+shiny::tabPanel(
   title = "Kvalitetsindikatorer",
   deformitet::module_kvalitetsindikator_UI("kval1")
 ),
 
 
-      ################################################################################
-      ##### TAB: Nestlasting av datadump #############################################
+
+
+################################################################################
+##### TAB: Sammenligning  ######################################################
+
+shiny::tabPanel(
+  title = "Sammenligning",
+  deformitet::module_sammenligning_UI("sam1")
+),
+
+################################################################################
+##### TAB: Nestlasting av datadump #############################################
 
 ##### download ---------------------------------------------------------------
       ##### download ---------------------------------------------------------------

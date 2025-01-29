@@ -11,8 +11,6 @@
 
 makePlot_gg <- function(data, gg_data, data_var, choice_var) {
 
-  reshID = "103240"
-
   #### TIDYING DATA -------
 
 
