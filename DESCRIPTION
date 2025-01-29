@@ -29,6 +29,8 @@ Imports:
   usethis,
   dplyr,
   bslib,
+  shinyWidgets,
+  NHSRplotthedots
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
