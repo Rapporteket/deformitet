@@ -48,6 +48,11 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+
+.DS_Store
+
+/dev
+
 # sql-files
 *.sql
 *.sql.*
