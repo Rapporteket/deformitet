@@ -32,7 +32,7 @@ mergeRegData <- function(mce, centre, mce_patient_data, patient,
 #' @export
 les_og_flate_ut <- function() {
 
-  tryCatch(
+  regData <- tryCatch(
     {
       mce <- deformitet::deformitetHentTabell("mce")
 
@@ -51,10 +51,11 @@ les_og_flate_ut <- function() {
       surgeon_followup <- deformitet::deformitetHentTabell("surgeonfollowup")
       surgeon_form <- deformitet::deformitetHentTabell("surgeonform")
 
-      regData <- mergeRegData(
+      regData <- deformitet::mergeRegData(
         mce, centre, mce_patient_data, patient,
         patient_followup, patient_form, surgeon_followup, surgeon_form
       )
+      return(regData)
     },
     error = function(e) {
       regData <- readRDS("../dev/fake_data_deformitet.rds")
