@@ -29,6 +29,7 @@ Imports:
   usethis,
   dplyr,
   bslib,
+  shinyWidgets
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

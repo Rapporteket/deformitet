@@ -136,7 +136,7 @@ app_ui <- function() {
               format = "mm/dd/yy",
               separator = " - "),
 
-
+            shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
             sliderInput( # fourth select
               inputId = "alder_var",
               label = "Aldersintervall:",
@@ -184,14 +184,34 @@ app_ui <- function() {
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
 
-shiny:: tabPanel(
+shiny::tabPanel(
   title = "Kvalitetsindikatorer",
   deformitet::module_kvalitetsindikator_UI("kval1")
 ),
 
 
-      ################################################################################
-      ##### TAB: Nestlasting av datadump #############################################
+
+
+################################################################################
+##### TAB: Sammenligning  ######################################################
+
+shiny::tabPanel(
+  title = "Sammenligning",
+  deformitet::module_sammenligning_UI("sam1")
+),
+
+
+################################################################################
+##### TAB: spc  ################################################################
+
+shiny::tabPanel(
+  title = "SPC",
+  deformitet::module_spc_UI("spc")
+),
+
+
+################################################################################
+##### TAB: Nestlasting av datadump #############################################
 
 ##### download ---------------------------------------------------------------
       ##### download ---------------------------------------------------------------

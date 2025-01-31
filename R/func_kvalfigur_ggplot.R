@@ -20,19 +20,6 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     ggplot2::ggplot(aes(x = Kjønn, y = andel_per_syk, fill = Kjønn))+
 
-    # ggplot2::annotate("rect", ######### DENNE KAN HELLER BRUKES "OVER TID"...
-    #                   xmin = -Inf,
-    #                   xmax = Inf,
-    #                   ymin = gg_data$y_green[1], ymax = gg_data$y_green[2] , fill = "#ADDFB3",
-    #                   alpha = .2)+
-    #
-    # ggplot2::annotate("rect", ######### DENNE KAN HELLER BRUKES "OVER TID"...
-    #                   xmin = -Inf,
-    #                   xmax = Inf,
-    #                   ymin = gg_data$y_red[1], ymax = gg_data$y_red[2] , fill = "red",
-    #                   alpha = .2)+
-
-
     ggplot2::geom_col(alpha = .7)+
 
     ggplot2::geom_hline(yintercept = gg_data$yintercept, linetype = "dashed", color = "#87189D")+
