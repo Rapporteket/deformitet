@@ -58,7 +58,7 @@ les_og_flate_ut <- function() {
       return(regData)
     },
     error = function(e) {
-      regData <- readRDS("../dev/fake_data_deformitet.rds")
+      regData <- readRDS("dev/fake_data_deformitet.rds")
       return(regData)
     }
   )
