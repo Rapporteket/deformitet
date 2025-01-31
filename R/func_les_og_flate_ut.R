@@ -2,7 +2,7 @@
 #'
 #' @export
 
-mergeRegData <- function(mce, centre, mce_patient_data, patient, 
+mergeRegData <- function(mce, centre, mce_patient_data, patient,
                          patient_followup, patient_form, surgeon_followup, surgeon_form) {
   regData <- merge(mce, mce_patient_data, by = "MCEID") %>% # nested merge
     merge(centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
@@ -27,7 +27,9 @@ mergeRegData <- function(mce, centre, mce_patient_data, patient,
 }
 
 
-
+#' Les og flate ut
+#'
+#' @export
 les_og_flate_ut <- function() {
 
   tryCatch(
