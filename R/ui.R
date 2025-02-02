@@ -198,12 +198,12 @@ shiny::tabPanel(
 ##### download ---------------------------------------------------------------
       ##### download ---------------------------------------------------------------
 
-        shiny::tabPanel( # third tab
-          title = "Datautvalg",
-          shiny::fluidPage(
-            deformitet::module_datadump_UI(
-              id = "module_1")
-          )),
+        # shiny::tabPanel( # third tab
+        #   title = "Datautvalg",
+        #   shiny::fluidPage(
+        #     deformitet::module_datadump_UI(
+        #       id = "module_1")
+        #   )),
 
 shiny::tabPanel(
   title = "Eksport",

@@ -135,7 +135,7 @@ module_sammenligning_server <- function (id) {
     id,
     function(input, output, session){
 
-      ### Read in data:
+      # ### Read in data:
       regdata <- deformitet::les_og_flate_ut()
 
       #### Clean and tidy data:
@@ -148,21 +148,7 @@ module_sammenligning_server <- function (id) {
 
       # regdata <- readRDS("../dev/fake_data_deformitet.rds")
       #
-      # regdata <- regdata %>%
-      #   dplyr::mutate(Sykehus =
-      #                   dplyr::recode(Sykehus,
-      #                                 "Bergen" = "Haukeland",
-      #                                 "Riksen" = "Rikshospitalet"))
-      #
-      # regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-      #                                 levels =c("Alvorlig undervekt\n < 16",
-      #                                           "Undervekt\n (16-17)",
-      #                                           "Mild undervekt\n (17-18,5)",
-      #                                           "Normal\n (18,5-25)",
-      #                                           "Overvekt\n (25-30)",
-      #                                           "Moderat fedme\n, klasse I (30-35)",
-      #                                           "Fedme, klasse II \n (35-40)",
-      #                                           "Fedme, klasse III \n (40-50)"))
+      # regdata <- pre_pros(regdata)
 
       # nolint end
 

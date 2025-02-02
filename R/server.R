@@ -56,26 +56,15 @@ app_server <- function(input, output, session) {
 
   regdata <- deformitet::pre_pros(regdata)
 
-  # ######## FAKE DATA ###########
-  #
+  # nolint start
+
+  ######## FAKE DATA ###########
+
   # regdata <- readRDS("../dev/fake_data_deformitet.rds")
   #
-  # ## General cleaning
-  # regdata <- regdata %>%
-  #   dplyr::mutate(Sykehus =
-  #                   dplyr::recode(Sykehus,
-  #                                 "Bergen" = "Haukeland",
-  #                                 "Riksen" = "Rikshospitalet"))
-  #
-  # regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-  #                                 levels =c("Alvorlig undervekt\n < 16",
-  #                                           "Undervekt\n (16-17)",
-  #                                           "Mild undervekt\n (17-18,5)",
-  #                                           "Normal\n (18,5-25)",
-  #                                           "Overvekt\n (25-30)",
-  #                                           "Moderat fedme\n, klasse I (30-35)",
-  #                                           "Fedme, klasse II \n (35-40)",
-  #                                           "Fedme, klasse III \n (40-50)"))
+  # regdata <- pre_pros(regdata)
+
+  # nolint end
 
   # Prepare data based on UI choices
 
@@ -184,7 +173,7 @@ app_server <- function(input, output, session) {
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  deformitet::module_datadump_server("module_1")
+  #deformitet::module_datadump_server("module_1")
 
 ################################################################################
 ###### TAB: Exporting data #####################################################

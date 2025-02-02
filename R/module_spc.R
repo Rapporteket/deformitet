@@ -78,6 +78,9 @@ module_spc_server <- function (id) {
 
       regdata <- deformitet::pre_pros(regdata)
 
+      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      #
+      # regdata <- pre_pros(regdata)
 
 
       ##### MAKE BASIC UTVALG ##################################################
