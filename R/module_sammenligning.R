@@ -87,17 +87,6 @@ module_sammenligning_UI <- function (id) {
         selected = "begge"
         ),
 
-      dateRangeInput( # fourth select
-        inputId = ns("date"),
-        label = "Tidsintervall:",
-        start = "2023-01-02",
-        end = "2024-09-02",
-        min = "2023-01-01",
-        max = "2025-09-02",
-        format = "mm/dd/yy",
-        separator = " - "
-        ),
-
       #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
       sliderInput( # fifth select
         inputId = ns("alder_var"),
@@ -113,6 +102,17 @@ module_sammenligning_UI <- function (id) {
         label = "Type operasjon",
         choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
         selected = "Primæroperasjon"
+      ),
+
+      dateRangeInput( # fourth select
+        inputId = ns("date"),
+        label = "Tidsintervall:",
+        start = "2023-01-02",
+        end = "2024-09-02",
+        min = "2023-01-01",
+        max = "2025-09-02",
+        format = "dd-mm-yyyy",
+        separator = " - "
       )),
 
       shiny::mainPanel(

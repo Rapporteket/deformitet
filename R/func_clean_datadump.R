@@ -5,13 +5,7 @@
 #' @export
 
 
-clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b, user_role) {
-  # data = regdata
-  # var1a-var1b = dato for operasjon
-  # var 2 = kjønn
-  # var3a-3b = alder
-  # user_role
-  # resh_ID
+clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b) {
 
 
   data <- data %>%
@@ -25,10 +19,5 @@ clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b, user_role) {
 
   data <- data %>%
     dplyr::filter(dplyr::between(Alder_num, {{var3a}}, {{var3b}}))
-
-  ##### JEG ER KOMMET HIT!!!! #####
-  # if(user_role != "SC"){
-  #   data <- data %>%
-  #     dplyr::filter()...}
 
 }

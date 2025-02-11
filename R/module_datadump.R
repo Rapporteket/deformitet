@@ -15,16 +15,6 @@ module_datadump_UI <- function(id){
                       "Datasett basert på skjematype og utvalg"),
           selected = "Datasett basert på utvalg"),
 
-        dateRangeInput( # first select - var1
-          inputId = ns("date"),
-          label = "Tidsintervall:",
-          start = "2023-01-02",
-          end = "2024-09-02",
-          min = "2023-01-02",
-          max = "2025-01-02",
-          format = "mm/dd/yy",
-          separator = " - "),
-
         selectInput( # second select - var2
           inputId = ns("kjønn_var"),
           label = "Utvalg basert på kjønn",
@@ -38,6 +28,16 @@ module_datadump_UI <- function(id){
           max = 100,
           value = c(0,100),
           dragRange = TRUE),
+
+        dateRangeInput( # first select - var1
+          inputId = ns("date"),
+          label = "Tidsintervall:",
+          start = "2023-01-02",
+          end = "2024-09-02",
+          min = "2023-01-02",
+          max = "2025-01-02",
+          format = "dd-mm-yyyy",
+          separator = " - "),
 
 
         conditionalPanel(
@@ -75,9 +75,9 @@ module_datadump_UI <- function(id){
                 flere av skjemaene som registeret sender inn. Det vil også her være mulig å begrense utvalget.",
                 tags$br(),
                 tags$br(),
-                "- Pasient: informasjon om pasientene ved operasjon. Superbrukere har også tilgang til oppfølgingsskjema (PROM - 3, 12 og 60 mnd)",
+                "- Pasientskjema: informasjon registrert om pasientene pre-operativt. Superbrukere (SC) har også tilgang til oppfølgingsskjema (PROM - 3-6, 12 og 60 mnd)",
                 tags$br(),
-                "- Kirurg ved operasjon: informasjon registert av kirurg ved operasjon og oppfølging")
+                "- Kirurgskjema: informasjon registert av kirurg ved operasjon og ved oppfølging")
               )
             )
           ),
@@ -100,21 +100,11 @@ module_datadump_server <- function(id){
     function(input, output, session){
 
       ### Read in data:
-      # regdata <- deformitet::les_og_flate_ut()
-      #
+      regdata <- deformitet::les_og_flate_ut()
+
       # #### Clean and tidy data:
-      #
-      # regdata <- deformitet::pre_pros(regdata)
+      regdata <- deformitet::pre_pros(regdata)
 
-      # nolint start
-
-      # FAKE DATA:
-
-      regdata <- readRDS("../dev/fake_data_deformitet.rds")
-
-      regdata <- pre_pros(regdata)
-
-      # nolint end
 #### HER LUGGER DET NÅR JEG IKKE HAR EKTE DAtA ####
 
       reshID = rapbase::getUserReshId(session)

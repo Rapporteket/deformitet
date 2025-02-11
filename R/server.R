@@ -167,13 +167,13 @@ app_server <- function(input, output, session) {
   ################################################################################
   ##### TAB: SPC #################################################################
 
-  deformitet::module_spc_server("spc")
+  # Add ready-made module here if requested by registry
 
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  #deformitet::module_datadump_server("module_1")
+  deformitet::module_datadump_server("module_1")
 
 ################################################################################
 ###### TAB: Exporting data #####################################################

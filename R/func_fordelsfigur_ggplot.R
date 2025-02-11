@@ -91,7 +91,9 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
     ggplot2::theme_bw()+ # light theme
 
     ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
-                                               face = "italic"))
+                                               face = "italic"),
+                   axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+                   axis.text.y = element_text(size = 14))
 
 
 
