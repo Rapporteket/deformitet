@@ -24,8 +24,7 @@ app_server <- function(input, output, session) {
 
 ######## USER INFO--------------------------------------------------------------
 
-  userRole = "SC"
-  #### MÅ VISES IGJEN NÅR JEG IKKE DRIVER MED FALSKE DATA ####
+userRole = rapbase::getUserRole(session)
 ##Render small header with user info
 
   output$appUserName <- shiny::renderText(

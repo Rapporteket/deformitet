@@ -29,23 +29,7 @@ app_ui <- function() {
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
-          rapbase:::appNavbarUserWidget( # get info about the user. See server for the input
-            user = shiny::uiOutput("appUserName"),
-            organization = shiny::uiOutput("appOrgName"),
-            addUserInfo = TRUE
-          )
-        #   ),
-        # conditionalPanel(
-        #   condition = userRole == "SC",
-        #   shiny::sidebarPanel(
-        #     selectInput(
-        #       inputId = "enhetsvalg",
-        #       label = "Enhetsvalg",
-        #       choices = c("Rikshospitalet" = ,
-        #                   "Haukeland",
-        #                   "St.Olav")
-        #     )
-        #   )
+          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE)
         )
       ),
 
