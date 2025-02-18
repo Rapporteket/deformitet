@@ -28,8 +28,7 @@ Imports:
   tidyr,
   usethis,
   dplyr,
-  bslib,
-  shinyWidgets
+  bslib
 Remotes:
   Rapporteket/rapbase
 License: GPL-3

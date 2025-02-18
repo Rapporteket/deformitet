@@ -10,10 +10,9 @@ module_kvalitetsindikator_UI <- function(id){
       selectInput( # First select
         inputId = ns("kval_var"),
         label = "Velg Kvalitetsindikator:",
-        choices = c("SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
-                    "SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
-                    #"SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
-                    #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
+        choices = c("SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
+                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 12 mnd" = "SRS22_spm21_12mnd",
+                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 60 mnd" = "SRS22_spm21_60mnd",
                     "Pre-operativ kurve" = "PRE_MAIN_CURVE",
                     #"Prosent korreksjon kurve" = "Diff_prosent_kurve",
                     "Liggetid" = "Liggetid",
@@ -90,33 +89,23 @@ module_kvalitetsindikator_server <- function(id){
     id,
     function(input, output, session){
 
-      #### Read in data:
-      #regdata <- deformitet::les_og_flate_ut()
-      #
-      # #### Clean and tidy data:
-      #
-      #regdata <- deformitet::pre_pros(regdata)
+      ### Read in data:
+
+regdata <- deformitet::les_og_flate_ut()
+
+#### Clean and tidy data:
+
+regdata <- deformitet::pre_pros(regdata)
+
+      # nolint start
 
       # FAKE DATA:
+#
+#       regdata <- readRDS("../dev/fake_data_deformitet.rds")
+#
+#       regdata <- pre_pros(regdata)
 
-      regdata <- readRDS("../dev/fake_data_deformitet.rds")
-
-      regdata <- regdata %>%
-        dplyr::mutate(Sykehus =
-                        dplyr::recode(Sykehus,
-                                      "Bergen" = "Haukeland",
-                                      "Riksen" = "Rikshospitalet"))
-
-      regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                      levels =c("Alvorlig undervekt\n < 16",
-                                                "Undervekt\n (16-17)",
-                                                "Mild undervekt\n (17-18,5)",
-                                                "Normal\n (18,5-25)",
-                                                "Overvekt\n (25-30)",
-                                                "Moderat fedme\n, klasse I (30-35)",
-                                                "Fedme, klasse II \n (35-40)",
-                                                "Fedme, klasse III \n (40-50)"))
-
+      # nolint end
 
       date1_reactive <- reactive({
         date1 <- min(regdata$SURGERY_DATE)
@@ -144,7 +133,6 @@ module_kvalitetsindikator_server <- function(id){
           dplyr::mutate(
             title = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ "Pasienter som har svart at de ønsker samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
@@ -153,7 +141,6 @@ module_kvalitetsindikator_server <- function(id){
 
             xlab = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ "'Definitivt ja' og 'sannsynligvis ja' til samme behandling på nytt (3-6 mnd)",
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
@@ -162,7 +149,6 @@ module_kvalitetsindikator_server <- function(id){
 
             yintercept = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm22_3mnd" ~ 70,
               "SRS22_spm21_3mnd" ~ 70,
               "PRE_MAIN_CURVE"~ 50,
               "Liggetid" ~ 10,

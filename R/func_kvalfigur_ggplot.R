@@ -57,7 +57,8 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
                    legend.position = case_when({{choice_kjønn}} == "begge" ~ "none",
                                                TRUE ~ "right"),
                    axis.text.x = element_text(color = case_when({{choice_kjønn}} == "nei" ~ "white",
-                                                                TRUE ~ "black")))+
+                                                                TRUE ~ "black"), size = 14),
+                   axis.text.y = element_text(size = 14))+
 
     ggplot2::scale_fill_manual(values = c("#6CACE4", "#6FA287", "#BFCED6"))+
 

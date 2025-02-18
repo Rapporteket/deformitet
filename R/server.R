@@ -11,6 +11,9 @@
 
 app_server <- function(input, output, session) {
 
+
+ # resh = rapbase::getUserReshId()
+
   library(dplyr)
   library(deformitet)
   library(tidyr)
@@ -24,26 +27,11 @@ app_server <- function(input, output, session) {
 
 ######## USER INFO--------------------------------------------------------------
 
-userRole = rapbase::getUserRole(session)
-##Render small header with user info
+  userRole = rapbase::getUserRole(session)
 
-  output$appUserName <- shiny::renderText(
-    paste(rapbase::getUserFullName(session),
-          rapbase::getUserRole(session), sep = ", ")
-  )
 
-  output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
-
-  # Make pop-up with "Dette vet Rapporteket om deg:"
-
-  userInfo <- rapbase::howWeDealWithPersonalData(session,
-                                                 callerPkg = "deformitet")
-  shiny::observeEvent(input$userInfo, {
-    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-                           type = "", imageUrl = "rap/logo.svg",
-                           closeOnEsc = True, closeOnClickOutside = TRUE,
-                           html = TRUE, confirmButtonText = rapbase::opOptOutOk())
-  })
+  rapbase::navbarWidgetServer("deformitetNavbarWidget", "deformitet",
+                              caller = "deformitet")
 
   ################################################################################
   ##### TAB: Startside ###########################################################
@@ -61,33 +49,22 @@ userRole = rapbase::getUserRole(session)
   ##### TAB: Fordelingsfigur og -tabell ##########################################
 
   ######### DATA TIDYING----------------------------------------------------------
-  #### Read in data:
-  #regdata <- deformitet::les_og_flate_ut()
-  #
-  # #### Clean and tidy data:
-  #
-  #regdata <- deformitet::pre_pros(regdata)
+  ### Read in data:
+  regdata <- deformitet::les_og_flate_ut()
+
+  #### Clean and tidy data:
+
+  regdata <- deformitet::pre_pros(regdata)
+
+  # nolint start
 
   ######## FAKE DATA ###########
 
-  regdata <- readRDS("../dev/fake_data_deformitet.rds")
+  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+  #
+  # regdata <- pre_pros(regdata)
 
-  ## General cleaning
-  regdata <- regdata %>%
-    dplyr::mutate(Sykehus =
-                    dplyr::recode(Sykehus,
-                                  "Bergen" = "Haukeland",
-                                  "Riksen" = "Rikshospitalet"))
-
-  regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                  levels =c("Alvorlig undervekt\n < 16",
-                                            "Undervekt\n (16-17)",
-                                            "Mild undervekt\n (17-18,5)",
-                                            "Normal\n (18,5-25)",
-                                            "Overvekt\n (25-30)",
-                                            "Moderat fedme\n, klasse I (30-35)",
-                                            "Fedme, klasse II \n (35-40)",
-                                            "Fedme, klasse III \n (40-50)"))
+  # nolint end
 
   # Prepare data based on UI choices
 
@@ -190,32 +167,14 @@ userRole = rapbase::getUserRole(session)
   ################################################################################
   ##### TAB: SPC #################################################################
 
-  deformitet::module_spc_server("spc")
+  # Add ready-made module here if requested by registry
+
 
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################
 
-  #userRole <- rapbase::getUserRole(session) # define userRole
 
-  if(userRole != "SC"){ # hide tab is userRole is not SC
-    shiny::hideTab(
-      inputId = "tabs", # saying its the tabs part of the page that should be hidden
-      target = "Datautvalg" # saying its the tab with "Datautvalg"
-    )
-    shiny::hideTab(
-      inputId = "tabs",
-      target = "Eksport"
-    )
-  }
-
-  output$d1 <- shiny::downloadHandler( # output = downloadHandler
-    filename = function() {
-      paste('datadump_utvalg', Sys.Date(), '.csv', sep = "") # make file name
-    },
-    content = function(con){
-      write.csv(regdata, con) # content is the non aggregated, fully processed data)
-    }
-  )
+  deformitet::module_datadump_server("module_1")
 
 ################################################################################
 ###### TAB: Exporting data #####################################################
