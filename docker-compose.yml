@@ -1,7 +1,7 @@
 x-environment: &environment
   MYSQL_DB_LOG: db_log # log in
   MYSQL_DB_AUTOREPORT: db_autoreport
-  MYSQL_DB_DATA: RapporteketDeformitet # databasenavnet det finner vi i adminer
+  MYSQL_DB_DATA: DeformitetRapporteket # databasenavnet det finner vi i adminer
   MYSQL_HOST: db
   MYSQL_USER: root
   MYSQL_PASSWORD: root
