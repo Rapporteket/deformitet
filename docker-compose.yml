@@ -24,8 +24,8 @@ services:
     volumes:
     -.dev/db:docker-entrypoint-initdb.d # USIKKER PÅ DENNE
     - ~/softlinks/mysql_db:/var/lib/mysql
-    entrypoint: #???
-    ports: #???
+    entrypoint: #??? Denne kan jeg kopiere fra NorGast 
+    ports: #??? # Denne trenger jeg ikke 
 
 
   app:
