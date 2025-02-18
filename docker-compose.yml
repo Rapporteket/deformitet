@@ -28,7 +28,7 @@ services:
   app:
     depends_on:
       - db
-    image: rapporteket/deformitet # image navn
+    image: ingridtesternhn # image navn
     ports:
       - 3838:3838
     volumes:
