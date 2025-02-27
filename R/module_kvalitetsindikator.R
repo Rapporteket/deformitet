@@ -84,7 +84,7 @@ module_kvalitetsindikator_UI <- function(id){
 
 #'@export
 
-module_kvalitetsindikator_server <- function(id){
+module_kvalitetsindikator_server <- function(id, userRole, userUnitId, db_data){
   moduleServer(
     id,
     function(input, output, session){
@@ -193,14 +193,24 @@ regdata <- deformitet::pre_pros(regdata)
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
       kval_df_reactive <- reactive({
-        x <- deformitet::kval_count(regdata, input$kval_var, input$kjønn_var, input$type_op)
-      })
+        x <- deformitet::kval_count(regdata,
+                                    input$kval_var,
+                                    input$kjønn_var,
+                                    input$type_op,
+                                    db_data,
+                                    userRole(),
+                                    userUnitId())
+
+        })
 
 
       ###### PLOT ####################################################################
 
       kval_plot <- reactive({
-        deformitet::kval_plot(kval_df_reactive(), gg_data_reactive(), my_data_reactive(), input$kjønn_var)
+        deformitet::kval_plot(kval_df_reactive(),
+                              gg_data_reactive(),
+                              my_data_reactive(),
+                              input$kjønn_var)
       })
 
       output$kval_plot <- renderPlot({
@@ -217,8 +227,9 @@ regdata <- deformitet::pre_pros(regdata)
                                                                 "Antall nasjonalt",
                                                                 "Antall per sykehus",
                                                                 "Antall - kvalitetsindikator",
-                                                                "Andel - kvalitetsindikator"))
-      })
+                                                                "Andel - kvalitetsindikator",
+                                                                "ReshId"))
+        })
 
       ##### KVALITETSINDIKATORER over tid ############################################
 

@@ -2,16 +2,14 @@
 #'
 #' @export
 
-utvalg_basic <- function (data, unit, gender, type_op, tid1, tid2, alder1, alder2) {
+utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, alder2) {
 
   # Filter by unit
 
   data <- data %>%
-    dplyr::filter(dplyr::case_when({{unit}} == 103240 ~ CENTREID == 103240,
-                                   {{unit}} == 102467 ~ CENTREID == 102467,
-                                   {{unit}} == 111961 ~ CENTREID == 111961,
-                                   {{unit}} == "alle" ~ CENTREID %in% c(103240, 102467, 111961)))
-
+    dplyr::filter(dplyr::case_when({{user_unit}} == 103240 ~ CENTREID == 103240,
+                                   {{user_unit}} == 102467 ~ CENTREID == 102467,
+                                   {{user_unit}} == 111961 ~ CENTREID == 111961))
 
   # Filter by gender
 

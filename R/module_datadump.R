@@ -104,15 +104,17 @@ module_datadump_server <- function(id, userRole, userUnitId){
       # #### Clean and tidy data:
       regdata <- deformitet::pre_pros(regdata)
 
-#### HER LUGGER DET NÅR JEG IKKE HAR EKTE DAtA ####
-
-      # reshID = rapbase::getUserReshId(session)
-      # userRole = rapbase::getUserRole(session)
-
       # do the cleaning
 
         clean_datadump_reactive <- reactive({
-          data <- deformitet::clean_datadump(regdata, input$date[1], input$date[2], input$kjønn_var, input$alder_var[1], input$alder_var[2], userRole(), userUnitId())
+          data <- deformitet::clean_datadump(regdata,
+                                             input$date[1],
+                                             input$date[2],
+                                             input$kjønn_var,
+                                             input$alder_var[1],
+                                             input$alder_var[2],
+                                             userRole(),
+                                             userUnitId())
         })
 
 

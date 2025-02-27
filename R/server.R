@@ -12,8 +12,6 @@
 app_server <- function(input, output, session) {
 
 
- # resh = rapbase::getUserReshId()
-
   library(dplyr)
   library(deformitet)
   library(tidyr)
@@ -48,12 +46,10 @@ app_server <- function(input, output, session) {
     select(-c(Sykehus, CENTREID)) # take out old columns
 
 
-  user <- rapbase::navbarWidgetServer2("deformitetNavbarWidget",
-                                       "deformitet", # denne skal bli navbarWidgetServer når alt er fikset i rapbase
+  user <- rapbase::navbarWidgetServer2("deformitetNavbarWidget", # denne skal bli navbarWidgetServer når alt er fikset i rapbase
+                                       "deformitet",
                                        caller = "deformitet",
                                        map_orgname = shiny::req(map_db_resh))
-
-
 
 
   ################################################################################
@@ -71,19 +67,42 @@ app_server <- function(input, output, session) {
   ################################################################################
   ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-
-
-  # nolint start
-
-  ######## FAKE DATA ###########
-
-  # regdata <- readRDS("../dev/fake_data_deformitet.rds")
-  #
-  # regdata <- pre_pros(regdata)
-
-  # nolint end
-
   # Prepare data based on UI choices
+
+
+  output$reshid <- renderUI({
+    if (user$role() == 'SC') { # fifth select
+      shiny::selectInput(
+        inputId = "reshId_var",
+        label = "Enhet",
+        choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
+        selected = "Haukeland"
+      )
+    }
+  })
+
+
+  output$view_type <- renderUI({
+    if(user$role() == 'SC') {
+      shiny::radioButtons( # seventh select
+        inputId = "type_view",
+        label = "Vis rapport for:",
+        choices = c("Hele landet" = "hele landet",
+                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                    "Hver enhet" = "hver enhet",
+                    "Egen enhet" = "egen enhet"
+        ))
+    } else {
+      shiny::radioButtons( # seventh select
+        inputId = "type_view",
+        label = "Vis rapport for:",
+        choices = c("Hele landet" = "hele landet",
+                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                    "Egen enhet" = "egen enhet"
+        ))
+    }
+  })
+
 
   prepVar_reactive <- reactive({
     deformitet::prepVar(
@@ -126,14 +145,24 @@ app_server <- function(input, output, session) {
   #Aggregate data in table format
 
   table_reactive <- reactive({
-    deformitet::makeTable(data_reactive(), input$reshId_var, input$type_view)
+    if (user$role() == 'SC') {
+      reshid = input$reshId_var
+    } else {
+      reshid = user$org()
+    }
+    deformitet::makeTable(data_reactive(), reshid, input$type_view)
   })
 
   # Make table of komplikasjonstyper
   ### Komplikasjonstyper is aggregated separately from the rest of the variables
 
   kompl_reactive <- reactive({
-    test <- deformitet::kompl_data(regdata, input$reshId_var)
+    if (user$role() == 'SC') {
+      reshid = input$reshId_var
+    } else {
+      reshid = user$org()
+    }
+    test <- deformitet::kompl_data(regdata, reshid)
   })
 
 
@@ -173,13 +202,18 @@ app_server <- function(input, output, session) {
 ##### TAB: Kvalitetsindikatorer ################################################
 
 
-  deformitet::module_kvalitetsindikator_server("kval1")
+  deformitet::module_kvalitetsindikator_server("kval1",
+                                               db_data = map_db_resh,
+                                               userRole = user$role,
+                                               userUnitId = user$org)
 
   ################################################################################
   ##### TAB: Sammenligning #####################################################
 
 
-  deformitet::module_sammenligning_server("sam1")
+  deformitet::module_sammenligning_server("sam1",
+                                          userRole = user$role,
+                                          userUnitId = user$org)
 
   ################################################################################
   ##### TAB: SPC #################################################################
@@ -198,6 +232,13 @@ app_server <- function(input, output, session) {
 ################################################################################
 ###### TAB: Exporting data #####################################################
 
+  shiny::observeEvent(
+    shiny::req(user$role()), {
+      if (user$role() != "SC") {
+        shiny::hideTab("tabs", target = "Eksport")
+      }
+  })
+
   # Brukerkontroller
 
   rapbase::exportUCServer("deformitetExport", "deformitet")
@@ -205,6 +246,7 @@ app_server <- function(input, output, session) {
   # Veiledning
 
   rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
+
 
 }
 

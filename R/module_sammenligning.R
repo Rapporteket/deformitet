@@ -104,6 +104,8 @@ module_sammenligning_UI <- function (id) {
         selected = "Primæroperasjon"
       ),
 
+      shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
+
       dateRangeInput( # fourth select
         inputId = ns("date"),
         label = "Tidsintervall:",
@@ -130,7 +132,7 @@ module_sammenligning_UI <- function (id) {
 #'
 #'@export
 
-module_sammenligning_server <- function (id) {
+module_sammenligning_server <- function (id, userRole, userUnitId) {
   moduleServer(
     id,
     function(input, output, session){
@@ -142,28 +144,44 @@ module_sammenligning_server <- function (id) {
 
       regdata <- deformitet::pre_pros(regdata)
 
-      # nolint start
-
-      # FAKE DATA:
-
-      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
-      #
-      # regdata <- pre_pros(regdata)
-
-      # nolint end
+      output$reshid <- renderUI({
+        ns <- session$ns
+        if (userRole() == 'SC') {
+          shiny::selectInput(
+            inputId = ns("reshId_var"),
+            label = "Enhet",
+            choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
+            selected = "Haukeland"
+          )
+        }
+      })
 
       ##### MAKE BASIC UTVALG ##################################################
 
       data_sam_reactive <- reactive({
-        x <- deformitet::utvalg_basic(regdata,
-                                      "alle",
-                                      input$gender_var,
-                                      input$type_op,
-                                      input$date[1],
-                                      input$date[2],
-                                      input$alder_var[1],
-                                      input$alder_var[2])
-      })
+
+        if (userRole() == "SC") {
+          x <- deformitet::utvalg_basic(regdata,
+                                        input$reshId_var,
+                                        input$gender_var,
+                                        input$type_op,
+                                        input$date[1],
+                                        input$date[2],
+                                        input$alder_var[1],
+                                        input$alder_var[2])
+
+        } else {
+          x <- deformitet::utvalg_basic(regdata,
+                                        userUnitId(),
+                                        input$gender_var,
+                                        input$type_op,
+                                        input$date[1],
+                                        input$date[2],
+                                        input$alder_var[1],
+                                        input$alder_var[2])
+
+      }
+    })
 
       #### CHECK FOR SMALL SAMPLE SIZE IN CHOSEN VARIABLES #####################
 #

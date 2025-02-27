@@ -9,7 +9,7 @@ app_ui <- function() {
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   shiny::tagList( # Needed for "about the user" tags
-    shiny::navbarPage(# type of page
+    shiny::navbarPage( # type of page
 
       ###### Graphics ----------------------------------------------------------
       title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))), # add the logo
@@ -117,12 +117,7 @@ app_ui <- function() {
               value = c(10, 20),
               dragRange = TRUE),
 
-            selectInput( # fifth select
-              inputId = "reshId_var",
-              label = "Enhet",
-              choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
-              selected = "Haukeland"
-            ),
+            shinyjs::hidden(uiOutput(outputId = 'reshid')),
 
             radioButtons( # sixth select
               inputId = "type_op",
@@ -131,14 +126,7 @@ app_ui <- function() {
               selected = "Primæroperasjon"
             ),
 
-            radioButtons( # seventh select
-              inputId = "type_view",
-              label = "Vis rapport for:",
-              choices = c("Hele landet" = "hele landet",
-                          "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
-                          "Hver enhet" = "hver enhet",
-                          "Egen enhet" = "egen enhet"
-                          )),
+            shinyjs::hidden(uiOutput(outputId = 'view_type')),
 
             dateRangeInput( # third select
               inputId = "date",
@@ -157,8 +145,7 @@ app_ui <- function() {
               bslib::navset_card_underline(
                 title = "Visualiseringer",
                 bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table")),
-                bslib::nav_panel("Text", textOutput("text"))
+                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
               )
             )
           )
