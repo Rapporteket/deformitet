@@ -25,13 +25,36 @@ app_server <- function(input, output, session) {
   library(shinyWidgets)
   library(NHSRplotthedots)
 
-######## USER INFO--------------------------------------------------------------
 
-  userRole = rapbase::getUserRole(session)
+  ######### DATA TIDYING----------------------------------------------------------
+  ### Read in data:
+  regdata <- deformitet::les_og_flate_ut()
+
+  #### Clean and tidy data:
+
+  regdata <- deformitet::pre_pros(regdata)
+
+  ######## USER INFO--------------------------------------------------------------
+
+  # Make a df that can be used for mapping between resh-ids and hospital names
+  # Must be organized as df with two columns: UnitId and orgname
+  # in order for navbarWidgetServer2 to work properly
+
+  map_db_resh <- regdata %>%
+    select(Sykehus, CENTREID) %>% # select required columns
+    unique() %>% # keep only unique variables
+    mutate(UnitId = CENTREID, # make new column with new name
+           orgname = Sykehus) %>% # make new column with new name
+    select(-c(Sykehus, CENTREID)) # take out old columns
 
 
-  rapbase::navbarWidgetServer("deformitetNavbarWidget", "deformitet",
-                              caller = "deformitet")
+  user <- rapbase::navbarWidgetServer2("deformitetNavbarWidget",
+                                       "deformitet", # denne skal bli navbarWidgetServer når alt er fikset i rapbase
+                                       caller = "deformitet",
+                                       map_orgname = shiny::req(map_db_resh))
+
+
+
 
   ################################################################################
   ##### TAB: Startside ###########################################################
@@ -48,13 +71,7 @@ app_server <- function(input, output, session) {
   ################################################################################
   ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-  ######### DATA TIDYING----------------------------------------------------------
-  ### Read in data:
-  regdata <- deformitet::les_og_flate_ut()
 
-  #### Clean and tidy data:
-
-  regdata <- deformitet::pre_pros(regdata)
 
   # nolint start
 
@@ -174,7 +191,9 @@ app_server <- function(input, output, session) {
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  deformitet::module_datadump_server("module_1")
+  deformitet::module_datadump_server("module_1",
+                                     userRole = user$role,
+                                     userUnitId = user$org)
 
 ################################################################################
 ###### TAB: Exporting data #####################################################

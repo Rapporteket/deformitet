@@ -157,7 +157,8 @@ app_ui <- function() {
               bslib::navset_card_underline(
                 title = "Visualiseringer",
                 bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
+                bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table")),
+                bslib::nav_panel("Text", textOutput("text"))
               )
             )
           )
@@ -173,7 +174,6 @@ shiny::tabPanel(
 
 
 
-
 ################################################################################
 ##### TAB: Sammenligning  ######################################################
 
@@ -181,16 +181,6 @@ shiny::tabPanel(
   title = "Sammenligning",
   deformitet::module_sammenligning_UI("sam1")
 ),
-
-
-################################################################################
-##### TAB: spc  ################################################################
-
-shiny::tabPanel(
-  title = "SPC",
-  deformitet::module_spc_UI("spc")
-),
-
 
 ################################################################################
 ##### TAB: spc  ################################################################

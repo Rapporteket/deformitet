@@ -5,7 +5,7 @@
 #' @export
 
 
-clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b) {
+clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b, userRole, userUnitId) {
 
 
   data <- data %>%
@@ -20,4 +20,12 @@ clean_datadump <- function(data, var1a, var1b, var2, var3a, var3b) {
   data <- data %>%
     dplyr::filter(dplyr::between(Alder_num, {{var3a}}, {{var3b}}))
 
+
+  if (userRole != "SC") {
+    data <- data %>%
+      dplyr::select(-contains(c("mths", "mnd"))) %>%
+      dplyr::filter(CENTREID == userUnitId)
+  }
+
+  return(data)
 }
