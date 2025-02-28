@@ -6,11 +6,17 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 21 * * 6' # run every Saturday at 21
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   push_to_registries:
     name: Push Docker image to docker hub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       IMAGE_NAME: ${{ github.repository }}
     steps:
@@ -32,8 +38,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=schedule,pattern=weekly
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
@@ -42,7 +48,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push to Docker Hub
+      - name: Build image and push to Docker Hub
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -50,5 +56,4 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          build-args: GH_PAT=${{ secrets.GITHUB_TOKEN }}
