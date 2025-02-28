@@ -199,9 +199,9 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
 
                             # HELSETILSTAND
                             {{var}} == "Helsetilstand" ~ "Helsetilstandsskår (0-100) preoperativt",
-                            {{var}} == "Helsetilstand_3mnd" ~ "Helsetilstandsskår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "Helsetilstand_12mnd" ~ "Helsetilstandsskår (1-5), 12 måneders oppfølging",
-                            {{var}} == "Helsetilstand_60mnd" ~ "Helsetilstandsskår (1-5), 5 års oppfølging",
+                            {{var}} == "Helsetilstand_3mnd" ~ "Helsetilstandsskår (0-100), 3-6 måneders oppfølging",
+                            {{var}} == "Helsetilstand_12mnd" ~ "Helsetilstandsskår (0-100), 12 måneders oppfølging",
+                            {{var}} == "Helsetilstand_60mnd" ~ "Helsetilstandsskår (0-100), 5 års oppfølging",
 
                             # KOMPLIKASJONER
                             {{var}} == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging",

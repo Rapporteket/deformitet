@@ -6,7 +6,7 @@
 ######### FUNCTION FOR CALCULATING COUNTS PR KVALITETSINDIKATOR ################
 ################################################################################
 
-kval_count <- function(data, var, kjønn, type_op){
+kval_count <- function(data, var, kjønn, type_op, map_db, userRole, userUnitId){
 
 
 
@@ -37,14 +37,11 @@ kval_count <- function(data, var, kjønn, type_op){
 
   kval <- data %>%
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
-                                     PRE_MAIN_CURVE > 70,
+                                     PRE_MAIN_CURVE < 70,
                                    {{var}} == "Komplikasjoner_3mnd" ~
                                      Komplikasjoner_3mnd == "Ja",
                                    {{var}} == "Liggetid" ~
                                      Liggetid == "> 7"| Liggetid == "7",
-                                   {{var}} == "SRS22_spm22_3mnd" ~
-                                     SRS22_spm22_3mnd == "Definitivt ja" |
-                                     SRS22_spm22_3mnd == "Sannsynligvis ja",
                                    {{var}} == "SRS22_spm21_3mnd" ~
                                      SRS22_spm21_3mnd == "Ganske fornøyd" |
                                      SRS22_spm21_3mnd == "Svært godt fornøyd",
@@ -110,12 +107,27 @@ kval_count <- function(data, var, kjønn, type_op){
     }
   }
 
+  map_db <- map_db %>%
+    dplyr::rename(CENTREID = UnitId,
+           Sykehus = orgname)
+
+  kval2 <- left_join(thode, map_db)
+
+  if (userRole != "SC") {
+    kval2 <- kval2 %>%
+      dplyr::filter(CENTREID == {{userUnitId}})
+  }
 
   ############# RETURN a data set with Kjønn: F, M, Both with rate and counts ####
 
-  return(thode)
+  return(kval2)
 }
 
+# nolint start
+
 # testing:
-## kval <-  kval_count(regdata, "PRE_MAIN_CURVE", "jj", "Begge")
+## kval <-  kval_count(regdata, "PRE_MAIN_CURVE", "jj", "Begge", map_db_resh)
+
+# nolint end
+
 

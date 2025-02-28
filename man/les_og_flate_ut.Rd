@@ -2,10 +2,10 @@
 % Please edit documentation in R/func_les_og_flate_ut.R
 \name{les_og_flate_ut}
 \alias{les_og_flate_ut}
-\title{Les inn data og lag utflatet dataramme}
+\title{Les og flate ut}
 \usage{
 les_og_flate_ut()
 }
 \description{
-Les inn data og lag utflatet dataramme
+Les og flate ut
 }

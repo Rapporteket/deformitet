@@ -1,12 +1,44 @@
+x-environment: &environment
+  MYSQL_DB_LOG: db_log # log in
+  MYSQL_DB_AUTOREPORT: db_autoreport # autoreport
+  MYSQL_DB_DATA: DeformitetRapporteket # databasenavnet - det finner vi i adminer
+  MYSQL_HOST: db
+  MYSQL_USER: root
+  MYSQL_PASSWORD: root
+  FALK_APP_ID: 14 # velg id (tall). NHN vil generere ny id seinere
+  USERORGID: "pilot" # vi tror det vil samsvare med pakkenavnet
+  SHINYPROXY_USERNAME: test@tester.no
+  SHINYPROXY_USERGROUPS: "pilot"
+  FALK_USER_EMAIL: ingrid.bondevik@helse-nord.no
+
+
 services:
   db:
     image: mysql:8
-    command: --innodb-log-file-size=500M --innodb_strict_mode=0
     restart: "no"
-    volumes:
-    - ~/softlinks/mysql_db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+    #- ./inst/db:docker-entrypoint-initdb.d
+    - ~/softlinks/mysql_db:/var/lib/mysql
+    entrypoint: sh -c "/usr/local/bin/docker-entrypoint.sh  --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
+
+  app:
+    depends_on:
+      - db
+    image: ingridtesternhn # image navn
+    ports:
+      - 3838:3838 # port for å se appen
+    volumes:
+      - ./data-raw/config:/app/R
+    environment:
+      R_RAP_CONFIG_PATH: /app/R
+      FALK_EXTENDED_USER_RIGHTS: "[{\"A\":14,\"R\":\"LU\",\"U\":111961},{\"A\":14,\"R\":\"SC\",\"U\":111961},{\"A\":14,\"R\":\"SC\",\"U\":103240},{\"A\":14,\"R\":\"LU\",\"U\":103240}, ,{\"A\":14,\"R\":\"SC\",\"U\":102467},{\"A\":14,\"R\":\"LU\",\"U\":102467}]]" # erstatte disse resh-ene med noen som faktisk eksisterer i dataene
+      R_RAP_INSTANCE: "QAC"
+      << : *environment
+    platform: linux/amd64 # kun nødvendig å ha med 
 
   dev:
     depends_on:
@@ -19,16 +51,13 @@ services:
       - ~/softlinks/mydata:/home/rstudio/mydata
     ports:
       - "8787:8787"
-      - "3838:3838"
-    dns:
-      - 8.8.8.8
     restart: "no"
     environment:
+      << : *environment
       DISABLE_AUTH: "true"
-      DB_HOST: db
-      DB_USER: root
-      DB_PASS: root
-    platform: linux/amd64
+      R_RAP_CONFIG_PATH: /home/rstudio/norgast/data-raw/config
+      FALK_EXTENDED_USER_RIGHTS: "[{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":111961},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":111961},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":103240},{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":103240}, {\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":102467},{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":102467}]" # du må ha tre backslashes i dev og en i app
+    platform: linux/amd64 # kun nødvendig for mac-brukere
 
   adminer:
     depends_on:
