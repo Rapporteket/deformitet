@@ -17,18 +17,19 @@ Description: Applikasjon for Ryggkirurgiregisteret - Deformitet
 Depends:
   R (>= 3.5.0)
 Imports:
-  DT, 
+  bslib,
+  DT,
+  dplyr,
+  ggplot2,
   magrittr,
+  NHSRplotthedots,
+  rlang,
   shiny,
   shinyalert,
-  ggplot2,
-  dplyr,
-  rlang,
+  shinyjs,
+  shinyWidgets,
   tidyr,
-  usethis,
-  dplyr,
-  bslib, 
-  shinyjs
+  usethis
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
