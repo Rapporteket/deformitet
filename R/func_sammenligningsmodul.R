@@ -1,8 +1,8 @@
-#'@title Check for small sample size
+#' Check for small sample size
 #'
-#'Returns a list of data frames
+#' @return a list of data frames
 #'
-#'@export
+#' @export
 
 check_small_sample <- function (data, var1, var2) {
 
@@ -42,11 +42,11 @@ check_small_sample <- function (data, var1, var2) {
 ## g[[2]]$SRS22_FULL_SCORE_patient12mths # sjekk at the fungerer
 # nolint end
 
-#'@title Make labels
+#' Make labels
 #'
-#'returns a dataframe with conditional labels
+#' @return a dataframe with conditional labels
 #'
-#'@export
+#' @export
 
 make_labels <- function (data1, data2, comp1, comp2) {
   labels = data.frame(var1 = 0,
@@ -85,11 +85,11 @@ make_labels <- function (data1, data2, comp1, comp2) {
 ## labels <- make_labels(plot_data1, plot_data2, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
 # nolint end
 
-#'@title Plot for comparison
+#' Plot for comparison
 #'
-#'returns a plot
+#' @return a plot
 #'
-#'@export
+#' @export
 
 comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
 
@@ -137,11 +137,11 @@ comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
 ## p
 # nolint end
 
-#'@title Plot for comparison
+#' Plot for comparison
 #'
-#'returns a plot
+#' @return a plot
 #'
-#'@export
+#' @export
 
 comparison_plot_discrete <- function(data1, data2, labels, comp1, comp2) {
 
