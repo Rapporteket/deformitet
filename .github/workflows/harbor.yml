@@ -3,9 +3,11 @@ on:
   release:
     types: [published]
   push:
-    branches: [ "main" ]
+    branches:
+        - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+        - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -13,6 +15,7 @@ concurrency:
 
 jobs:
   build:
+    name: Push Docker image to Harbor
     runs-on: ubuntu-latest
     env:
         IMAGE_NAME: ${{ github.repository }}
