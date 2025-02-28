@@ -6,18 +6,24 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 21 * * 6' # run every Saturday at 21
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   push_to_registries:
     name: Push Docker image to docker hub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       IMAGE_NAME: ${{ github.repository }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
       - name: R setup
-        uses: r-lib/actions/setup-r@v2.11.1
+        uses: r-lib/actions/setup-r@v2
       - name: Build package (tarball)
         run: R CMD build .
       - name: Lint Dockerfile
@@ -26,29 +32,28 @@ jobs:
           dockerfile: "Dockerfile"
       - name: Prepare tags
         id: docker_meta
-        uses: docker/metadata-action@v5.6.1
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=schedule,pattern=weekly
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.7.1
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3.3.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v6.13.0
+      - name: Build image and push to Docker Hub
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          build-args: GH_PAT=${{ secrets.GITHUB_TOKEN }}
