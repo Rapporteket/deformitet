@@ -1,6 +1,6 @@
 #'@title Ui sammenligningsmodul
 #'
-#'@export
+#' @export
 
 module_spc_UI <- function (id) {
   ns <- NS(id)

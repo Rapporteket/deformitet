@@ -11,7 +11,7 @@
 #'                   surgeonform
 #' @export
 deformitetHentTabell <- function(tabellnavn = "surgeonform") {
-  registryName <- "deformitet"
+  registryName <- "data"
   dbType <- "mysql"
   query <- paste0("SELECT * FROM ", tabellnavn)
 

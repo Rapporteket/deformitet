@@ -15,6 +15,15 @@ module_datadump_UI <- function(id){
                       "Datasett basert på skjematype og utvalg"),
           selected = "Datasett basert på utvalg"),
 
+        conditionalPanel(
+          condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
+          selectInput(
+            inputId = ns("skjema_type"),
+            label = "Data fra: ",
+            choices = c("Pasientskjema",
+                        "Kirurgskjema")
+          )),
+
         selectInput( # second select - var2
           inputId = ns("kjønn_var"),
           label = "Utvalg basert på kjønn",
@@ -38,16 +47,6 @@ module_datadump_UI <- function(id){
           max = "2025-01-02",
           format = "dd-mm-yyyy",
           separator = " - "),
-
-
-        conditionalPanel(
-          condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
-          selectInput(
-            inputId = ns("skjema_type"),
-            label = "Data fra: ",
-            choices = c("Pasientskjema",
-                        "Kirurgskjema")
-          )),
 
         shiny::downloadButton(ns("download_data"), "Last ned data")
         ),
@@ -94,7 +93,7 @@ module_datadump_UI <- function(id){
 
 
 #'@export
-module_datadump_server <- function(id){
+module_datadump_server <- function(id, userRole, userUnitId){
   moduleServer(
     id,
     function(input, output, session){
@@ -105,25 +104,19 @@ module_datadump_server <- function(id){
       # #### Clean and tidy data:
       regdata <- deformitet::pre_pros(regdata)
 
-#### HER LUGGER DET NÅR JEG IKKE HAR EKTE DAtA ####
-
-      reshID = rapbase::getUserReshId(session)
-      userRole = rapbase::getUserRole(session)
-
       # do the cleaning
 
-      if(userRole == "SC"){
         clean_datadump_reactive <- reactive({
-          data <- deformitet::clean_datadump(regdata, input$date[1], input$date[2], input$kjønn_var, input$alder_var[1], input$alder_var[2])
+          data <- deformitet::clean_datadump(regdata,
+                                             input$date[1],
+                                             input$date[2],
+                                             input$kjønn_var,
+                                             input$alder_var[1],
+                                             input$alder_var[2],
+                                             userRole(),
+                                             userUnitId())
         })
-      } else {
-        clean_datadump_reactive <- reactive({
-          data <- deformitet::clean_datadump(regdata, input$date[1], input$date[2], input$kjønn_var, input$alder_var[1], input$alder_var[2])
-          data <- data %>%
-            dplyr::select(-contains(c("mths", "mnd"))) %>%
-            dplyr::filter(CENTREID == reshID)
-        })
-      }
+
 
       colnames_surgeonform <- colnames(deformitet::deformitetHentTabell("surgeonform"))
       colnames_surgeonfollowup <- colnames(deformitet::deformitetHentTabell("surgeonfollowup"))

@@ -35,11 +35,10 @@ services:
       - ./data-raw/config:/app/R
     environment:
       R_RAP_CONFIG_PATH: /app/R
-      FALK_EXTENDED_USER_RIGHTS: "[{\"A\":14,\"R\":\"LU\",\"U\":601225},{\"A\":14,\"R\":\"SC\",\"U\":601225},{\"A\":14,\"R\":\"SC\",\"U\":700922},{\"A\":14,\"R\":\"LU\",\"U\":700922}]" # erstatte disse resh-ene med noen som faktisk eksisterer i dataene
+      FALK_EXTENDED_USER_RIGHTS: "[{\"A\":14,\"R\":\"LU\",\"U\":111961},{\"A\":14,\"R\":\"SC\",\"U\":111961},{\"A\":14,\"R\":\"SC\",\"U\":103240},{\"A\":14,\"R\":\"LU\",\"U\":103240}, ,{\"A\":14,\"R\":\"SC\",\"U\":102467},{\"A\":14,\"R\":\"LU\",\"U\":102467}]]" # erstatte disse resh-ene med noen som faktisk eksisterer i dataene
       R_RAP_INSTANCE: "QAC"
       << : *environment
     platform: linux/amd64 # kun nødvendig å ha med 
-
 
   dev:
     depends_on:
@@ -57,7 +56,7 @@ services:
       << : *environment
       DISABLE_AUTH: "true"
       R_RAP_CONFIG_PATH: /home/rstudio/norgast/data-raw/config
-      FALK_EXTENDED_USER_RIGHTS: "[{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":601225},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":601225},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":700922},{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":700922}]" # du må ha tre backslashes i dev og en i app
+      FALK_EXTENDED_USER_RIGHTS: "[{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":111961},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":111961},{\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":103240},{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":103240}, {\\\"A\\\":14,\\\"R\\\":\\\"SC\\\",\\\"U\\\":102467},{\\\"A\\\":14,\\\"R\\\":\\\"LU\\\",\\\"U\\\":102467}]" # du må ha tre backslashes i dev og en i app
     platform: linux/amd64 # kun nødvendig for mac-brukere
 
   adminer:
