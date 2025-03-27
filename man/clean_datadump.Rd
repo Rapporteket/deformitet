@@ -4,7 +4,7 @@
 \alias{clean_datadump}
 \title{Clean_datadump}
 \usage{
-clean_datadump(data, var1a, var1b, var2, var3a, var3b, user_role)
+clean_datadump(data, var1a, var1b, var2, var3a, var3b, userRole, userUnitId)
 }
 \description{
 Clean data for module data dump

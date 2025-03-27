@@ -24,15 +24,17 @@
 
 pre_pros <- function(regdata){
 
+  regdata <- regdata %>%
+    dplyr::select(-starts_with("USERCOMMENT"))
+
 
 # SYKEHUS:
 regdata <- regdata %>%
   dplyr::rename(Sykehus = CENTRESHORTNAME,
                 Kjønn = GENDER)  %>%
-  dplyr::mutate(Sykehus =
-                  dplyr::recode(Sykehus,
-                                "Bergen" = "Haukeland",
-                                "Riksen" = "Rikshospitalet"))
+  dplyr::mutate(Sykehus = dplyr::recode(Sykehus,
+                                        "Bergen" = "Haukeland",
+                                        "Riksen" = "Rikshospitalet"))
 
 
 # (i) FOR KJØNN:
@@ -137,12 +139,12 @@ regdata <- regdata %>%
   dplyr::mutate(my_time_mins = my_end-my_start,
                 my_time_mins = gsub("mins", "", my_time_mins),
                 my_time_mins = as.numeric(my_time_mins),
-                my_time_mins = replace_na(my_time_mins, 0),
-                KNIFE_TIME_EXACT_TIMER = replace_na(KNIFE_TIME_EXACT_TIMER, 0),
-                KNIFE_TIME_EXACT_MIN= replace_na(KNIFE_TIME_EXACT_MIN, 0),
+                my_time_mins = tidyr::replace_na(my_time_mins, 0),
+                KNIFE_TIME_EXACT_TIMER = tidyr::replace_na(KNIFE_TIME_EXACT_TIMER, 0),
+                KNIFE_TIME_EXACT_MIN= tidyr::replace_na(KNIFE_TIME_EXACT_MIN, 0),
                 KNIFE_TIME_EXACT_TIMER = KNIFE_TIME_EXACT_TIMER*60,
                 my_time_mins2 = KNIFE_TIME_EXACT_TIMER+KNIFE_TIME_EXACT_MIN,
-                my_time_mins2 = replace_na(my_time_mins2, 0),
+                my_time_mins2 = tidyr::replace_na(my_time_mins2, 0),
                 kniv_tid = my_time_mins+my_time_mins2) %>%
   dplyr::select(-KNIFE_TIME_EXACT_MIN, -KNIFE_TIME_EXACT_TIMER, -my_time_mins,
                 -my_time_mins2, -my_start, -my_end)

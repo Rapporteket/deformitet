@@ -9,7 +9,7 @@ app_ui <- function() {
   shiny::addResourcePath("rap", system.file("www", package = "rapbase"))
 
   shiny::tagList( # Needed for "about the user" tags
-    shiny::navbarPage(# type of page
+    shiny::navbarPage( # type of page
 
       ###### Graphics ----------------------------------------------------------
       title = shiny::div(shiny::a(shiny::includeHTML(system.file('www/logo.svg', package = 'rapbase'))), # add the logo
@@ -25,27 +25,10 @@ app_ui <- function() {
 
       shiny::tabPanel( # First tab
         title = "Startside",
-        # waiter::useWaitress(color = "#003087"),
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
-          rapbase:::appNavbarUserWidget( # get info about the user. See server for the input
-            user = shiny::uiOutput("appUserName"),
-            organization = shiny::uiOutput("appOrgName"),
-            addUserInfo = TRUE
-          )
-        #   ),
-        # conditionalPanel(
-        #   condition = userRole == "SC",
-        #   shiny::sidebarPanel(
-        #     selectInput(
-        #       inputId = "enhetsvalg",
-        #       label = "Enhetsvalg",
-        #       choices = c("Rikshospitalet" = ,
-        #                   "Haukeland",
-        #                   "St.Olav")
-        #     )
-        #   )
+          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE)
         )
       ),
 
@@ -104,16 +87,16 @@ app_ui <- function() {
                           #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
                           "SRS22 mental helse preoperativt" = "SRS22_mhelse",
                           "SRS22 mental helse, 3-6 mnd" = "SRS22_mhelse_3mnd",
-                          "SRS22 mental helse, 12 mdn" = "SRS22_mhelse_12mnd",
+                          "SRS22 mental helse, 12 mnd" = "SRS22_mhelse_12mnd",
                           #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
                           "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
                           "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                           #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
                           "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                          "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
+                          "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd"
                           #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
-                          "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
-                          "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+                          #"Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+                          #"Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
                           #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
               ),
               selected = "BMI_kategori"),
@@ -125,18 +108,7 @@ app_ui <- function() {
               choices = c("begge", "mann", "kvinne"),
               selected = "begge"),
 
-
-            dateRangeInput( # third select
-              inputId = "date",
-              label = "Tidsintervall:",
-              start = "2023-01-02",
-              end = "2024-09-02",
-              min = "2023-01-01",
-              max = "2025-09-02",
-              format = "mm/dd/yy",
-              separator = " - "),
-
-            shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
+            #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
             sliderInput( # fourth select
               inputId = "alder_var",
               label = "Aldersintervall:",
@@ -145,12 +117,7 @@ app_ui <- function() {
               value = c(10, 20),
               dragRange = TRUE),
 
-            selectInput( # fifth select
-              inputId = "reshId_var",
-              label = "Enhet",
-              choices = c("Haukeland" = 103240, "Rikshospitalet" = 102467, "St.Olav" = 111961),
-              selected = "Haukeland"
-            ),
+            shinyjs::hidden(uiOutput(outputId = 'reshid')),
 
             radioButtons( # sixth select
               inputId = "type_op",
@@ -159,14 +126,17 @@ app_ui <- function() {
               selected = "Primæroperasjon"
             ),
 
-            radioButtons( # seventh select
-              inputId = "type_view",
-              label = "Vis rapport for:",
-              choices = c("Hele landet" = "hele landet",
-                          "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
-                          "Hver enhet" = "hver enhet",
-                          "Egen enhet" = "egen enhet"
-                          ))
+            shinyjs::hidden(uiOutput(outputId = 'view_type')),
+
+            dateRangeInput( # third select
+              inputId = "date",
+              label = "Tidsintervall:",
+              start = "2023-01-02",
+              end = "2024-09-02",
+              min = "2023-01-01",
+              max = "2025-09-02",
+              format = "dd-mm-yyyy",
+              separator = " - ")
             ),
 
 
@@ -191,7 +161,6 @@ shiny::tabPanel(
 
 
 
-
 ################################################################################
 ##### TAB: Sammenligning  ######################################################
 
@@ -200,28 +169,22 @@ shiny::tabPanel(
   deformitet::module_sammenligning_UI("sam1")
 ),
 
-
 ################################################################################
 ##### TAB: spc  ################################################################
 
-shiny::tabPanel(
-  title = "SPC",
-  deformitet::module_spc_UI("spc")
-),
+# Add ready-made spc-module here if requested by the registry
 
 
 ################################################################################
 ##### TAB: Nestlasting av datadump #############################################
 
-##### download ---------------------------------------------------------------
-      ##### download ---------------------------------------------------------------
 
-        shiny::tabPanel( # third tab
-          title = "Datautvalg",
-          shiny::fluidPage(
-            deformitet::module_datadump_UI(
-              id = "module_1")
-          )),
+shiny::tabPanel( # third tab
+  title = "Datautvalg",
+  shiny::fluidPage(
+    deformitet::module_datadump_UI(
+      id = "module_1")
+    )),
 
 shiny::tabPanel(
   title = "Eksport",

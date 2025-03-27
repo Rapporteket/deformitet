@@ -11,12 +11,14 @@
 kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
 
-  kval_plot <- data %>%
+  plotdata <- data %>%
     dplyr::filter(dplyr::case_when({{choice_kjønn}} != "begge" ~
                                      Kjønn == "kvinne" |
                                      Kjønn == "mann" |
                                      Kjønn == "begge",
-                                   TRUE ~ Kjønn == "begge")) %>%
+                                   TRUE ~ Kjønn == "begge"))
+
+  kval_plot = plotdata %>%
 
     ggplot2::ggplot(aes(x = Kjønn, y = andel_per_syk, fill = Kjønn))+
 
@@ -57,7 +59,8 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
                    legend.position = case_when({{choice_kjønn}} == "begge" ~ "none",
                                                TRUE ~ "right"),
                    axis.text.x = element_text(color = case_when({{choice_kjønn}} == "nei" ~ "white",
-                                                                TRUE ~ "black")))+
+                                                                TRUE ~ "black"), size = 14),
+                   axis.text.y = element_text(size = 14))+
 
     ggplot2::scale_fill_manual(values = c("#6CACE4", "#6FA287", "#BFCED6"))+
 
@@ -69,10 +72,4 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
   return(kval_plot)
 }
-
-
-# Test to see if it works:
-## kval_plot(kval, gg_data, bla, "no")
-## required dataframe
-## bla <- data.frame(d_var)
 

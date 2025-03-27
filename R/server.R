@@ -11,6 +11,7 @@
 
 app_server <- function(input, output, session) {
 
+
   library(dplyr)
   library(deformitet)
   library(tidyr)
@@ -22,29 +23,34 @@ app_server <- function(input, output, session) {
   library(shinyWidgets)
   library(NHSRplotthedots)
 
-######## USER INFO--------------------------------------------------------------
 
-  userRole = "SC"
-  #### MÅ VISES IGJEN NÅR JEG IKKE DRIVER MED FALSKE DATA ####
-##Render small header with user info
+  ######### DATA TIDYING----------------------------------------------------------
+  ### Read in data:
+  regdata <- deformitet::les_og_flate_ut()
 
-  output$appUserName <- shiny::renderText(
-    paste(rapbase::getUserFullName(session),
-          rapbase::getUserRole(session), sep = ", ")
-  )
+  #### Clean and tidy data:
 
-  output$appOrgName <- shiny::renderText(rapbase::getUserReshId(session))
+  regdata <- deformitet::pre_pros(regdata)
 
-  # Make pop-up with "Dette vet Rapporteket om deg:"
+  ######## USER INFO--------------------------------------------------------------
 
-  userInfo <- rapbase::howWeDealWithPersonalData(session,
-                                                 callerPkg = "deformitet")
-  shiny::observeEvent(input$userInfo, {
-    shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-                           type = "", imageUrl = "rap/logo.svg",
-                           closeOnEsc = True, closeOnClickOutside = TRUE,
-                           html = TRUE, confirmButtonText = rapbase::opOptOutOk())
-  })
+  # Make a df that can be used for mapping between resh-ids and hospital names
+  # Must be organized as df with two columns: UnitId and orgname
+  # in order for navbarWidgetServer2 to work properly
+
+  map_db_resh <- regdata %>%
+    select(Sykehus, CENTREID) %>% # select required columns
+    unique() %>% # keep only unique variables
+    mutate(UnitId = CENTREID, # make new column with new name
+           orgname = Sykehus) %>% # make new column with new name
+    select(-c(Sykehus, CENTREID)) # take out old columns
+
+
+  user <- rapbase::navbarWidgetServer2("deformitetNavbarWidget", # denne skal bli navbarWidgetServer når alt er fikset i rapbase
+                                       "deformitet",
+                                       caller = "deformitet",
+                                       map_orgname = shiny::req(map_db_resh))
+
 
   ################################################################################
   ##### TAB: Startside ###########################################################
@@ -61,36 +67,42 @@ app_server <- function(input, output, session) {
   ################################################################################
   ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-  ######### DATA TIDYING----------------------------------------------------------
-  #### Read in data:
-  #regdata <- deformitet::les_og_flate_ut()
-  #
-  # #### Clean and tidy data:
-  #
-  #regdata <- deformitet::pre_pros(regdata)
-
-  ######## FAKE DATA ###########
-
-  regdata <- readRDS("../dev/fake_data_deformitet.rds")
-
-  ## General cleaning
-  regdata <- regdata %>%
-    dplyr::mutate(Sykehus =
-                    dplyr::recode(Sykehus,
-                                  "Bergen" = "Haukeland",
-                                  "Riksen" = "Rikshospitalet"))
-
-  regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                  levels =c("Alvorlig undervekt\n < 16",
-                                            "Undervekt\n (16-17)",
-                                            "Mild undervekt\n (17-18,5)",
-                                            "Normal\n (18,5-25)",
-                                            "Overvekt\n (25-30)",
-                                            "Moderat fedme\n, klasse I (30-35)",
-                                            "Fedme, klasse II \n (35-40)",
-                                            "Fedme, klasse III \n (40-50)"))
-
   # Prepare data based on UI choices
+
+
+  output$reshid <- renderUI({
+    if (user$role() == 'SC') { # fifth select
+      shiny::selectInput(
+        inputId = "reshId_var",
+        label = "Enhet",
+        choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
+        selected = "Haukeland"
+      )
+    }
+  })
+
+
+  output$view_type <- renderUI({
+    if(user$role() == 'SC') {
+      shiny::radioButtons( # seventh select
+        inputId = "type_view",
+        label = "Vis rapport for:",
+        choices = c("Hele landet" = "hele landet",
+                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                    "Hver enhet" = "hver enhet",
+                    "Egen enhet" = "egen enhet"
+        ))
+    } else {
+      shiny::radioButtons( # seventh select
+        inputId = "type_view",
+        label = "Vis rapport for:",
+        choices = c("Hele landet" = "hele landet",
+                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                    "Egen enhet" = "egen enhet"
+        ))
+    }
+  })
+
 
   prepVar_reactive <- reactive({
     deformitet::prepVar(
@@ -133,14 +145,24 @@ app_server <- function(input, output, session) {
   #Aggregate data in table format
 
   table_reactive <- reactive({
-    deformitet::makeTable(data_reactive(), input$reshId_var, input$type_view)
+    if (user$role() == 'SC') {
+      reshid = input$reshId_var
+    } else {
+      reshid = user$org()
+    }
+    deformitet::makeTable(data_reactive(), reshid, input$type_view)
   })
 
   # Make table of komplikasjonstyper
   ### Komplikasjonstyper is aggregated separately from the rest of the variables
 
   kompl_reactive <- reactive({
-    test <- deformitet::kompl_data(regdata, input$reshId_var)
+    if (user$role() == 'SC') {
+      reshid = input$reshId_var
+    } else {
+      reshid = user$org()
+    }
+    test <- deformitet::kompl_data(regdata, reshid)
   })
 
 
@@ -180,46 +202,42 @@ app_server <- function(input, output, session) {
 ##### TAB: Kvalitetsindikatorer ################################################
 
 
-  deformitet::module_kvalitetsindikator_server("kval1")
+  deformitet::module_kvalitetsindikator_server("kval1",
+                                               db_data = map_db_resh,
+                                               userRole = user$role,
+                                               userUnitId = user$org)
 
   ################################################################################
   ##### TAB: Sammenligning #####################################################
 
 
-  deformitet::module_sammenligning_server("sam1")
+  deformitet::module_sammenligning_server("sam1",
+                                          userRole = user$role,
+                                          userUnitId = user$org)
 
   ################################################################################
   ##### TAB: SPC #################################################################
 
-  deformitet::module_spc_server("spc")
+  # Add ready-made module here if requested by registry
+
 
   ################################################################################
   ##### TAB: Nestlasting av datadump #############################################
 
-  #userRole <- rapbase::getUserRole(session) # define userRole
 
-  if(userRole != "SC"){ # hide tab is userRole is not SC
-    shiny::hideTab(
-      inputId = "tabs", # saying its the tabs part of the page that should be hidden
-      target = "Datautvalg" # saying its the tab with "Datautvalg"
-    )
-    shiny::hideTab(
-      inputId = "tabs",
-      target = "Eksport"
-    )
-  }
-
-  output$d1 <- shiny::downloadHandler( # output = downloadHandler
-    filename = function() {
-      paste('datadump_utvalg', Sys.Date(), '.csv', sep = "") # make file name
-    },
-    content = function(con){
-      write.csv(regdata, con) # content is the non aggregated, fully processed data)
-    }
-  )
+  deformitet::module_datadump_server("module_1",
+                                     userRole = user$role,
+                                     userUnitId = user$org)
 
 ################################################################################
 ###### TAB: Exporting data #####################################################
+
+  shiny::observeEvent(
+    shiny::req(user$role()), {
+      if (user$role() != "SC") {
+        shiny::hideTab("tabs", target = "Eksport")
+      }
+  })
 
   # Brukerkontroller
 
@@ -228,6 +246,7 @@ app_server <- function(input, output, session) {
   # Veiledning
 
   rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
+
 
 }
 

@@ -60,16 +60,16 @@ make_labels <- function (data1, data2, comp1, comp2) {
   ## Conditional ggtitle
   if (labels$var1[1] < 20 && labels$var2[1] < 20) {
   labels$ggtitle <- "For få observasjoner i begge valgte variabler"
-  }
-
-  if (labels$var1[1] < 20) {
-    labels$ggtitle <- paste0("For få observasjoner i ", comp1)
-  }
-
-  if (labels$var1[1] < 20) {
-    labels$ggtitle <- paste0("For få observasjoner i ", comp2)
   } else {
-    labels$ggtitle <- paste0("Sammenligning av ", comp1, " og ", comp2)
+    if (labels$var1[1] < 20) {
+      labels$ggtitle <- paste0("For få observasjoner i ", comp1)
+    } else {
+      if (labels$var2[1] < 20) {
+        labels$ggtitle <- paste0("For få observasjoner i ", comp2)
+      } else {
+        labels$ggtitle <- paste0("Sammenligning av ", comp1, " og ", comp2)
+      }
+    }
   }
 
   ## Conditional ggcaption
