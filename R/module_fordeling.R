@@ -117,3 +117,22 @@ module_fordeling_UI <- function (id) {
       )
 
 }
+
+#'@title Server sammenligningsmodul
+#'
+#'@export
+
+module_fordeling_server <- function (id, userRole, userUnitId, data) {
+  moduleServer(
+    id,
+    function(input, output, session){
+
+
+
+
+
+
+
+    }
+    )
+  }
