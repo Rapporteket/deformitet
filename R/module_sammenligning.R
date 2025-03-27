@@ -132,17 +132,10 @@ module_sammenligning_UI <- function (id) {
 #'
 #'@export
 
-module_sammenligning_server <- function (id, userRole, userUnitId) {
+module_sammenligning_server <- function (id, userRole, userUnitId, data) {
   moduleServer(
     id,
     function(input, output, session){
-
-      # ### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
-
-      #### Clean and tidy data:
-
-      regdata <- deformitet::pre_pros(regdata)
 
       output$reshid <- renderUI({
         ns <- session$ns

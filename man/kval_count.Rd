@@ -4,7 +4,7 @@
 \alias{kval_count}
 \title{Calculate counts for kvalitetsiindikator}
 \usage{
-kval_count(data, var, kjønn, type_op)
+kval_count(data, var, kjønn, type_op, map_db, userRole, userUnitId)
 }
 \description{
 Calculate counts for kvalitetsiindikator
