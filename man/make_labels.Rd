@@ -2,14 +2,13 @@
 % Please edit documentation in R/func_sammenligningsmodul.R
 \name{make_labels}
 \alias{make_labels}
-\title{Make labels
-
-returns a dataframe with conditional labels}
+\title{Make labels}
 \usage{
 make_labels(data1, data2, comp1, comp2)
 }
+\value{
+a dataframe with conditional labels
+}
 \description{
 Make labels
-
-returns a dataframe with conditional labels
 }

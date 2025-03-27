@@ -2,14 +2,13 @@
 % Please edit documentation in R/func_sammenligningsmodul.R
 \name{check_small_sample}
 \alias{check_small_sample}
-\title{Check for small sample size
-
-Returns a list of data frames}
+\title{Check for small sample size}
 \usage{
 check_small_sample(data, var1, var2)
 }
+\value{
+a list of data frames
+}
 \description{
 Check for small sample size
-
-Returns a list of data frames
 }

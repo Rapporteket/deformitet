@@ -2,14 +2,13 @@
 % Please edit documentation in R/func_sammenligningsmodul.R
 \name{comparison_plot_discrete}
 \alias{comparison_plot_discrete}
-\title{Plot for comparison
-
-returns a plot}
+\title{Plot for comparison}
 \usage{
 comparison_plot_discrete(data1, data2, labels, comp1, comp2)
 }
+\value{
+a plot
+}
 \description{
 Plot for comparison
-
-returns a plot
 }
