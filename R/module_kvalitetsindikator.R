@@ -255,6 +255,7 @@ regdata <- deformitet::pre_pros(regdata)
         }
       )
 
+      #### RENDER TEXT ##############################################################
       output$text_header <- renderText({
         data <- explanation_kvalind(input$kjønn_var, input$kval_var)
         data$header

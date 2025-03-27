@@ -14,7 +14,7 @@ module_fordeling_UI <- function (id) {
 
           # Select variable for x-axis
           selectInput( # First select
-            inputId = "x_var",
+            inputId = ns("x_var"),
             label = "Variabel:",
             choices = c("test" = "Helsetilstand",
                         "Helsetilstand" = "Helsetilstand",
@@ -70,32 +70,33 @@ module_fordeling_UI <- function (id) {
 
 
           selectInput( # second select
-            inputId = "kjønn_var",
+            inputId = ns("kjønn_var"),
             label = "Utvalg basert på kjønn",
             choices = c("begge", "mann", "kvinne"),
             selected = "begge"),
 
           #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
           sliderInput( # fourth select
-            inputId = "alder_var",
+            inputId = ns("alder_var"),
             label = "Aldersintervall:",
             min = 0,
             max = 100,
             value = c(10, 20),
             dragRange = TRUE),
 
-          shinyjs::hidden(uiOutput(outputId = 'reshid')),
+          shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
+
           radioButtons( # sixth select
-            inputId = "type_op",
+            inputId = ns("type_op"),
             label = "Type operasjon",
             choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
             selected = "Primæroperasjon"
             ),
 
-          shinyjs::hidden(uiOutput(outputId = 'view_type')),
+          shinyjs::hidden(uiOutput(outputId = ns('view_type'))),
 
           dateRangeInput( # third select
-            inputId = "date",
+            inputId = ns("date"),
             label = "Tidsintervall:",
             start = "2023-01-02",
             end = "2024-09-02",
@@ -109,14 +110,22 @@ module_fordeling_UI <- function (id) {
         mainPanel(
           bslib::navset_card_underline(
             title = "Visualiseringer",
-            bslib::nav_panel("Figur", plotOutput(outputId = "plot")),
-            bslib::nav_panel("Tabell", DT::DTOutput(outputId = "table"))
-            )
+            bslib::nav_panel("Figur",
+                             shiny::plotOutput(outputId = ns("plot")),
+                             bslib::card_body(
+                               shiny::downloadButton(ns("download_fordelingsfig"), "Last ned figur"))),
+            bslib::nav_panel("Tabell",
+                             DT::DTOutput(outputId = ns("table")),
+                             bslib::card_body(
+                               shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell")))
           )
-        )
-      )
+
+    )
+   )
+  )
 
 }
+
 
 #'@title Server sammenligningsmodul
 #'
@@ -128,7 +137,157 @@ module_fordeling_server <- function (id, userRole, userUnitId, data) {
     function(input, output, session){
 
 
+      output$reshid <- renderUI({
+        ns <- session$ns
+        if (userRole() == 'SC') { # fifth select
+          shiny::selectInput(
+            inputId = ns("reshId_var"),
+            label = "Enhet",
+            choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
+            selected = "Haukeland"
+          )
+        }
+      })
 
+      output$view_type <- renderUI({
+        ns <- session$ns
+        if(userRole() == 'SC') {
+          shiny::radioButtons( # seventh select
+            inputId = ns("type_view"),
+            label = "Vis rapport for:",
+            choices = c("Hele landet" = "hele landet",
+                        "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                        "Hver enhet" = "hver enhet",
+                        "Egen enhet" = "egen enhet"
+            ))
+        } else {
+          shiny::radioButtons( # seventh select
+            inputId = ns("type_view"),
+            label = "Vis rapport for:",
+            choices = c("Hele landet" = "hele landet",
+                        "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
+                        "Egen enhet" = "egen enhet"
+            ))
+        }
+      })
+
+      prepVar_reactive <- reactive({
+        deformitet::prepVar(
+          data,
+          input$x_var,
+          input$kjønn_var,
+          input$date[1],
+          input$date[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op
+        )
+      })
+
+      # Make data frame where UI choices are stored
+
+      ### ALSO DOCUMENT ALL ACCESS EACH USER ROLE HAS
+
+      my_data_reactive <- reactive({
+        x <- format(input$date, "%d/%m/%y")
+        my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
+      })
+
+
+      # prepVar() returns a list
+      # Unpack part 1 of list: data
+
+      data_reactive <- reactive({
+        data <- data.frame(prepVar_reactive()[1])
+      })
+
+      # Unpack part 2 of list: gg-data
+
+      gg_data_reactive <- reactive({
+        gg_data <- data.frame(prepVar_reactive()[2])
+      })
+
+
+      ######## AGGREGATE DATA-------------------------------------------------------
+
+      #Aggregate data in table format
+
+      table_reactive <- reactive({
+       if (userRole() == 'SC') {
+         reshid = input$reshId_var
+       } else {
+         reshid = userUnitId()
+       }
+        deformitet::makeTable(data_reactive(), reshid, input$type_view)
+      })
+
+      # Make table of komplikasjonstyper
+      ### Komplikasjonstyper is aggregated separately from the rest of the variables
+
+      kompl_reactive <- reactive({
+        if (userRole() == 'SC') {
+          reshid = input$reshId_var
+        } else {
+          reshid = userUnitId()
+        }
+        test <- deformitet::kompl_data(data, reshid)
+      })
+
+
+      # ########## DISPLAY DATA-------------------------------------------------------
+
+      ## TABLE
+
+      output$table <- DT::renderDT({
+        ns <- session$ns
+        if(input$x_var == "Komplikasjonstype"){ # if "komplikasjonstype is chosen, use kompl_reactive
+          kompl_reactive()
+        }
+        else{datatable(table_reactive())
+        }
+      })
+
+
+      # ## FIGURE
+
+      output$plot <- renderPlot({
+        if(input$x_var != "Komplikasjonstype"){
+          gg_data <- data.frame(gg_data_reactive())
+          deformitet::makePlot_gg(table_reactive(),
+                                  gg_data,
+                                  my_data_reactive(),
+                                  input$type_view)
+        }
+        else{
+          gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype",
+                                   "xlab" = "Komplikasjonstype"))
+          deformitet::makePlot_gg(kompl_reactive(),
+                                  gg_kompl,
+                                  my_data_reactive(),
+                                  input$type_view)}
+      })
+
+
+      # ##### NEDLASTING ###############################################################
+      output$download_fordelingsfig <-  downloadHandler(
+        filename = function(){
+          paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
+        },
+        content = function(file){
+          pdf(file, onefile = TRUE, width = 15, height = 9)
+          plot(plot())
+          dev.off()
+        }
+      )
+
+      output$download_fordelingstbl <- downloadHandler(
+        filename = function(){
+          paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
+        },
+        content = function(file){
+          write.csv(table(), file)
+        }
+      )
 
 
 

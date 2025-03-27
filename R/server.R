@@ -64,139 +64,13 @@ app_server <- function(input, output, session) {
   })
 
 
-  ################################################################################
-  ##### TAB: Fordelingsfigur og -tabell ##########################################
+################################################################################
+##### TAB: Fordelingsfigur- og tabell ##########################################
 
-  # Prepare data based on UI choices
-
-
-  output$reshid <- renderUI({
-    if (user$role() == 'SC') { # fifth select
-      shiny::selectInput(
-        inputId = "reshId_var",
-        label = "Enhet",
-        choices = c("Haukeland" = 111961, "Rikshospitalet" = 103240, "St.Olav" = 102467),
-        selected = "Haukeland"
-      )
-    }
-  })
-
-
-  output$view_type <- renderUI({
-    if(user$role() == 'SC') {
-      shiny::radioButtons( # seventh select
-        inputId = "type_view",
-        label = "Vis rapport for:",
-        choices = c("Hele landet" = "hele landet",
-                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
-                    "Hver enhet" = "hver enhet",
-                    "Egen enhet" = "egen enhet"
-        ))
-    } else {
-      shiny::radioButtons( # seventh select
-        inputId = "type_view",
-        label = "Vis rapport for:",
-        choices = c("Hele landet" = "hele landet",
-                    "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
-                    "Egen enhet" = "egen enhet"
-        ))
-    }
-  })
-
-
-  prepVar_reactive <- reactive({
-    deformitet::prepVar(
-      regdata,
-      input$x_var,
-      input$kjønn_var,
-      input$date[1],
-      input$date[2],
-      input$alder_var[1],
-      input$alder_var[2],
-      input$type_op
-      )
-  })
-
-  # Make data frame where UI choices are stored
-
-  ### ALSO DOCUMENT ALL ACCESS EACH USER ROLE HAS
-
-  my_data_reactive <- reactive({
-    x <- format(input$date, "%d/%m/%y")
-    my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
-  })
-  # prepVar() returns a list
-
-  # Unpack part 1 of list: data
-
-  data_reactive <- reactive({
-    data <- data.frame(prepVar_reactive()[1])
-  })
-
-  # Unpack part 2 of list: gg-data
-
-  gg_data_reactive <- reactive({
-    gg_data <- data.frame(prepVar_reactive()[2])
-  })
-
-
-  ######## AGGREGATE DATA-------------------------------------------------------
-
-  #Aggregate data in table format
-
-  table_reactive <- reactive({
-    if (user$role() == 'SC') {
-      reshid = input$reshId_var
-    } else {
-      reshid = user$org()
-    }
-    deformitet::makeTable(data_reactive(), reshid, input$type_view)
-  })
-
-  # Make table of komplikasjonstyper
-  ### Komplikasjonstyper is aggregated separately from the rest of the variables
-
-  kompl_reactive <- reactive({
-    if (user$role() == 'SC') {
-      reshid = input$reshId_var
-    } else {
-      reshid = user$org()
-    }
-    test <- deformitet::kompl_data(regdata, reshid)
-  })
-
-
-  ########## DISPLAY DATA-------------------------------------------------------
-
-  ## TABLE
-
-  output$table <- DT::renderDT({
-    if(input$x_var == "Komplikasjonstype"){ # if "komplikasjonstype is chosen, use kompl_reactive
-      kompl_reactive()
-    }
-    else{datatable(table_reactive())
-      }
-  })
-
-
-  ## FIGURE
-
-  output$plot <- renderPlot({
-    if(input$x_var != "Komplikasjonstype"){
-      gg_data <- data.frame(gg_data_reactive())
-      deformitet::makePlot_gg(table_reactive(),
-                              gg_data,
-                              my_data_reactive(),
-                              input$type_view)
-    }
-    else{
-      gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype",
-                               "xlab" = "Komplikasjonstype"))
-      deformitet::makePlot_gg(kompl_reactive(),
-                              gg_kompl,
-                              my_data_reactive(),
-                              input$type_view)}
-  })
+  deformitet::module_fordeling_server("fordeling",
+                                      data = regdata,
+                                      userRole = user$role,
+                                      userUnitId = user$org)
 
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
@@ -212,6 +86,7 @@ app_server <- function(input, output, session) {
 
 
   deformitet::module_sammenligning_server("sam1",
+                                          data = regdata,
                                           userRole = user$role,
                                           userUnitId = user$org)
 
