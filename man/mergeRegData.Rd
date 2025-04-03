@@ -7,7 +7,6 @@
 mergeRegData(
   mce,
   centre,
-  mce_patient_data,
   patient,
   patient_followup,
   patient_form,

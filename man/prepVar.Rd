@@ -2,10 +2,10 @@
 % Please edit documentation in R/func_prep_data.R
 \name{prepVar}
 \alias{prepVar}
-\title{Simple function}
+\title{prepvar-funksjon}
 \usage{
 prepVar(data, var, var_kjønn, time1, time2, alder1, alder2, type_op)
 }
 \description{
-Simple function
+prepvar-funksjon
 }

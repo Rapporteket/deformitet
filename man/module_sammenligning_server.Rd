@@ -4,7 +4,7 @@
 \alias{module_sammenligning_server}
 \title{Server sammenligningsmodul}
 \usage{
-module_sammenligning_server(id)
+module_sammenligning_server(id, userRole, userUnitId, data)
 }
 \description{
 Server sammenligningsmodul

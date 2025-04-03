@@ -133,7 +133,7 @@ regdata <- deformitet::pre_pros(regdata)
           dplyr::mutate(
             title = dplyr::case_match(
               input$kval_var,
-              "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlilngen (3-6 mnd)",
+              "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder",
@@ -255,6 +255,7 @@ regdata <- deformitet::pre_pros(regdata)
         }
       )
 
+      #### RENDER TEXT ##############################################################
       output$text_header <- renderText({
         data <- explanation_kvalind(input$kjønn_var, input$kval_var)
         data$header

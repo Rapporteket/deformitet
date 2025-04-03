@@ -25,6 +25,9 @@
 pre_pros <- function(regdata){
 
   regdata <- regdata %>%
+    dplyr::rename(PID = PATIENT_ID)
+
+  regdata <- regdata %>%
     dplyr::select(-starts_with("USERCOMMENT"))
 
 
@@ -43,7 +46,7 @@ regdata$Kjønn <- as.character(regdata$Kjønn)
 
 # b. Rename rows:
 regdata <- regdata %>%
-  dplyr::mutate(Kjønn = recode(Kjønn, "1" = "mann", "2" = "kvinne"))
+  dplyr::mutate(Kjønn = dplyr::recode(Kjønn, "1" = "mann", "2" = "kvinne"))
 
 # (ii) FOR ALDER:
 # a. Find number of years
@@ -65,7 +68,7 @@ regdata$Alder <- cut(regdata$Alder,
 # (iii) FOR BMI:
 # a. Make into a factor
 regdata <- regdata %>%
-  dplyr::mutate(BMI_kategori = as.factor(recode(BMI_CATEGORY,
+  dplyr::mutate(BMI_kategori = as.factor(dplyr::recode(BMI_CATEGORY,
     "Alvorlig undervekt" = "Alvorlig undervekt\n < 16",
     "Moderat undervekt" = "Undervekt\n (16-17)",
     "Mild undervekt" = "Mild undervekt\n (17-18,5)",
@@ -321,15 +324,19 @@ regdata$PROCEDURE_COMPLICATIONS_patient12mths <- as.character(regdata$PROCEDURE_
 regdata$PROCEDURE_COMPLICATIONS_patient60mths <- as.character(regdata$PROCEDURE_COMPLICATIONS_patient60mths)
 
 regdata <- regdata %>%
-  dplyr::mutate(Komplikasjoner_3mnd = recode(PROCEDURE_COMPLICATIONS, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+  dplyr::mutate(Komplikasjoner_3mnd = dplyr::recode(PROCEDURE_COMPLICATIONS, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
 regdata <- regdata %>%
-  dplyr::mutate(Komplikasjoner_12mnd = recode(PROCEDURE_COMPLICATIONS_patient12mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+  dplyr::mutate(Komplikasjoner_12mnd = dplyr::recode(PROCEDURE_COMPLICATIONS_patient12mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
 regdata <- regdata %>%
-  dplyr::mutate(Komplikasjoner_60mnd = recode(PROCEDURE_COMPLICATIONS_patient60mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
+  dplyr::mutate(Komplikasjoner_60mnd = dplyr::recode(PROCEDURE_COMPLICATIONS_patient60mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
 
 return(regdata)
- }
+}
+
+
+
+
 
