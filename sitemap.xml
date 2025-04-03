@@ -5,6 +5,7 @@
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
+<url><loc>/reference/add_freq_var_to_dataframe.html</loc></url>
 <url><loc>/reference/app_server.html</loc></url>
 <url><loc>/reference/app_ui.html</loc></url>
 <url><loc>/reference/check_small_sample.html</loc></url>
@@ -19,9 +20,13 @@
 <url><loc>/reference/les_og_flate_ut.html</loc></url>
 <url><loc>/reference/makePlot_gg.html</loc></url>
 <url><loc>/reference/makeTable.html</loc></url>
+<url><loc>/reference/make_freq_table.html</loc></url>
 <url><loc>/reference/make_labels.html</loc></url>
+<url><loc>/reference/mapping_old_name_new_name.html</loc></url>
 <url><loc>/reference/mergeRegData.html</loc></url>
 <url><loc>/reference/module_datadump_UI.html</loc></url>
+<url><loc>/reference/module_fordeling_UI.html</loc></url>
+<url><loc>/reference/module_fordeling_server.html</loc></url>
 <url><loc>/reference/module_kvalitetsindikator_UI.html</loc></url>
 <url><loc>/reference/module_sammenligning_UI.html</loc></url>
 <url><loc>/reference/module_sammenligning_server.html</loc></url>
@@ -30,6 +35,7 @@
 <url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/pre_pros.html</loc></url>
 <url><loc>/reference/prepVar.html</loc></url>
+<url><loc>/reference/prep_var_na.html</loc></url>
 <url><loc>/reference/prepros_SPC.html</loc></url>
 <url><loc>/reference/run_app.html</loc></url>
 <url><loc>/reference/spc_function.html</loc></url>
