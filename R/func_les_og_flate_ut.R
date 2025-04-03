@@ -2,10 +2,10 @@
 #'
 #' @export
 
-mergeRegData <- function(mce, centre, mce_patient_data, patient,
+
+mergeRegData <- function(mce, centre, patient,
                          patient_followup, patient_form, surgeon_followup, surgeon_form) {
-  regData <- merge(mce, mce_patient_data, by = "MCEID") %>% # nested merge
-    merge(centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
+  regData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
     merge(surgeon_form %>% dplyr::filter(STATUS == 1), # filter by status == 1
           by = "MCEID", suffixes = c("", "_surgeon")) %>% # merge by MCEID
     merge(patient_form %>% dplyr::filter(STATUS == 1),
@@ -37,10 +37,7 @@ les_og_flate_ut <- function() {
       mce <- deformitet::deformitetHentTabell("mce")
 
       centre <- deformitet::deformitetHentTabell("centre") %>%
-        dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3")
-
-      # Take out test hospitals
-      mce_patient_data <- deformitet::deformitetHentTabell("mce_patient_data")
+        dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
 
       patient <- deformitet::deformitetHentTabell("patient")
 
@@ -52,9 +49,10 @@ les_og_flate_ut <- function() {
       surgeon_form <- deformitet::deformitetHentTabell("surgeonform")
 
       regData <- deformitet::mergeRegData(
-        mce, centre, mce_patient_data, patient,
+        mce, centre, patient,
         patient_followup, patient_form, surgeon_followup, surgeon_form
       )
+
       return(regData)
     },
     error = function(e) {
@@ -65,4 +63,3 @@ les_og_flate_ut <- function() {
   return(regData)
 }
 
-debug(les_og_flate_ut)

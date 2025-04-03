@@ -88,7 +88,7 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
                                    data_var[5,], "-", data_var[6,]))+
 
 
-    ggplot2::theme_bw()+ # light theme
+    ggplot2::theme_bw(base_size = 16)+ # light theme
 
     ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
                                                face = "italic"),

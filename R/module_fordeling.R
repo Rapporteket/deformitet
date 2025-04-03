@@ -16,8 +16,7 @@ module_fordeling_UI <- function (id) {
           selectInput( # First select
             inputId = ns("x_var"),
             label = "Variabel:",
-            choices = c("test" = "Helsetilstand",
-                        "Helsetilstand" = "Helsetilstand",
+            choices = c("Helsetilstand" = "Helsetilstand",
                         "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
                         "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
                         #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
@@ -117,7 +116,18 @@ module_fordeling_UI <- function (id) {
             bslib::nav_panel("Tabell",
                              DT::DTOutput(outputId = ns("table")),
                              bslib::card_body(
-                               shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell")))
+                               shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell"))),
+            bslib::nav_panel("Frekvenstabeller",
+                             DT::DTOutput(outputId = ns("freq_table")),
+                             bslib::card_body(
+                               shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
+                             bslib::card_body(
+                               bslib::card_title("Om frekvenstabellen"),
+                               bslib::card_body("Tabellen viser gjennomsnitt pr. sykehus og for hele landet.
+                                                Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
+                                                som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
+                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging).")
+                             ))
           )
 
     )
@@ -131,7 +141,7 @@ module_fordeling_UI <- function (id) {
 #'
 #'@export
 
-module_fordeling_server <- function (id, userRole, userUnitId, data) {
+module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
   moduleServer(
     id,
     function(input, output, session){
@@ -265,6 +275,49 @@ module_fordeling_server <- function (id, userRole, userUnitId, data) {
                                   gg_kompl,
                                   my_data_reactive(),
                                   input$type_view)}
+      })
+
+      ####### FREKVENSTABELL ##########################################################
+
+      name_reactive <- reactive({
+        name <- deformitet::mapping_old_name_new_name(raw_data, input$x_var)
+      })
+
+      freq_added_reactive <- reactive({
+        freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, name_reactive())
+      })
+
+
+      freq_prepVar_reactive <- reactive({
+        deformitet::prepVar(
+          freq_added_reactive(),
+          "freq_var",
+          input$kjønn_var,
+          input$date[1],
+          input$date[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op
+        )
+      })
+
+
+      # prepVar() returns a list
+      # Unpack part 1 of list: data
+
+      freq_data_reactive <- reactive({
+        data <- data.frame(freq_prepVar_reactive()[1])
+      })
+
+
+      freq_table_reactive <- reactive({
+        freq_data <- deformitet::make_freq_table(freq_data_reactive())
+      })
+
+
+      output$freq_table <- DT::renderDT({
+        ns <- session$ns
+        datatable(freq_table_reactive())
       })
 
 

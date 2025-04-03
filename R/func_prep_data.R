@@ -1,10 +1,13 @@
-#'
-#' @title Simple function
+
+#' @title prepvar-funksjon
 #'
 #' @export
 #'
 
 prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op){
+
+
+  data <- deformitet::prep_var_na(data, var)
 
 
   # Filter by gender
@@ -219,7 +222,7 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
 my_data <- data %>%
     dplyr::select(c("Sykehus",
                     "CENTREID",
-                    {{var}},
+                    all_of({{var}}),
                     "Kjønn",
                     "CURRENT_SURGERY"))
 
@@ -229,7 +232,75 @@ my_data <- data %>%
 }
 
 # Test of the function
-## x <- prepVar(regdata, "SRS22_spm22_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## x <- prepVar(regdata, "SRS22_spm22_12mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 # Inspect returned data frame (object 1 in list):
 ## rr <- data.frame(x[1])
 ## gg_data <- data.frame(x[2])
+
+
+# Funksjon for å ta ut NA der det ikke er registrert oppfølging enda
+
+#' @title Ta bort na
+#'
+#' @export
+
+prep_var_na <- function (data, var) {
+
+  data <- data
+
+  oppflg <- data.frame(
+    "tre" = c("Helsetilstand_3mnd",
+               "SRS22_spm22_3mnd",
+               "SRS22_spm21_3mnd",
+               "SRS22_total_3mnd",
+               "SRS22_funksjon_3mnd",
+               "SRS22_smerte_3mnd",
+               "SRS22_selvbilde_3mnd",
+               "SRS22_mhelse_3mnd",
+               "SRS22_fornoyd_3mnd",
+               "Komplikasjoner_3mnd"),
+
+    "tolv" = c("Helsetilstand_12mnd",
+                "SRS22_spm22_12mnd",
+                "SRS22_spm21_12mnd",
+                "SRS22_total_12mnd",
+                "SRS22_funksjon_12mnd",
+                "SRS22_smerte_12mnd",
+                "SRS22_selvbilde_12mnd",
+                "SRS22_mhelse_12mnd",
+                "SRS22_fornoyd_12mnd",
+                "Komplikasjoner_12mnd"),
+
+    "seksti" = c("Helsetilstand_60mnd",
+                 "SRS22_spm22_60mnd",
+                 "SRS22_spm21_60mnd",
+                 "SRS22_total_60mnd",
+                 "SRS22_funksjon_60mnd",
+                 "SRS22_smerte_60mnd",
+                 "SRS22_selvbilde_60mnd",
+                 "SRS22_mhelse_60mnd",
+                 "SRS22_fornoyd_60mnd",
+                 "Komplikasjoner_60mnd"))
+
+ if (var %in% oppflg$tre) {
+   data <- data %>%
+     dplyr::filter(FOLLOWUP == 3)
+ }
+
+  if (var %in% oppflg$tolv) {
+    data <- data %>%
+      dplyr::filter(FOLLOWUP_patient12mths == 12)
+  }
+
+  if (var %in% oppflg$seksti) {
+    data <- data %>%
+      dplyr::filter(FOLLOWUP_patient_60mths == 60)
+  }
+
+  return (data)
+}
+
+# nolint start
+# sjekk at det fungerer:
+## r <- prep_var_na(regdata, "Helsetilstand_3mnd")
+# nolint end

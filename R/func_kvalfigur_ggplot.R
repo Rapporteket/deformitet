@@ -52,7 +52,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     ##### THEME AND COLOURS ####################################################
 
-  ggplot2::theme_light()+ # light theme
+    ggplot2::theme_bw(base_size = 16)+ # light theme
 
     ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
                                                face = "italic"),

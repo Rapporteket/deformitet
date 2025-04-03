@@ -122,7 +122,7 @@ comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
       title = labels$ggtitle,
       caption = labels$ggcaption)+
 
-    ggplot2::theme_light()+
+    ggplot2::theme_light(base_size = 16)+
     ggplot2::theme(plot.title = element_text(size = 10,
                                              face = "bold"),
                    plot.caption = element_text(size = 12,

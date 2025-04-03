@@ -26,11 +26,11 @@ app_server <- function(input, output, session) {
 
   ######### DATA TIDYING----------------------------------------------------------
   ### Read in data:
-  regdata <- deformitet::les_og_flate_ut()
+  raw_regdata <- deformitet::les_og_flate_ut()
 
   #### Clean and tidy data:
 
-  regdata <- deformitet::pre_pros(regdata)
+  regdata <- deformitet::pre_pros(raw_regdata)
 
   ######## USER INFO--------------------------------------------------------------
 
@@ -63,12 +63,12 @@ app_server <- function(input, output, session) {
     )
   })
 
-
 ################################################################################
 ##### TAB: Fordelingsfigur- og tabell ##########################################
 
   deformitet::module_fordeling_server("fordeling",
                                       data = regdata,
+                                      raw_data = raw_regdata,
                                       userRole = user$role,
                                       userUnitId = user$org)
 
