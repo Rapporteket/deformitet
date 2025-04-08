@@ -269,47 +269,46 @@ add_freq_var_to_dataframe <- function (raw_data, data, freq_var) {
 
 
 
-
+# nolint start
 ## HER KJØRER PREPVAR ##################
 ## x <- prepVar(rrr, "freq_var", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 ## xx <- data.frame(x[1])
-
+# nolint end
 
 #' @title make_freq_table
 #'
 #' @export
 
 
-make_freq_table <- function (data, kjonn_var) {
+make_freq_table <- function (data) {
 
   freq <- data %>%
-    dplyr::rename(freq_var = 3)
-
-  freq1 <- freq %>%
     dplyr::filter(!is.na(freq_var))
 
-  freq_pr_sykehus <- freq1 %>%
+  freq_pr_sykehus <- freq %>%
     dplyr::group_by(Sykehus) %>%
-    dplyr::tally() %>%
-    dplyr::summarize(gjennomsnitt = round(mean(freq_var), 2),
-              median = median(freq_var)) %>%
+    dplyr::summarise(gjennomsnitt = round(mean(freq_var), 2),
+                     median = median(freq_var)) %>%
     dplyr::ungroup()
 
-  freq_total <- freq1 %>%
+
+  freq_total <- freq %>%
     dplyr::summarize(totalt_gjennomsnitt = round(mean(freq_var), 2),
                      totalt_median = median(freq_var))
 
- freq_table <- merge(freq_pr_sykehus, freq_total)
+  freq_table <- merge(freq_pr_sykehus, freq_total)
 
 
- freq_n <- data %>%
-   group_by(Sykehus) %>%
-   tally() %>%
-   mutate(total_n = sum(n))
+  freq_n <- freq %>%
+    group_by(Sykehus) %>%
+    tally(n = "antall") %>%
+    mutate(totalt_antall = sum(antall))
 
- freq_table2 <- merge(freq_table, freq_n)
+  freq_table2 <- merge(freq_table, freq_n)
 
-  return(freq_table2)
+   return(freq_table2)
+
+
 }
 
 # nolint start

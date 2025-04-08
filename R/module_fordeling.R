@@ -123,10 +123,11 @@ module_fordeling_UI <- function (id) {
                                shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
                              bslib::card_body(
                                bslib::card_title("Om frekvenstabellen"),
-                               bslib::card_body("Tabellen viser gjennomsnitt pr. sykehus og for hele landet.
+                               bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
                                                 Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
                                                 som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
-                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging).")
+                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
+                                                pasienter som er inkludert i beregningen er oppgitt under 'antall'.")
                              ))
           )
 
@@ -244,9 +245,9 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
       })
 
 
-      # ########## DISPLAY DATA-------------------------------------------------------
+      ########### DISPLAY DATA-------------------------------------------------------
 
-      ## TABLE
+      ### TABLE
 
       output$table <- DT::renderDT({
         ns <- session$ns
@@ -258,7 +259,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
       })
 
 
-      # ## FIGURE
+      ### FIGURE
 
       output$plot <- renderPlot({
         if(input$x_var != "Komplikasjonstype"){

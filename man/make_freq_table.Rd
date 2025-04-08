@@ -4,7 +4,7 @@
 \alias{make_freq_table}
 \title{make_freq_table}
 \usage{
-make_freq_table(data, kjonn_var)
+make_freq_table(data)
 }
 \description{
 make_freq_table
