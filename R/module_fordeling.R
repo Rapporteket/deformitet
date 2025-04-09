@@ -236,7 +236,6 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
       ### Komplikasjonstyper is aggregated separately from the rest of the variables
 
       kompl_reactive <- reactive({
-
         if (userRole() == 'SC') {
           reshid = input$reshId_var
         } else {
