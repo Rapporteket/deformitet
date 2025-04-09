@@ -3,31 +3,13 @@
 
 
 # Making a function that returns a table of complications
+# Returns a dataframe
 
-####### MÅ LEGGE INN NOE FUNKSJONALITET HER PÅ KJØNN #####################
-
-kompl_data <- function(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder2, type_op){
+kompl_data <- function(regdata, reshid, var_kjønn, time1, time2, alder1, alder2, type_op, type_view){
 
 # Make data set smaller and more manageageble
   kompl <- regdata %>%
-    # dplyr::select(PATIENT_ID,
-    #               Sykehus,
-    #               Kjønn,
-    #               Alder_num,
-    #               SURGERY_DATE,
-    #               CURRENT_SURGERY,
-    #               Komplikasjoner_3mnd,
-    #               COMPLICATIONS_BLEEDING,
-    #               COMPLICATIONS_UTI,
-    #               COMPLICATIONS_PNEUMONIA,
-    #               COMPLICATIONS_DVT,
-    #               COMPLICATIONS_PE,
-    #               COMPLICATIONS_INFECTION_WOUND,
-    #               COMPLICATIONS_INFECTION_DEEP,
-    #               COMPLICATIONS_INFECTION_REOP,
-    #               COMPLICATIONS_NUMBNESS,
-    #               COMPLICATIONS_PAIN,
-    #               COMPLICATIONS_OTHER) %>%
+
 
     dplyr::mutate(Blødning =
                     dplyr::case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
@@ -63,7 +45,10 @@ kompl_data <- function(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder
   kompl <- kompl %>%
     dplyr::filter(Kjønn == dplyr::case_when({{var_kjønn}} == "kvinne" ~ "kvinne",
                                             {{var_kjønn}} == "mann" ~ "mann",
-                                            {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn))
+                                            {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn)) %>%
+    dplyr::mutate(Kjønn = dplyr::case_when({{var_kjønn}} == "kvinne" ~ "kvinne",
+                                           {{var_kjønn}} == "mann" ~ "mann",
+                                           {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ "begge"))
 
   ### by operation type:
 
@@ -89,7 +74,7 @@ kompl_data <- function(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder
                                  {{alder2}}))
 
   kompl <- kompl %>%
-    dplyr::select(PATIENT_ID, Sykehus, Kjønn, Blødning, UVI, Lunge, DVT,
+    dplyr::select(PID, Sykehus, CENTREID, Kjønn, Blødning, UVI, Lunge, DVT,
                   Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
 
 
@@ -98,7 +83,7 @@ kompl_data <- function(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder
 
   # # pivot longer
   kompl <- kompl %>%
-    tidyr::pivot_longer(!c(PATIENT_ID, Sykehus, Kjønn), names_to = "type", values_to = "Komplikasjonstype") %>%
+    tidyr::pivot_longer(!c(PID, Sykehus, Kjønn, CENTREID), names_to = "type", values_to = "Komplikasjonstype") %>%
     dplyr::select(-type)
 
   # # remove "unknown" and nas
@@ -111,92 +96,70 @@ kompl_data <- function(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder
     dplyr::filter(Komplikasjonstype != "0")
 
   # # make data frames of tables
-  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjønn))
+  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjønn, kompl$CENTREID))
 
   # # rename columns
   kompl_df <- kompl_df %>%
     dplyr::rename(Sykehus = Var1,
                   Komplikasjonstype = Var2,
                   Kjønn = Var3,
-                  antall = Freq)
+                  antall = Freq,
+                  reshId = Var4)
 
 
+  if(type_view == "hver enhet"){
+    return (kompl_df)
 
-  if(var_kjønn != "kvinne" | var_kjønn != "mann"){
+  }
 
-        kompl_df <- kompl_df %>%
-          dplyr::mutate(Kjønn = "begge")
-        }
+  if(type_view == "egen enhet"){
+    kompl_df_hosp <- kompl_df %>%
+      dplyr::filter(reshId == {{reshid}})
 
+    return(kompl_df_hosp)
+  }
 
+  if(type_view == "hele landet, uten sammenligning"){
+    kompl_df_all <- kompl_df %>%
+      dplyr::group_by(Komplikasjonstype, Kjønn) %>%
+      dplyr::mutate(Antall = sum(antall)) %>%
+      dplyr::select(Komplikasjonstype, Kjønn, Antall) %>%
+      dplyr::mutate(Sykehus = "Alle") %>%
+      dplyr::distinct()
 
-  # # make me vs. the rest stats
-  # kompl_df <- kompl_df %>%
-  #   dplyr::mutate(Sykehus  = dplyr::case_when({{Sykehus}} == "Bergen" ~
-  #                                               dplyr::recode(Sykehus,
-  #                                                             "Riksen" = "Resten",
-  #                                                             "St.Olav" = "Resten"),
-  #                                             {{Sykehus}} == "Riksen" ~
-  #                                               dplyr::recode(Sykehus,
-  #                                                             "Bergen" = "Resten",
-  #                                                             "St.Olav" = "Resten"),
-  #                                             {{Sykehus}} == "St.Olav" ~
-  #                                               dplyr::recode(Sykehus,
-  #                                                             "Bergen" = "Resten",
-  #                                                             "Riksen" = "Resten"),
-  #                                             TRUE ~ Sykehus))
-  #
-  # # pivot wider again
-  # kompl_df <- kompl_df %>%
-  #   tidyr::pivot_wider(names_from = Sykehus, values_from = antall, values_fn = list)
-  #
-  # # for the hospitals name
-  # if(Sykehus %in% c("Bergen", "Riksen", "St.Olav")){
-  #   kompl_df <- kompl_df %>%
-  #     tidyr::unnest_wider(Resten, names_sep = ".") %>%
-  #     tidyr::unnest_wider(dplyr::case_when({{Sykehus}} == "Bergen" ~ "Bergen",
-  #                                          {{Sykehus}} == "Riksen" ~ "Riksen",
-  #                                          {{Sykehus}} == "St.Olav" ~ "St.Olav"), names_sep = "") %>%
-  #     dplyr::mutate(Resten = Resten.1+Resten.2) %>%
-  #     dplyr::select(-Resten.1, -Resten.2)
-  #
-  #
-  #
-  #
-  #   kompl_df$Sykehus <- sub("1", "", kompl_df$Sykehus)
-  #
-  #   y <- kompl_df %>%
-  #     dplyr::group_by(Sykehus, .drop=FALSE) %>%
-  #     dplyr::mutate(antall_pr_Sykehus = sum(antall)) %>%
-  #     dplyr::group_by(Sykehus, Komplikasjonstype, .drop=FALSE) %>%
-  #     dplyr::mutate(andel = round(antall/antall_pr_Sykehus, 4),
-  #            prosent = round(andel*100,2))
-  #
-  #
-  #   y$Sykehus <- sub("1", "", y$Sykehus)
-  #
-  # }
-  # else{
-  # x <- kompl_df %>%
-  #   tidyr::pivot_longer(!Komplikasjonstype, names_to = "Sykehus", values_to = "antall")
-  #
-  # x$Antall <- as.numeric(x$antall)
-  #
-  # y <- x %>%
-  #   group_by(Sykehus, .drop=FALSE) %>%
-  #   mutate(antall_pr_Sykehus = sum(antall)) %>%
-  #   group_by(Sykehus, Komplikasjonstype, .drop=FALSE) %>%
-  #   mutate(andel = round(antall/antall_pr_Sykehus, 4),
-  #          prosent = round(andel*100, 2))
-  #
-  # }
-  #
-  # g <- y %>%
-  #   dplyr::relocate(Sykehus, .before = Komplikasjonstype)
+    return(kompl_df_all)
 
-  return(kompl_df)
+  }
+  else{return(kompl_df)} # => hele landet med sammenligning
 }
 
+# nolint start
 # test
-## g <- kompl_data(regdata, "Bergen", "mann", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## g <- kompl_data(regdata, 111961, "ee", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "hele landet, uten sammenligning")
+# nolint end
+
+
+###### MAKE TABLE WITH PERCENTAGES ########
+
+kompl_tbl <- function (data, var_kjønn, kompl_data) {
+
+  data_based_on_UI_choices <- data %>%
+    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::tally()
+
+
+  data_based_on_UI_choices <- data_based_on_UI_choices %>%
+    dplyr::case_match({{var_kjønn}} != "mann" |
+                        {{var_kjønn}} != "kvinne" ~ "begge",
+                      {{v}})
+
+  kompl_data <- dplyr::left_join(kompl_data, data_based_on_UI_choices)
+
+
+  return(data_based_on_UI_choices)
+
+}
+
+##
+h <- kompl_tbl(rr, g) #, "Komplikasjoner_3mnd", 111961, "begge", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "hele landet, uten sammenligning")
 
