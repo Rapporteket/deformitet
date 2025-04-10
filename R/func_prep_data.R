@@ -294,7 +294,7 @@ prep_var_na <- function (data, var) {
 
   if (var %in% oppflg$seksti) {
     data <- data %>%
-      dplyr::filter(FOLLOWUP_patient_60mths == 60)
+      dplyr::filter(FOLLOWUP_patient60mths == 60)
   }
 
   return (data)

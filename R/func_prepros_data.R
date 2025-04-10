@@ -337,6 +337,3 @@ return(regdata)
 }
 
 
-
-
-
