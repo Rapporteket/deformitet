@@ -232,7 +232,7 @@ my_data <- data %>%
 }
 
 # Test of the function
-## x <- prepVar(regdata, "SRS22_spm22_12mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## x <- prepVar(regdata, "Komplikasjoner_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 # Inspect returned data frame (object 1 in list):
 ## rr <- data.frame(x[1])
 ## gg_data <- data.frame(x[2])
@@ -294,7 +294,7 @@ prep_var_na <- function (data, var) {
 
   if (var %in% oppflg$seksti) {
     data <- data %>%
-      dplyr::filter(FOLLOWUP_patient_60mths == 60)
+      dplyr::filter(FOLLOWUP_patient60mths == 60)
   }
 
   return (data)

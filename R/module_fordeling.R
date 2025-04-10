@@ -59,10 +59,10 @@ module_fordeling_UI <- function (id) {
                         "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
                         #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
                         "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                        "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd"
+                        "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
                         #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
-                        #"Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
-                        #"Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+                        "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+                        "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
                         #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
             ),
             selected = "BMI_kategori"),
@@ -123,10 +123,11 @@ module_fordeling_UI <- function (id) {
                                shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
                              bslib::card_body(
                                bslib::card_title("Om frekvenstabellen"),
-                               bslib::card_body("Tabellen viser gjennomsnitt pr. sykehus og for hele landet.
+                               bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
                                                 Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
                                                 som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
-                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging).")
+                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
+                                                pasienter som er inkludert i beregningen er oppgitt under 'antall'.")
                              ))
           )
 
@@ -231,62 +232,120 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
         deformitet::makeTable(data_reactive(), reshid, input$type_view)
       })
 
-      # Make table of komplikasjonstyper
-      ### Komplikasjonstyper is aggregated separately from the rest of the variables
 
-      kompl_reactive <- reactive({
-        if (userRole() == 'SC') {
-          reshid = input$reshId_var
-        } else {
-          reshid = userUnitId()
-        }
-        test <- deformitet::kompl_data(data, reshid)
+        # First get a dataset based on UI choices
+
+        kompl_data_reative <- reactive({
+          deformitet::kompl_data(data,
+                                 input$x_var,
+                                 input$kjønn_var,
+                                 input$date[1],
+                                 input$date[2],
+                                 input$alder_var[1],
+                                 input$alder_var[2],
+                                 input$type_op)
       })
 
+      # Next, get a dataset with number of patients who have registered whether
+      # or not they have had a complication (to calculate rates)
 
-      # ########## DISPLAY DATA-------------------------------------------------------
+        kompl_prepVar_reactive <- reactive({
+          if (input$x_var == "Komplikasjonstype") {
+            var = "Komplikasjoner_3mnd"
+          } else {
+            if (input$x_var == "Komplikasjonstype_12mnd") {
+              var = "Komplikasjoner_12mnd"
+            } else {
+              var = "Komplikasjoner_60mnd"
+            }
+          }
 
-      ## TABLE
+          data_prep <- deformitet::prepVar(
+            data,
+            var,
+            input$kjønn_var,
+            input$date[1],
+            input$date[2],
+            input$alder_var[1],
+            input$alder_var[2],
+            input$type_op
+          )
+
+          data <- data.frame(data_prep[1])
+          })
+
+        kompl_tbl_reactive <- reactive({
+            if (userRole() == 'SC') {
+              reshid = input$reshId_var
+            } else {
+              reshid = userUnitId()
+            }
+
+          deformitet::kompl_tbl(
+            kompl_prepVar_reactive(),
+            kompl_data_reative(),
+            input$kjønn_var,
+            input$type_view,
+            reshid
+            )
+          })
+
+
+
+      ########### DISPLAY DATA-------------------------------------------------------
+
+      ### TABLE
+
+      ###### FIKSE SÅ JEG KAN OGSÅ SE KOMPLIKASJONSTYPER ETTER 12 MNDer!!
 
       output$table <- DT::renderDT({
         ns <- session$ns
-        if(input$x_var == "Komplikasjonstype"){ # if "komplikasjonstype is chosen, use kompl_reactive
-          kompl_reactive()
+        if(input$x_var %in% c("Komplikasjonstype",
+                              "Komplikasjonstype_12mnd",
+                              "Komplikasjonstype_60mnd")) { # if "komplikasjonstype is chosen, use kompl_reactive
+          datatable(kompl_tbl_reactive())
         }
         else{datatable(table_reactive())
         }
       })
 
-
-      # ## FIGURE
+      ### FIGURE
 
       output$plot <- renderPlot({
-        if(input$x_var != "Komplikasjonstype"){
+        if(input$x_var %in% c("Komplikasjonstype",
+                              "Komplikasjonstype_12mnd",
+                              "Komplikasjonstype_60mnd")) {
+          deformitet::kompl_plot(kompl_tbl_reactive(),
+                                 input$x_var,
+                                 my_data_reactive())
+        }
+        else{
           gg_data <- data.frame(gg_data_reactive())
           deformitet::makePlot_gg(table_reactive(),
                                   gg_data,
                                   my_data_reactive(),
                                   input$type_view)
-        }
-        else{
-          gg_kompl <- data.frame(c("title" = "Operasjoner pr komplikasjonstype",
-                                   "xlab" = "Komplikasjonstype"))
-          deformitet::makePlot_gg(kompl_reactive(),
-                                  gg_kompl,
-                                  my_data_reactive(),
-                                  input$type_view)}
+          }
       })
 
       ####### FREKVENSTABELL ##########################################################
 
       name_reactive <- reactive({
-        name <- deformitet::mapping_old_name_new_name(raw_data, input$x_var)
-      })
+       name <- deformitet::mapping_old_name_new_name(raw_data, input$x_var)
+       })
 
       freq_added_reactive <- reactive({
-        freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, name_reactive())
-      })
 
+        if (input$x_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
+
+          freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, input$x_var)
+
+        } else {
+
+          freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, name_reactive())
+        }
+
+      })
 
       freq_prepVar_reactive <- reactive({
         deformitet::prepVar(
@@ -298,20 +357,25 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
           input$alder_var[1],
           input$alder_var[2],
           input$type_op
-        )
-      })
+          )
+        })
 
-
-      # prepVar() returns a list
-      # Unpack part 1 of list: data
 
       freq_data_reactive <- reactive({
         data <- data.frame(freq_prepVar_reactive()[1])
       })
+      # prepVar() returns a list
+      # Unpack part 1 of list: data
 
 
       freq_table_reactive <- reactive({
-        freq_data <- deformitet::make_freq_table(freq_data_reactive())
+        if (input$x_var %in% c("Komplikasjonstype",
+                               "Komplikasjonstype_12mnd",
+                               "Komplikasjonstype_60mnd")) {
+          freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
+        } else {
+          freq_data <- deformitet::make_freq_table(freq_data_reactive())
+        }
       })
 
 
@@ -347,4 +411,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
 
     }
     )
-  }
+}
+
+
+
+

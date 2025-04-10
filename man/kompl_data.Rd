@@ -4,7 +4,7 @@
 \alias{kompl_data}
 \title{Komplikasjonstyper}
 \usage{
-kompl_data(regdata, Sykehus, var_kjønn, time1, time2, alder1, alder2, type_op)
+kompl_data(regdata, var, var_kjønn, time1, time2, alder1, alder2, type_op)
 }
 \description{
 Komplikasjonstyper

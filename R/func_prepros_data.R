@@ -113,8 +113,8 @@ regdata <- regdata %>%
 # b. FOR KURVE-DIFFERANSE PROSENT:
 regdata <- regdata %>%
   dplyr::mutate(Diff_prosent_kurve = (((PRE_MAIN_CURVE - POST_MAIN_CURVE)/PRE_MAIN_CURVE)*100),
-                Diff_prosent_kurve = round(Diff_prosent_kurve, digits = 0),
-                Diff_prosent_kurve = cut(Diff_prosent_kurve,
+                Diff_prosent_kurve_raw = round(Diff_prosent_kurve, digits = 0),
+                Diff_prosent_kurve = cut(Diff_prosent_kurve_raw,
                                          breaks = c(0, 45, 55, 65, 75, 80, 85, 90, 95, 105),
                                          labels = c("0-44", "45-54", "55-64", "65-74", "75-79", "80-84", "85-89", "90-94", "95-100")))
 
@@ -335,8 +335,5 @@ regdata <- regdata %>%
 
 return(regdata)
 }
-
-
-
 
 

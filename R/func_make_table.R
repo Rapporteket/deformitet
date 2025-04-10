@@ -144,47 +144,6 @@ mapping_old_name_new_name <- function (data, x_var) {
                              "SRS22_fornoyd_12mnd",
                              "SRS22_fornoyd_60mnd"),
 
-                             #
-                             #
-                             # "Helsetilstand",
-                             # "Helsetilstand 3-6 mnd",
-                             # "Helsetilstand 12 mnd",
-                             # "Helsetilstand 5 år",
-                             # "SRS22 'Samme behandling på nytt?' 3-6 mnd",
-                             # "SRS22 'Samme behandling på nytt?' 12 mnd",
-                             # "SRS22 'Samme behandling på nytt?' 5 år",
-                             # "SRS22 'Fornøyd med resultatet?' 3-6 mnd",
-                             # "SRS22 'Fornøyd med resultatet?' 12 mdn",
-                             # "SRS22 'Fornøyd med resultatet?' 5 år",
-                             # "BMI-kategori", # +ALDER
-                             # "Pre-operativ kurve",
-                             # "Post-operativ kurve", # + diff kurve
-                             # "Liggetid",
-                             # "Blodtap pr. 100 ml",
-                             # "Blodtap pr. 200 ml",
-                             # "SRS22 totalscore preoperativt",
-                             # "SRS22 totalscore 3-6 mnd",
-                             # "SRS22 totalscore 12 mnd",
-                             # "SRS22 totalscore 5 år",
-                             # "SRS22 funksjon preoperativt",
-                             # "SRS22 funksjon, 3-6 mnd",
-                             # "SRS22 funksjon, 12 mnd",
-                             # "SRS22 funksjon, 5 år",
-                             # "SRS22 smerte preoperativt",
-                             # "SRS22 smerte, 3-6 mnd",
-                             # "SRS22 smerte, 12 mnd",
-                             # "SRS22 smerte, 5 år",
-                             # "SRS22 selvbilde preoperativt",
-                             # "SRS22 selvbilde, 3-6 mnd",
-                             # "SRS22 selvbilde, 12 mnd",
-                             # "SRS22 selvbilde, 5 år",
-                             # "SRS22 mental helse preoperativt",
-                             # "SRS22 mental helse, 3-6 mnd",
-                             # "SRS22 mental helse, 12 mnd",
-                             # "SRS22 mental helse, 5 år",
-                             # "SRS22 tilfredshet, 3-6 mnd",
-                             # "SRS22 tilfredshet, 12 mnd",
-                             # "SRS22 tilfredshet, 5 år"),
 
                          new_name = c("HELSETILSTAND_SCALE",
                                       "HEALTH_CONDITION_SCALE",
@@ -251,65 +210,75 @@ mapping_old_name_new_name <- function (data, x_var) {
 
 add_freq_var_to_dataframe <- function (raw_data, data, freq_var) {
 
-  select_raw <- raw_data %>%
-    dplyr::select(all_of(freq_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
+  if (freq_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
-  freq_data <- dplyr::left_join(data, select_raw, by = "MCEID")
+    freq_data <- data %>%
+      mutate(freq_var = case_when({{freq_var}} == "Alder" ~ Alder_num,
+                                  {{freq_var}} == "Knivtid" ~ kniv_tid,
+                                  {{freq_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
 
-  colnames(freq_data)[ncol(freq_data)] = "freq_var"
+    return (freq_data)
 
-  return (freq_data)
+  } else {
+    select_raw <- raw_data %>%
+      dplyr::select(all_of(freq_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
+
+    freq_data <- dplyr::left_join(data, select_raw, by = "MCEID")
+
+    colnames(freq_data)[ncol(freq_data)] = "freq_var"
+
+    return (freq_data)
+    }
 
 }
 
 # nolint start
 ##
-## rrr <- add_freq_var_to_dataframe(raw_regdata, regdata, ggg)
+## rrr <- add_freq_var_to_dataframe(raw_regdata, regdata, "Diff_prosent_kurve")
 # nolint end
 
 
 
-
+# nolint start
 ## HER KJØRER PREPVAR ##################
 ## x <- prepVar(rrr, "freq_var", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 ## xx <- data.frame(x[1])
-
+# nolint end
 
 #' @title make_freq_table
 #'
 #' @export
 
 
-make_freq_table <- function (data, kjonn_var) {
+make_freq_table <- function (data) {
 
   freq <- data %>%
-    dplyr::rename(freq_var = 3)
-
-  freq1 <- freq %>%
     dplyr::filter(!is.na(freq_var))
 
-  freq_pr_sykehus <- freq1 %>%
+  freq_pr_sykehus <- freq %>%
     dplyr::group_by(Sykehus) %>%
-    dplyr::tally() %>%
-    dplyr::summarize(gjennomsnitt = round(mean(freq_var), 2),
-              median = median(freq_var)) %>%
+    dplyr::summarise(gjennomsnitt = round(mean(freq_var), 2),
+                     median = median(freq_var)) %>%
     dplyr::ungroup()
 
-  freq_total <- freq1 %>%
+
+  freq_total <- freq %>%
     dplyr::summarize(totalt_gjennomsnitt = round(mean(freq_var), 2),
                      totalt_median = median(freq_var))
 
- freq_table <- merge(freq_pr_sykehus, freq_total)
+  freq_table <- merge(freq_pr_sykehus, freq_total)
 
 
- freq_n <- data %>%
-   group_by(Sykehus) %>%
-   tally() %>%
-   mutate(total_n = sum(n))
+  freq_n <- freq %>%
+    group_by(Sykehus) %>%
+    tally(n = "antall") %>%
+    mutate(totalt_antall = sum(antall))
 
- freq_table2 <- merge(freq_table, freq_n)
+  freq_table2 <- merge(freq_table, freq_n)
 
-  return(freq_table2)
+   return(freq_table2)
+
+
 }
 
 # nolint start
