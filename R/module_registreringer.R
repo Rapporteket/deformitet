@@ -6,7 +6,8 @@ module_registreringer_UI <- function (id) {
   ns <- NS(id)
   shiny::tagList(
     shiny::fluidPage(
-      shiny::textOutput(outputId = ns("Test"))
+      shiny::htmlOutput(outputId = ns("Test"), inline = TRUE)
+
     )
   )
 
@@ -21,10 +22,15 @@ module_registreringer_server <- function (id, userRole, userUnitId, data, raw_da
     id,
     function(input, output, session){
 
-      output$Test <- renderText(
-        "Her kommer en oversikt over registreringer"
+      output$Test <- shiny::renderUI({
+        rapbase::renderRmd(
+          system.file("registreringer.Rmd", package = "deformitet"),
+          outputType = "html_fragment"
+        )
+      }
       )
 
     }
   )
 }
+
