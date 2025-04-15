@@ -62,6 +62,14 @@ shiny::tabPanel(
 ),
 
 ################################################################################
+##### TAB: Registreringer  #####################################################
+
+shiny::tabPanel(
+  title = "Registreringer",
+  deformitet::module_registreringer_UI("reg1")
+),
+
+################################################################################
 ##### TAB: spc  ################################################################
 
 # Add ready-made spc-module here if requested by the registry

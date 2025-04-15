@@ -4,6 +4,12 @@
 
 module_registreringer_UI <- function (id) {
   ns <- NS(id)
+  shiny::tagList(
+    shiny::fluidPage(
+      shiny::textOutput(outputId = ns("Test"))
+    )
+  )
+
 
 }
 
@@ -14,6 +20,11 @@ module_registreringer_server <- function (id, userRole, userUnitId, data, raw_da
   moduleServer(
     id,
     function(input, output, session){
+
+      output$Test <- renderText(
+        "Her kommer en oversikt over registreringer"
+      )
+
     }
   )
 }

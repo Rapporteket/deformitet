@@ -91,6 +91,15 @@ app_server <- function(input, output, session) {
                                           userUnitId = user$org)
 
   ################################################################################
+  ##### TAB: Registreringer #####################################################
+
+
+  deformitet::module_registreringer_server("reg1",
+                                          data = regdata,
+                                          userRole = user$role,
+                                          userUnitId = user$org)
+
+  ################################################################################
   ##### TAB: SPC #################################################################
 
   # Add ready-made module here if requested by registry
