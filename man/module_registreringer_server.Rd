@@ -4,7 +4,7 @@
 \alias{module_registreringer_server}
 \title{Server sammenligningsmodul}
 \usage{
-module_registreringer_server(id, userRole, userUnitId, data, raw_data)
+module_registreringer_server(id, userRole, userUnitId, data)
 }
 \description{
 Server sammenligningsmodul
