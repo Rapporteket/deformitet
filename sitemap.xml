@@ -30,6 +30,8 @@
 <url><loc>/reference/module_fordeling_UI.html</loc></url>
 <url><loc>/reference/module_fordeling_server.html</loc></url>
 <url><loc>/reference/module_kvalitetsindikator_UI.html</loc></url>
+<url><loc>/reference/module_registreringer_UI.html</loc></url>
+<url><loc>/reference/module_registreringer_server.html</loc></url>
 <url><loc>/reference/module_sammenligning_UI.html</loc></url>
 <url><loc>/reference/module_sammenligning_server.html</loc></url>
 <url><loc>/reference/module_spc_UI.html</loc></url>
@@ -44,6 +46,8 @@
 <url><loc>/reference/spc_text.html</loc></url>
 <url><loc>/reference/tabell_sam.html</loc></url>
 <url><loc>/reference/tabell_sam_discrete.html</loc></url>
+<url><loc>/reference/tbl_reg.html</loc></url>
+<url><loc>/reference/tbl_skjema_reg.html</loc></url>
 <url><loc>/reference/utvalg_basic.html</loc></url>
 </urlset>
 
