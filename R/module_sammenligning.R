@@ -154,7 +154,7 @@ module_sammenligning_server <- function (id, userRole, userUnitId, data) {
       data_sam_reactive <- reactive({
 
         if (userRole() == "SC") {
-          x <- deformitet::utvalg_basic(regdata,
+          x <- deformitet::utvalg_basic(data,
                                         input$reshId_var,
                                         input$gender_var,
                                         input$type_op,
@@ -164,7 +164,7 @@ module_sammenligning_server <- function (id, userRole, userUnitId, data) {
                                         input$alder_var[2])
 
         } else {
-          x <- deformitet::utvalg_basic(regdata,
+          x <- deformitet::utvalg_basic(data,
                                         userUnitId(),
                                         input$gender_var,
                                         input$type_op,

@@ -21,7 +21,7 @@ app_server <- function(input, output, session) {
   library(rapbase)
   library(bslib)
   library(shinyWidgets)
-  library(NHSRplotthedots)
+  library(lubridate)
 
 
   ######### DATA TIDYING----------------------------------------------------------
@@ -86,6 +86,15 @@ app_server <- function(input, output, session) {
 
 
   deformitet::module_sammenligning_server("sam1",
+                                          data = regdata,
+                                          userRole = user$role,
+                                          userUnitId = user$org)
+
+  ################################################################################
+  ##### TAB: Registreringer #####################################################
+
+
+  deformitet::module_registreringer_server("reg1",
                                           data = regdata,
                                           userRole = user$role,
                                           userUnitId = user$org)
