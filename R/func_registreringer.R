@@ -47,23 +47,23 @@ tbl_skjema_reg <- function (date1, date2, data) {
                                  as.Date({{date1}}, format = "%d-%m-%Y"),
                                  as.Date({{date2}}, format = "%d-%m-%Y"))) %>%
     group_by(Sykehus) %>%
-    mutate(patient = sum(!is.na(REGISTERED_DATE)),
-           patient_form = sum(!is.na(FILLING_DATE)),
-           surgeon_form = sum(!is.na(SURGERY_DATE)),
-           patient_followup3mths = sum(!is.na(FOLLOWUP)),
-           surgeon_followup3mths = sum(!is.na(FOLLOWUP_surgeon3mths)),
-           patient_followup12mths = sum(!is.na(FOLLOWUP_patient12mths)),
-           surgeon_followup12mths = sum(!is.na(FOLLOWUP_surgeon12mths)),
-           patient_followup60mths = sum(!is.na(FOLLOWUP_patient60mths))) %>%
+    mutate(personopplysninger = sum(!is.na(REGISTERED_DATE)),
+           Skjema_1a_Pasientoppl_preop = sum(!is.na(FILLING_DATE)),
+           Skjema_2a_Sykepleier_lege_preop = sum(!is.na(SURGERY_DATE)),
+           Skjema_1a_Pasientoppl_3mnd = sum(!is.na(FOLLOWUP)),
+           Skjema_2a_Sykepleier_lege_3mnd = sum(!is.na(FOLLOWUP_surgeon3mths)),
+           Skjema_1a_Pasientoppl_12mnd = sum(!is.na(FOLLOWUP_patient12mths)),
+           Skjema_2a_Sykepleier_lege_12mnd = sum(!is.na(FOLLOWUP_surgeon12mths)),
+           Skjema_1a_Pasientoppl_60mnd = sum(!is.na(FOLLOWUP_patient60mths))) %>%
     select(c(Sykehus,
-             patient,
-             patient_form,
-             surgeon_form,
-             patient_followup3mths,
-             surgeon_followup3mths,
-             patient_followup12mths,
-             surgeon_followup12mths,
-             patient_followup60mths)) %>%
+             personopplysninger,
+             Skjema_1a_Pasientoppl_preop,
+             Skjema_2a_Sykepleier_lege_preop,
+             Skjema_1a_Pasientoppl_3mnd,
+             Skjema_2a_Sykepleier_lege_3mnd,
+             Skjema_1a_Pasientoppl_12mnd,
+             Skjema_2a_Sykepleier_lege_12mnd,
+             Skjema_1a_Pasientoppl_60mnd)) %>%
     unique()
 
   return(tbl_skjema)
