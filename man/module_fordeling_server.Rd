@@ -4,7 +4,7 @@
 \alias{module_fordeling_server}
 \title{Server sammenligningsmodul}
 \usage{
-module_fordeling_server(id, userRole, userUnitId, data, raw_data)
+module_fordeling_server(id, userRole, userUnitId, data, raw_data, map_data)
 }
 \description{
 Server sammenligningsmodul

@@ -1,7 +1,6 @@
 #'@title Module fordeling
 #'@export
 
-
 module_fordeling_UI <- function (id) {
   ns <- NS(id)
   shiny::tagList(
@@ -106,47 +105,74 @@ module_fordeling_UI <- function (id) {
           ),
 
         # Output: Show plot
-        mainPanel(
-          bslib::navset_card_underline(
-            title = "Visualiseringer",
-            bslib::nav_panel("Figur",
-                             shiny::plotOutput(outputId = ns("plot")),
-                             bslib::card_body(
-                               shiny::downloadButton(ns("download_fordelingsfig"), "Last ned figur"))),
-            bslib::nav_panel("Tabell",
-                             DT::DTOutput(outputId = ns("table")),
-                             bslib::card_body(
-                               shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell"))),
-            bslib::nav_panel("Frekvenstabeller",
-                             DT::DTOutput(outputId = ns("freq_table")),
-                             bslib::card_body(
-                               shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
-                             bslib::card_body(
-                               bslib::card_title("Om frekvenstabellen"),
-                               bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
-                                                Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
-                                                som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
-                                                registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
-                                                pasienter som er inkludert i beregningen er oppgitt under 'antall'.")
-                             ))
-          )
+    #     mainPanel(
+    #       bslib::navset_card_underline(
+    #         bslib::nav_panel("Figur",
+    #                           shiny::plotOutput(outputId = ns("my_plot")),
+    #                           bslib::card_body(
+    #                             shiny::downloadButton(ns("download_fordelingsfig"), "Last ned figur"))),
+    #         bslib::nav_panel("Tabell",
+    #                          DT::DTOutput(outputId = ns("table")),
+    #                          bslib::card_body(
+    #                            shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell"))),
+    #         bslib::nav_panel("Frekvenstabeller",
+    #                          DT::DTOutput(outputId = ns("freq_table")),
+    #                          bslib::card_body(
+    #                            shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
+    #                          bslib::card_body(
+    #                            bslib::card_title("Om frekvenstabellen"),
+    #                            bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
+    #                                             Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
+    #                                             som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
+    #                                             registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
+    #                                             pasienter som er inkludert i beregningen er oppgitt under 'antall'.")
+    #                          ))
+    #       )
+    # )
 
-    )
+    mainPanel(
+      tabsetPanel(id = ns("tab"),
+                  tabPanel("Figur", value = "fig",
+                           plotOutput(outputId = ns("my_plot"), height = "auto"),
+                           downloadButton(ns("download_fordelingsfig"),
+                                          "Last ned figur")),
+                  tabPanel("Tabell", value = "tab",
+                           DT::DTOutput(outputId = ns("table")),
+                           downloadButton(ns("download_fordelingstbl"),
+                                          "Last ned tabell")
+                  ),
+                  tabPanel("Frekvens", value = "freq",
+                           DT::DTOutput(outputId = ns("freq_table")),
+                           downloadButton(ns("download_fordelingsfreqtable"),
+                                          "Last ned tabell"),
+                           bslib::card_body(
+                             bslib::card_title("Om frekvenstabellen"),
+                             bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
+                                              Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
+                                              som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
+                                              registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
+                                              pasienter som er inkludert i beregningen er oppgitt under 'antall'.")))
+      )
    )
   )
-
+  )
 }
+
+
 
 
 #'@title Server sammenligningsmodul
 #'
 #'@export
 
-module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
+module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, map_data) {
   moduleServer(
     id,
     function(input, output, session){
 
+
+      # Define constants for complication types
+      COMPLICATION_TYPES <- c("Komplikasjonstype", "Komplikasjonstype_12mnd", "Komplikasjonstype_60mnd")
 
       output$reshid <- renderUI({
         ns <- session$ns
@@ -243,7 +269,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
                                  input$date[2],
                                  input$alder_var[1],
                                  input$alder_var[2],
-                                 input$type_op)
+                                 input$type_op,
+                                 map_data)
       })
 
       # Next, get a dataset with number of patients who have registered whether
@@ -298,35 +325,42 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
 
       ###### FIKSE SÅ JEG KAN OGSÅ SE KOMPLIKASJONSTYPER ETTER 12 MNDer!!
 
-      output$table <- DT::renderDT({
-        ns <- session$ns
-        if(input$x_var %in% c("Komplikasjonstype",
-                              "Komplikasjonstype_12mnd",
-                              "Komplikasjonstype_60mnd")) { # if "komplikasjonstype is chosen, use kompl_reactive
-          datatable(kompl_tbl_reactive())
-        }
-        else{datatable(table_reactive())
-        }
-      })
-
-      ### FIGURE
-
-      output$plot <- renderPlot({
-        if(input$x_var %in% c("Komplikasjonstype",
-                              "Komplikasjonstype_12mnd",
-                              "Komplikasjonstype_60mnd")) {
-          deformitet::kompl_plot(kompl_tbl_reactive(),
-                                 input$x_var,
-                                 my_data_reactive())
+      table <- reactive ({
+        if(input$x_var %in% COMPLICATION_TYPES) { # if "komplikasjonstype" is chosen, use kompl_reactive
+          x <- kompl_tbl_reactive()
         }
         else{
-          gg_data <- data.frame(gg_data_reactive())
-          deformitet::makePlot_gg(table_reactive(),
-                                  gg_data,
-                                  my_data_reactive(),
-                                  input$type_view)
-          }
+          x <- table_reactive()
+        }
       })
+
+
+      output$table <- DT::renderDT({
+        datatable(table())
+      })
+
+      ### FIGURE ###
+
+      my_plot <- reactive ({
+        if(input$x_var %in% COMPLICATION_TYPES) {
+           deformitet::kompl_plot(kompl_tbl_reactive(),
+                                      input$x_var,
+                                      my_data_reactive())
+                   }
+        else{
+          gg_data <- data.frame(gg_data_reactive())
+          # Generate the plot using the selected table, ggplot data, and user input.
+          # The `input$type_view` parameter determines the type of view (e.g., "Hele landet", "Egen enhet") for the plot.
+          deformitet::makePlot_gg(table_reactive(),
+                                       gg_data,
+                                       my_data_reactive(),
+                                       input$type_view)
+        }
+      })
+
+      output$my_plot <- renderPlot({
+        my_plot()
+      }, width = 800, height = 600)
 
       ####### FREKVENSTABELL ##########################################################
 
@@ -367,17 +401,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
       # prepVar() returns a list
       # Unpack part 1 of list: data
 
-
-      freq_table_reactive <- reactive({
-        if (input$x_var %in% c("Komplikasjonstype",
-                               "Komplikasjonstype_12mnd",
-                               "Komplikasjonstype_60mnd")) {
+      freq_table_reactive <- reactive ({
+        if (input$x_var %in% COMPLICATION_TYPES) {
           freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
-        } else {
-          freq_data <- deformitet::make_freq_table(freq_data_reactive())
-        }
+      } else {
+        freq_data <- deformitet::make_freq_table(freq_data_reactive())
+      }
       })
-
 
       output$freq_table <- DT::renderDT({
         ns <- session$ns
@@ -392,7 +422,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
         },
         content = function(file){
           pdf(file, onefile = TRUE, width = 15, height = 9)
-          plot(plot())
+          plot(my_plot())
           dev.off()
         }
       )
@@ -406,13 +436,16 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data) {
         }
       )
 
-
-
-
+      output$dowload_fordelingsfreqtable <- downloadHandler(
+        filename = function(){
+          paste("Frekvenstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
+        },
+        content = function(file){
+          write.csv(freq_table_reactive(), file)
+        }
+      )
     }
     )
 }
-
-
 
 
