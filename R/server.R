@@ -70,13 +70,15 @@ app_server <- function(input, output, session) {
                                       data = regdata,
                                       raw_data = raw_regdata,
                                       userRole = user$role,
-                                      userUnitId = user$org)
+                                      userUnitId = user$org,
+                                      map_data = map_db_resh)
 
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
 
 
   deformitet::module_kvalitetsindikator_server("kval1",
+                                               data = regdata,
                                                db_data = map_db_resh,
                                                userRole = user$role,
                                                userUnitId = user$org)
@@ -110,6 +112,7 @@ app_server <- function(input, output, session) {
 
 
   deformitet::module_datadump_server("module_1",
+                                     data = regdata,
                                      userRole = user$role,
                                      userUnitId = user$org)
 

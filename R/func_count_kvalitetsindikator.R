@@ -8,6 +8,8 @@
 
 kval_count <- function(data, var, kjønn, type_op, map_db, userRole, userUnitId){
 
+  # add column that allows couting complications besides pain
+  data <- ny_komplikasjon3mnd_usmerte(data)
 
 
   ##### Other filtertings as data set grows ####################################
@@ -37,9 +39,9 @@ kval_count <- function(data, var, kjønn, type_op, map_db, userRole, userUnitId)
 
   kval <- data %>%
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
-                                     PRE_MAIN_CURVE < 70,
+                                     PRE_MAIN_CURVE > 70,
                                    {{var}} == "Komplikasjoner_3mnd" ~
-                                     Komplikasjoner_3mnd == "Ja",
+                                     komplikasjoner_uSmerte_3mnd == "ja",
                                    {{var}} == "Liggetid" ~
                                      Liggetid == "> 7"| Liggetid == "7",
                                    {{var}} == "SRS22_spm21_3mnd" ~
@@ -124,10 +126,38 @@ kval_count <- function(data, var, kjønn, type_op, map_db, userRole, userUnitId)
 }
 
 # nolint start
-
 # testing:
-## kval <-  kval_count(regdata, "PRE_MAIN_CURVE", "jj", "Begge", map_db_resh)
-
+## kval <-  kval_count(regdata, "Komplikasjoner_3mnd", "jj", "Begge", map_db_resh, "SC", 103240)
 # nolint end
+
+
+######### FUNCTION THAT COUNTS NUMBER OF FORLØPs WITH COMPLICATIONS OTHER THAN
+######### PAIN ###############################################################
+
+#'@title Ny komplikasjonskolonne
+#'@export
+
+ny_komplikasjon3mnd_usmerte <- function (data) {
+
+  data <- data %>%
+    dplyr::mutate(komplikasjoner_uSmerte_3mnd =
+                    dplyr::if_else(COMPLICATIONS_BLEEDING == 1 |
+                                     COMPLICATIONS_HEAD == 1 |
+                                     COMPLICATIONS_DVT == 1 |
+                                     COMPLICATIONS_UTI == 1 |
+                                     COMPLICATIONS_PNEUMONIA == 1 |
+                                     COMPLICATIONS_PE == 1 |
+                                     COMPLICATIONS_INFECTION_WOUND == 1 |
+                                     COMPLICATIONS_INFECTION_DEEP == 1 |
+                                     COMPLICATIONS_INFECTION_REOP == 1 |
+                                     COMPLICATIONS_NUMBNESS == 1 |
+                                     COMPLICATIONS_OTHER == 1, "ja", "nei")) %>%
+    dplyr::mutate(komplikasjoner_uSmerte_3mnd =
+                    if_else(is.na(komplikasjoner_uSmerte_3mnd), "nei",
+                            if_else(komplikasjoner_uSmerte_3mnd == "nei", "nei", "ja")))
+
+
+  return (data)
+}
 
 

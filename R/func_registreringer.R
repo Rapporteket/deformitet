@@ -21,7 +21,11 @@ tbl_reg <- function(date1, date2, data) {
 
   reg_tbl <- data %>%
     pivot_wider(names_from = c(mnd, aar),names_sep = "-", values_from = n) %>%
-    mutate_all(~replace(., is.na(.), 0))
+
+    mutate_all(~replace(., is.na(.), 0)) %>%
+    mutate(Totalt = rowSums(across(where(is.numeric))))
+
+
 
   return (reg_tbl)
 

@@ -132,7 +132,7 @@ module_sammenligning_UI <- function (id) {
 #'
 #'@export
 
-module_sammenligning_server <- function (id, userRole, userUnitId, data) {
+module_sammenligning_server <- function (id, data, userRole, userUnitId) {
   moduleServer(
     id,
     function(input, output, session){
@@ -182,12 +182,13 @@ module_sammenligning_server <- function (id, userRole, userUnitId, data) {
 
         if(input$comp1 == "PRE_MAIN_CURVE") {
           deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp3)
-        }
-        if (input$comp1 == "Helsetilstand" ||
-            input$comp1 == "Helsetilstand_3mnd") {
-          deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp4)
         } else {
-          deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp2)
+          if (input$comp1 == "Helsetilstand" ||
+              input$comp1 == "Helsetilstand_3mnd") {
+            deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp4)
+          } else {
+            deformitet::check_small_sample(data_sam_reactive(), input$comp1, input$comp2)
+          }
         }
       })
 
@@ -203,7 +204,16 @@ module_sammenligning_server <- function (id, userRole, userUnitId, data) {
       #### MAKE CONDITIONAL LABELS #############################################
 
       data_sam_labels <- reactive({
-        deformitet::make_labels(data_sam1(), data_sam2(), input$comp1, input$comp2)
+        if(input$comp1 == "PRE_MAIN_CURVE") {
+          deformitet::make_labels(data_sam1(), data_sam2(), input$comp1, input$comp3)
+        } else {
+          if (input$comp1 == "Helsetilstand" ||
+              input$comp1 == "Helsetilstand_3mnd") {
+            deformitet::make_labels(data_sam1(), data_sam2(), input$comp1, input$comp4)
+          } else {
+            deformitet::make_labels(data_sam1(), data_sam2(), input$comp1, input$comp2)
+          }
+        }
       })
 
       # #### MAKE PLOT ###########################################################

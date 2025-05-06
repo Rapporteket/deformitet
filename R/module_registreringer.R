@@ -36,17 +36,25 @@ module_registreringer_UI <- function (id) {
       bslib::navset_card_underline(
         bslib::nav_panel("Antall registreringer",
                          DT::DTOutput(outputId = ns("reg_table")),
-                         shiny::downloadButton(ns("download_fig"), "Last ned figur")),
+                         shiny::downloadButton(ns("download_reg_table"), "Last ned tabell"),
+                         bslib::navset_card_underline(
+                           title = h4("Antall registreringer pr. operasjonsdato"),
+                           bslib::card_body("Denne tabellen gir en oversikt over antall operasjoner pr måned (i en gitt tidsperiode). Siden denne oversikten er basert på innregistrerte operasjoner gir tabellen en oversikt over antall operasjoner registrert i registeret."))),
         bslib::nav_panel("Antall registreringer pr. skjema",
                          textOutput(outputId = ns("skjema_text")),
                          DT::DTOutput(outputId = ns("reg_skjema_table")),
-                         shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2"))
+                         shiny::downloadButton(ns("download_reg_skjema_table"), "Last ned tabell", class = "butt2"),
+                         bslib::navset_card_underline(
+                           title = h4("Antall registreringer pr. skjema"),
+                           bslib::card_body("Denne tabellen gir en oversikt over antall registreringer pr skjema (i en gitt tidsperiode). For hvert skjema er tallene basert på registrert dato eller utfyllingsdato. Altså gir tabellen en oversikt over når dataene er registrert inn i registeret.")))
   )
 )
 )
 )
 )
 }
+
+
 
 #'@title Server sammenligningsmodul
 #'@export
@@ -113,6 +121,24 @@ module_registreringer_server <- function (id, userRole, userUnitId, data) {
         paste0("Viser data for tidsrommet: ", date1(), " til ", date2())
       })
 
+
+      output$download_reg_table <- downloadHandler(
+        filename = function(){
+          paste("AntallOperasjoner_", input$registreringer, "_", Sys.Date(), ".csv", sep = "")
+        },
+        content = function(file){
+          write.csv(reg_reactive(), file)
+        }
+      )
+
+      output$download_reg_skjema_table <- downloadHandler(
+        filename = function(){
+          paste("RegistreringerPrSkjema_", input$registreringer, "_", Sys.Date(), ".csv", sep = "")
+        },
+        content = function(file){
+          write.csv(reg_skjema_reactive(), file)
+        }
+      )
     }
   )
 }

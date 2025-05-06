@@ -84,43 +84,26 @@ module_kvalitetsindikator_UI <- function(id){
 
 #'@export
 
-module_kvalitetsindikator_server <- function(id, userRole, userUnitId, db_data){
+module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_data){
   moduleServer(
     id,
     function(input, output, session){
 
-      ### Read in data:
-
-regdata <- deformitet::les_og_flate_ut()
-
-#### Clean and tidy data:
-
-regdata <- deformitet::pre_pros(regdata)
-
-      # nolint start
-
-      # FAKE DATA:
-#
-#       regdata <- readRDS("../dev/fake_data_deformitet.rds")
-#
-#       regdata <- pre_pros(regdata)
-
-      # nolint end
 
       date1_reactive <- reactive({
-        date1 <- min(regdata$SURGERY_DATE)
+        date1 <- min(data$SURGERY_DATE)
       })
 
       date2_reactive <- reactive({
-        date2 <- max(regdata$SURGERY_DATE)
+        date2 <- max(data$SURGERY_DATE)
       })
 
       age1_reactive <- reactive({
-        age1 <- min(regdata$Alder_num)
+        age1 <- min(data$Alder_num)
       })
 
       age2_reactive <-reactive({
-        age2 = max(regdata$Alder_num)
+        age2 = max(data$Alder_num)
       })
 
 
@@ -139,39 +122,30 @@ regdata <- deformitet::pre_pros(regdata)
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder",
               "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"),
 
-            xlab = dplyr::case_match(
+            ylab = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
-              "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd",
+              "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd (unntatt smerte)",
               "CURRENT_SURGERY" ~ "Reoperasjonsrate"),
 
-            yintercept = dplyr::case_match(
+            ymin = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 70,
-              "PRE_MAIN_CURVE"~ 50,
+              "PRE_MAIN_CURVE"~ 0,
+              "Liggetid" ~ 0,
+              "Komplikasjoner_3mnd" ~ 0,
+              "CURRENT_SURGERY" ~ 0),
+
+            ymax = dplyr::case_match(
+              input$kval_var,
+              "SRS22_spm21_3mnd" ~ 100,
+              "PRE_MAIN_CURVE"~ 10,
               "Liggetid" ~ 10,
               "Komplikasjoner_3mnd" ~ 10,
               "CURRENT_SURGERY" ~ 5)
 
-            # y_green = dplyr::case_match(
-            #   input$kval_var,
-            #   "SRS22_spm22_3mnd" ~ c(70, 100),
-            #   "SRS22_spm21_3mnd" ~ c(70, 100),
-            #   "PRE_MAIN_CURVE"~ c(50, 100),
-            #   "Liggetid" ~ c(0, 10),
-            #   "Komplikasjoner_3mnd" ~ c(0, 10),
-            #   "CURRENT_SURGERY" ~ c(0,5)),
-            #
-            # y_red = dplyr::case_match(
-            #   input$kval_var,
-            #   "SRS22_spm22_3mnd" ~ c(0,70),
-            #   "SRS22_spm21_3mnd" ~ c(0,70),
-            #   "PRE_MAIN_CURVE"~ c(0, 50),
-            #   "Liggetid" ~ c(10,50),
-            #   "Komplikasjoner_3mnd" ~ c(10, 50),
-            #   "CURRENT_SURGERY" ~ c(5, 25)),
 
           )
       })
@@ -193,7 +167,7 @@ regdata <- deformitet::pre_pros(regdata)
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
       kval_df_reactive <- reactive({
-        x <- deformitet::kval_count(regdata,
+        x <- deformitet::kval_count(data,
                                     input$kval_var,
                                     input$kjønn_var,
                                     input$type_op,
@@ -265,7 +239,6 @@ regdata <- deformitet::pre_pros(regdata)
         data <- explanation_kvalind(input$kjønn_var, input$kval_var)
         data$text
       })
-
     })
 }
 

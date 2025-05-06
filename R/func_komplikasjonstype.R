@@ -5,7 +5,7 @@
 # Making a function that returns a table of complications
 # Returns a dataframe
 
-kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, type_op){
+kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, type_op, map_data){
 
 # Make data set smaller and more manageageble
   if (var == "Komplikasjonstype") {
@@ -87,9 +87,6 @@ kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, t
       }
 
 
-############## ALT DETTE MÅ GJØRES FOR 12 mnd og 60 mnd også!!
-
-
 
   # Filter to match user choices:
 
@@ -127,7 +124,7 @@ kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, t
                                  {{alder2}}))
 
   kompl <- kompl %>%
-    dplyr::select(PID, Sykehus, Kjønn, Blødning, UVI, Lunge, DVT,
+    dplyr::select(PID, Sykehus, Kjønn, CURRENT_SURGERY, Blødning, UVI, Lunge, DVT,
                   Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
 
 
@@ -136,7 +133,7 @@ kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, t
 
   # # pivot longer
   kompl <- kompl %>%
-    tidyr::pivot_longer(!c(PID, Sykehus, Kjønn), names_to = "type", values_to = "Komplikasjonstype") %>%
+    tidyr::pivot_longer(!c(PID, Sykehus, Kjønn, CURRENT_SURGERY), names_to = "type", values_to = "Komplikasjonstype") %>%
     dplyr::select(-type)
 
   # # remove "unknown" and nas
@@ -149,17 +146,18 @@ kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, t
     dplyr::filter(Komplikasjonstype != "0")
 
   # # make data frames of tables
-  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjønn))
+  kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjønn, kompl$CURRENT_SURGERY))
 
   # # rename columns
   kompl_df <- kompl_df %>%
     dplyr::rename(Sykehus = Var1,
                   Komplikasjonstype = Var2,
                   Kjønn = Var3,
-                  antall = Freq)
+                  antall = Freq,
+                  Operasjon = Var4)
 
   # Add reshId based on hospital name
-  kompl_df <- dplyr::left_join(kompl_df, map_db_resh, join_by(Sykehus == orgname))
+  kompl_df <- dplyr::left_join(kompl_df, map_data, join_by(Sykehus == orgname))
 
 
 
@@ -167,7 +165,7 @@ kompl_data <- function(regdata, var, var_kjønn, time1, time2, alder1, alder2, t
 
 # nolint start
 # test
-## g <- kompl_data(regdata, "Komplikasjonstype", "ee", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+## g <- kompl_data(regdata, "Komplikasjonstype", "ee", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", map_db_resh)
 # nolint end
 
 #' @title Komplikasjonstyper - tabell
@@ -296,6 +294,5 @@ kompl_plot <- function (data, var, data_caption) {
 
 # nolint start
 # test
-## kompl_plot(h, "Komplikasjonstype", data_var_fff)
 # nolint end
 
