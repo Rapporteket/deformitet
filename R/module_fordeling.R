@@ -104,31 +104,7 @@ module_fordeling_UI <- function (id) {
             separator = " - ")
           ),
 
-        # Output: Show plot
-    #     mainPanel(
-    #       bslib::navset_card_underline(
-    #         bslib::nav_panel("Figur",
-    #                           shiny::plotOutput(outputId = ns("my_plot")),
-    #                           bslib::card_body(
-    #                             shiny::downloadButton(ns("download_fordelingsfig"), "Last ned figur"))),
-    #         bslib::nav_panel("Tabell",
-    #                          DT::DTOutput(outputId = ns("table")),
-    #                          bslib::card_body(
-    #                            shiny::downloadButton(ns("download_fordelingstbl"), "Last ned tabell"))),
-    #         bslib::nav_panel("Frekvenstabeller",
-    #                          DT::DTOutput(outputId = ns("freq_table")),
-    #                          bslib::card_body(
-    #                            shiny::downloadButton(ns("dowload_fordelingsfreqtable"), "Last ned frekvenstabell")),
-    #                          bslib::card_body(
-    #                            bslib::card_title("Om frekvenstabellen"),
-    #                            bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
-    #                                             Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
-    #                                             som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
-    #                                             registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
-    #                                             pasienter som er inkludert i beregningen er oppgitt under 'antall'.")
-    #                          ))
-    #       )
-    # )
+
 
     mainPanel(
       tabsetPanel(id = ns("tab"),
