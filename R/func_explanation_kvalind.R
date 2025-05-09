@@ -97,11 +97,13 @@ explanation_kvalind <- function(kjønn_choice, var){
                                           "Komplikasjoner_3mnd" ~
                                           paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
                                           andel kvinnelige pasienter og andel mannlige pasienter som
-                                          rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene.
+                                          rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene
+                                          Smerte som komplikasjon er tatt ut fra denne utregningen ettersom dette er
+                                          en komplikasjon som i høy grad er forventet etter operasjonen.
                                                  For hvert sykehus er hver andel regnet ut slik:", "<br/>",
-                                                 "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>",
-                                                 "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>",
-                                                 "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"),
+                                                 "antall pasienter som rapporterer komplikasjoner (unntatt smerte) ved 3-6 mnds oppfølging / antall opererte *100", "<br/>",
+                                                 "antall kvinnelige pasienter som rapporterer komplikasjoner (unntatt smerte) ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>",
+                                                 "antall mannlige pasienter som rapporterer komplikasjoner (unntatt smerte) ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"),
 
                                           "CURRENT_SURGERY" ~
                                           paste0("Figuren viser reoperasjonsrate for begge kjønn,

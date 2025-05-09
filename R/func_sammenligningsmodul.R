@@ -18,13 +18,13 @@ check_small_sample <- function (data, var1, var2) {
   # If one (or both) of the chosen variables has less than 20 observations
 
   if (data1$count_var1[1] < 20) {
-    data1[[var1]] = 0
+    data1[[var1]] = NA
   } else {
     data1 <- data1
   }
 
   if (data2$count_var2[1] < 20) {
-    data2[[var2]] = 0
+    data2[[var2]] = NA
   } else {
     data2 <- data2
   }
@@ -102,10 +102,10 @@ comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
 
   sam_plot = sam_plot +
   # Comp 1:
-    ggplot2::geom_histogram(data = data1, binwidth = .3, aes(x = .data[[comp1]], color = "før"),
+    ggplot2::geom_density(data = data1, aes(x = .data[[comp1]], color = "før"),
                             fill = "#6CACE4", alpha = .2) +
     # Comp2 2:
-    ggplot2::geom_histogram(data = data2, binwidth = .3, aes(x = .data[[comp2]], color = "etter"),
+    ggplot2::geom_density(data = data2, aes(x = .data[[comp2]], color = "etter"),
                                 fill = "#003087", alpha = .2) +
 
 

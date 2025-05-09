@@ -41,10 +41,10 @@ module_datadump_UI <- function(id){
         dateRangeInput( # first select - var1
           inputId = ns("date"),
           label = "Tidsintervall:",
-          start = "2023-01-02",
-          end = "2024-09-02",
-          min = "2023-01-02",
-          max = "2025-01-02",
+          start = "2023-01-01",
+          end = "2026-01-01",
+          min = "2023-01-01",
+          max = "2026-01-01",
           format = "dd-mm-yyyy",
           separator = " - "),
 
@@ -84,7 +84,8 @@ module_datadump_UI <- function(id){
             bslib::card(
               bslib::card_header(
                 h3("Her er en forhåndsvisning av tabellen som lastes ned"),
-                DT::DTOutput(outputId = ns("datadump")))))
+                DT::DTOutput(outputId = ns("datadump")),
+                )))
         )
       )
     )
@@ -93,21 +94,15 @@ module_datadump_UI <- function(id){
 
 
 #'@export
-module_datadump_server <- function(id, userRole, userUnitId){
+module_datadump_server <- function(id, data, userRole, userUnitId){
   moduleServer(
     id,
     function(input, output, session){
 
-      ### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
-
-      # #### Clean and tidy data:
-      regdata <- deformitet::pre_pros(regdata)
-
       # do the cleaning
 
         clean_datadump_reactive <- reactive({
-          data <- deformitet::clean_datadump(regdata,
+          data <- deformitet::clean_datadump(data,
                                              input$date[1],
                                              input$date[2],
                                              input$kjønn_var,
@@ -167,3 +162,4 @@ module_datadump_server <- function(id, userRole, userUnitId){
     }
   )
 }
+
