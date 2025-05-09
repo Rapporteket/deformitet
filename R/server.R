@@ -123,6 +123,8 @@ app_server <- function(input, output, session) {
     shiny::req(user$role()), {
       if (user$role() != "SC") {
         shiny::hideTab("tabs", target = "Eksport")
+      } else {
+        shiny::showTab("tabs", target = "Eksport")
       }
   })
 

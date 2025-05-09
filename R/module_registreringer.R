@@ -55,7 +55,6 @@ module_registreringer_UI <- function (id) {
 }
 
 
-
 #'@title Server sammenligningsmodul
 #'@export
 
