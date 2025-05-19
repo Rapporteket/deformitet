@@ -8,7 +8,8 @@ output:
 ---
 
 # Rapporteket for Deformitet
-Velkommen til Rapporteket for Deformitetsregisteret. I rapporteket er det mulig å se figurer og tabeller med oppdaterte data, samt å laste ned og abonnere på rapporter der figurer og tabeller er inkludert.  
+Velkommen til Rapporteket for Deformitetsregisteret. I Rapporteket er det mulig å se figurer og tabeller med oppdaterte data, samt å laste ned og abonnere på rapporter der figurer og tabeller er inkludert. 
+
 Dersom du ikke tilhører registerledelsen vil figurene sammenligne din enhet med resten av landet. Det vil si at det ikke er mulig å se tall for hver enkelt av de andre enhetene.
 
 ## Om registeret
@@ -16,4 +17,6 @@ Deformitetsregisteret er en del av NKR (Nasjonalt kvalitetsregister for ryggkiru
 I Norge behandles idiopatisk skoliose ved Haukeland Universitetssjukehus, St.Olavs hospital og Rikshospitalet-OUS. Alle 3 sykehus rapporterer sine operasjoner til registeret. 
 
 Ved inkludering i registeret fyller pasienten ut samtykke og preoperativt skjema. Kirurg fyller ut legeskjema etter operasjon. Pasienter fyller ut skjema postoperativt etter 6 måneder, 2år og 5 år. Dette blir tilsendt og fylles ut elektronisk.
+
 Alle reoperasjoner skal registreres. Dersom pasienter med skoliose opereres for en annen degenerativ rygglidelse (spinal stenose, prolaps etc.) registreres dette i NKR degenerativ, ikke i Deformitet.
+
