@@ -120,7 +120,6 @@ module_registreringer_server <- function (id, userRole, userUnitId, data) {
         paste0("Viser data for tidsrommet: ", date1(), " til ", date2())
       })
 
-
       output$download_reg_table <- downloadHandler(
         filename = function(){
           paste("AntallOperasjoner_", input$registreringer, "_", Sys.Date(), ".csv", sep = "")
