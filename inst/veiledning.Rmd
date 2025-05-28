@@ -37,63 +37,61 @@ regdata <- deformitet::pre_pros(raw_regdata)
 ```{r, include=FALSE, echo=FALSE}
 #### PER SYKEHUS #####
 
-# Alder, kobbvinkel og antall opererte 
-age_curve_data <- regdata %>% 
-  filter(!is.na(PRE_MAIN_CURVE)) %>% 
-   #group_by() ÅR! 
-  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>% 
+#Alder, kobbvinkel og antall opererte
+age_curve_data <- regdata %>%
+  filter(!is.na(PRE_MAIN_CURVE)) %>%
+  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>% 
+  filter(year != 2025) %>%
   summarize("Antall opererte" = as.character(n_distinct(PID)),
             "Pre Cobbvinkel" = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
             Alder_median = round(median(Alder_num), digits = 1),
-            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep ="")) %>% 
-  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>% 
+            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
+  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
   select(-c(Alder_median, Alder_range))
 
 
 # Kjønn
-gender_data <- regdata %>% 
-  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>% 
-  mutate(year = format(year, "%Y")) %>% 
-  filter(year != 2025) %>% 
+gender_data <- regdata %>%
+  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
+  mutate(year = format(year, "%Y")) %>%
+  filter(year != 2025) %>%
   count(f = Kjønn == "kvinne") %>%
-  mutate(total = sum(n)) %>% 
-  filter(f == TRUE) %>% 
-  mutate("Prosentandel kvinner" = as.character(round((n/total*100), digits = 0))) %>%
+  mutate(total = sum(n)) %>%
+  filter(f == TRUE) %>%
+  mutate("Prosentandel kvinner" = as.character(round((n / total * 100), digits = 0))) %>%
   select("Prosentandel kvinner")
 
 key_data <- left_join(age_curve_data, gender_data)
 
 
 #### NASJONALT ####
-# Alder, kobbvinkel og antall opererte 
-nasjonalt_age_curve_data <- regdata %>% 
-  filter(!is.na(PRE_MAIN_CURVE)) %>% 
-   #group_by() ÅR! 
-  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>% 
+# Alder, kobbvinkel og antall opererte
+nasjonalt_age_curve_data <- regdata %>%
+  filter(!is.na(PRE_MAIN_CURVE)) %>%
+  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>% 
+  filter(year != 2025) %>%
   summarize("Antall opererte" = as.character(n_distinct(PID)),
             "Pre Cobbvinkel" = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
             Alder_median = round(median(Alder_num), digits = 1),
-            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep ="")) %>% 
-  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>% 
+            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
+  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
   select(-c(Alder_median, Alder_range))
 
 # Kjønn
-nasjonalt_gender_data <- regdata %>% 
-  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>% 
-  mutate(year = format(year, "%Y")) %>% 
-  filter(year != 2025) %>% 
+nasjonalt_gender_data <- regdata %>%
+  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
+  mutate(year = format(year, "%Y")) %>%
+  filter(year != 2025) %>%
   count(f =  Kjønn == "kvinne") %>%
-  mutate(total = sum(n)) %>% 
-  filter(f == TRUE) %>% 
-  mutate("Prosentandel kvinner" = as.character(round((n/total*100), digits = 0))) %>%
+  mutate(total = sum(n)) %>%
+  filter(f == TRUE) %>%
+  mutate("Prosentandel kvinner" = as.character(round((n / total * 100), digits = 0))) %>%
   select("Prosentandel kvinner")
 
-nasjonalt_key_data <- left_join(nasjonalt_age_curve_data, nasjonalt_gender_data) %>% 
-  mutate(Sykehus = "Nasjonalt") %>% 
+nasjonalt_key_data <- left_join(nasjonalt_age_curve_data, nasjonalt_gender_data) %>%
+  mutate(Sykehus = "Nasjonalt") %>%
   relocate(Sykehus)
 
 ## Koble nasjonalt med sykehusvis
@@ -104,13 +102,18 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 
 ```{r, include=FALSE, echo=FALSE}
 # Lag tabellen
-key_data_table <- key_data %>% 
+key_data_table <- key_data %>%
   pivot_longer(!c(Sykehus, year), names_to = "Variabler", values_to = "Verdier") %>%
-  mutate(Verdier = if_else(Variabler == "Prosentandel kvinner", paste(Verdier, "%", sep = ""), if_else(Variabler == "Pre Cobbvinkel", paste(Verdier, intToUtf8(176), sep = ""), paste(Verdier, "", sep = "")), paste(Verdier, "", sep = ""))) %>% 
+  mutate(Verdier = if_else(Variabler == "Prosentandel kvinner",
+                           paste(Verdier, "%", sep = ""),
+                           if_else(Variabler == "Pre Cobbvinkel",
+                                   paste(Verdier, intToUtf8(176), sep = ""),
+                                   paste(Verdier, "", sep = "")),
+                           paste(Verdier, "", sep = ""))) %>%
   pivot_wider(names_from = year, values_from = Verdier)
 
 # Få ønsket rekkefølge på Sykehus
-key_data_table <- key_data_table %>% 
+key_data_table <- key_data_table %>%
   arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav")))
 
 
@@ -119,11 +122,9 @@ key_data_table <- key_data_table %>%
 
 ```{r, echo=FALSE}
 
-key_data_table %>% 
-  kbl() %>% 
+key_data_table %>%
+  kbl() %>%
   kable_styling("condensed")
-
-
 ```
 
 ### Om registeret:
