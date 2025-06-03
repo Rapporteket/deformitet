@@ -29,7 +29,8 @@ Imports:
   shinyjs,
   shinyWidgets,
   tidyr,
-  usethis
+  usethis,
+  lubridate
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
@@ -39,3 +40,4 @@ URL: http://github.com/Rapporteket/deformitet
 BugReports: http://github.com/Rapporteket/deformitet/issues
 Suggests: 
     testthat
+LazyData: true
