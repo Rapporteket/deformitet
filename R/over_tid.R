@@ -7,43 +7,40 @@
 ### Deretter kjører prep_var med mapping som input
 ### Deretter kjører table_freq_time med mapping som input
 
+# nolint start
+# Nødvendig data for å teste funksjonene i over_tid
 #map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
 #prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
 #prep_data_var <- data.frame(prep_data[1])
 #gg_data <- data.frame(prep_data[2])
-#
-
-# plot <- over_tid_plot(table_data, "Alle avdelinger", "Haukeland")
-# plot
+# nolint end
 
 #' @title Tabell - gjennomsnitt over tid
 #' @export
 
-table_freq_time <- function (data,
-                             var,
-                             map_data,
-                             tidsenhet = "kvartal",
-                             visning = "hele landet",
-                             userUnitId) {
-
+table_freq_time <- function(data,
+                            var,
+                            map_data,
+                            tidsenhet = "kvartal",
+                            visning = "hele landet",
+                            userUnitId) {
   data$PID <- as.character(data$PID)
 
+  if(tidsenhet == "kvartal") {
 
-  if (tidsenhet == "kvartal") {
+      data <- data %>%
+        dplyr::rename(mine = {{var}},
+                      date = 6) %>%
+        dplyr::mutate(quarter = lubridate::floor_date(date, unit = "quarter"),
+                      tid = ymd(quarter))
 
-  data <- data %>%
-    dplyr::rename(mine = {{var}},
-                    date = 6) %>%
-    dplyr::mutate(quarter = lubridate::floor_date(date, unit = "quarter"),
-                  tid = ymd(quarter))
+      } else {
 
-  } else {
-
-    data <- data %>%
-      dplyr::rename(mine = {{var}},
-                    date = 6) %>%
-      dplyr::mutate(aar = lubridate::floor_date(date, unit = "year"),
-                    tid = format(aar, "%Y"))
+        data <- data %>%
+          dplyr::rename(mine = {{var}},
+                        date = 6) %>%
+          dplyr::mutate(aar = lubridate::floor_date(date, unit = "year"),
+                        tid = format(aar, "%Y"))
   }
 
   ## Pr. sykehus
@@ -77,8 +74,8 @@ table_freq_time <- function (data,
     dplyr::mutate(Sykehus = "Nasjonalt") %>%
     dplyr::group_by(Sykehus, tid) %>%
     dplyr::add_tally(n = "antall") %>%
-    select(Sykehus, tid, antall) %>%
-    unique()
+    dplyr::select(Sykehus, tid, antall) %>%
+    dplyr::unique()
 
   data_nasjonalt <- left_join(data_nasjonalt, data_nasjonalt_tally)
 
@@ -120,7 +117,7 @@ over_tid_plot <- function (data, visning, gg_data, map_var) {
 
   data$Sykehus <- as.factor(data$Sykehus)
 
-  if (visning == "hele landet") {
+  if(visning == "hele landet") {
     data$Sykehus <- relevel(data$Sykehus, "Nasjonalt")
     } else {
       data <- data
@@ -135,22 +132,20 @@ over_tid_plot <- function (data, visning, gg_data, map_var) {
     geom_point(size = 2.2)
 
   ## GENERELLE TILPASNINGER AV PLOT ##
-  tid_plot = tid_plot +
-    theme_bw(base_size = 16)+
+  tid_plot <- tid_plot +
+    theme_bw(base_size = 16) +
 
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.title.y = element_text(size = 16))+
+          axis.title.y = element_text(size = 16)) +
 
-    xlab("Tid")+
-    ylab(gg_data$xlab)+
-    ggtitle("Gjennomsnitt over tid")+
+    xlab("Tid") +
+    ylab(gg_data$xlab) +
+    ggtitle("Gjennomsnitt over tid") +
 
     scale_color_manual(values = # adding chosen colors
-                         c("darkblue", "#6CACE4", "#ADDFB3", "#87189D"))+
+                         c("darkblue", "#6CACE4", "#ADDFB3", "#87189D")) +
 
     ylim(limits$ymin, limits$ymax)
-
-  return(tid_plot)
 
 }
 
@@ -315,7 +310,7 @@ usethis::use_data(skjema, overwrite = TRUE)
 #' @title Y-axis limits
 #' @export
 
-y_limits_gjen <- function (var) {
+y_limits_gjen <- function(var) {
 
   data <- data.frame(ymin = "", ymax = "")
   data <- data %>%
@@ -349,7 +344,7 @@ y_limits_gjen <- function (var) {
 
 # Funksjon for å sjekke størrelse
 
-sjekk_antall <- function (data, data1, date1, date2, tidsenhet) {
+sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
 
   if (tidsenhet == "kvartal") {
 
@@ -373,7 +368,6 @@ sjekk_antall <- function (data, data1, date1, date2, tidsenhet) {
   check <- if_else(true_quarter == 0, "Drop",
                            if_else(is.na(sample_quarter), "Drop", "Keep"))
 
-  return(check)
 
   } else {
 
@@ -400,9 +394,6 @@ sjekk_antall <- function (data, data1, date1, date2, tidsenhet) {
 
     check <- if_else(true_year == 0, "Drop",
                      if_else(is.na(sample_year), "Drop", "Keep"))
-
-    return(check)
-
   }
 }
 
