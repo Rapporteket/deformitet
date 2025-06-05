@@ -11,7 +11,7 @@ prepVar <- function(data, var, var_kjønn,
                     visning = "uten_tid"){
 
 
-  data <- prep_var_na(data, var)
+  data <- deformitet::prep_var_na(data, var)
 
 
   # Filter by gender
@@ -360,7 +360,8 @@ prepVar <- function(data, var, var_kjønn,
                                        {{var}} %in% skjema$tolv_mnd_pas ~ "FILLING_DATE_patient12mths",
                                        {{var}} %in% skjema$tolv_mnd_lege ~ "FILLING_DATE_surgeon12mths",
                                        {{var}} %in% skjema$seksti_mnd_pas ~ "FILLING_DATE_patient12mths",
-                                       .default = "SURGERY_DATE"))))
+                                       .default = "SURGERY_DATE")),
+                      PID))
     } else {
       my_data <- data %>%
         dplyr::select(c("Sykehus",

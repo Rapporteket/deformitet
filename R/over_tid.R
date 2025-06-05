@@ -7,10 +7,10 @@
 ### Deretter kjører prep_var med mapping som input
 ### Deretter kjører table_freq_time med mapping som input
 
-# map_var <- deformitet::mapping_old_name_new_name(regdata, "Helsetilstand_3mnd")
-# prep_data <- prepVar(regdata, map_var, "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
-# prep_data_var <- data.frame(prep_data[1])
-# gg_data <- data.frame(prep_data[2])
+#map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
+#prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
+#prep_data_var <- data.frame(prep_data[1])
+#gg_data <- data.frame(prep_data[2])
 #
 
 # plot <- over_tid_plot(table_data, "Alle avdelinger", "Haukeland")
@@ -25,6 +25,8 @@ table_freq_time <- function (data,
                              tidsenhet = "kvartal",
                              visning = "hele landet",
                              userUnitId) {
+
+  data$PID <- as.character(data$PID)
 
 
   if (tidsenhet == "kvartal") {
@@ -50,7 +52,15 @@ table_freq_time <- function (data,
     dplyr::filter(!is.na(mine)) %>%
     dplyr::group_by(Sykehus, tid) %>%
     dplyr::summarize(gjen = mean(mine)) %>%
-    dplyr::select(c(gjen, tid))
+    dplyr::select(c(Sykehus, tid, gjen))
+
+  data_tally <- data %>%
+    dplyr::group_by(Sykehus, tid) %>%
+    dplyr::add_tally(n = "antall") %>%
+    select(Sykehus, tid, antall) %>%
+    unique()
+
+  data_sykehus <- left_join(data_sykehus, data_tally)
 
   ## Nasjonalt
 
@@ -60,7 +70,17 @@ table_freq_time <- function (data,
     dplyr::mutate(Sykehus = "Nasjonalt") %>%
     dplyr::group_by(Sykehus, tid) %>%
     dplyr::summarize(gjen = mean(mine)) %>%
-    dplyr::select(c(gjen, tid))
+    dplyr::select(c(Sykehus, tid, gjen))
+
+  data_nasjonalt_tally <- data %>%
+    dplyr::select(-Sykehus) %>%
+    dplyr::mutate(Sykehus = "Nasjonalt") %>%
+    dplyr::group_by(Sykehus, tid) %>%
+    dplyr::add_tally(n = "antall") %>%
+    select(Sykehus, tid, antall) %>%
+    unique()
+
+  data_nasjonalt <- left_join(data_nasjonalt, data_nasjonalt_tally)
 
 
   data <- rbind(data_sykehus, data_nasjonalt) # Bind disse to sammen
@@ -79,12 +99,15 @@ table_freq_time <- function (data,
                               Sykehus != "Nasjonalt",
                             .default = Sykehus == Sykehus))
 
+  data <- data %>%
+    select(-c(UnitId))
+
   return(data)
 }
 
 # nolint start
 ## Test:
-### t <- table_freq_time(prep_data_var, map_var, map_db_resh, "kvartal", "hver enhet", 111961)
+###t <- table_freq_time(prep_data_var, map_var, map_db_resh, "aar", "hver enhet", 111961)
 # nolint end
 
 
@@ -120,6 +143,7 @@ over_tid_plot <- function (data, visning, gg_data, map_var) {
 
     xlab("Tid")+
     ylab(gg_data$xlab)+
+    ggtitle("Gjennomsnitt over tid")+
 
     scale_color_manual(values = # adding chosen colors
                          c("darkblue", "#6CACE4", "#ADDFB3", "#87189D"))+
@@ -132,7 +156,7 @@ over_tid_plot <- function (data, visning, gg_data, map_var) {
 
 # nolint start
 # Test for å sjekke om det fungerer:
-## r <- over_tid_plot(t, "egen enhet", gg_data, map_var)
+##r <- over_tid_plot(t, "egen enhet", gg_data, map_var)
 ##r
 # nolint end
 
@@ -309,7 +333,7 @@ y_limits_gjen <- function (var) {
                                    str_detect(var, "SCALE") == TRUE ~ 100,
                                    str_detect(var, "Alder") == TRUE ~ 80,
                                    str_detect(var, "BMI") == TRUE ~ 35,
-                                   str_detect(var, "PRE_MAIN_CURVE") == TRUE ~ 90,
+                                   str_detect(var, "PRE_MAIN_CURVE") == TRUE ~ 110,
                                    str_detect(var, "POST_MAIN_CURVE") == TRUE ~ 50,
                                    str_detect(var, "kurve") == TRUE ~ 110,
                                    str_detect(var, "tid") == TRUE ~ 600,
@@ -323,3 +347,66 @@ y_limits_gjen <- function (var) {
 ## rr <- r("PER_BLOOD_LOSS_VALUE")
 # nolint end
 
+# Funksjon for å sjekke størrelse
+
+sjekk_antall <- function (data, data1, date1, date2, tidsenhet) {
+
+  if (tidsenhet == "kvartal") {
+
+  true_data <- data %>%
+    filter(between(SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
+    dplyr::mutate(quarter = lubridate::floor_date(SURGERY_DATE, unit = "quarter")) %>%
+    select(quarter) %>%
+    unique() %>%
+    add_tally(n = "n_quarter") %>%
+    select(quarter, n_quarter)
+
+  true_quarter <- true_data$n_quarter[1]
+
+  sample_data <- data1 %>%
+    group_by(Sykehus) %>%
+    add_tally(n = "n_quarter") %>%
+    dplyr::mutate(check = if_else(n_quarter == true_quarter, TRUE, FALSE))
+
+  sample_quarter <- sample_data$n_quarter[1]
+
+  check <- if_else(true_quarter == 0, "Drop",
+                           if_else(is.na(sample_quarter), "Drop", "Keep"))
+
+  return(check)
+
+  } else {
+
+    true_data <- data %>%
+      filter(between(SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
+      dplyr::mutate(year = lubridate::floor_date(SURGERY_DATE, unit = "year")) %>%
+      select(year) %>%
+      unique() %>%
+      add_tally(n = "n_year") %>%
+      select(year, n_year)
+
+    true_year <- true_data$n_year[1]
+
+    sample_data <- data1 %>%
+      group_by(Sykehus) %>%
+      add_tally(n = "n_year") %>%
+      dplyr::mutate(check = if_else(n_year == true_year, TRUE, FALSE))
+
+    sample_year <- sample_data$n_year[1]
+
+    # check <- if_else(FALSE %in% sample_data$check, "Drop",
+    #                  if_else(true_year == 0, "Drop",
+    #                          if_else(is.na(sample_year), "Drop", "Keep")))
+
+    check <- if_else(true_year == 0, "Drop",
+                     if_else(is.na(sample_year), "Drop", "Keep"))
+
+    return(check)
+
+  }
+}
+
+# nolint start
+# test for å se om det fungerer:
+##r  <- sjekk_antall(regdata, t, "2024-01-01", "2025-01-01", "aar")
+# nolint end

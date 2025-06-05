@@ -110,12 +110,13 @@ module_gjennomsnitt_UI <- function (id) {
       mainPanel(
         tabsetPanel(id = ns("tab"),
                     tabPanel("Figur", value = "fig",
+                             textOutput(outputId = ns("my_text")),
                              plotOutput(outputId = ns("my_plot"), height = "auto"),
                              downloadButton(ns("download_gjennomsnittsfig"),
                                             "Last ned figur")),
                     tabPanel("Tabell", value = "tab",
                              DT::DTOutput(outputId = ns("table")),
-                             downloadButton(ns("download_gjennomsnittstab"),
+                             downloadButton(ns("download_gjennomsnittstbl"),
                                             "Last ned tabell")
           )
         )
@@ -206,7 +207,7 @@ module_gjennomsnitt_server <- function (id, userRole, userUnitId, data, map_data
         deformitet::table_freq_time(data_reactive(),
                                     map_var_reactive(),
                                     map_data,
-                                    input$tidsenhet ,
+                                    input$tidsenhet,
                                     input$type_view,
                                     userUnitId())
       })
@@ -229,41 +230,55 @@ module_gjennomsnitt_server <- function (id, userRole, userUnitId, data, map_data
                                   map_var_reactive())
       })
 
+      check <- reactive({
+        sjekk_antall(data,
+                     table_data(),
+                     input$date[1],
+                     input$date[2],
+                     input$tidsenhet)
+      })
+
+
+      output$my_text <- renderText({
+        if (check() == "Drop") {
+          "For få verdier for visse variabler. Gjør nytt utvalg. Se tabell i neste fane."
+        } else {
+          ""
+        }
+      })
+
+
       output$my_plot <- renderPlot({
-        my_plot()
-      }, width = 800, height = 600)
+        if (check() == "Keep") {
+          my_plot()
+      }
+      },  width = 800, height = 600)
 
 
 
-      # ##### NEDLASTING ###############################################################
-      # output$download_fordelingsfig <-  downloadHandler(
-      #   filename = function(){
-      #     paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
-      #   },
-      #   content = function(file){
-      #     pdf(file, onefile = TRUE, width = 15, height = 9)
-      #     plot(my_plot())
-      #     dev.off()
-      #   }
-      # )
-      #
-      # output$download_fordelingstbl <- downloadHandler(
-      #   filename = function(){
-      #     paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
-      #   },
-      #   content = function(file){
-      #     write.csv(table(), file)
-      #   }
-      # )
-      #
-      # output$dowload_fordelingsfreqtable <- downloadHandler(
-      #   filename = function(){
-      #     paste("Frekvenstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
-      #   },
-      #   content = function(file){
-      #     write.csv(freq_table_reactive(), file)
-      #   }
-      # )
+
+
+##### NEDLASTING ###############################################################
+output$download_gjennomsnittsfig <-  downloadHandler(
+  filename = function(){
+    paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
+  },
+  content = function(file){
+    pdf(file, onefile = TRUE, width = 15, height = 9)
+    plot(my_plot())
+    dev.off()
+  }
+)
+
+output$download_gjennomsnittstbl <- downloadHandler(
+  filename = function(){
+    paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
+  },
+  content = function(file){
+    write.csv(table(), file)
+  }
+)
+
     }
   )
 }
