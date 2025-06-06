@@ -33,7 +33,7 @@ table_freq_time <- function(data,
       ) %>%
       dplyr::mutate(
         quarter = lubridate::floor_date(date, unit = "quarter"),
-        tid = lubridate::ymd(quarter)
+        tid = lubridate::ymd(.data$quarter)
       )
   } else {
     data <- data %>%
@@ -43,22 +43,22 @@ table_freq_time <- function(data,
       ) %>%
       dplyr::mutate(
         aar = lubridate::floor_date(date, unit = "year"),
-        tid = format(aar, "%Y")
+        tid = format(.data$aar, "%Y")
       )
   }
 
   ## Pr. sykehus
 
   data_sykehus <- data %>%
-    dplyr::filter(!is.na(mine)) %>%
-    dplyr::group_by(Sykehus, tid) %>%
-    dplyr::summarize(gjen = mean(mine)) %>%
-    dplyr::select(c(Sykehus, tid, gjen))
+    dplyr::filter(!is.na(.data$mine)) %>%
+    dplyr::group_by(.data$Sykehus, .data$tid) %>%
+    dplyr::summarize(gjen = mean(.data$mine)) %>%
+    dplyr::select(c(.data$Sykehus, .data$tid, .data$gjen))
 
   data_tally <- data %>%
-    dplyr::group_by(Sykehus, tid) %>%
+    dplyr::group_by(.data$Sykehus, .data$tid) %>%
     dplyr::add_tally(n = "antall") %>%
-    dplyr::select(Sykehus, tid, antall) %>%
+    dplyr::select(.data$Sykehus, .data$tid, .data$antall) %>%
     unique()
 
   data_sykehus <- dplyr::left_join(data_sykehus, data_tally)
@@ -66,19 +66,19 @@ table_freq_time <- function(data,
   ## Nasjonalt
 
   data_nasjonalt <- data %>%
-    dplyr::filter(!is.na(mine)) %>%
-    dplyr::select(-Sykehus) %>%
+    dplyr::filter(!is.na(.data$mine)) %>%
+    dplyr::select(-.data$Sykehus) %>%
     dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::group_by(Sykehus, tid) %>%
-    dplyr::summarize(gjen = mean(mine)) %>%
-    dplyr::select(c(Sykehus, tid, gjen))
+    dplyr::group_by(.data$Sykehus, .data$tid) %>%
+    dplyr::summarize(gjen = mean(.data$mine)) %>%
+    dplyr::select(c(.data$Sykehus, .data$tid, .data$gjen))
 
   data_nasjonalt_tally <- data %>%
-    dplyr::select(-Sykehus) %>%
+    dplyr::select(-.data$Sykehus) %>%
     dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::group_by(Sykehus, tid) %>%
+    dplyr::group_by(.data$Sykehus, .data$tid) %>%
     dplyr::add_tally(n = "antall") %>%
-    dplyr::select(Sykehus, tid, antall) %>%
+    dplyr::select(.data$Sykehus, .data$tid, .data$antall) %>%
     dplyr::unique()
 
   data_nasjonalt <- dplyr::left_join(data_nasjonalt, data_nasjonalt_tally)
@@ -99,11 +99,11 @@ table_freq_time <- function(data,
         UnitId == {{ userUnitId }},
       {{ visning }} == "hver enhet" ~
         Sykehus != "Nasjonalt",
-      .default = Sykehus == Sykehus
+      .default = .data$Sykehus == .data$Sykehus
     ))
 
   data <- data %>%
-    dplyr::select(-c(UnitId))
+    dplyr::select(-c(.data$UnitId))
 
   return(data)
 }
@@ -131,9 +131,9 @@ over_tid_plot <- function(data, visning, gg_data, map_var) {
   limits <- y_limits_gjen(map_var)
 
   tid_plot <-
-    ggplot2::ggplot(data, aes(
-      x = tid, y = gjen,
-      color = Sykehus, group = Sykehus
+    ggplot2::ggplot(data, ggplot2::aes(
+      x = .data$tid, y = .data$gjen,
+      color = .data$Sykehus, group = .data$Sykehus
     )) +
     ggplot2::geom_line(linewidth = 1.2) +
     ggplot2::geom_point(size = 2.2)
@@ -143,8 +143,8 @@ over_tid_plot <- function(data, visning, gg_data, map_var) {
     ggplot2::theme_bw(base_size = 16) +
 
     ggplot2::theme(
-      ggplot2::axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-      ggplot2::axis.title.y = ggplot2::element_text(size = 16)
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      axis.title.y = ggplot2::element_text(size = 16)
     ) +
 
     ggplot2::xlab("Tid") +
@@ -379,40 +379,42 @@ y_limits_gjen <- function(var) {
 sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
   if (tidsenhet == "kvartal") {
     true_data <- data %>%
-      dplyr::filter(between(SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
-      dplyr::mutate(quarter = lubridate::floor_date(SURGERY_DATE, unit = "quarter")) %>%
-      dplyr::select(quarter) %>%
+      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
+      dplyr::mutate(quarter = lubridate::floor_date(.data$SURGERY_DATE, unit = "quarter")) %>%
+      dplyr::select(.data$quarter) %>%
       unique() %>%
       dplyr::add_tally(n = "n_quarter") %>%
-      dplyr::select(quarter, n_quarter)
+      dplyr::select(.data$quarter, .data$n_quarter)
 
     true_quarter <- true_data$n_quarter[1]
 
     sample_data <- data1 %>%
-      dplyr::group_by(Sykehus) %>%
+      dplyr::group_by(.data$Sykehus) %>%
       dplyr::add_tally(n = "n_quarter") %>%
-      dplyr::mutate(check = dplyr::if_else(n_quarter == true_quarter, TRUE, FALSE))
+      dplyr::mutate(check = dplyr::if_else(.data$n_quarter == true_quarter, TRUE, FALSE))
 
     sample_quarter <- sample_data$n_quarter[1]
 
     check <- dplyr::if_else(true_quarter == 0, "Drop",
       dplyr::if_else(is.na(sample_quarter), "Drop", "Keep")
     )
+    return(check)
+
   } else {
     true_data <- data %>%
-      dplyr::filter(between(SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
-      dplyr::mutate(year = lubridate::floor_date(SURGERY_DATE, unit = "year")) %>%
-      dplyr::select(year) %>%
+      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
+      dplyr::mutate(year = lubridate::floor_date(.data$SURGERY_DATE, unit = "year")) %>%
+      dplyr::select(.data$year) %>%
       unique() %>%
       dplyr::add_tally(n = "n_year") %>%
-      dplyr::select(year, n_year)
+      dplyr::select(.data$year, .data$n_year)
 
     true_year <- true_data$n_year[1]
 
     sample_data <- data1 %>%
-      dplyr::group_by(Sykehus) %>%
+      dplyr::group_by(.data$Sykehus) %>%
       dplyr::add_tally(n = "n_year") %>%
-      dplyr::mutate(check = dplyr::if_else(n_year == true_year, TRUE, FALSE))
+      dplyr::mutate(check = dplyr::if_else(.data$n_year == true_year, TRUE, FALSE))
 
     sample_year <- sample_data$n_year[1]
 
@@ -423,6 +425,8 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
     check <- dplyr::if_else(true_year == 0, "Drop",
       dplyr::if_else(is.na(sample_year), "Drop", "Keep")
     )
+
+    return(check)
   }
 }
 
