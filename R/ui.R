@@ -42,6 +42,14 @@ app_ui <- function() {
         deformitet::module_fordeling_UI("fordeling")
       ),
 
+################################################################################
+##### TAB: Gjennomsnitt  #######################################################
+
+      shiny::tabPanel(
+        title = "Gjennomsnitt",
+        deformitet::module_gjennomsnitt_UI("gjen1")
+      ),
+
 
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################

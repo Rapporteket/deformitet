@@ -22,7 +22,8 @@ app_server <- function(input, output, session) {
   library(bslib)
   library(shinyWidgets)
   library(lubridate)
-
+  library(stringr)
+  library(usethis)
 
   ######### DATA TIDYING----------------------------------------------------------
   ### Read in data:
@@ -72,6 +73,16 @@ app_server <- function(input, output, session) {
                                       userRole = user$role,
                                       userUnitId = user$org,
                                       map_data = map_db_resh)
+
+################################################################################
+##### TAB: gjennomsnitt ########################################################
+
+
+deformitet::module_gjennomsnitt_server("gjen1",
+                                       data = regdata,
+                                       userRole = user$role,
+                                       userUnitId = user$org,
+                                       map_data = map_db_resh)
 
 ################################################################################
 ##### TAB: Kvalitetsindikatorer ################################################
