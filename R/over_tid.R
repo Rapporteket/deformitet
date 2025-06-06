@@ -8,10 +8,10 @@
 
 # nolint start
 # Nødvendig data for å teste funksjonene i over_tid
-# map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
-# prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
-# prep_data_var <- data.frame(prep_data[1])
-# gg_data <- data.frame(prep_data[2])
+#map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
+#prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
+#prep_data_var <- data.frame(prep_data[1])
+#gg_data <- data.frame(prep_data[2])
 # nolint end
 
 #' @title Tabell - gjennomsnitt over tid
@@ -79,7 +79,7 @@ table_freq_time <- function(data,
     dplyr::group_by(.data$Sykehus, .data$tid) %>%
     dplyr::add_tally(n = "antall") %>%
     dplyr::select(.data$Sykehus, .data$tid, .data$antall) %>%
-    dplyr::unique()
+    unique()
 
   data_nasjonalt <- dplyr::left_join(data_nasjonalt, data_nasjonalt_tally)
 
@@ -157,6 +157,8 @@ over_tid_plot <- function(data, visning, gg_data, map_var) {
     ) +
 
     ggplot2::ylim(limits$ymin, limits$ymax)
+
+  return(tid_plot)
 }
 
 # nolint start
