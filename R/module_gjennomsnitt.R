@@ -248,8 +248,6 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       output$my_text <- renderText({
         if(check() == "Drop") {
           "For få verdier for visse variabler. Gjør nytt utvalg. Se tabell i neste fane."
-        } else {
-          ""
         }
         })
 
