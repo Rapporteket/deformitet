@@ -22,7 +22,7 @@ explanation_kvalind <- function(kjønn_choice, var){
                                           "Liggetid" ~
                                             paste0("Figuren viser fordelingen av andel pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter med post-operativ liggetid 7 dager eller mer / antall opererte *100", "<br/>"),
                                           "Komplikasjoner_3mnd" ~
-                                            paste0("Figuren viser fordelingen av andel pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte *100", "<br/>"),
+                                            paste0("Figuren viser fordelingen av andel pasienter som rapporterte komplikasjoner (med unntak av smerte) ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall pasienter som rapporterer komplikasjoner (med unntak av smerte) ved 3-6 mnds oppfølging / antall opererte *100", "<br/>"),
                                           "CURRENT_SURGERY" ~
                                             paste0("Figuren viser reoperasjonsrate på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall reoperasjoner / antall operasjoner *100", "<br/>")),
 
@@ -37,7 +37,7 @@ explanation_kvalind <- function(kjønn_choice, var){
                                           "Liggetid" ~
                                             paste0("Figuren viser fordelingen av andel mannlige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte menn *100", "<br/>"),
                                           "Komplikasjoner_3mnd" ~
-                                            paste0("Figuren viser fordelingen av andel mannlige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"),
+                                            paste0("Figuren viser fordelingen av andel mannlige pasienter som rapporterte komplikasjoner (med unntak av smerte) ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall mannlige pasienter som rapporterer komplikasjoner (med unntak av smerte) ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"),
                                           "CURRENT_SURGERY" ~
                                             paste0("Figuren viser reoperasjonsrate for menn på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall reopererte menn / antall opererte menn *100", "<br/>")),
 
@@ -52,7 +52,7 @@ explanation_kvalind <- function(kjønn_choice, var){
                                           "Liggetid" ~
                                             paste0("Figuren viser fordelingen av andel kvinnelige pasienter med post-operativ liggetid på 7 eller flere dager på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter med post-operativ liggetid 7 dager eller mer / antall opererte kvinner *100", "<br/>"),
                                           "Komplikasjoner_3mnd" ~
-                                            paste0("Figuren viser fordelingen av andel kvinnelige pasienter som rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som rapporterer komplikasjoner ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>"),
+                                            paste0("Figuren viser fordelingen av andel kvinnelige pasienter som rapporterte komplikasjoner (med unntak av smerte) ved 3-6 oppfølging på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall kvinnelige pasienter som rapporterer komplikasjoner (med unntak av smerte) ved 3-6 mnds oppfølging / antall opererte kvinner *100", "<br/>"),
                                           "CURRENT_SURGERY" ~
                                             paste0("Figuren viser reoperasjonsrate for kvinner på de ulike sykehusene. For hvert sykehus er det regnet ut slik:", "<br/>", "antall reopererte kvinner / antall opererte kvinner *100", "<br/>")),
 
@@ -97,7 +97,7 @@ explanation_kvalind <- function(kjønn_choice, var){
                                           "Komplikasjoner_3mnd" ~
                                           paste0("Figuren viser fordelinger av andel pasienter (av begge kjønn),
                                           andel kvinnelige pasienter og andel mannlige pasienter som
-                                          rapporterte komplikasjoner ved 3-6 oppfølging på de ulike sykehusene
+                                          rapporterte komplikasjoner (med unntak av smerte) ved 3-6 oppfølging på de ulike sykehusene
                                           Smerte som komplikasjon er tatt ut fra denne utregningen ettersom dette er
                                           en komplikasjon som i høy grad er forventet etter operasjonen.
                                                  For hvert sykehus er hver andel regnet ut slik:", "<br/>",
