@@ -17,14 +17,6 @@ Dersom du ikke tilhører registerledelsen vil figurene sammenligne din enhet med
 ### Nøkkeltall:
 
 ```{r, include=FALSE, echo=FALSE}
-library(tidyverse)
-library(deformitet)
-library(knitr)
-
-library(kableExtra)
-```
-
-```{r, include=FALSE, echo=FALSE}
 ### Read in data:
 raw_regdata <- deformitet::les_og_flate_ut()
 
