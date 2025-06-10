@@ -4,7 +4,17 @@
 \alias{prepVar}
 \title{prepvar-funksjon}
 \usage{
-prepVar(data, var, var_kjønn, time1, time2, alder1, alder2, type_op)
+prepVar(
+  data,
+  var,
+  var_kjønn,
+  time1,
+  time2,
+  alder1,
+  alder2,
+  type_op,
+  visning = "uten_tid"
+)
 }
 \description{
 prepvar-funksjon
