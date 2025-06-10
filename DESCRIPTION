@@ -29,7 +29,9 @@ Imports:
   shinyjs,
   shinyWidgets,
   tidyr,
-  usethis
+  usethis,
+  kableExtra,
+  knitr
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
