@@ -105,12 +105,35 @@ table_freq_time <- function(data,
   data <- data %>%
     dplyr::select(-c(.data$UnitId))
 
+
+  ##### GJØR DET MULIG Å PRINTE KVARTAL PENT #####
+
+  if (tidsenhet == "kvartal") {
+    data <- data %>%
+      mutate(tid1 = lubridate::year(tid),
+             tid_as_character = as.character(tid),
+             tid = case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
+                             str_detect(tid, "04-01") == TRUE ~ paste(tid1, "2", sep = "-"),
+                             str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
+                             str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")))
+
+
+    data$tid <- as.factor(data$tid)
+
+    data <- data %>%
+      select(-c(tid1, tid_as_character))
+
+  }
+
+
+
+
   return(data)
 }
 
 # nolint start
 ## Test:
-### t <- table_freq_time(prep_data_var, map_var, map_db_resh, "aar", "hver enhet", 111961)
+###t <- table_freq_time(prep_data_var, map_var, map_db_resh, "kvartal", "hver enhet", 111961)
 # nolint end
 
 
@@ -119,13 +142,25 @@ table_freq_time <- function(data,
 #' @title Plot - gjennomsnitt over tid
 #' @export
 
-over_tid_plot <- function(data, visning, gg_data, map_var) {
+over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time()
+                          visning, # valgt visning -> hele landet, egen enhet osv.
+                          gg_data, # data med limits på y-aksen
+                          map_var, # data som mapper mellom variabel med faktornivå og kontinuerlig variabel
+                          tidsenhet, # valgt tidsenhet -> kvartal eller år
+                          data_var # data som lagrer UI-valg
+                          ) {
   data$Sykehus <- as.factor(data$Sykehus)
 
   if (visning == "hele landet") {
     data$Sykehus <- relevel(data$Sykehus, "Nasjonalt")
   } else {
     data <- data
+  }
+
+  if (tidsenhet == "aar") {
+    tid = "År"
+  } else {
+    tid = "Kvartal"
   }
 
   limits <- y_limits_gjen(map_var)
@@ -142,14 +177,20 @@ over_tid_plot <- function(data, visning, gg_data, map_var) {
   tid_plot <- tid_plot +
     ggplot2::theme_bw(base_size = 16) +
 
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-      axis.title.y = ggplot2::element_text(size = 16)
-    ) +
 
-    ggplot2::xlab("Tid") +
+    ggplot2::xlab(tid) +
     ggplot2::ylab(gg_data$xlab) +
     ggplot2::ggtitle("Gjennomsnitt over tid") +
+    ggplot2::labs(caption = paste0("**Valgte variabler:**", "\n", data_var[1,], ", Kjønn: ", data_var[2,], "\n",
+                                   "Dato: ", data_var[3,], "-", data_var[4,], "\n",
+                                   "Alder: ", data_var[5,], "-", data_var[6,], "\n",
+                                   "Type operasjon: ", data_var[7,]))+
+
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      axis.title.y = ggplot2::element_text(size = 16),
+      plot.caption = ggplot2::element_text(color = "#87189D", # add caption
+                                          face = "italic")) +
 
     ggplot2::scale_color_manual(
       values = # adding chosen colors
@@ -163,10 +204,9 @@ over_tid_plot <- function(data, visning, gg_data, map_var) {
 
 # nolint start
 # Test for å sjekke om det fungerer:
-## r <- over_tid_plot(t, "egen enhet", gg_data, map_var)
+## r <- over_tid_plot(t, "egen enhet", gg_data, map_var, "kvartal")
 ## r
 # nolint end
-
 
 
 # Oversikt variabler pr. skjema

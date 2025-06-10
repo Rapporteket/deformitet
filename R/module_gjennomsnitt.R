@@ -115,7 +115,7 @@ module_gjennomsnitt_UI <- function(id) {
                              downloadButton(ns("download_gjennomsnittsfig"),
                                             "Last ned figur")),
                     tabPanel("Tabell", value = "tab",
-                             DT::DTOutput(outputId = ns("table")),
+                             tableOutput(outputId = ns("table")),
                              downloadButton(ns("download_gjennomsnittstbl"),
                                             "Last ned tabell")
                              )
@@ -223,8 +223,9 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
       ### TABLE
 
-      output$table <- DT::renderDT({
-        datatable(table_data())
+      output$table <- renderTable({
+        table_data() %>%
+          mutate(tid = format(tid, "%d-%m-%Y"))
       })
 
       ### FIGURE ###
@@ -233,7 +234,9 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         deformitet::over_tid_plot(table_data(),
                                   input$type_view,
                                   gg_data_reactive(),
-                                  map_var_reactive())
+                                  map_var_reactive(),
+                                  input$tidsenhet,
+                                  my_data_reactive())
       })
 
       check <- reactive({
