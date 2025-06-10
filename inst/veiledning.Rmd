@@ -115,8 +115,8 @@ key_data_table <- key_data_table %>%
 ```{r, echo=FALSE}
 
 key_data_table %>%
-  kbl() %>%
-  kable_styling("condensed")
+  kableExtra::kbl() %>%
+  kableExtra::kable_styling("condensed")
 ```
 
 ### Om registeret:

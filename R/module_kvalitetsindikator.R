@@ -119,7 +119,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE"~ "Pasienter med pre-operativ kurve over 70 grader",
               "Liggetid" ~ "Pasienter med 7 dager eller lengre liggetid",
-              "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner etter 3-6 måneder",
+              "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner (unntatt smerte) etter 3-6 måneder",
               "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"),
 
             ylab = dplyr::case_match(
@@ -129,6 +129,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
               "Liggetid" ~ "Liggetid 7 dager eller lengre",
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd (unntatt smerte)",
               "CURRENT_SURGERY" ~ "Reoperasjonsrate"),
+
 
             ymin = dplyr::case_match(
               input$kval_var,
