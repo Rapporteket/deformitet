@@ -30,6 +30,9 @@ makeTable <- function(data, var_reshID, choice_var){
       dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
       dplyr::rename("n pr variabel" = by_var) %>%
       dplyr::distinct()
+
+    data_hosp <- data_hosp %>%
+      dplyr::relocate(Prosent, .before = n)
   }
 
   if(choice_var == "hver enhet"){
@@ -45,6 +48,9 @@ makeTable <- function(data, var_reshID, choice_var){
       dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
       dplyr::rename("n pr variabel" = by_var) %>%
       dplyr::distinct()
+
+    data_hosp_all <- data_hosp_all %>%
+      dplyr::relocate(Prosent, .before = n)
   }
 
   else{
@@ -64,7 +70,13 @@ makeTable <- function(data, var_reshID, choice_var){
     dplyr::distinct()
 
 
-  data_full <- dplyr::full_join(data_hosp, data_all)}
+  data_full <- dplyr::full_join(data_hosp, data_all)
+
+  data_full <- data_full %>%
+    dplyr::relocate(Prosent, .before = n)
+
+
+  }
 
 
   if(choice_var == "hver enhet"){
@@ -74,6 +86,8 @@ makeTable <- function(data, var_reshID, choice_var){
     return(data_hosp)
   }
   if(choice_var == "hele landet, uten sammenligning"){
+    data_all <- data_all %>%
+      dplyr::relocate(Prosent, .before = n)
     return(data_all)
   }
   else{return(data_full)} # => hele landet med sammenligning
@@ -82,8 +96,7 @@ makeTable <- function(data, var_reshID, choice_var){
 # nolint start
 
 # Test to see if it works:
-## g <- makeTable(rr, 103240, "enhet")
-
+##g <- makeTable(rr, 103240, "egen enhet")
 # nolint end
 
 
