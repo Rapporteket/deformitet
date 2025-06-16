@@ -36,15 +36,13 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     #### TITLES ################################################################
 
-    ggplot2::xlab("Andel pasienter (%)")+
-
-    ggplot2::ylab(gg_data$ylab)+
+    ggplot2::xlab(paste("Andel pasienter (%)", gg_data$ylab))+
 
     ggplot2::labs(title = gg_data$title,
                   caption = paste0("**Valgte variabler:**", "\n", data_var[1,],
-                                   ", ", "\n", "Kjønn - ", data_var[2,], "\n",
-                                   data_var[3,], "-", data_var[4,], "\n",
-                                   data_var[5,], "-", data_var[6,]))+
+                                   ", ", "\n", "Kjønn: ", data_var[2,], "\n",
+                                   "Dato: ", data_var[3,], "-", data_var[4,], "\n",
+                                   "Alder: ", data_var[5,], "-", data_var[6,]))+
 
     ggplot2::geom_label(aes(x = 0, label = paste(antall_kval_syk, "av", per_syk)),
                         fill = "#BFCED6", color = "#003087", fontface = "italic",
@@ -61,15 +59,14 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
                    legend.position = case_when({{choice_kjønn}} == "begge" ~ "none",
                                                TRUE ~ "right"),
                    axis.text.x = element_text(color = case_when({{choice_kjønn}} == "nei" ~ "white",
-                                                                TRUE ~ "black"), size = 14),
-                   axis.text.y = element_text(size = 14))+
+                                                                TRUE ~ "black"), size = 10),
+                   axis.text.y = element_text(size = 14),
+
+                   axis.title.x = element_text(size = 12),
+
+                   plot.title = element_text(size = 16))+
 
     ggplot2::scale_fill_manual(values = c("#6CACE4", "#6FA287", "#BFCED6"))
-
-    ##### FACETING #############################################################
-
-
-  #ggplot2::facet_wrap(~Kjønn)
 
 
   return(kval_plot)

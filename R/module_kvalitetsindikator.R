@@ -84,7 +84,7 @@ module_kvalitetsindikator_UI <- function(id){
 
 #'@export
 
-module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_data){
+module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map_data){
   moduleServer(
     id,
     function(input, output, session){
@@ -168,16 +168,14 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
       kval_df_reactive <- reactive({
-        x <- deformitet::kval_count(data,
-                                    input$kval_var,
-                                    input$kjønn_var,
-                                    input$type_op,
-                                    db_data,
-                                    userRole(),
-                                    userUnitId())
-
+        x <- deformitet::count_kvalind(data,
+                                       input$kjønn_var,
+                                       input$type_op,
+                                       input$kval_var,
+                                       userRole(),
+                                       userUnitId(),
+                                       map_data)
         })
-
 
       ###### PLOT ####################################################################
 
