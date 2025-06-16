@@ -30,7 +30,9 @@ Imports:
   shinyWidgets,
   tidyr,
   usethis,
-  lubridate
+  lubridate,
+  kableExtra,
+  knitr
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
