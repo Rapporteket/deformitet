@@ -30,6 +30,7 @@ Imports:
   shinyWidgets,
   tidyr,
   usethis,
+  lubridate,
   kableExtra,
   knitr,
   forcats
@@ -42,3 +43,4 @@ URL: http://github.com/Rapporteket/deformitet
 BugReports: http://github.com/Rapporteket/deformitet/issues
 Suggests: 
     testthat
+LazyData: true

@@ -143,7 +143,7 @@ module_fordeling_UI <- function (id) {
 
 
 
-#'@title Server sammenligningsmodul
+#'@title Server fordeling
 #'
 #'@export
 

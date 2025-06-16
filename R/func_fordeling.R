@@ -127,9 +127,12 @@ mapping_old_name_new_name <- function (data, x_var) {
                              "SRS22_spm21_3mnd",
                              "SRS22_spm21_12mnd",
                              "SRS22_spm21_60mnd",
+                             "Alder",
                              "BMI_kategori",
                              "Kurve_pre",
                              "Kurve_post",
+                             "Diff_prosent_kurve",
+                             "Knivtid",
                              "Liggetid",
                              "Blodtap_100",
                              "Blodtap_200",
@@ -168,9 +171,12 @@ mapping_old_name_new_name <- function (data, x_var) {
                                       "SRS22_21",
                                       "SRS22_21_patient12mths",
                                       "SRS22_21_patient60mths",
-                                      "BMI", # + Alder
+                                      "Alder_num",
+                                      "BMI",
                                       "PRE_MAIN_CURVE",
-                                      "POST_MAIN_CURVE", # + diff kurve
+                                      "POST_MAIN_CURVE",
+                                      "Diff_prosent_kurve_raw",
+                                      "kniv_tid",
                                       "BED_DAYS_POSTOPERATIVE",
                                       "PER_BLOOD_LOSS_VALUE",
                                       "PER_BLOOD_LOSS_VALUE",
@@ -269,7 +275,7 @@ make_freq_table <- function (data) {
     dplyr::filter(!is.na(freq_var))
 
   freq_pr_sykehus <- freq %>%
-    dplyr::group_by(Sykehus) %>%
+    dplyr::group_by(Sykehus, x) %>%
     dplyr::summarise(gjennomsnitt = round(mean(freq_var), 2),
                      median = median(freq_var)) %>%
     dplyr::ungroup()
@@ -301,5 +307,4 @@ make_freq_table <- function (data) {
 # test:
 ## d <- make_freq_table(xx)
 # nolint end
-
 
