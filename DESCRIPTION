@@ -31,7 +31,8 @@ Imports:
   tidyr,
   usethis,
   kableExtra,
-  knitr
+  knitr,
+  forcats
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
