@@ -131,6 +131,10 @@ count_kvalind <- function (data, kjoenn, type_op, var, userRole, userUnitId, map
       dplyr::filter(CENTREID == {{userUnitId}} | CENTREID == "0")
   }
 
+  data_total <- data_total %>%
+    select(-c(CENTREID))
+
+
   return (data_total)
 }
 
@@ -138,7 +142,6 @@ count_kvalind <- function (data, kjoenn, type_op, var, userRole, userUnitId, map
 # nolint start
 ## test for å sjekke at det fungerer:
 ## r <- count_kvalind(regdata, "ee", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
-# nolint end
 
 #### FUNCTION FOR MAKING PLOT FOR KVALITETSINDIKATORER #########################
 #### GGPLOT2 ###################################################################
@@ -169,6 +172,7 @@ count_kvalind <- function (data, kjoenn, type_op, var, userRole, userUnitId, map
 # gg_data is made under PrepVar()
 # data_var should be reactive data that stores UI choices for PrepVar
 # choice_kjønn will be a radio button indicating "fordelt på kjønn?" "ja" vs. "nei"
+# nolint end
 
 #' @export
 

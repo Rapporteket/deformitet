@@ -276,8 +276,8 @@ make_freq_table <- function (data) {
 
 
   freq_total <- freq %>%
-    dplyr::summarize(totalt_gjennomsnitt = round(mean(freq_var), 2),
-                     totalt_median = median(freq_var))
+    dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(freq_var), 2),
+                     "median nasjonalt" = median(freq_var))
 
   freq_table <- merge(freq_pr_sykehus, freq_total)
 
@@ -285,9 +285,12 @@ make_freq_table <- function (data) {
   freq_n <- freq %>%
     group_by(Sykehus) %>%
     tally(n = "antall") %>%
-    mutate(totalt_antall = sum(antall))
+    mutate("antall nasjonalt"= sum(antall))
 
   freq_table2 <- merge(freq_table, freq_n)
+
+  freq_table2 <- freq_table2 %>%
+    dplyr::relocate(antall, .before = "gjennomsnitt nasjonalt")
 
    return(freq_table2)
 

@@ -187,7 +187,6 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       })
 
       output$kval_plot <- renderPlot({
-        #ggplot2::ggsave("test.test.pdf", kval_plot(), width = 2.5, length = 1.5, unit = "mm")
         kval_plot()
       })
 
@@ -197,11 +196,9 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
                                                    class = 'white-space:nowrap compact',
                                                    colnames = c("Sykehus",
                                                                 "Kjønn",
-                                                                "Antall nasjonalt",
-                                                                "Antall per sykehus",
+                                                                "Antall",
                                                                 "Antall - kvalitetsindikator",
-                                                                "Andel - kvalitetsindikator",
-                                                                "ReshId"))
+                                                                "Andel - kvalitetsindikator"))
         })
 
       ##### KVALITETSINDIKATORER over tid ############################################
