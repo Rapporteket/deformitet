@@ -79,12 +79,13 @@ makeTable <- function(data, var_reshID, choice_var){
 
 
   }
-  data_full <- dplyr::full_join(data_hosp, data_all)}
+  data_full <- dplyr::full_join(data_hosp, data_all)
 
 
   if(choice_var == "hver enhet"){
     return(data_hosp_all)
   }
+
   if(choice_var == "egen enhet"){
     return(data_hosp)
   }
@@ -93,10 +94,9 @@ makeTable <- function(data, var_reshID, choice_var){
       dplyr::relocate(Prosent, .before = n)
 
     return(data_all)
-  }
-  else{return(data_full)} # => hele landet med sammenligning
-  }
-
+  } else {
+    return(data_full)} # => hele landet med sammenligning
+}
 # nolint start
 
 # Test to see if it works
@@ -265,7 +265,7 @@ add_freq_var_to_dataframe <- function (raw_data, data, freq_var) {
 
 # nolint start
 ## HER KJØRER PREPVAR ##################
-## x <- prepVar(rrr, "freq_var", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
+##x <- prepVar(rrr, "freq_var", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
 ## xx <- data.frame(x[1])
 # nolint end
 
@@ -280,7 +280,7 @@ make_freq_table <- function (data) {
     dplyr::filter(!is.na(freq_var))
 
   freq_pr_sykehus <- freq %>%
-    dplyr::group_by(Sykehus, x) %>%
+    dplyr::group_by(Sykehus) %>%
     dplyr::summarise(gjennomsnitt = round(mean(freq_var), 2),
                      median = median(freq_var)) %>%
     dplyr::ungroup()

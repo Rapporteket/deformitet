@@ -378,7 +378,7 @@ prepVar <- function(data, var, var_kjønn,
 
 
 # Test of the function
-##x <- prepVar(regdata, f, "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
+##x <- prepVar(regdata, "Kurve_pre", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
 # Inspect returned data frame (object 1 in list):
 ##rr <- data.frame(x[1])
 ## gg_data <- data.frame(x[2])

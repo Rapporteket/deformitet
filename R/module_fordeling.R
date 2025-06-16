@@ -402,11 +402,12 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Unpack part 1 of list: data
 
       freq_table_reactive <- reactive ({
-        if (input$x_var %in% COMPLICATION_TYPES) {
-          freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
-      } else {
+      #   if (input$x_var %in% COMPLICATION_TYPES) {
+      #     freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
+      # } else {
+      #   freq_data <- deformitet::make_freq_table(freq_data_reactive())
+      # }
         freq_data <- deformitet::make_freq_table(freq_data_reactive())
-      }
       })
 
       output$freq_table <- DT::renderDT({
