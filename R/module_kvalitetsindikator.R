@@ -84,7 +84,7 @@ module_kvalitetsindikator_UI <- function(id){
 
 #'@export
 
-module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_data){
+module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map_data){
   moduleServer(
     id,
     function(input, output, session){
@@ -130,6 +130,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd (unntatt smerte)",
               "CURRENT_SURGERY" ~ "Reoperasjonsrate"),
 
+
             ymin = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 70,
@@ -167,16 +168,14 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
       kval_df_reactive <- reactive({
-        x <- deformitet::kval_count(data,
-                                    input$kval_var,
-                                    input$kjønn_var,
-                                    input$type_op,
-                                    db_data,
-                                    userRole(),
-                                    userUnitId())
-
+        x <- deformitet::count_kvalind(data,
+                                       input$kjønn_var,
+                                       input$type_op,
+                                       input$kval_var,
+                                       userRole(),
+                                       userUnitId(),
+                                       map_data)
         })
-
 
       ###### PLOT ####################################################################
 
@@ -188,7 +187,6 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
       })
 
       output$kval_plot <- renderPlot({
-        #ggplot2::ggsave("test.test.pdf", kval_plot(), width = 2.5, length = 1.5, unit = "mm")
         kval_plot()
       })
 
@@ -198,11 +196,9 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, db_
                                                    class = 'white-space:nowrap compact',
                                                    colnames = c("Sykehus",
                                                                 "Kjønn",
-                                                                "Antall nasjonalt",
-                                                                "Antall per sykehus",
+                                                                "Antall",
                                                                 "Antall - kvalitetsindikator",
-                                                                "Andel - kvalitetsindikator",
-                                                                "ReshId"))
+                                                                "Andel - kvalitetsindikator"))
         })
 
       ##### KVALITETSINDIKATORER over tid ############################################

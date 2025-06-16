@@ -69,24 +69,24 @@ regdata$Alder <- cut(regdata$Alder,
 # a. Make into a factor
 regdata <- regdata %>%
   dplyr::mutate(BMI_kategori = as.factor(dplyr::recode(BMI_CATEGORY,
-    "Alvorlig undervekt" = "Alvorlig undervekt\n < 16",
-    "Moderat undervekt" = "Undervekt\n (16-17)",
-    "Mild undervekt" = "Mild undervekt\n (17-18,5)",
-    "Normal" =  "Normal\n (18,5-25)",
-    "Overvekt" = "Overvekt\n (25-30)",
-    "Moderat fedme, klasse I" =  "Moderat fedme\n, klasse I (30-35)",
-    "Fedme, klasse II" = "Fedme, klasse II \n (35-40)",
-    "Fedme, klasse III" = "Fedme, klasse III \n (40-50)")))
+    "Alvorlig undervekt" = "Alvorlig undervekt < 16",
+    "Moderat undervekt" = "Undervekt (16-17)",
+    "Mild undervekt" = "Mild undervekt (17-18,5)",
+    "Normal" =  "Normal (18,5-25)",
+    "Overvekt" = "Overvekt (25-30)",
+    "Moderat fedme, klasse I" =  "Moderat fedme, klasse I (30-35)",
+    "Fedme, klasse II" = "Fedme, klasse II (35-40)",
+    "Fedme, klasse III" = "Fedme, klasse III (40-50)")))
 
 regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
-                                levels =c("Alvorlig undervekt\n < 16",
-                                          "Undervekt\n (16-17)",
-                                          "Mild undervekt\n (17-18,5)",
-                                          "Normal\n (18,5-25)",
-                                          "Overvekt\n (25-30)",
-                                          "Moderat fedme\n, klasse I (30-35)",
-                                          "Fedme, klasse II \n (35-40)",
-                                          "Fedme, klasse III \n (40-50)"))
+                                levels =c("Alvorlig undervekt < 16",
+                                          "Undervekt (16-17)",
+                                          "Mild undervekt (17-18,5)",
+                                          "Normal (18,5-25)",
+                                          "Overvekt (25-30)",
+                                          "Moderat fedme, klasse I (30-35)",
+                                          "Fedme, klasse II (35-40)",
+                                          "Fedme, klasse III (40-50)"))
 
 
 # (iv) FOR PRE-OPERATIV KURVE:

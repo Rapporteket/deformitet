@@ -31,20 +31,20 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
       dplyr::filter(Sykehus == "Alle")
 
     table1 <- table1 %>%
-      dplyr::mutate(Sykehus = paste(table1[,1], "n:", table1[,3]))
+      dplyr::mutate(Sykehus = paste(table1[,1], "n:", table1[,4]))
 
     table2 <- table2 %>%
-      dplyr::mutate(Sykehus = paste(table2[,1], "n:", table2[,3]))
+      dplyr::mutate(Sykehus = paste(table2[,1], "n:", table2[,4]))
 
-    label = c(paste(table1[,1],"n:", table1[,3]), paste(table2[,1], "n:", table2[,3]))
+    label = c(paste(table1[,1],"n:", table1[,4]), paste(table2[,1], "n:", table2[,4]))
   }
 
   else{
     table <- table %>%
     dplyr::rename(var = colnames(table[2])) %>%
-    dplyr::mutate(Sykehus = paste(table[,1], "n:", table[,3]))
+    dplyr::mutate(Sykehus = paste(table[,1], "n:", table[,4]))
 
-    label = paste(table[,1],"n:", table[,3])
+    label = paste(table[,1],"n:", table[,4])
   }
 
 
@@ -71,7 +71,7 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
   if (choice_var != "hele landet"){ # => hvert sykehus og hele landet uten sammenligning
     fig_plot = fig_plot+
       ggplot2::geom_col(data = table, aes(x = var, y = Prosent, fill = Sykehus), alpha = .9)+
-      ggplot2::facet_wrap(~Sykehus)+
+      ggplot2::facet_wrap(~Sykehus) +
 
       ggplot2::scale_fill_manual(values = # adding chosen colors
                                     c("#6CACE4", "#ADDFB3", "#87189D", "black"))
@@ -92,8 +92,9 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
 
     ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
                                                face = "italic"),
-                   axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
-                   axis.text.y = element_text(size = 14))
+                   axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+                   axis.text.y = element_text(size = 14),
+                   plot.title = element_text(size = 16))
 
 
 
@@ -104,11 +105,11 @@ makePlot_gg <- function(data, gg_data, data_var, choice_var) {
 
 ### Testkode for å sjekke om funksjonen fungerer -------------------------------
 
-# data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
-# d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
+#data_var_fff <- data.frame("Valg"= c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15"))
+#d_var <- c("BMI_kategori", "kvinne", "10/01/23", "10/01/24", "10", "15")
 
 
-# makePlot_gg(d, gg_data, data_var_fff, "egen enhet")
+#makePlot_gg(g, gg_data, data_var_fff, "egen enhet")
 # d <- makeTable(f, 103240, "egen enhet")
 
 

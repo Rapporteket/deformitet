@@ -90,7 +90,7 @@ deformitet::module_gjennomsnitt_server("gjen1",
 
   deformitet::module_kvalitetsindikator_server("kval1",
                                                data = regdata,
-                                               db_data = map_db_resh,
+                                               map_data = map_db_resh,
                                                userRole = user$role,
                                                userUnitId = user$org)
 

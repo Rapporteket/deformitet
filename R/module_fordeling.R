@@ -113,6 +113,12 @@ module_fordeling_UI <- function (id) {
                            downloadButton(ns("download_fordelingsfig"),
                                           "Last ned figur")),
                   tabPanel("Tabell", value = "tab",
+                           bslib::card_body(
+                             bslib::card_header(
+                               textOutput(outputId = ns("title_table")
+                               )
+                             )
+                           ),
                            DT::DTOutput(outputId = ns("table")),
                            downloadButton(ns("download_fordelingstbl"),
                                           "Last ned tabell")
@@ -231,6 +237,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
        } else {
          reshid = userUnitId()
        }
+        req(input$type_view)
         deformitet::makeTable(data_reactive(), reshid, input$type_view)
       })
 
@@ -301,6 +308,23 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       ###### FIKSE SÅ JEG KAN OGSÅ SE KOMPLIKASJONSTYPER ETTER 12 MNDer!!
 
+      text_reactive <- reactive({
+        if (! input$x_var %in% c("Komplikasjonstype", "Komplikasjonstype_12mnd")) {
+          gg_data_4tbl <- data.frame(prepVar_reactive()[2])
+          gg_data_4tbl$title
+        } else {
+          if (input$x_var == "Komplikasjonstype") {
+            "Selvrapportert komplikasjonstype 3-6 måneders oppfølging"
+          } else {
+            "Selvrapportert komplikasjonstype 12 måneders oppfølging"
+          }
+        }
+      })
+
+      output$title_table <- renderText(
+       text_reactive()
+      )
+
       table <- reactive ({
         if(input$x_var %in% COMPLICATION_TYPES) { # if "komplikasjonstype" is chosen, use kompl_reactive
           x <- kompl_tbl_reactive()
@@ -328,9 +352,9 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
           # Generate the plot using the selected table, ggplot data, and user input.
           # The `input$type_view` parameter determines the type of view (e.g., "Hele landet", "Egen enhet") for the plot.
           deformitet::makePlot_gg(table_reactive(),
-                                       gg_data,
-                                       my_data_reactive(),
-                                       input$type_view)
+                                  gg_data,
+                                  my_data_reactive(),
+                                  input$type_view)
         }
       })
 
@@ -378,11 +402,12 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Unpack part 1 of list: data
 
       freq_table_reactive <- reactive ({
-        if (input$x_var %in% COMPLICATION_TYPES) {
-          freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
-      } else {
+      #   if (input$x_var %in% COMPLICATION_TYPES) {
+      #     freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
+      # } else {
+      #   freq_data <- deformitet::make_freq_table(freq_data_reactive())
+      # }
         freq_data <- deformitet::make_freq_table(freq_data_reactive())
-      }
       })
 
       output$freq_table <- DT::renderDT({

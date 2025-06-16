@@ -32,7 +32,8 @@ Imports:
   usethis,
   lubridate,
   kableExtra,
-  knitr
+  knitr,
+  forcats
 Remotes:
   Rapporteket/rapbase
 License: GPL-3
