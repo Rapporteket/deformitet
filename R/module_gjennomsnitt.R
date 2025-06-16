@@ -224,8 +224,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       ### TABLE
 
       output$table <- renderTable({
-        table_data() %>%
-          mutate(tid = format(tid, "%d-%m-%Y"))
+        table_data()
       })
 
       ### FIGURE ###
