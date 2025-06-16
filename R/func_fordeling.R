@@ -33,6 +33,7 @@ makeTable <- function(data, var_reshID, choice_var){
 
     data_hosp <- data_hosp %>%
       dplyr::relocate(Prosent, .before = n)
+
   }
 
   if(choice_var == "hver enhet"){
@@ -51,6 +52,7 @@ makeTable <- function(data, var_reshID, choice_var){
 
     data_hosp_all <- data_hosp_all %>%
       dplyr::relocate(Prosent, .before = n)
+
   }
 
   else{
@@ -77,6 +79,7 @@ makeTable <- function(data, var_reshID, choice_var){
 
 
   }
+  data_full <- dplyr::full_join(data_hosp, data_all)}
 
 
   if(choice_var == "hver enhet"){
@@ -88,6 +91,7 @@ makeTable <- function(data, var_reshID, choice_var){
   if(choice_var == "hele landet, uten sammenligning"){
     data_all <- data_all %>%
       dplyr::relocate(Prosent, .before = n)
+
     return(data_all)
   }
   else{return(data_full)} # => hele landet med sammenligning
@@ -95,8 +99,9 @@ makeTable <- function(data, var_reshID, choice_var){
 
 # nolint start
 
-# Test to see if it works:
+# Test to see if it works
 ##g <- makeTable(rr, 103240, "egen enhet")
+## g <- makeTable(rr, 103240, "enhet")
 # nolint end
 
 
