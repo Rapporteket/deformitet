@@ -29,6 +29,8 @@
 <url><loc>/reference/module_datadump_UI.html</loc></url>
 <url><loc>/reference/module_fordeling_UI.html</loc></url>
 <url><loc>/reference/module_fordeling_server.html</loc></url>
+<url><loc>/reference/module_gjennomsnitt_UI.html</loc></url>
+<url><loc>/reference/module_gjennomsnitt_server.html</loc></url>
 <url><loc>/reference/module_kvalitetsindikator_UI.html</loc></url>
 <url><loc>/reference/module_registreringer_UI.html</loc></url>
 <url><loc>/reference/module_registreringer_server.html</loc></url>
@@ -37,18 +39,22 @@
 <url><loc>/reference/module_spc_UI.html</loc></url>
 <url><loc>/reference/module_spc_server.html</loc></url>
 <url><loc>/reference/ny_komplikasjon3mnd_usmerte.html</loc></url>
+<url><loc>/reference/over_tid_plot.html</loc></url>
 <url><loc>/reference/pipe.html</loc></url>
 <url><loc>/reference/pre_pros.html</loc></url>
 <url><loc>/reference/prepVar.html</loc></url>
 <url><loc>/reference/prep_var_na.html</loc></url>
 <url><loc>/reference/prepros_SPC.html</loc></url>
+<url><loc>/reference/pronoun.html</loc></url>
 <url><loc>/reference/run_app.html</loc></url>
 <url><loc>/reference/spc_function.html</loc></url>
 <url><loc>/reference/spc_text.html</loc></url>
 <url><loc>/reference/tabell_sam.html</loc></url>
 <url><loc>/reference/tabell_sam_discrete.html</loc></url>
+<url><loc>/reference/table_freq_time.html</loc></url>
 <url><loc>/reference/tbl_reg.html</loc></url>
 <url><loc>/reference/tbl_skjema_reg.html</loc></url>
 <url><loc>/reference/utvalg_basic.html</loc></url>
+<url><loc>/reference/y_limits_gjen.html</loc></url>
 </urlset>
 
