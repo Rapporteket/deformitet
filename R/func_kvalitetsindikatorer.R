@@ -139,6 +139,36 @@ count_kvalind <- function (data, kjoenn, type_op, var, userRole, userUnitId, map
 }
 
 
+######### FUNCTION THAT COUNTS NUMBER OF FORLØPs WITH COMPLICATIONS OTHER THAN
+######### PAIN ###############################################################
+
+#'@title Ny komplikasjonskolonne
+#'@export
+
+ny_komplikasjon3mnd_usmerte <- function (data) {
+
+  data <- data %>%
+    dplyr::mutate(komplikasjoner_uSmerte_3mnd =
+                    dplyr::if_else(COMPLICATIONS_BLEEDING == 1 |
+                                     COMPLICATIONS_HEAD == 1 |
+                                     COMPLICATIONS_DVT == 1 |
+                                     COMPLICATIONS_UTI == 1 |
+                                     COMPLICATIONS_PNEUMONIA == 1 |
+                                     COMPLICATIONS_PE == 1 |
+                                     COMPLICATIONS_INFECTION_WOUND == 1 |
+                                     COMPLICATIONS_INFECTION_DEEP == 1 |
+                                     COMPLICATIONS_INFECTION_REOP == 1 |
+                                     COMPLICATIONS_NUMBNESS == 1 |
+                                     COMPLICATIONS_OTHER == 1, "ja", "nei")) %>%
+    dplyr::mutate(komplikasjoner_uSmerte_3mnd =
+                    if_else(is.na(komplikasjoner_uSmerte_3mnd), "nei",
+                            if_else(komplikasjoner_uSmerte_3mnd == "nei", "nei", "ja")))
+
+
+  return (data)
+}
+
+
 # nolint start
 ## test for å sjekke at det fungerer:
 ## r <- count_kvalind(regdata, "ee", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
