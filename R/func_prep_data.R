@@ -4,7 +4,11 @@
 #' @export
 #'
 
-prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op){
+prepVar <- function(data, var, var_kjønn,
+                    time1, time2,
+                    alder1, alder2,
+                    type_op,
+                    visning = "uten_tid"){
 
 
   data <- deformitet::prep_var_na(data, var)
@@ -50,79 +54,141 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
   # Add good titles on each variable--------------------------------------------
 
   gg_data <- gg_data %>%
-    dplyr::mutate(title = dplyr::case_when({{var}} == "BMI_kategori" ~ "Andel operasjoner fordelt på BMI-kategorier",
+    dplyr::mutate(title = dplyr::case_when({{var}} %in% c("BMI_kategori", "BMI") ~
+                                             "Andel operasjoner fordelt på BMI-kategorier",
 
                                            # ALDER:
-                                           {{var}} == "Alder" ~ "Andel operasjoner fordelt på aldersgrupper",
+                                           {{var}} %in% c("Alder", "Alder_num") ~ "Andel operasjoner fordelt på aldersgrupper",
 
                                            # KURVE:
-                                           {{var}} == "PRE_MAIN_CURVE" ~ "Andel operasjoner fordelt på pre-operativ kurve",
-                                           {{var}} == "Kurve_pre" ~ "Andel operasjoner fordelt på pre-operativ kurve",
-                                           {{var}} == "Kurve_post" ~ "Andel operasjoner fordelt på post-operativ kurve",
-                                           {{var}} == "Diff_prosent_kurve" ~ "Andel operasjoner fordelt på prosentvis korreksjon i kurve",
+                                           {{var}} %in% c("Kurve_pre", "PRE_MAIN_CURVE") ~
+                                             "Andel operasjoner fordelt på pre-operativ kurve",
+                                           {{var}} %in% c("Kurve_post", "POST_MAIN_CURVE") ~
+                                             "Andel operasjoner fordelt på post-operativ kurve",
+                                           {{var}} %in% c("Diff_prosent_kurve", "Diff_prosent_kurve_raw") ~
+                                             "Andel operasjoner fordelt på prosentvis korreksjon i kurve",
+
 
                                            # LIGGETID
-                                           {{var}} == "Liggetid" ~ "Andel operasjoner fordelt på liggetid etter operasjon",
+                                           {{var}} %in% c("Liggetid", "BED_DAYS_POSTOPERATIVE") ~
+                                             "Andel operasjoner fordelt på liggetid etter operasjon",
 
                                            # KNIVTID
-                                           {{var}} == "Knivtid" ~ "Andel operasjoner fordelt på knivtid",
+                                           {{var}} %in% c("Knivtid", "kniv_tid") ~ "Andel operasjoner fordelt på knivtid",
 
                                            # BLODTAP:
-                                           {{var}} == "Blodtap_100" ~ "Andel operasjoner fordelt på blodtap",
-                                           {{var}} == "Blodtap_200" ~ "Andel operasjoner fordelt på blodtap",
+                                           {{var}} %in% c("Blodtap_100", "Blodtap_200", "PER_BLOOD_LOSS_VALUE") ~
+                                                            "Andel operasjoner fordelt på blodtap",
 
                                            # SRS22:total
-                                           {{var}} == "SRS22_total" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) preoperativt",
-                                           {{var}} == "SRS22_total_3mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_total_12mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_total_60mnd" ~ "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_total", "SRS22_MAIN_SCORE") ~
+                                             "Andel operasjoner fordelt på total SRS22 skår (1-5) preoperativt",
+                                           {{var}} %in% c("SRS22_total_3mnd", "SRS22_FULL_SCORE") ~
+                                             "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_total_12mnd", "SRS22_FULL_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_total_60mnd", "SRS22_FULL_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på total SRS22 skår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: funksjon
-                                           {{var}} == "SRS22_funksjon" ~ "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) preoperativt",
-                                           {{var}} == "SRS22_funksjon_3mnd" ~ "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_funksjon_12mnd" ~ "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_funksjon_60mnd" ~ "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_funksjon","SRS22_FUNCTION_SCORE") ~
+                                             "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) preoperativt",
+                                           {{var}} %in% c("SRS22_funksjon_3mnd", "SRS22_FUNCTION_SCORE_patient3mths") ~
+                                             "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_funksjon_12mnd", "SRS22_FUNCTION_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_funksjon_60mnd", "SRS22_FUNCTION_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på SRS22-funksjonsskår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: smerte
-                                           {{var}} == "SRS22_smerte" ~ "Andel operasjoner fordelt på SRS22-smertesskår (1-5) preoperativt",
-                                           {{var}} == "SRS22_smerte_3mnd" ~ "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_smerte_12mnd" ~ "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_smerte_60mnd" ~ "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_smerte",
+                                                          "SRS22_PAIN_SCORE") ~
+                                             "Andel operasjoner fordelt på SRS22-smertesskår (1-5) preoperativt",
+                                           {{var}} %in% c("SRS22_smerte_3mnd",
+                                                          "SRS22_PAIN_SCORE_patient3mths") ~
+                                             "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_smerte_12mnd",
+                                                          "SRS22_PAIN_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_smerte_60mnd",
+                                                          "SRS22_PAIN_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på SRS22-smertesskår (1-5) ved 5 års oppfølging",
+
 
                                            # SRS22: selvbilde
-                                           {{var}} == "SRS22_selvbilde" ~ "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) preoperativt",
-                                           {{var}} == "SRS22_selvbilde_3mnd" ~ "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_selvbilde_12mnd" ~ "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_selvbilde_60mnd" ~ "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_selvbilde",
+                                                          "SRS22_SELFIMAGE_SCORE") ~
+                                             "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) preoperativt",
+                                           {{var}} %in% c("SRS22_selvbilde_3mnd",
+                                                          "SRS22_SELFIMAGE_SCORE_patient3mths") ~
+                                             "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_selvbilde_12mnd",
+                                                          "SRS22_SELFIMAGE_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_selvbilde_60mnd",
+                                                          "SRS22_SELFIMAGE_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på SRS22-selvbildesskår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: mental helse
-                                           {{var}} == "SRS22_mhelse" ~ "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) preoperativt",
-                                           {{var}} == "SRS22_mhelse_3mnd" ~ "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_mhelse_12mnd" ~ "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_mhelse_60mnd" ~ "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_mhelse",
+                                                          "SRS22_MENTALHEALTH_SCORE") ~
+                                             "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) preoperativt",
+                                           {{var}} %in% c("SRS22_mhelse_3mnd",
+                                                          "SRS22_MENTALHEALTH_SCORE_patient3mths") ~
+                                             "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_mhelse_12mnd",
+                                                          "SRS22_MENTALHEALTH_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_mhelse_60mnd",
+                                                          "SRS22_MENTALHEALTH_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på SRS22-mental-helse-skår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: fornøyd
-                                           {{var}} == "SRS22_fornoyd_3mnd" ~ "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_fornoyd_12mnd" ~ "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_fornoyd_60mnd" ~ "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_fornoyd_3mnd",
+                                                          "SRS22_SATISFACTION_SCORE") ~
+                                             "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_fornoyd_12mnd",
+                                                          "SRS22_SATISFACTION_SCORE_patient12mths") ~
+                                             "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_fornoyd_60mnd",
+                                                          "SRS22_SATISFACTION_SCORE_patient60mths") ~
+                                             "Andel operasjoner fordelt på SRS22-fornøydhetsskår (1-5) ved 5 års oppfølging",
 
                                            # SRS22: spm 21 - hvor fornøyd?
-                                           {{var}} == "SRS22_spm21_3mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_spm21_12mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_spm21_60mnd" ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_spm21_3mnd",
+                                                          "SRS22_21") ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_spm21_12mnd",
+                                                          "SRS22_21_patient12mths") ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_spm21_60mnd",
+                                                          "SRS22_21_patient60mths") ~ "Andel operasjoner fordelt på: 'Er du fornøyd med resultatet av behandlingen?' ved 5 års oppfølging",
 
                                            # SRS22: spm 22 - på nytt?
-                                           {{var}} == "SRS22_spm22_3mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 3-6 måneders oppfølging",
-                                           {{var}} == "SRS22_spm22_12mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 12 måneders oppfølging",
-                                           {{var}} == "SRS22_spm22_60mnd" ~ "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 5 års oppfølging",
+                                           {{var}} %in% c("SRS22_spm22_3mnd",
+                                                          "SRS22_22") ~
+                                             "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_spm22_12mnd",
+                                                          "SRS22_22_patient12mths") ~
+                                             "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 12 måneders oppfølging",
+                                           {{var}} %in% c("SRS22_spm22_60mnd",
+                                                          "SRS22_22_patient60mths") ~
+                                             "Andel operasjoner fordelt på: 'Ville du ønsket samme behandling på nytt?' ved 5 års oppfølging",
 
                                            # EQ5D
 
                                            # HELSETILSTAND
-                                           {{var}} == "Helsetilstand" ~ "Andel operasjoner fordelt på helsetilstandsskår (0-100) preoperativt",
-                                           {{var}} == "Helsetilstand_3mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 3-6 måneders oppfølging",
-                                           {{var}} == "Helsetilstand_12mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 12 måneders oppfølging",
-                                           {{var}} == "Helsetilstand_60mnd" ~ "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 5 års oppfølging",
+                                           {{var}} %in% c("Helsetilstand",
+                                                          "HELSETILSTAND_SCALE") ~
+                                             "Andel operasjoner fordelt på helsetilstandsskår (0-100) preoperativt",
+                                           {{var}} %in% c("Helsetilstand_3mnd",
+                                                           "HEALTH_CONDITION_SCALE") ~
+                                             "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 3-6 måneders oppfølging",
+                                           {{var}} %in% c("Helsetilstand_12mnd",
+                                                          "HEALTH_CONDITION_SCALE_patient12mths") ~
+                                             "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 12 måneders oppfølging",
+                                           {{var}} %in% c("Helsetilstand_60mnd",
+                                                          "HEALTH_CONDITION_SCALE_patient_60_mths") ~
+                                             "Andel operasjoner fordelt på helsetilstandsskår (1-5) ved 5 års oppfølging",
+
 
                                            # KOMPLIKASJONER
                                            {{var}} == "Komplikasjoner_3mnd" ~ "Andel komplikasjoner pr. operasjon ved 3-6 måneders oppfølging",
@@ -136,75 +202,140 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
     # Add title for label in plot (specifically xlab in ggplot)---------------------
 
     xlab = dplyr::case_when({{var}} == "BMI_kategori" ~ "BMI-kategorier",
+                            {{var}} == "BMI" ~ "BMI",
 
                             # ALDER:
                             {{var}} == "Alder" ~ "Aldersgrupper",
+                            {{var}} == "Alder_num" ~ "Alder",
 
                             # KURVE:
-                            {{var}} == "PRE_MAIN_CURVE" ~ "Pre-operativ kurve",
-                            {{var}} == "Kurve_pre" ~ "Pre-operativ kurve",
-                            {{var}} == "Kurve_post" ~ "Post-operativ kurve",
-                            {{var}} == "Diff_prosent_kurve" ~ "Post-operativ prosent korreksjon",
+                            {{var}} %in% c("Kurve_pre", "PRE_MAIN_CURVE") ~
+                              "Pre-operativ kurve",
+                            {{var}} %in% c("Kurve_post", "POST_MAIN_CURVE") ~
+                              "Post-operativ kurve",
+                            {{var}} %in% c("Diff_prosent_kurve", "Diff_prosent_kurve_raw") ~
+                              "Post-operativ prosent korreksjon",
 
                             # LIGGETID
-                            {{var}} == "Liggetid" ~ "Liggetid etter operasjon, oppgitt i dager",
+                            {{var}} %in% c("Liggetid", "BED_DAYS_POSTOPERATIVE") ~
+                              "Liggetid etter operasjon, oppgitt i dager",
 
                             # KNIVTID
-                            {{var}} == "Knivtid" ~ "Knivtid, oppgitt i minutter",
+                            {{var}} %in% c("Knivtid", "kniv_tid") ~ "Knivtid, oppgitt i minutter",
 
                             # BLODTAP:
                             {{var}} == "Blodtap_100" ~ "Blodtap pr 100ml",
                             {{var}} == "Blodtap_200" ~ "Blodtap pr 200ml",
+                            {{var}} == "PER_BLOOD_LOSS_VALUE" ~ "Blodtap i ml",
 
                             # SRS22:total
-                            {{var}} == "SRS22_total" ~ "Total SRS22 skår (1-5) ved innleggelse",
+                            {{var}} %in% c("SRS22_total", "SRS22_MAIN_SCORE") ~
+                              "Total SRS22 skår (1-5) preoperativt",
+                            {{var}} %in% c("SRS22_total_3mnd", "SRS22_FULL_SCORE") ~
+                              "Total SRS22 skår (1-5) ved 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_total_12mnd", "SRS22_FULL_SCORE_patient12mths") ~
+                              "Total SRS22 skår (1-5) ved 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_total_60mnd", "SRS22_FULL_SCORE_patient60mths") ~
+                              "Total SRS22 skår (1-5) ved 5 års oppfølging",
 
                             # SRS22: funksjon
-                            {{var}} == "SRS22_funksjon" ~ "SRS22-funksjonsskår (1-5) preoperativt",
-                            {{var}} == "SRS22_funksjon_3mnd" ~ "SRS22-funksjonsskår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_funksjon_12mnd" ~ "SRS22-funksjonsskår (1-5), 12 måneders oppfølging",
-                            {{var}} == "SRS22_funksjon_60mnd" ~ "SRS22-funksjonsskår (1-5), 5 års oppfølging",
+                            {{var}} %in% c("SRS22_funksjon","SRS22_FUNCTION_SCORE") ~
+                              "SRS22-funksjonsskår (1-5) preoperativt",
+                            {{var}} %in% c("SRS22_funksjon_3mnd", "SRS22_FUNCTION_SCORE_patient3mths") ~
+                              "SRS22-funksjonsskår (1-5), 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_funksjon_12mnd", "SRS22_FUNCTION_SCORE_patient12mths") ~
+                              "SRS22-funksjonsskår (1-5), 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_funksjon_60mnd", "SRS22_FUNCTION_SCORE_patient60mths") ~
+                              "SRS22-funksjonsskår (1-5), 5 års oppfølging",
 
                             # SRS22: smerte
-                            {{var}} == "SRS22_smerte" ~ "SRS22-smertesskår (1-5) preoperativt",
-                            {{var}} == "SRS22_smerte_3mnd" ~ "SRS22-smertesskår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_smerte_12mnd" ~ "SRS22-smertesskår (1-5), 12 måneders oppfølging",
-                            {{var}} == "SRS22_smerte_60mnd" ~ "SRS22-smertesskår (1-5), 5 års oppfølging",
+                            {{var}} %in% c("SRS22_smerte", "SRS22_PAIN_SCORE") ~
+                              "SRS22-smertesskår (1-5) preoperativt",
+                            {{var}} %in% c("SRS22_smerte_3mnd", "SRS22_PAIN_SCORE_patient3mths") ~
+                              "SRS22-smertesskår (1-5), 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_smerte_12mnd", "SRS22_PAIN_SCORE_patient12mths") ~
+                              "SRS22-smertesskår (1-5), 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_smerte_60mnd", "SRS22_PAIN_SCORE_patient60mths") ~
+                              "SRS22-smertesskår (1-5), 5 års oppfølging",
 
                             # SRS22: selvbilde
-                            {{var}} == "SRS22_selvbilde" ~ "SRS22-selvbildesskår (1-5) preoperativt",
-                            {{var}} == "SRS22_selvbilde_3mnd" ~ "SRS22-selvbildesskår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_selvbilde_12mnd" ~ "SRS22-selvbildesskår (1-5), 12 måneders oppfølging",
-                            {{var}} == "SRS22_selvbilde_60mnd" ~ "SRS22-selvbildesskår (1-5), 5 års oppfølging",
+                            {{var}} %in% c("SRS22_selvbilde",
+                                           "SRS22_SELFIMAGE_SCORE") ~
+                              "SRS22-selvbildesskår (1-5) preoperativt",
+                            {{var}} %in% c("SRS22_selvbilde_3mnd",
+                                           "SRS22_SELFIMAGE_SCORE_patient3mths") ~
+                              "SRS22-selvbildesskår (1-5), 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_selvbilde_12mnd",
+                                           "SRS22_SELFIMAGE_SCORE_patient12mths") ~
+                              "SRS22-selvbildesskår (1-5), 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_selvbilde_60mnd",
+                                           "SRS22_SELFIMAGE_SCORE_patient60mths") ~
+                              "SRS22-selvbildesskår (1-5), 5 års oppfølging",
 
                             # SRS22: mental helse
-                            {{var}} == "SRS22_mhelse" ~ "SRS22-mental-helse-skår (1-5) preoperativt",
-                            {{var}} == "SRS22_mhelse_3mnd" ~ "SRS22-mental-helse-skår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_mhelse_12mnd" ~ "SRS22-mental-helse-skår (1-5), 12 måneders oppfølging",
-                            {{var}} == "SRS22_mhelse_60mnd" ~ "SRS22-mental-helse-skår (1-5), 5 års oppfølging",
+                            {{var}} %in% c("SRS22_mhelse",
+                                           "SRS22_MENTALHEALTH_SCORE") ~
+                              "SRS22-mental-helse-skår (1-5) preoperativt",
+                            {{var}} %in% c("SRS22_mhelse_3mnd",
+                                           "SRS22_MENTALHEALTH_SCORE_patient3mths") ~
+                              "SRS22-mental-helse-skår (1-5), 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_mhelse_12mnd",
+                                           "SRS22_MENTALHEALTH_SCORE_patient12mths") ~
+                              "SRS22-mental-helse-skår (1-5), 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_mhelse_60mnd",
+                                           "SRS22_MENTALHEALTH_SCORE_patient60mths") ~
+                              "SRS22-mental-helse-skår (1-5), 5 års oppfølging",
 
                             # SRS22: fornøyd
-                            {{var}} == "SRS22_fornoyd_3mnd" ~ "SRS22-fornøydhetsskår (1-5), 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_fornoyd_12mnd" ~ "SRS22-fornøydhetsskår (1-5), 12 måneders oppfølging",
-                            {{var}} == "SRS22_fornoyd_60mnd" ~ "SRS22-fornøydhetsskår (1-5), 5 års oppfølging",
+                            {{var}} %in% c("SRS22_fornoyd_3mnd",
+                                           "SRS22_SATISFACTION_SCORE") ~
+                              "SRS22-fornøydhetsskår (1-5), 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_fornoyd_12mnd",
+                                           "SRS22_SATISFACTION_SCORE_patient12mths") ~
+                              "SRS22-fornøydhetsskår (1-5), 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_fornoyd_60mnd",
+                                           "SRS22_SATISFACTION_SCORE_patient60mths") ~
+                              "SRS22-fornøydhetsskår (1-5), 5 års oppfølging",
+
 
                             # SRS22: spm 21 - hvor fornøyd?
-                            {{var}} == "SRS22_spm21_3mnd" ~ "'Er du fornøyd med resultatet av behandlingen?', 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_spm21_12mnd" ~ "'Er du fornøyd med resultatet av behandlingen?', 12 måneders oppfølging",
-                            {{var}} == "SRS22_spm21_60mnd" ~ "'Er du fornøyd med resultatet av behandlingen?', 5 år oppfølging",
+                            {{var}} %in% c("SRS22_spm21_3mnd",
+                                           "SRS22_21") ~
+                              "'Er du fornøyd med resultatet av behandlingen?', 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_spm21_12mnd",
+                                           "SRS22_21_patient12mths") ~
+                              "'Er du fornøyd med resultatet av behandlingen?', 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_spm21_60mnd",
+                                           "SRS22_21_patient60mths") ~
+                              "'Er du fornøyd med resultatet av behandlingen?', 5 år oppfølging",
 
                             # SRS22: spm 22 - på nytt?
-                            {{var}} == "SRS22_spm22_3mnd" ~ "'Ville du ønsket samme behandling på nytt?', 3-6 måneders oppfølging",
-                            {{var}} == "SRS22_spm22_12mnd" ~ "'Ville du ønsket samme behandling på nytt?', 12 måneders oppfølging",
-                            {{var}} == "SRS22_spm22_60mnd" ~ "'Ville du ønsket samme behandling på nytt?', 5 års oppfølging",
+                            {{var}} %in% c("SRS22_spm22_3mnd",
+                                           "SRS22_22") ~
+                              "'Ville du ønsket samme behandling på nytt?', 3-6 måneders oppfølging",
+                            {{var}} %in% c("SRS22_spm22_12mnd",
+                                           "SRS22_22_patient12mths") ~
+                              "'Ville du ønsket samme behandling på nytt?', 12 måneders oppfølging",
+                            {{var}} %in% c("SRS22_spm22_60mnd",
+                                           "SRS22_22_patient60mths") ~
+                              "'Ville du ønsket samme behandling på nytt?', 5 års oppfølging",
+
 
                             # EQ5D
 
                             # HELSETILSTAND
-                            {{var}} == "Helsetilstand" ~ "Helsetilstandsskår (0-100) preoperativt",
-                            {{var}} == "Helsetilstand_3mnd" ~ "Helsetilstandsskår (0-100), 3-6 måneders oppfølging",
-                            {{var}} == "Helsetilstand_12mnd" ~ "Helsetilstandsskår (0-100), 12 måneders oppfølging",
-                            {{var}} == "Helsetilstand_60mnd" ~ "Helsetilstandsskår (0-100), 5 års oppfølging",
+                            {{var}} %in% c("Helsetilstand",
+                                           "HELSETILSTAND_SCALE") ~
+                              "Helsetilstandsskår (0-100) preoperativt",
+                            {{var}} %in% c("Helsetilstand_3mnd",
+                                           "HEALTH_CONDITION_SCALE") ~
+                              "Helsetilstandsskår (0-100), 3-6 måneders oppfølging",
+                            {{var}} %in% c("Helsetilstand_12mnd",
+                                           "HEALTH_CONDITION_SCALE_patient12mths") ~
+                              "Helsetilstandsskår (0-100), 12 måneders oppfølging",
+                            {{var}} %in% c("Helsetilstand_60mnd",
+                                           "HEALTH_CONDITION_SCALE_patient_60_mths") ~
+                              "Helsetilstandsskår (0-100), 5 års oppfølging",
 
                             # KOMPLIKASJONER
                             {{var}} == "Komplikasjoner_3mnd" ~ "Selvrapportert komplikasjon, 3-6 måneders oppfølging",
@@ -216,27 +347,41 @@ prepVar <- function(data, var, var_kjønn, time1, time2, alder1, alder2, type_op
     ))
 
 
-  #### Select and return the column of interest-----------------------------------
-
-
-my_data <- data %>%
-    dplyr::select(c("Sykehus",
-                    "CENTREID",
-                    all_of({{var}}),
-                    "Kjønn",
-                    "CURRENT_SURGERY"))
+  #### Select and return the column of interest---------------------------------
+  if (visning == "over_tid") {
+    my_data <- data %>%
+      dplyr::select(c("Sykehus",
+                      "CENTREID",
+                      all_of({{var}}),
+                      "Kjønn",
+                      "CURRENT_SURGERY",
+                      all_of(case_when({{var}} %in% skjema$tre_mnd_pas ~ "FILLING_DATE_patient3mths",
+                                       {{var}} %in% skjema$tre_mnd_lege ~ "FILLING_DATE_surgeon3mths",
+                                       {{var}} %in% skjema$tolv_mnd_pas ~ "FILLING_DATE_patient12mths",
+                                       {{var}} %in% skjema$tolv_mnd_lege ~ "FILLING_DATE_surgeon12mths",
+                                       {{var}} %in% skjema$seksti_mnd_pas ~ "FILLING_DATE_patient12mths",
+                                       .default = "SURGERY_DATE")),
+                      PID))
+    } else {
+      my_data <- data %>%
+        dplyr::select(c("Sykehus",
+                      "CENTREID",
+                      all_of({{var}}),
+                      "Kjønn",
+                      "CURRENT_SURGERY"))
+    }
 
 
   return(list(my_data, gg_data)) # returns a list (the list is unpacked in UI)
 
 }
 
-# Test of the function
-## x <- prepVar(regdata, "Komplikasjoner_3mnd", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
-# Inspect returned data frame (object 1 in list):
-## rr <- data.frame(x[1])
-## gg_data <- data.frame(x[2])
 
+# Test of the function
+##x <- prepVar(regdata, f, "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
+# Inspect returned data frame (object 1 in list):
+##rr <- data.frame(x[1])
+## gg_data <- data.frame(x[2])
 
 # Funksjon for å ta ut NA der det ikke er registrert oppfølging enda
 
@@ -250,36 +395,63 @@ prep_var_na <- function (data, var) {
 
   oppflg <- data.frame(
     "tre" = c("Helsetilstand_3mnd",
-               "SRS22_spm22_3mnd",
-               "SRS22_spm21_3mnd",
-               "SRS22_total_3mnd",
-               "SRS22_funksjon_3mnd",
-               "SRS22_smerte_3mnd",
-               "SRS22_selvbilde_3mnd",
-               "SRS22_mhelse_3mnd",
-               "SRS22_fornoyd_3mnd",
+              "HEALTH_CONDITION_SCALE",
+              "SRS22_spm22_3mnd",
+              "SRS22_22",
+              "SRS22_spm21_3mnd",
+              "SRS22_21",
+              "SRS22_total_3mnd",
+              "SRS22_FULL_SCORE",
+              "SRS22_funksjon_3mnd",
+              "SRS22_FUNCTION_SCORE_patient3mths",
+              "SRS22_smerte_3mnd",
+              "SRS22_PAIN_SCORE_patient3mths",
+              "SRS22_selvbilde_3mnd",
+              "SRS22_SELFIMAGE_SCORE_patient3mths",
+              "SRS22_mhelse_3mnd",
+              "SRS22_MENTALHEALTH_SCORE_patient3mths",
+              "SRS22_fornoyd_3mnd",
+              "SRS22_SATISFACTION_SCORE",
                "Komplikasjoner_3mnd"),
 
     "tolv" = c("Helsetilstand_12mnd",
-                "SRS22_spm22_12mnd",
-                "SRS22_spm21_12mnd",
-                "SRS22_total_12mnd",
-                "SRS22_funksjon_12mnd",
-                "SRS22_smerte_12mnd",
-                "SRS22_selvbilde_12mnd",
-                "SRS22_mhelse_12mnd",
-                "SRS22_fornoyd_12mnd",
-                "Komplikasjoner_12mnd"),
+               "HEALTH_CONDITION_SCALE_patient12mths",
+               "SRS22_spm22_12mnd",
+               "SRS22_22_patient12mths",
+               "SRS22_spm21_12mnd",
+               "SRS22_21_patient12mths",
+               "SRS22_total_12mnd",
+               "SRS22_FULL_SCORE_patient12mths",
+               "SRS22_funksjon_12mnd",
+               "SRS22_FUNCTION_SCORE_patient12mths",
+               "SRS22_smerte_12mnd",
+               "SRS22_PAIN_SCORE_patient12mths",
+               "SRS22_selvbilde_12mnd",
+               "SRS22_SELFIMAGE_SCORE_patient12mths",
+               "SRS22_mhelse_12mnd",
+               "SRS22_MENTALHEALTH_SCORE_patient12mths",
+               "SRS22_fornoyd_12mnd",
+               "SRS22_SATISFACTION_SCORE_patient12mths",
+               "Komplikasjoner_12mnd"),
 
     "seksti" = c("Helsetilstand_60mnd",
+                 "HEALTH_CONDITION_SCALE_patient_60_mths",
                  "SRS22_spm22_60mnd",
+                 "SRS22_22_patient60mths",
                  "SRS22_spm21_60mnd",
+                 "SRS22_21_patient60mths",
                  "SRS22_total_60mnd",
+                 "SRS22_FULL_SCORE_patient60mths",
                  "SRS22_funksjon_60mnd",
+                 "SRS22_FUNCTION_SCORE_patient60mths",
                  "SRS22_smerte_60mnd",
+                 "SRS22_PAIN_SCORE_patient60mths",
                  "SRS22_selvbilde_60mnd",
+                 "SRS22_SELFIMAGE_SCORE_patient60mths",
                  "SRS22_mhelse_60mnd",
+                 "SRS22_MENTALHEALTH_SCORE_patient60mths",
                  "SRS22_fornoyd_60mnd",
+                 "SRS22_SATISFACTION_SCORE_patient60mths",
                  "Komplikasjoner_60mnd"))
 
  if (var %in% oppflg$tre) {
@@ -304,3 +476,6 @@ prep_var_na <- function (data, var) {
 # sjekk at det fungerer:
 ## r <- prep_var_na(regdata, "Helsetilstand_3mnd")
 # nolint end
+
+
+
