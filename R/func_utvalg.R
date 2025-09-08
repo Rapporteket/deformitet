@@ -7,9 +7,7 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
   # Filter by unit
 
   data <- data %>%
-    dplyr::filter(dplyr::case_when({{user_unit}} == 103240 ~ CENTREID == 103240,
-                                   {{user_unit}} == 102467 ~ CENTREID == 102467,
-                                   {{user_unit}} == 111961 ~ CENTREID == 111961))
+    dplyr::filter(CENTREID == user_unit)
 
   # Filter by gender
 
@@ -25,21 +23,20 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
                                    {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
                                    {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
-# Add filter on surgery date--------------------------------------------------
+  # Add filter on surgery date--------------------------------------------------
 
-data <- data %>%
-  dplyr::filter(dplyr::between(SURGERY_DATE,
-                               as.Date({{tid1}}),
-                               as.Date({{tid2}})))
+  data <- data %>%
+    dplyr::filter(dplyr::between(SURGERY_DATE,
+                                 as.Date({{tid1}}),
+                                 as.Date({{tid2}})))
 
 # Add filter on age-----------------------------------------------------------
 
 # Using column "Alder_num" in which alder is given as an integer
-
-data <- data %>%
-  dplyr::filter(dplyr::between(Alder_num,
-                               {{alder1}},
-                               {{alder2}}))
+  data <- data %>%
+    dplyr::filter(dplyr::between(Alder_num,
+                                 {{alder1}},
+                                 {{alder2}}))
 
 
 return (data)
@@ -50,5 +47,7 @@ return (data)
 ## TEST AT DET FUNGERER:
 ##
 ##
-##g <- utvalg_basic(regdata, 111961, "m", "Begge", "2023-01-01", "2024-12-01", 1, 100)
+## g <- utvalg_basic(regdata, 111961, "m", "Begge", "2023-01-01", "2024-12-01", 1, 100)
+
+#f <- utvalg_basic(regdata, 111961)
 # nolint end
