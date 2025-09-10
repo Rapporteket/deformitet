@@ -1,18 +1,24 @@
+################################################################################
 # Funksjoner til sammenligningsmodul
-# Funksjonene lager to faner - density plot og boxplot
+# Funksjonene lager to plot: density plot og boxplot
+################################################################################
 
 
-###----------------- BOXPLOT --------------------------------###################
+#### ------------------------------- BOXPLOT -------------------------------####
 
-#' Find variables over time
+# Først en funksjon som finner navn på kolonner. Brukeren velger variabel og
+# denne funksjonen finner alle kolonnene som hører til denne variabelen over tid.
+
+#' Finn variabler over tid
 #'
-#' @return values that can be used for selection
+#' @param var input fra UI - valg av variabel
+#' @return en vektor med navn på kolonner som hører til valgt variabel
 #'
 #' @export
 
-find_variables <- function(var) {
+finn_variabler <- function(var) {
 
-  variables <- dplyr::case_when({{var}} == "SRS22 totalskår" ~ c("SRS22_MAIN_SCORE",
+  variabler <- dplyr::case_when({{var}} == "SRS22 totalskår" ~ c("SRS22_MAIN_SCORE",
                                                                  "SRS22_FULL_SCORE",
                                                                  "SRS22_FULL_SCORE_patient12mths",
                                                                  "SRS22_FULL_SCORE_patient60mths"),
@@ -48,17 +54,27 @@ find_variables <- function(var) {
                                                              "SRS22_SATISFACTION_SCORE_patient60mths"))
 }
 
-#x <- find_variables("Funksjon")
+# Sjekk at funksjonen fungerer
+# nolint start
+#x <- finn_variabler("Funksjon")
+# nolint end
 
 
-#' Make table
+# Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
+# alle kolonnene av interesse i et langt format. Det er kun variabelene som er
+# valgt, samt Sykehus som blir mer i funksjonen.
+
+#' Lag tabell til sammenligning
 #'
-#' @return a dataframe that is in the long format
+#' @param data datasett
+#' @param var variabelen som skal brukes i finn_variabler()
+#'
+#' @return datasett/tabell i langt format
 #' @export
 
-make_comparability_table <- function(data, var) {
+lag_sam_tabell <- function(data, var) {
 
-  variables <- find_variables({{var}})
+  variables <- finn_variabler({{var}})
 
   data_long <- data %>%
     select(Sykehus, all_of(variables)) %>%
@@ -67,19 +83,24 @@ make_comparability_table <- function(data, var) {
   return(data_long)
 }
 
+# Sjekk at funksjonen fungerer
 # nolint start
-## r <- make_comparability_table(regdata, "Funksjon")
+##r <- lag_sam_tabell(regdata, "Funksjon", "Kurve_pre")
 # nolint end
 
-# Deretter gi nye navn til variablene slik at vi får "før operasjon", "3mnd", "2 år" og "5 år"
 
-#' Making labels
+
+# Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
+# "før operasjon", "3mnd", "2 år" og "5 år".
+
+#' Lage nye navn på kolonne
 #'
-#' @return a dataframe with labels
+#' @param data datasett som skal endres
+#' @return datasett med nye kolonnenavn
 #'
 #' @export
 
-new_labels <- function (data) {
+nye_navn <- function (data) {
 
   data <- data %>%
     mutate(Punkt = case_match(Punkt, c("SRS22_MAIN_SCORE",
@@ -118,19 +139,25 @@ new_labels <- function (data) {
 
 }
 
+# Sjekk at funksjonen fungerer:
 # nolint start
-## g <- new_labels(r)
+##g <- nye_navn(r)
 # nolint end
 
-# Ting som gjenstår å gjøre:
-# Først filtrer ut NA-er
-# Deretter tell antall observasjoner i hver gruppe (hvis færre enn 5, ikke vis)
 
-#' Cleaning data frame
+# Videre vask av datasettet. Nå tas NA-er ut. Deretter grupper der det er
+# 5 eller færre observasjoner.
+
+
+#' Vaske datasettet
+#'
+#' @param data datasettet som skal vaskes
+#' @param var variabel brukeren har valgt i UI-delen
+#' @return et vasket datasett
 #'
 #' @export
 
-clean_comparability_table <- function(data, var) {
+vask_sam_tabell <- function(data, var) {
 
   data <- data %>%
     mutate(Punkt = forcats::as_factor(Punkt),
@@ -159,53 +186,61 @@ clean_comparability_table <- function(data, var) {
 
 }
 
-
+# Sjekk at funksjonen fungerer:
 # nolint start
-##f <- clean_comparability_table(g, "Funksjon")
+##f <- vask_sam_tabell(g, "Funksjon")
 # nolint end
 
 
+# Lag fine navn til plotting
 
-# Make data nice for plotting
-#' GG data for boxplot
+#' Data for gg-plotting
 #'
+#' @param var Variabel som skal få finere navn
+#' @return datasett med fine navn til ggplot
 #' @export
 
-gg_data_comparability <- function (var) {
+ggdata_sam_plot <- function (var) {
 
-  gg_data <- data.frame(xlab = "", ylab = "")
+  gg_data <- data.frame(forklaring = "")
 
   gg_data <- gg_data %>%
-    dplyr::mutate(xlab = case_when({{var}} == "SRS22 totalskår" ~ "SRS22 totalskår (1: dårlig - 5: bra)",
-                                   {{var}} == "Funksjon" ~ "SRS22 funksjon (1: dårlig - 5: bra)",
-                                   {{var}} == "Selvbilde" ~ "SRS22 selvbilde (1: dårlig - 5: bra)",
-                                   {{var}} == "Mental helse" ~ "SRS22 mental helse (1: dårlig - 5: bra)",
-                                   {{var}} == "Smerte" ~ "SRS22 smerte (1: dårlig - 5: bra)",
-                                   {{var}} == "Helsetilstand" ~ "Helsetilstand (0-100)",
-                                   {{var}} == "Tilfredshet" ~ "SRS22 tilfredshet (1: dårlig - 5: bra)"),
-                  ylab = "Skår")
+    dplyr::mutate(forklaring = case_when({{var}} == "SRS22 totalskår" ~ "SRS22 totalskår (1: dårlig - 5: bra)",
+                                         {{var}} == "Funksjon" ~ "SRS22 funksjon (1: dårlig - 5: bra)",
+                                         {{var}} == "Selvbilde" ~ "SRS22 selvbilde (1: dårlig - 5: bra)",
+                                         {{var}} == "Mental helse" ~ "SRS22 mental helse (1: dårlig - 5: bra)",
+                                         {{var}} == "Smerte" ~ "SRS22 smerte (1: dårlig - 5: bra)",
+                                         {{var}} == "Helsetilstand" ~ "Helsetilstand (0-100)",
+                                         {{var}} == "Tilfredshet" ~ "SRS22 tilfredshet (1: dårlig - 5: bra)"))
 
 }
 
+# Sjekk at funksjonen fungerer:
 # nolint start
-## h <- gg_data_comparability("Funksjon")
+##h <- ggdata_sam_plot("Funksjon")
 # nolint end
 
 
-# Make plot
-#' Make boxplot
+# Lag boxplot
+
+#' Lag boxplot
+#'
+#' @param data datasett som skal plottes
+#' @param ggdata datasett med navn til ggplot
+#' @param input_data datasett med brukerens UI-valg
+#' @return boxplot
 #'
 #' @export
 
-ggplot_comparability <- function (data, gg_data, input_data) {
+boxplot_sam <- function (data, gg_data, input_data) {
 
-  comp_plot = ggplot2::ggplot()
+  boxplot_sam = ggplot2::ggplot()
 
-  comp_plot = comp_plot +
+  boxplot_sam = boxplot_sam +
     ggplot2::geom_boxplot(data = data, aes(x = Punkt, y = Score), fill = "#6CACE4")+
-    ggplot2::ylab(gg_data$ylab)+
+    ggplot2::ylab("Skår")+
     ggplot2::xlab("Utvikling over tid")+
-    ggplot2::labs(title = gg_data$xlab,
+    ggplot2::labs(title = gg_data$forklaring,
                   caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
                                    input_data[3,], "-", input_data[4,], "\n",
                                    input_data[5,], "-", input_data[6,]))+
@@ -216,71 +251,83 @@ ggplot_comparability <- function (data, gg_data, input_data) {
                    plot.caption = element_text(size = 12,
                                                face = "italic", color = "#87189D"))
 
-  return(comp_plot)
+  return(boxplot_sam)
 
 }
 
+# Sjekk at funksjonen fungerer:
 # nolint start
-
-#input_data <- c("Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
-## j <- ggplot_comparability(f, h, input_data)
-## j
+# Lag input_data:
+#input_data <- tibble(stuff <- "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
+##j <- boxplot_sam(f, h, input_data)
+##j
 # nolint end
 
-
-###------------- DENSITY -------------##########################################
-
-# Explanation of steps taken to create the plot (see module_sammenligning)
-# 1. find_variables()
-# 2. make_comparability_table()
-# 3. new_labels()
-# 4. clean_comparability_table()
-# 5. find two variables based on UI-choices
-# 6. make density plot
+#### ------------------------------- DENSITY -------------------------------####
 
 
-#' Find exact variables
+# Forklaring av stegene som kreves for å lage density plot (se modulen)
+# 1. finn_variabler()
+# 2. lag_sam_tabell()
+# 3. nye_navn()
+# 4. vask_sam_tabell()
+# 5. finn nøyaktig to variabler som skal sammenlignes
+# 6. lag densityplot
+
+# Finn nøyaktig to variabler som skal sammenlignes. Density plot-visninga tillater
+# kun sammenligning av to variabler
+
+#' Finn to variabler
 #'
-#' @return two variables chosen by UI
+#' @param data datasett som skal brukes
+#' @param valg_sam brukerens UI-valg av variabler som skal sammenlignes
+#'
+#' @return datasett med to variabler som skal sammenlignes
 #'
 #' @export
 
-find_comp_variables <- function (data, choice_comp) {
+finn_sam_variabler <- function (data, valg_sam) {
 
   data <- data %>%
-    dplyr::filter(Punkt == dplyr::case_when({{choice_comp}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
-                                            {{choice_comp}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
-                                            {{choice_comp}} == "Før operasjon - 5 år" ~ "Pre-operativt",
-                                            {{choice_comp}} == "3 mnd - 12 mnd" ~ "3 mnd",
-                                            {{choice_comp}} == "3 mnd - 5 år" ~ "3 mnd",
-                                            {{choice_comp}} == "12 mnd - 5 år" ~ "12 mnd") |
-                    Punkt == dplyr::case_when({{choice_comp}} == "Før operasjon - 3 mnd" ~ "3 mnd",
-                                              {{choice_comp}} == "Før operasjon - 12 mnd" ~ "12 mnd",
-                                              {{choice_comp}} == "Før operasjon - 5 år" ~ "5 aar",
-                                              {{choice_comp}} == "3 mnd - 12 mnd" ~ "12 mnd",
-                                              {{choice_comp}} == "3 mnd - 5 år" ~ "5 aar",
-                                              {{choice_comp}} == "12 mnd - 5 år" ~ "5 aar")
+    dplyr::filter(Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
+                                            {{valg_sam}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
+                                            {{valg_sam}} == "Før operasjon - 5 år" ~ "Pre-operativt",
+                                            {{valg_sam}} == "3 mnd - 12 mnd" ~ "3 mnd",
+                                            {{valg_sam}} == "3 mnd - 5 år" ~ "3 mnd",
+                                            {{valg_sam}} == "12 mnd - 5 år" ~ "12 mnd") |
+                    Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
+                                              {{valg_sam}} == "Før operasjon - 12 mnd" ~ "12 mnd",
+                                              {{valg_sam}} == "Før operasjon - 5 år" ~ "5 aar",
+                                              {{valg_sam}} == "3 mnd - 12 mnd" ~ "12 mnd",
+                                              {{valg_sam}} == "3 mnd - 5 år" ~ "5 aar",
+                                              {{valg_sam}} == "12 mnd - 5 år" ~ "5 aar")
   )
 }
 
+# Sjekk at det fungerer:
 # nolint start
-## r <- find_comp_variables(f, "Før operasjon - 12 mnd")
+## r <- finn_sam_variabler(f, "Før operasjon - 12 mnd")
 # nolint end
 
+# Lag density plot (tetthetsplot)
 
-#' Plot for comparison
+#' Density plot for sammenligning
 #'
-#' @return a density plot
+#' @param data datasett som skal plottes
+#' @param gg_data datasett med fine navn til ggplot
+#' @param input_data datasett med brukerens UI-valg
+#'
+#' @return density plot (tetthetsplot)
 #'
 #' @export
 
-density_plot_comparability <- function(data, labels, input_data) {
+density_sam <- function(data, gg_data, input_data) {
 
-  sam_plot <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt))+
+  density_sam <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt))+
     geom_density(alpha = .3)+
 
     ggplot2::scale_fill_manual(values = c("#6CACE4","#003087"))+
-    ggplot2::xlab(labels$xlab) +
+    ggplot2::xlab(gg_data$forklaring)+
     ggplot2::ylab("Tetthet")+
     ggplot2::labs(
       caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
@@ -293,16 +340,14 @@ density_plot_comparability <- function(data, labels, input_data) {
                    plot.caption = element_text(size = 12,
                                                face = "italic", color = "#87189D"))
 
-  return(sam_plot)
+  return(density_sam)
 
 }
 
+# Sjekk at funksjonen fungerer:
 # nolint start
-
+# Lag input_data:
 #input_data <- c("Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
-
 ##p <-  density_plot_comparability(r, h)
 ##p
 # nolint end
-
-

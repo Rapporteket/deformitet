@@ -47,7 +47,7 @@ return (data)
 ## TEST AT DET FUNGERER:
 ##
 ##
-## g <- utvalg_basic(regdata, 111961, "m", "Begge", "2023-01-01", "2024-12-01", 1, 100)
+##g <- utvalg_basic(regdata, 103240, "Begge", "Reoperasjon", "2023-01-01", "2025-12-01", 1, 100)
 
 #f <- utvalg_basic(regdata, 111961)
 # nolint end

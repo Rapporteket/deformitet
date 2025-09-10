@@ -1,3 +1,8 @@
+# Modul for sammenligning av promdata over tid
+# Modulen lag brukeren gjøre en rekke valg for datasettet, samt velge hvordan
+# dataen skal fremstilles. Dataene kan fremstilles med boxplot og som density plot
+
+
 #'@title Ui sammenligningsmodul
 #'
 #'@export
@@ -7,8 +12,8 @@ module_sammenligning_UI <- function (id) {
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        selectInput( # First select
-          inputId = ns("comp"),
+        selectInput( # Første brukervalg
+          inputId = ns("sam_var"),
           label = "Velg variabel",
           choices = c("SRS22 totalskår",
                       "Funksjon",
@@ -19,7 +24,7 @@ module_sammenligning_UI <- function (id) {
                       "Tilfredshet"),
           selected = "SRS22 totalskår"),
 
-        shiny::selectInput( # Second select
+        shiny::selectInput( # Andre brukervalg
           inputId = ns("plot_valg"),
           label = "Velg plot-type",
           choices = c("Tetthetsplot",
@@ -27,9 +32,23 @@ module_sammenligning_UI <- function (id) {
           selected = "Boksplot"
           ),
 
-        conditionalPanel(
-          condition = "input.plot_valg == 'Tetthetsplot'",
-          shiny::selectInput( #fifth select
+        # Vises kun hvis tetthetsplot er valgt og "tilfredshet" er valgt
+        conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
+          condition = "input.plot_valg == 'Tetthetsplot' && input.sam_var == 'Tilfredshet'",
+          shiny::selectInput( # Tredje brukervalg
+            inputId = ns("valg_sammenligning"),
+            label = "Velg sammenligning",
+            choices = c("3 mnd - 12 mnd",
+                        "3 mnd - 5 år",
+                        "12 mnd - 5 år")),
+            selected = "Før operasjon - 3 mnd",
+            ns = NS(id)
+          ),
+
+        # Vises kun hvis tetthetsplot er valgt og "tilfredshet" ikke er valgt
+        conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
+          condition = "input.plot_valg == 'Tetthetsplot' && input.sam_var != 'Tilfredshet'",
+          shiny::selectInput( # Tredje brukervalg
             inputId = ns("valg_sammenligning"),
             label = "Velg sammenligning",
             choices = c("Før operasjon - 3 mnd",
@@ -38,12 +57,12 @@ module_sammenligning_UI <- function (id) {
                         "3 mnd - 12 mnd",
                         "3 mnd - 5 år",
                         "12 mnd - 5 år")),
-            selected = "Før operasjon - 3 mnd",
-            ns = NS(id)
-          ),
+          selected = "Før operasjon - 3 mnd",
+          ns = NS(id)
+        ),
 
-      shiny::radioButtons( # second select
-        inputId = ns("gender_var"),
+      shiny::radioButtons( # Fjerde brukervalg
+        inputId = ns("kjoenn_var"),
         label = "Dele på kjønn?",
         choices = c("kvinne" = "kvinne",
                     "mann" = "mann",
@@ -52,7 +71,7 @@ module_sammenligning_UI <- function (id) {
         ),
 
       #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
-      sliderInput( # third select
+      sliderInput( # Femte brukervalg
         inputId = ns("alder_var"),
         label = "Aldersintervall:",
         min = 0,
@@ -61,23 +80,15 @@ module_sammenligning_UI <- function (id) {
         dragRange = TRUE
         ),
 
-      radioButtons( # fourth select
-        inputId = ns("type_op"),
-        label = "Type operasjon",
-        choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
-        selected = "Primæroperasjon"
-      ),
-
-
       shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
 
-      dateRangeInput( # sixth select
-        inputId = ns("date"),
+      dateRangeInput( # Sjuende brukervalg
+        inputId = ns("dato"),
         label = "Tidsintervall:",
         start = "2023-01-02",
-        end = "2024-09-02",
+        end = "2025-12-12",
         min = "2023-01-01",
-        max = "2025-09-02",
+        max = "2026-12-12",
         format = "dd-mm-yyyy",
         separator = " - "
       )),
@@ -86,8 +97,8 @@ module_sammenligning_UI <- function (id) {
         bslib::navset_card_underline(
           bslib::nav_panel(
             "Figur",
-            shiny::plotOutput(outputId = ns("comp_plot")),
-            shiny::downloadButton(ns("download_comp_plot"), "Last ned figur"),
+            shiny::plotOutput(outputId = ns("sam_plot")),
+            shiny::downloadButton(ns("nedlastning_sam_plot"), "Last ned figur"),
           )
         )
       )
@@ -104,10 +115,10 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
     id,
     function(input, output, session){
 
-      reshid <- reactiveValues(reshId_var = 111961)
+      reshid <- reactiveValues(reshId_var = 111961) # Lagre dette som en reaktiv verdi
 
 
-      output$reshid <- renderUI({
+      output$reshid <- renderUI({ # Åttende valg som kun vises dersom brukeren har SC-rolle
         ns <- session$ns
         if (userRole() == 'SC') {
           shiny::selectInput(
@@ -119,33 +130,33 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
         }
       })
 
-      observe({
+      observe({ # Dersom brukerens rolle endrer seg endrer også den reaktive verdien seg
         req(input$reshId_var)
         reshid$reshId_var <- input$reshId_var
       })
 
 
-      ##### MAKE BASIC UTVALG ##################################################
+      ##### Gjør hovedutvalg av dataen #########################################
 
       data_sam_reactive <- reactive({
 
         if (userRole() == "SC") {
           x <- deformitet::utvalg_basic(data,
                                 reshid$reshId_var,
-                                input$gender_var,
-                                input$type_op,
-                                input$date[1],
-                                input$date[2],
+                                input$kjoenn_var,
+                                "Primæroperasjon",
+                                input$dato[1],
+                                input$dato[2],
                                 input$alder_var[1],
                                 input$alder_var[2]
                                 )
           } else {
             x <- deformitet::utvalg_basic(data,
                                         userUnitId(),
-                                        input$gender_var,
-                                        input$type_op,
-                                        input$date[1],
-                                        input$date[2],
+                                        input$kjoenn_var,
+                                        "Primæroperasjon",
+                                        input$dato[1],
+                                        input$dato[2],
                                         input$alder_var[1],
                                         input$alder_var[2]
                                         )
@@ -153,140 +164,62 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
       }
     })
 
-      my_data_reactive <- reactive({
-        x <- format(input$date, "%d/%m/%y")
-        my_data <- data.frame(c(input$comp, input$gender_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
+      # Lagre brukervalg i et datasett
+      brukervalg_reactive <- reactive({
+        x <- format(input$dato, "%d/%m/%y")
+        brukervalg <- data.frame(c(input$sam_var, input$kjoenn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
       })
 
-      comparability_data_reactive <- reactive({
-        data <- make_comparability_table(data_sam_reactive(), input$comp)
+
+      # Lag tabell til sammenligning
+      sam_tabell_reactive <- reactive({
+        deformitet::lag_sam_tabell(data_sam_reactive(), input$sam_var)
       })
 
-      new_labels_reactive <- reactive({
-        labels <- new_labels(comparability_data_reactive())
+      # Lag nye navn
+      nye_navn_reactive <- reactive({
+        deformitet::nye_navn(sam_tabell_reactive())
       })
 
-      clean_comp_data_reactive <- reactive({
-        data_clean <- clean_comparability_table(new_labels_reactive(), input$comp)
+      # Vask datasett
+      ren_sam_tabell_reactive <- reactive({
+        deformitet::vask_sam_tabell(nye_navn_reactive(), input$sam_var)
       })
 
-      gg_data_boxplot_reactive <- reactive({
-        gg_data_boxplot <- gg_data_comparability(input$comp)
+      # Lag fine navn til ggplot
+      gg_data_sam_reactive <- reactive({
+        deformitet::ggdata_sam_plot(input$sam_var)
       })
 
-      comp_variables_reactive <- reactive({
-        find_comp_variables(clean_comp_data_reactive(), input$valg_sammenligning)
+      # Finn variabler til density plot
+      sam_variabler_reactive <- reactive({
+        deformitet::finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
       })
 
-      comp_plot_reactive <- reactive({
+      # Lag plot
+      sam_plot_reactive <- reactive({
 
         if(input$plot_valg == "Boksplot") {
-          deformitet::ggplot_comparability(clean_comp_data_reactive(), gg_data_boxplot_reactive(), my_data_reactive())
+          deformitet::boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
 
         } else {
-          deformitet::density_plot_comparability(comp_variables_reactive(), gg_data_boxplot_reactive(), my_data_reactive())
+          deformitet::density_sam(sam_variabler_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
           }
         })
 
-      output$comp_plot <- renderPlot({
-        comp_plot_reactive()
+      # Render plot
+      output$sam_plot <- renderPlot({
+        sam_plot_reactive()
         })
 
-
-
-
-      #### CHECK FOR SMALL SAMPLE SIZE IN CHOSEN VARIABLES #####################
-
-     # Make new dataframe - I need one column with value and one with time of oppfølging
-
-      # #### MAKE PLOT ###########################################################
-
-      # sam_plot <- reactive({
-      #
-      #   if (input$comp1 == "PRE_MAIN_CURVE") {
-      #
-      #     deformitet::comparison_plot_continuous(data_sam1(),
-      #                                            data_sam2(),
-      #                                            data_sam_labels(),
-      #                                            input$comp1,
-      #                                            input$comp3)
-      #   } else {
-      #     if (input$comp1 == "Helsetilstand" ||
-      #         input$comp1 == "Helsetilstand_3mnd") {
-      #
-      #       deformitet::comparison_plot_discrete(data_sam1(),
-      #                                            data_sam2(),
-      #                                            data_sam_labels(),
-      #                                            input$comp1,
-      #                                            input$comp4)
-      #   } else {
-      #     deformitet::comparison_plot_continuous(data_sam1(),
-      #                                            data_sam2(),
-      #                                            data_sam_labels(),
-      #                                            input$comp1,
-      #                                            input$comp2)
-      #   }
-      #   }
-      #   })
-      #
-      # output$sam_plot <- renderPlot({
-      #   sam_plot()
-      # })
-
-      # nolint start
-
-      ### MAKE TABLE ###########################################################
-
-      # sam_table <- reactive({
-      #
-      #   if (input$comp1 == "PRE_MAIN_CURVE") {
-      #
-      #     deformitet::tabell_sam(regdata,
-      #                            input$comp1,
-      #                            input$comp3)
-      #   } else {
-      #     if (input$comp1 == "Helsetilstand" ||
-      #         input$comp1 == "Helsetilstand_3mnd") {
-      #
-      #       deformitet::tabell_sam_discrete(regdata,
-      #                                       input$comp1,
-      #                                       input$comp4)
-      #     } else {
-      #       deformitet::tabell_sam(regdata,
-      #                             input$comp1,
-      #                             input$comp2)
-      #     }
-      #   }
-      # })
-      #
-      # output$sam_table <- DT::renderDT({datatable(sam_table(),
-      #                                             extensions = 'Buttons',
-      #                                             options = list(
-      #                                               dom = 'Bfrtip',
-      #                                               buttons = c('copy', 'csv', 'excel','pdf')),
-      #                                             class = 'white-space:nowrap compact')
-      # })
-
-      # nolint end
-
-      # output$download_sam_plot <-  downloadHandler(
-      #   filename = function(){
-      #     paste("Figur_sammenligning", Sys.Date(), ".pdf", sep = "")
-      #   },
-      #   content = function(file){
-      #     pdf(file, onefile = TRUE, width = 15, height = 9)
-      #     plot(sam_plot())
-      #     dev.off()
-      #   }
-      # )
-
-      output$download_comp_plot <-  downloadHandler(
+      # Lag nedlastning
+      output$nedlastning_sam_plot <-  downloadHandler(
         filename = function(){
-          paste("boxplot_sammenligning", Sys.Date(), ".pdf", sep = "")
+          paste("plot_sammenligning", Sys.Date(), ".pdf", sep = "")
         },
         content = function(file){
           pdf(file, onefile = TRUE, width = 15, height = 9)
-          plot(comp_plot_reactive())
+          plot(sam_plot_reactive())
           dev.off()
         }
       )
