@@ -7,12 +7,12 @@
 #'
 #'@export
 
-module_sammenligning_UI <- function (id) {
+module_sammenligning_UI <- function(id) {
   ns <- NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        selectInput( # Første brukervalg
+        selectInput(# Første brukervalg
           inputId = ns("sam_var"),
           label = "Velg variabel",
           choices = c("SRS22 totalskår",
@@ -70,7 +70,6 @@ module_sammenligning_UI <- function (id) {
         selected = "begge"
         ),
 
-      #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
       sliderInput( # Femte brukervalg
         inputId = ns("alder_var"),
         label = "Aldersintervall:",
@@ -80,7 +79,7 @@ module_sammenligning_UI <- function (id) {
         dragRange = TRUE
         ),
 
-      shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
+      shinyjs::hidden(uiOutput(outputId = ns("reshid"))),
 
       dateRangeInput( # Sjuende brukervalg
         inputId = ns("dato"),
@@ -110,17 +109,17 @@ module_sammenligning_UI <- function (id) {
 #'
 #'@export
 
-module_sammenligning_server <- function (id, data, userRole, userUnitId) {
+module_sammenligning_server <- function(id, data, userRole, userUnitId) {
   moduleServer(
     id,
-    function(input, output, session){
+    function(input, output, session) {
 
       reshid <- reactiveValues(reshId_var = 111961) # Lagre dette som en reaktiv verdi
 
 
       output$reshid <- renderUI({ # Åttende valg som kun vises dersom brukeren har SC-rolle
         ns <- session$ns
-        if (userRole() == 'SC') {
+        if (userRole() == "SC") {
           shiny::selectInput(
             inputId = ns("reshId_var"),
             label = "Enhet",
@@ -167,7 +166,13 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
       # Lagre brukervalg i et datasett
       brukervalg_reactive <- reactive({
         x <- format(input$dato, "%d/%m/%y")
-        brukervalg <- data.frame(c(input$sam_var, input$kjoenn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
+        brukervalg <- data.frame(c(input$sam_var,
+                                   input$kjoenn_var,
+                                   x[1], x[2],
+                                   input$alder_var[1],
+                                   input$alder_var[2],
+                                   "Primæroperasjon"))
+        return(brukervalg)
       })
 
 
@@ -198,10 +203,8 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
 
       # Lag plot
       sam_plot_reactive <- reactive({
-
-        if(input$plot_valg == "Boksplot") {
+        if (input$plot_valg == "Boksplot") {
           deformitet::boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
-
         } else {
           deformitet::density_sam(sam_variabler_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
           }
@@ -214,10 +217,10 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
 
       # Lag nedlastning
       output$nedlastning_sam_plot <-  downloadHandler(
-        filename = function(){
+        filename = function() {
           paste("plot_sammenligning", Sys.Date(), ".pdf", sep = "")
         },
-        content = function(file){
+        content = function(file) {
           pdf(file, onefile = TRUE, width = 15, height = 9)
           plot(sam_plot_reactive())
           dev.off()
@@ -228,5 +231,3 @@ module_sammenligning_server <- function (id, data, userRole, userUnitId) {
     }
   )
 }
-
-

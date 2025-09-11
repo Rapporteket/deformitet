@@ -52,6 +52,8 @@ finn_variabler <- function(var) {
                                                              "SRS22_SATISFACTION_SCORE",
                                                              "SRS22_SATISFACTION_SCORE_patient12mths",
                                                              "SRS22_SATISFACTION_SCORE_patient60mths"))
+  variabler
+
 }
 
 # Sjekk at funksjonen fungerer
@@ -77,15 +79,15 @@ lag_sam_tabell <- function(data, var) {
   variables <- finn_variabler({{var}})
 
   data_long <- data %>%
-    select(Sykehus, all_of(variables)) %>%
+    select(.data$Sykehus, all_of(variables)) %>%
     pivot_longer(cols = all_of(variables), names_to = "Punkt", values_to = "Score")
 
-  return(data_long)
+  data_long
 }
 
 # Sjekk at funksjonen fungerer
 # nolint start
-##r <- lag_sam_tabell(regdata, "Funksjon", "Kurve_pre")
+##r <- lag_sam_tabell(regdata, "Funksjon")
 # nolint end
 
 
@@ -100,7 +102,7 @@ lag_sam_tabell <- function(data, var) {
 #'
 #' @export
 
-nye_navn <- function (data) {
+nye_navn <- function(data) {
 
   data <- data %>%
     mutate(Punkt = case_match(Punkt, c("SRS22_MAIN_SCORE",
@@ -109,7 +111,6 @@ nye_navn <- function (data) {
                                        "SRS22_MENTALHEALTH_SCORE",
                                        "SRS22_PAIN_SCORE",
                                        "HELSETILSTAND_SCALE") ~ "Pre-operativt",
-
                               c("SRS22_FULL_SCORE",
                                 "SRS22_FUNCTION_SCORE_patient3mths",
                                 "SRS22_SELFIMAGE_SCORE_patient3mths",
@@ -117,26 +118,22 @@ nye_navn <- function (data) {
                                 "SRS22_PAIN_SCORE_patient3mths",
                                 "HEALTH_CONDITION_SCALE",
                                 "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
-
                               c("SRS22_FULL_SCORE_patient12mths",
-                                "SRS22_FUNCTION_SCORE_patient12mths",
-                                "SRS22_SELFIMAGE_SCORE_patient12mths",
-                                "SRS22_MENTALHEALTH_SCORE_patient12mths",
-                                "SRS22_PAIN_SCORE_patient12mths",
-                                "HEALTH_CONDITION_SCALE_patient12mths",
-                                "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
-
+                              "SRS22_FUNCTION_SCORE_patient12mths",
+                              "SRS22_SELFIMAGE_SCORE_patient12mths",
+                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
+                              "SRS22_PAIN_SCORE_patient12mths",
+                              "HEALTH_CONDITION_SCALE_patient12mths",
+                              "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
                               c("SRS22_FULL_SCORE_patient60mths",
-                                "SRS22_FUNCTION_SCORE_patient60mths",
-                                "SRS22_SELFIMAGE_SCORE_patient60mths",
-                                "SRS22_MENTALHEALTH_SCORE_patient60mths",
-                                "SRS22_PAIN_SCORE_patient60mths",
-                                "HEALTH_CONDITION_SCALE_patient60mths",
-                                "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
+                              "SRS22_FUNCTION_SCORE_patient60mths",
+                              "SRS22_SELFIMAGE_SCORE_patient60mths",
+                              "SRS22_MENTALHEALTH_SCORE_patient60mths",
+                              "SRS22_PAIN_SCORE_patient60mths",
+                              "HEALTH_CONDITION_SCALE_patient60mths",
+                              "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
 
-
-  return(data)
-
+  data
 }
 
 # Sjekk at funksjonen fungerer:
@@ -182,8 +179,6 @@ vask_sam_tabell <- function(data, var) {
   data <- data %>%
     filter(n > 5)
 
-  return(data)
-
 }
 
 # Sjekk at funksjonen fungerer:
@@ -200,7 +195,7 @@ vask_sam_tabell <- function(data, var) {
 #' @return datasett med fine navn til ggplot
 #' @export
 
-ggdata_sam_plot <- function (var) {
+ggdata_sam_plot <- function(var) {
 
   gg_data <- data.frame(forklaring = "")
 
@@ -212,6 +207,7 @@ ggdata_sam_plot <- function (var) {
                                          {{var}} == "Smerte" ~ "SRS22 smerte (1: dårlig - 5: bra)",
                                          {{var}} == "Helsetilstand" ~ "Helsetilstand (0-100)",
                                          {{var}} == "Tilfredshet" ~ "SRS22 tilfredshet (1: dårlig - 5: bra)"))
+  gg_data
 
 }
 
@@ -232,19 +228,19 @@ ggdata_sam_plot <- function (var) {
 #'
 #' @export
 
-boxplot_sam <- function (data, gg_data, input_data) {
+boxplot_sam <- function(data, gg_data, input_data) {
 
-  boxplot_sam = ggplot2::ggplot()
+  boxplot_sam <- ggplot2::ggplot()
 
-  boxplot_sam = boxplot_sam +
-    ggplot2::geom_boxplot(data = data, aes(x = Punkt, y = Score), fill = "#6CACE4")+
-    ggplot2::ylab("Skår")+
-    ggplot2::xlab("Utvikling over tid")+
+  boxplot_sam <- boxplot_sam +
+    ggplot2::geom_boxplot(data = data, aes(x = Punkt, y = Score), fill = "#6CACE4") +
+    ggplot2::ylab("Skår") +
+    ggplot2::xlab("Utvikling over tid") +
     ggplot2::labs(title = gg_data$forklaring,
-                  caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
-                                   input_data[3,], "-", input_data[4,], "\n",
-                                   input_data[5,], "-", input_data[6,]))+
-    ggplot2::theme_light(base_size = 16)+
+                  caption = paste0("**Valgte variabler:**", "\n", input_data[1, ], ", ", input_data[2, ], "\n",
+                                   input_data[3, ], "-", input_data[4, ], "\n",
+                                   input_data[5, ], "-", input_data[6, ])) +
+    ggplot2::theme_light(base_size = 16) +
     ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
                    plot.title = element_text(size = 10,
                                              face = "bold"),
@@ -286,7 +282,7 @@ boxplot_sam <- function (data, gg_data, input_data) {
 #'
 #' @export
 
-finn_sam_variabler <- function (data, valg_sam) {
+finn_sam_variabler <- function(data, valg_sam) {
 
   data <- data %>%
     dplyr::filter(Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
@@ -302,11 +298,12 @@ finn_sam_variabler <- function (data, valg_sam) {
                                               {{valg_sam}} == "3 mnd - 5 år" ~ "5 aar",
                                               {{valg_sam}} == "12 mnd - 5 år" ~ "5 aar")
   )
+
 }
 
 # Sjekk at det fungerer:
 # nolint start
-## r <- finn_sam_variabler(f, "Før operasjon - 12 mnd")
+##r <- finn_sam_variabler(f, "Før operasjon - 12 mnd")
 # nolint end
 
 # Lag density plot (tetthetsplot)
@@ -323,18 +320,18 @@ finn_sam_variabler <- function (data, valg_sam) {
 
 density_sam <- function(data, gg_data, input_data) {
 
-  density_sam <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt))+
-    geom_density(alpha = .3)+
+  density_sam <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt)) +
+    geom_density(alpha = .3) +
 
-    ggplot2::scale_fill_manual(values = c("#6CACE4","#003087"))+
-    ggplot2::xlab(gg_data$forklaring)+
-    ggplot2::ylab("Tetthet")+
+    ggplot2::scale_fill_manual(values = c("#6CACE4","#003087")) +
+    ggplot2::xlab(gg_data$forklaring) +
+    ggplot2::ylab("Tetthet") +
     ggplot2::labs(
       caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
                        input_data[3,], "-", input_data[4,], "\n",
-                       input_data[5,], "-", input_data[6,]))+
-    ggplot2::guides(fill = guide_legend(""))+
-    ggplot2::theme_light(base_size = 16)+
+                       input_data[5,], "-", input_data[6,])) +
+    ggplot2::guides(fill = guide_legend("")) +
+    ggplot2::theme_light(base_size = 16) +
     ggplot2::theme(plot.title = element_text(size = 10,
                                              face = "bold"),
                    plot.caption = element_text(size = 12,
@@ -348,6 +345,6 @@ density_sam <- function(data, gg_data, input_data) {
 # nolint start
 # Lag input_data:
 #input_data <- c("Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
-##p <-  density_plot_comparability(r, h)
+##p <-  density_sam(r, h, input_data)
 ##p
 # nolint end
