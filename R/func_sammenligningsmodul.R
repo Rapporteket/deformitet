@@ -79,7 +79,7 @@ lag_sam_tabell <- function(data, var) {
   variables <- finn_variabler({{var}})
 
   data_long <- data %>%
-    select(.data$Sykehus, all_of(variables)) %>%
+    select(Sykehus, all_of(variables)) %>%
     pivot_longer(cols = all_of(variables), names_to = "Punkt", values_to = "Score")
 
   data_long

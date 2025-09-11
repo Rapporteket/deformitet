@@ -42,5 +42,6 @@ RoxygenNote: 7.3.2
 URL: http://github.com/Rapporteket/deformitet
 BugReports: http://github.com/Rapporteket/deformitet/issues
 Suggests: 
-    testthat
+    testthat (>= 3.0.0)
 LazyData: true
+Config/testthat/edition: 3
