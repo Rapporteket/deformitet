@@ -70,7 +70,8 @@ test_that("boxplot_sam creates a ggplot object", {
 
 # Test for `density_sam`
 test_that("density_sam creates a ggplot object", {
-  data <- tibble(Punkt = c("Pre-operativt", "3 mnd"),
+  data <- tibble(Sykehus = c("A", "B"),
+                 Punkt = c("Pre-operativt", "3 mnd"),
                  Score = c(1, 2))
   gg_data <- tibble(forklaring = "SRS22 funksjon (1: dårlig - 5: bra)")
   input_data <- tibble(stuff = "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")

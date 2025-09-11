@@ -233,7 +233,7 @@ boxplot_sam <- function(data, gg_data, input_data) {
   boxplot_sam <- ggplot2::ggplot()
 
   boxplot_sam <- boxplot_sam +
-    ggplot2::geom_boxplot(data = data, aes(x = Punkt, y = Score), fill = "#6CACE4") +
+    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = Punkt, y = Score), fill = "#6CACE4") +
     ggplot2::ylab("Skår") +
     ggplot2::xlab("Utvikling over tid") +
     ggplot2::labs(title = gg_data$forklaring,
@@ -241,10 +241,10 @@ boxplot_sam <- function(data, gg_data, input_data) {
                                    input_data[3, ], "-", input_data[4, ], "\n",
                                    input_data[5, ], "-", input_data[6, ])) +
     ggplot2::theme_light(base_size = 16) +
-    ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-                   plot.title = element_text(size = 10,
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+                   plot.title = ggplot2::element_text(size = 10,
                                              face = "bold"),
-                   plot.caption = element_text(size = 12,
+                   plot.caption = ggplot2::element_text(size = 12,
                                                face = "italic", color = "#87189D"))
 
   return(boxplot_sam)
@@ -325,7 +325,7 @@ density_sam <- function(data, gg_data, input_data) {
     group_by(Sykehus, Punkt) %>%
     dplyr::summarize(mean = mean(Score))
 
-  density_sam <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt)) +
+  density_sam <- ggplot2::ggplot(data = data, ggplot2::aes(x = Score, fill = Punkt)) +
     ggplot2::geom_density(alpha = .3) +
     ggplot2::geom_vline(xintercept = c(gjennomsnitt_data$mean[1], gjennomsnitt_data$mean[2]), linetype = "twodash", color =  c("#6CACE4","#003087"), linewidth = 1)+
 
@@ -337,11 +337,11 @@ density_sam <- function(data, gg_data, input_data) {
       caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
                        input_data[3,], "-", input_data[4,], "\n",
                        input_data[5,], "-", input_data[6,])) +
-    ggplot2::guides(fill = guide_legend("")) +
+    ggplot2::guides(fill = ggplot2::guide_legend("")) +
     ggplot2::theme_light(base_size = 16) +
-    ggplot2::theme(plot.title = element_text(size = 10,
+    ggplot2::theme(plot.title = ggplot2::element_text(size = 10,
                                              face = "bold"),
-                   plot.caption = element_text(size = 12,
+                   plot.caption = ggplot2::element_text(size = 12,
                                                face = "italic", color = "#87189D"))
 
   return(density_sam)
