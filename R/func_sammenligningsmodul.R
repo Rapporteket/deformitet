@@ -321,7 +321,7 @@ finn_sam_variabler <- function(data, valg_sam) {
 
 density_sam <- function(data, gg_data, input_data) {
 
-  gjennomsnitt_data <- r %>%
+  gjennomsnitt_data <- data %>%
     group_by(Sykehus, Punkt) %>%
     dplyr::summarize(mean = mean(Score))
 
