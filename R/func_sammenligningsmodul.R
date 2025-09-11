@@ -318,10 +318,17 @@ finn_sam_variabler <- function(data, valg_sam) {
 #'
 #' @export
 
+
 density_sam <- function(data, gg_data, input_data) {
 
+  gjennomsnitt_data <- r %>%
+    group_by(Sykehus, Punkt) %>%
+    dplyr::summarize(mean = mean(Score))
+
   density_sam <- ggplot2::ggplot(data = data, aes(x = Score, fill = Punkt)) +
-    geom_density(alpha = .3) +
+    ggplot2::geom_density(alpha = .3) +
+    ggplot2::geom_vline(xintercept = c(gjennomsnitt_data$mean[1], gjennomsnitt_data$mean[2]), linetype = "twodash", color =  c("#6CACE4","#003087"), linewidth = 1)+
+
 
     ggplot2::scale_fill_manual(values = c("#6CACE4","#003087")) +
     ggplot2::xlab(gg_data$forklaring) +
@@ -344,7 +351,7 @@ density_sam <- function(data, gg_data, input_data) {
 # Sjekk at funksjonen fungerer:
 # nolint start
 # Lag input_data:
-#input_data <- c("Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
+#input_data <- tibble(stuff <- "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
 ##p <-  density_sam(r, h, input_data)
 ##p
 # nolint end
