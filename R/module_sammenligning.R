@@ -201,6 +201,9 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
         deformitet::finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
       })
 
+      # Finn konfidensintervall for variabler til density plot
+
+
       # Lag plot
       sam_plot_reactive <- reactive({
         if (input$plot_valg == "Boksplot") {

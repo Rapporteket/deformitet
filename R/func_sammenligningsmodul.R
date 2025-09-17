@@ -303,8 +303,90 @@ finn_sam_variabler <- function(data, valg_sam) {
 
 # Sjekk at det fungerer:
 # nolint start
-##r <- finn_sam_variabler(f, "Før operasjon - 12 mnd")
+##r <- finn_sam_variabler(f, "Før operasjon - 3 mnd")
 # nolint end
+
+#' Funksjon som regner konfidensintervall for variabler til density plot
+#' @param data datasett som har vært gjennom finn_sam_variabler()
+#' @return datasett med konfidensintervall for de to variablene valgt i ui-delen
+#' @export
+
+finn_sam_konfidensint <- function(data) {
+
+  # finn variabelnavn
+
+  data_var_navn <- data %>%
+    ungroup() %>%
+    select(Punkt) %>%
+    distinct()
+
+  vector <- dplyr::pull(data_var_navn, Punkt)
+  sam1 <- as.character(vector[[1]])
+  sam2 <- as.character(vector[[2]])
+
+
+  # lag egne datasett for hvert måletidspunkt
+  sam1_data <- data %>%
+    filter(Punkt == sam1)
+
+  #names(sam1_data)[names(sam1_data) == "Punkt"] <- sam1
+
+  sam2_data <- data %>%
+    filter(Punkt == sam2)
+
+  # se etter normalitet
+  sam1_data <- sam1_data %>%
+    dplyr::mutate(normalitet = shapiro.test(sam1_data$Score)$p.value)
+
+  if(any(sam1_data$normalitet < 1)){
+    sam1_data <- sam1_data %>%
+      group_by(Sykehus) %>%
+      dplyr::mutate(gj = mean(Score),
+                    conf1 = t.test(Score)$conf.int[1],
+                    conf2 = t.test(Score)$conf.int[2])
+  } else {
+    sam2_data <- sam2_data %>%
+      group_by(Sykehus) %>%
+      dplyr::mutate(gj = mean(Score),
+                    conf1 = 0,
+                    conf2 = 0)
+  }
+
+  sam1_data <- sam1_data %>%
+    select(-c(n, Score, normalitet)) %>%
+    distinct()
+
+  sam2_data <- sam2_data %>%
+    dplyr::mutate(normalitet = shapiro.test(sam2_data$Score)$p.value)
+
+  if(any(sam2_data$normalitet < 1)){
+    sam2_data <- sam2_data %>%
+      group_by(Sykehus) %>%
+      dplyr::mutate(gj = mean(Score),
+                    conf1 = t.test(Score)$conf.int[1],
+                    conf2 = t.test(Score)$conf.int[2])
+  } else {
+    sam2_data <- sam2_data %>%
+      group_by(Sykehus) %>%
+      dplyr::mutate(gj = mean(Score),
+                    conf1 = 0,
+                    conf2 = 0)
+  }
+
+  sam2_data <- sam2_data %>%
+    select(-c(n, Score, normalitet)) %>%
+    distinct()
+
+
+  data_conf <- full_join(sam1_data, sam2_data)
+
+  return(data_conf)
+
+}
+
+#nolint start
+#b <- finn_sam_konfidensint(r)
+#nolint end
 
 # Lag density plot (tetthetsplot)
 
@@ -318,25 +400,29 @@ finn_sam_variabler <- function(data, valg_sam) {
 #'
 #' @export
 
+density_sam <- function(data, gg_data, input_data, konf_data) {
 
-density_sam <- function(data, gg_data, input_data) {
-
-  gjennomsnitt_data <- data %>%
-    group_by(Sykehus, Punkt) %>%
-    dplyr::summarize(mean = mean(Score))
+  input_data <- input_data %>%
+    dplyr::mutate(conf1_sjekk = ifelse(konf_data$conf1[1] == 0 | konf_data$conf2[1] == 0, "For få observasjoner til å vise konf.interv. på første måling", "Stiplet linje viser konfidensintervall"),
+                  conf2_sjekk = ifelse(konf_data$conf1[2] == 0 | konf_data$conf2[2] == 0, "For få observasjoner til å vise konf.interv. på andre måling", "Stiplet linje viser konfidensintervall"))
 
   density_sam <- ggplot2::ggplot(data = data, ggplot2::aes(x = Score, fill = Punkt)) +
     ggplot2::geom_density(alpha = .3) +
-    ggplot2::geom_vline(xintercept = c(gjennomsnitt_data$mean[1], gjennomsnitt_data$mean[2]), linetype = "twodash", color =  c("#6CACE4","#003087"), linewidth = 1)+
+    ggplot2::geom_vline(xintercept = c(konf_data$gj[1], konf_data$conf1[1], konf_data$conf2[1],
+                                       konf_data$gj[2], konf_data$conf1[2], konf_data$conf2[2]),
+                        linetype = c("solid", "dotted", "dotted", "solid", "dotted", "dotted"),
+                        color =  c("palegreen3", "palegreen3", "palegreen3",
+                                   "steelblue4", "steelblue4", "steelblue4"), linewidth = c(1, .8, .8, 1, .8, .8))+
 
 
-    ggplot2::scale_fill_manual(values = c("#6CACE4","#003087")) +
+    ggplot2::scale_fill_manual(values = c("#6FA287","#6CACE4")) +
     ggplot2::xlab(gg_data$forklaring) +
     ggplot2::ylab("Tetthet") +
     ggplot2::labs(
-      caption = paste0("**Valgte variabler:**", "\n", input_data[1,], ", ", input_data[2,], "\n",
-                       input_data[3,], "-", input_data[4,], "\n",
-                       input_data[5,], "-", input_data[6,])) +
+      caption = paste0("**Valgte variabler:**", "\n", input_data[,1], ", ", input_data[,2], "\n",
+                       input_data[,3], "-", input_data[,4], "\n",
+                       input_data[,5], "-", input_data[,6], "\n",
+                       input_data[,7], "\n", ifelse(input_data[,8] == input_data[,7], "", input_data[,8]))) +
     ggplot2::guides(fill = ggplot2::guide_legend("")) +
     ggplot2::theme_light(base_size = 16) +
     ggplot2::theme(plot.title = ggplot2::element_text(size = 10,
@@ -352,6 +438,10 @@ density_sam <- function(data, gg_data, input_data) {
 # nolint start
 # Lag input_data:
 #input_data <- tibble(stuff <- "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
-##p <-  density_sam(r, h, input_data)
+##p <-  density_sam(r, h, input_data, c)
 ##p
 # nolint end
+
+
+
+
