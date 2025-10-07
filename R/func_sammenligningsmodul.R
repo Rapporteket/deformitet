@@ -1,259 +1,380 @@
-#' Check for small sample size
+################################################################################
+# Funksjoner til sammenligningsmodul
+# Funksjonene lager to plot: density plot og boxplot
+################################################################################
+
+
+#### ------------------------------- BOXPLOT -------------------------------####
+
+# Først en funksjon som finner navn på kolonner. Brukeren velger variabel og
+# denne funksjonen finner alle kolonnene som hører til denne variabelen over tid.
+
+#' Finn variabler over tid
 #'
-#' @return a list of data frames
+#' @param var input fra UI - valg av variabel
+#' @return en vektor med navn på kolonner som hører til valgt variabel
 #'
 #' @export
 
-check_small_sample <- function (data, var1, var2) {
+finn_variabler <- function(var) {
 
-  # Remove NAs and add sample count
-  data1 <- data %>%
-    dplyr::filter(!is.na(.data[[var1]])) %>%
-    dplyr::add_count(name = "count_var1")
+  variabler <- dplyr::case_when({{var}} == "SRS22 totalskår" ~ c("SRS22_MAIN_SCORE",
+                                                                 "SRS22_FULL_SCORE",
+                                                                 "SRS22_FULL_SCORE_patient12mths",
+                                                                 "SRS22_FULL_SCORE_patient60mths"),
 
-  data2 <- data %>%
-    dplyr::filter(!is.na(.data[[var2]])) %>%
-    add_count(name = "count_var2")
+                                {{var}} == "Funksjon" ~ c("SRS22_FUNCTION_SCORE",
+                                                          "SRS22_FUNCTION_SCORE_patient3mths",
+                                                          "SRS22_FUNCTION_SCORE_patient12mths",
+                                                          "SRS22_FUNCTION_SCORE_patient60mths"),
 
-  # If one (or both) of the chosen variables has less than 20 observations
+                                {{var}} == "Selvbilde" ~ c("SRS22_SELFIMAGE_SCORE",
+                                                           "SRS22_SELFIMAGE_SCORE_patient3mths",
+                                                           "SRS22_SELFIMAGE_SCORE_patient12mths",
+                                                           "SRS22_SELFIMAGE_SCORE_patient60mths"),
 
-  if (data1$count_var1[1] < 20) {
-    data1[[var1]] = NA
-  } else {
-    data1 <- data1
-  }
+                                {{var}} == "Mental helse" ~ c("SRS22_MENTALHEALTH_SCORE",
+                                                              "SRS22_MENTALHEALTH_SCORE_patient3mths",
+                                                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
+                                                              "SRS22_MENTALHEALTH_SCORE_patient60mths"),
 
-  if (data2$count_var2[1] < 20) {
-    data2[[var2]] = NA
-  } else {
-    data2 <- data2
-  }
+                                {{var}} == "Smerte" ~ c("SRS22_PAIN_SCORE",
+                                                        "SRS22_PAIN_SCORE_patient3mths",
+                                                        "SRS22_PAIN_SCORE_patient12mths",
+                                                        "SRS22_PAIN_SCORE_patient60mths"),
 
-  return (list(data1, data2))
+                                {{var}} == "Helsetilstand" ~ c("HELSETILSTAND_SCALE",
+                                                               "HEALTH_CONDITION_SCALE",
+                                                               "HEALTH_CONDITION_SCALE_patient12mths",
+                                                               "HEALTH_CONDITION_SCALE_patient60mths"),
+
+                                {{var}} == "Tilfredshet" ~ c("SRS22_SATISFACTION_SCORE",
+                                                             "SRS22_SATISFACTION_SCORE",
+                                                             "SRS22_SATISFACTION_SCORE_patient12mths",
+                                                             "SRS22_SATISFACTION_SCORE_patient60mths"))
+  variabler
+
 }
 
+# Sjekk at funksjonen fungerer
 # nolint start
-## SJEKK AT DET FUNGERER:
-
-## f <- check_small_sample(g, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE") # vi returnerer ei liste
-## plot_data1 <- data.frame(f[1])
-## plot_data2 <- data.frame(f[2])
-
-## g[[2]]$SRS22_FULL_SCORE_patient12mths # sjekk at the fungerer
+#x <- finn_variabler("Funksjon")
 # nolint end
 
-#' Make labels
+
+# Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
+# alle kolonnene av interesse i et langt format. Det er kun variabelene som er
+# valgt, samt Sykehus som blir mer i funksjonen.
+
+#' Lag tabell til sammenligning
 #'
-#' @return a dataframe with conditional labels
+#' @param data datasett
+#' @param var variabelen som skal brukes i finn_variabler()
 #'
+#' @return datasett/tabell i langt format
 #' @export
 
-make_labels <- function (data1, data2, comp1, comp2) {
-  labels = data.frame(var1 = 0,
-                      var2 = 0,
-                      ggtitle = "",
-                      ggcaption = "")
+lag_sam_tabell <- function(data, var) {
 
-  labels$var1 <- data1$count_var1[1] # var1 is the number of observations in variable1 that are not NAs
-  labels$var2 <- data2$count_var2[1] # var2 is the number of observations in variable2 that are not NAs
+  variables <- finn_variabler({{var}})
 
-  ## Conditional ggtitle
-  if (labels$var1[1] < 20 && labels$var2[1] < 20) {
-  labels$ggtitle <- "For få observasjoner i begge valgte variabler"
-  } else {
-    if (labels$var1[1] < 20) {
-      labels$ggtitle <- paste0("For få observasjoner i ", comp1)
-    } else {
-      if (labels$var2[1] < 20) {
-        labels$ggtitle <- paste0("For få observasjoner i ", comp2)
-      } else {
-        labels$ggtitle <- paste0("Sammenligning av ", comp1, " og ", comp2)
-      }
-    }
-  }
+  data_long <- data %>%
+    dplyr::select(Sykehus, dplyr::all_of(variables)) %>%
+    tidyr::pivot_longer(cols = dplyr::all_of(variables), names_to = "Punkt", values_to = "Score")
 
-  ## Conditional ggcaption
-  if (labels$var1[1] - labels$var2[1] > 50) {
-    labels$ggcaption <- "Obs! Det er store forskjeller mellom de to variablene i antall observasjoner"
-  }
-
-  return(labels) #returns the data set
+  data_long
 }
 
-# nolint start
-## check that it works
-## labels <- make_labels(plot_data1, plot_data2, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
-# nolint end
-
-#' Plot for comparison
-#'
-#' @return a plot
-#'
-#' @export
-
-comparison_plot_continuous <- function(data1, data2, labels, comp1, comp2) {
-
-  # Make a new data frame with count of observations for var1 and var2
-  # Add conditional ggtitle and ggcaption
-  # This function needs two dataframes to exist in advance -
-      # plot_data1 and plot_data2
-
-  sam_plot = ggplot2::ggplot()
-
-  sam_plot = sam_plot +
-  # Comp 1:
-    ggplot2::geom_density(data = data1, aes(x = .data[[comp1]], color = "før"),
-                            fill = "#6CACE4", alpha = .2) +
-    # Comp2 2:
-    ggplot2::geom_density(data = data2, aes(x = .data[[comp2]], color = "etter"),
-                                fill = "#003087", alpha = .2) +
-
-
-    ggplot2::theme(legend.position = "right")+
-    ggplot2::guides(color = guide_legend(""))+
-
-    ggplot2::scale_color_manual(values = c("før" = "#6CACE4", "etter" = "#003087"),
-                                limits = c("før", "etter"),
-                                labels = c(paste0("Før (n= ", labels$var1, ")"),
-                                           paste0("Etter (n= ", labels$var2, ")")))+
-    ggplot2::xlab("Fordeling") +
-    ggplot2::ylab("Andel pasienter")+
-    ggplot2::labs(
-      title = labels$ggtitle,
-      caption = labels$ggcaption)+
-
-    ggplot2::theme_light(base_size = 16)+
-    ggplot2::theme(plot.title = element_text(size = 10,
-                                             face = "bold"),
-                   plot.caption = element_text(size = 12,
-                                               face = "italic", color = "#87189D"))
-
-  return(sam_plot)
-
-}
-
-# nolint start
-## p <-  comparison_plot_continuous(plot_data1, plot_data2, labels, "PRE_MAIN_CURVE", "POST_MAIN_CURVE")
-## p
-# nolint end
-
-#' Plot for comparison
-#'
-#' @return a plot
-#'
-#' @export
-
-comparison_plot_discrete <- function(data1, data2, labels, comp1, comp2) {
-
-  # Make a new data frame with count of observations for var1 and var2
-  # Add conditional ggtitle and ggcaption
-  # This function needs two dataframes to exist in advance -
-  # plot_data1 and plot_data2
-
-  sam_plot = ggplot2::ggplot()
-
-  sam_plot = sam_plot +
-    # Comp 1:
-    ggplot2::geom_bar(data = data1, aes(x = .data[[comp1]], color = "før"),
-                        fill = "#6CACE4", alpha = .3) +
-
-    # Comp2 :
-    ggplot2::geom_bar(data = data2, aes(x = .data[[comp2]], color = "etter"),
-                      fill = "#003087", alpha = .3) +
-
-    ggplot2::theme(legend.position = "right")+
-    ggplot2::guides(color = guide_legend(""))+
-
-    ggplot2::scale_color_manual(values = c("før" = "#6CACE4", "etter" = "#003087"),
-                                limits = c("før", "etter"),
-                                labels = c(paste0("Før (n= ", labels$var1, ")"),
-                                           paste0("Etter (n= ", labels$var2, ")")))+
-    ggplot2::xlab("Fordeling") +
-    ggplot2::ylab("Andel pasienter")+
-    ggplot2::labs(
-      title = labels$ggtitle,
-      caption = labels$ggcaption)+
-
-    ggplot2::theme_light()+
-    ggplot2::theme(plot.title = element_text(size = 10,
-                                             face = "bold"),
-                   plot.caption = element_text(size = 12,
-                                               face = "italic", color = "#87189D"))
-
-  return(sam_plot)
-
-}
-
+# Sjekk at funksjonen fungerer
 # nolint start
 ##
-##p <-  comparison_plot_discrete(plot_data1, plot_data2, labels, "Kurve_pre", "Kurve_post")
+#r <- lag_sam_tabell(regdata, "Funksjon")
+# nolint end
+
+
+# Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
+# "før operasjon", "3mnd", "2 år" og "5 år".
+
+#' Lage nye navn på kolonne
+#'
+#' @param data datasett som skal endres
+#' @return datasett med nye kolonnenavn
+#'
+#' @export
+
+nye_navn <- function(data) {
+
+  data <- data %>%
+    mutate(Punkt = case_match(Punkt, c("SRS22_MAIN_SCORE",
+                                       "SRS22_FUNCTION_SCORE",
+                                       "SRS22_SELFIMAGE_SCORE",
+                                       "SRS22_MENTALHEALTH_SCORE",
+                                       "SRS22_PAIN_SCORE",
+                                       "HELSETILSTAND_SCALE") ~ "Pre-operativt",
+                              c("SRS22_FULL_SCORE",
+                                "SRS22_FUNCTION_SCORE_patient3mths",
+                                "SRS22_SELFIMAGE_SCORE_patient3mths",
+                                "SRS22_MENTALHEALTH_SCORE_patient3mths",
+                                "SRS22_PAIN_SCORE_patient3mths",
+                                "HEALTH_CONDITION_SCALE",
+                                "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
+                              c("SRS22_FULL_SCORE_patient12mths",
+                              "SRS22_FUNCTION_SCORE_patient12mths",
+                              "SRS22_SELFIMAGE_SCORE_patient12mths",
+                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
+                              "SRS22_PAIN_SCORE_patient12mths",
+                              "HEALTH_CONDITION_SCALE_patient12mths",
+                              "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
+                              c("SRS22_FULL_SCORE_patient60mths",
+                              "SRS22_FUNCTION_SCORE_patient60mths",
+                              "SRS22_SELFIMAGE_SCORE_patient60mths",
+                              "SRS22_MENTALHEALTH_SCORE_patient60mths",
+                              "SRS22_PAIN_SCORE_patient60mths",
+                              "HEALTH_CONDITION_SCALE_patient60mths",
+                              "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
+
+  data
+}
+
+# Sjekk at funksjonen fungerer:
+# nolint start
+##g <- nye_navn(r)
+# nolint end
+
+
+# Videre vask av datasettet. Nå tas NA-er ut. Deretter grupper der det er
+# 5 eller færre observasjoner.
+
+
+#' Vaske datasettet
+#'
+#' @param data datasettet som skal vaskes
+#' @param var variabel brukeren har valgt i UI-delen
+#' @return et vasket datasett
+#'
+#' @export
+
+vask_sam_tabell <- function(data, var) {
+
+  data <- data %>%
+    mutate(Punkt = forcats::as_factor(Punkt),
+           Punkt = case_when({{var}} %in% c("SRS22 totalskår", "Funksjon",
+                                            "Selvbilde", "Mental helse",
+                                            "Smerte", "Helsetilstand") ~
+                               forcats::fct_relevel(Punkt, "Pre-operativt",
+                                                    "3 mnd", "12 mnd", "5 aar"),
+
+                             {{var}} == "Tilfredshet" ~
+                               forcats::fct_relevel(Punkt, "3 mnd",
+                                                    "12 mnd", "5 aar")))
+
+
+  data <- data %>%
+    filter(!is.na(Score))
+
+  data <- data %>%
+    group_by(Punkt, Sykehus) %>%
+    add_count(Punkt)
+
+  data <- data %>%
+    filter(n > 5)
+
+}
+
+# Sjekk at funksjonen fungerer:
+# nolint start
+##f <- vask_sam_tabell(g, "Funksjon")
+# nolint end
+
+
+#' Funksjon som regner gjennomsnitt og konfidensintervall for variabler
+#' @param data datasett som har vært gjennom vask_sam_tabell()
+#' @return datasett med konfidensintervall for variabelen valgt i ui-delen
+#' @export
+
+finn_sam_konfidensint <- function(data) {
+
+  konf_data <- data %>%
+    group_by(Punkt, Sykehus) %>%
+    mutate(gjennomsnitt = round(mean(Score), 2),
+           "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
+           "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) %>%
+    select(-c(Score, n)) %>%
+    distinct()
+
+  return(konf_data)
+}
+
+#nolint start
+#b <- finn_sam_konfidensint(f)
+#nolint end
+
+
+# Lag fine navn til plotting
+
+#' Data for gg-plotting
+#'
+#' @param var Variabel som skal få finere navn
+#' @return datasett med fine navn til ggplot
+#' @export
+
+ggdata_sam_plot <- function(var) {
+
+  gg_data <- data.frame(forklaring = "")
+
+  gg_data <- gg_data %>%
+    dplyr::mutate(forklaring = case_when({{var}} == "SRS22 totalskår" ~ "SRS22 totalskår (1: dårlig - 5: bra)",
+                                         {{var}} == "Funksjon" ~ "SRS22 funksjon (1: dårlig - 5: bra)",
+                                         {{var}} == "Selvbilde" ~ "SRS22 selvbilde (1: dårlig - 5: bra)",
+                                         {{var}} == "Mental helse" ~ "SRS22 mental helse (1: dårlig - 5: bra)",
+                                         {{var}} == "Smerte" ~ "SRS22 smerte (1: dårlig - 5: bra)",
+                                         {{var}} == "Helsetilstand" ~ "Helsetilstand (0-100)",
+                                         {{var}} == "Tilfredshet" ~ "SRS22 tilfredshet (1: dårlig - 5: bra)"))
+  gg_data
+
+}
+
+# Sjekk at funksjonen fungerer:
+# nolint start
+##h <- ggdata_sam_plot("Funksjon")
+# nolint end
+
+
+# Lag boxplot
+
+#' Lag boxplot
+#'
+#' @param data datasett som skal plottes
+#' @param ggdata datasett med navn til ggplot
+#' @param input_data datasett med brukerens UI-valg
+#' @return boxplot
+#'
+#' @export
+
+boxplot_sam <- function(data, gg_data, input_data) {
+
+  boxplot_sam <- ggplot2::ggplot()
+
+  boxplot_sam <- boxplot_sam +
+    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = Punkt, y = Score), fill = "#6CACE4") +
+    ggplot2::ylab("Skår") +
+    ggplot2::xlab("Utvikling over tid") +
+    ggplot2::labs(title = gg_data$forklaring,
+                  caption = paste0("**Valgte variabler:**", "\n", input_data[,1], ", ", input_data[,2], "\n",
+                                   input_data[,3], "-", input_data[,4], "\n",
+                                   input_data[,5], "-", input_data[,6])) +
+    ggplot2::theme_light(base_size = 16) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+                   plot.title = ggplot2::element_text(size = 10,
+                                             face = "bold"),
+                   plot.caption = ggplot2::element_text(size = 12,
+                                               face = "italic", color = "#87189D"))
+
+  return(boxplot_sam)
+
+}
+
+# Sjekk at funksjonen fungerer:
+# nolint start
+# Lag input_data:
+#input_data <- tibble(stuff <- "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
+##j <- boxplot_sam(f, h, input_data)
+##j
+# nolint end
+
+#### ------------------------------- DENSITY -------------------------------####
+
+
+# Forklaring av stegene som kreves for å lage density plot (se modulen)
+# 1. finn_variabler()
+# 2. lag_sam_tabell()
+# 3. nye_navn()
+# 4. vask_sam_tabell()
+# 5. finn nøyaktig to variabler som skal sammenlignes
+# 6. lag densityplot
+
+# Finn nøyaktig to variabler som skal sammenlignes. Density plot-visninga tillater
+# kun sammenligning av to variabler
+
+#' Finn to variabler
+#'
+#' @param data datasett som skal brukes
+#' @param valg_sam brukerens UI-valg av variabler som skal sammenlignes
+#'
+#' @return datasett med to variabler som skal sammenlignes
+#'
+#' @export
+
+finn_sam_variabler <- function(data, valg_sam) {
+
+  data <- data %>%
+    dplyr::filter(Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
+                                            {{valg_sam}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
+                                            {{valg_sam}} == "Før operasjon - 5 år" ~ "Pre-operativt",
+                                            {{valg_sam}} == "3 mnd - 12 mnd" ~ "3 mnd",
+                                            {{valg_sam}} == "3 mnd - 5 år" ~ "3 mnd",
+                                            {{valg_sam}} == "12 mnd - 5 år" ~ "12 mnd") |
+                    Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
+                                              {{valg_sam}} == "Før operasjon - 12 mnd" ~ "12 mnd",
+                                              {{valg_sam}} == "Før operasjon - 5 år" ~ "5 aar",
+                                              {{valg_sam}} == "3 mnd - 12 mnd" ~ "12 mnd",
+                                              {{valg_sam}} == "3 mnd - 5 år" ~ "5 aar",
+                                              {{valg_sam}} == "12 mnd - 5 år" ~ "5 aar")
+  )
+
+}
+
+# Sjekk at det fungerer:
+# nolint start
+##r <- finn_sam_variabler(f, "Før operasjon - 3 mnd")
+# nolint end
+
+
+# Lag density plot (tetthetsplot)
+
+#' Density plot for sammenligning
+#'
+#' @param data datasett som skal plottes
+#' @param gg_data datasett med fine navn til ggplot
+#' @param input_data datasett med brukerens UI-valg
+#'
+#' @return density plot (tetthetsplot)
+#'
+#' @export
+
+density_sam <- function(data, gg_data, input_data) {
+
+   density_sam <- ggplot2::ggplot(data = data, ggplot2::aes(x = Score, fill = Punkt)) +
+    ggplot2::geom_density(alpha = .3) +
+
+    ggplot2::scale_fill_manual(values = c("#6FA287","#6CACE4")) +
+    ggplot2::xlab(gg_data$forklaring) +
+    ggplot2::ylab("Tetthet") +
+    ggplot2::labs(
+      caption = paste0("**Valgte variabler:**", "\n", input_data[,1], ", ", input_data[,2], "\n",
+                       input_data[,3], "-", input_data[,4], "\n",
+                       input_data[,5], "-", input_data[,6], "\n")) +
+    ggplot2::guides(fill = ggplot2::guide_legend("")) +
+    ggplot2::theme_light(base_size = 16) +
+    ggplot2::theme(plot.title = ggplot2::element_text(size = 10,
+                                             face = "bold"),
+                   plot.caption = ggplot2::element_text(size = 12,
+                                               face = "italic", color = "#87189D"))
+
+  return(density_sam)
+
+}
+
+# Sjekk at funksjonen fungerer:
+# nolint start
+# Lag input_data:
+#input_data <- tidyr::tibble(stuff <- "Funksjon", "kvinne", "10/01/23", "10/01/24", "10", "15")
+##p <-  density_sam(r, h, input_data)
 ##p
-## p
 # nolint end
 
-#'@title Sammenligningstabell
-#'
-#'@export
-
-tabell_sam <- function (data, comp1, comp2) {
-
-  comp1 <- enquo(comp1)
-  comp2 <- enquo(comp2)
-
-  data <- data %>%
-    dplyr::filter(!is.na(.data[[comp1]]))
-
-  data <- data %>%
-    dplyr::filter(!is.na(.data[[comp2]])) %>%
-    dplyr::select(Sykehus, Kjønn, !!comp1, !!comp2) %>%
-    dplyr::mutate(diff_pre_post = .data[[comp1]] - .data[[comp2]]) %>%
-    dplyr::group_by(Sykehus, Kjønn) %>%
-    dplyr::summarise(mean_diff = mean(diff_pre_post)) %>%
-    dplyr::mutate(mean_diff = round(mean_diff,3))
-
-}
-
-# nolint start
-## SJEKK AT DET FUNGERER:
-##
-##
-## f <- tabell_sam(regdata, "SRS22_MAIN_SCORE", "SRS22_FULL_SCORE")
-# nolint end
-
-#'@title Sammenligningstabell - grupper av faktorer
-#'
-#'@export
-
-tabell_sam_discrete <- function(data, comp1, comp2) {
-
-  comp1 <- enquo(comp1)
-  comp2 <- enquo(comp2)
-
-  data <- data %>%
-    dplyr::filter(!is.na(.data[[comp1]]))
-
-  data <- data %>%
-    dplyr::filter(!is.na(.data[[comp2]])) %>%
-    dplyr::select(Sykehus, Kjønn, !!comp1, !!comp2)
-
-  data_post <- data %>%
-    dplyr::group_by(Sykehus, Kjønn) %>%
-    dplyr::rename(var := !!comp2) %>%
-    dplyr::count(var, name = "count_post")
-
-  data_pre <- data %>%
-    dplyr::group_by(Sykehus, Kjønn) %>%
-    dplyr::rename(var := !!comp1) %>%
-    dplyr::count(var, name = "count_pre")
 
 
-  data <- dplyr::full_join(data_pre, data_post)
 
-  return (data)
-}
 
-# nolint start
-## SJEKK AT DET FUNGERER:
-## f <- tabell_sam_discrete(regdata, "Helsetilstand", "Helsetilstand_3mnd")
-# nolint end
 

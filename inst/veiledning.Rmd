@@ -108,15 +108,13 @@ key_data_table <- key_data %>%
 key_data_table <- key_data_table %>%
   arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav")))
 
-
-
 ```
 
 ```{r, echo=FALSE}
 
 key_data_table %>%
   kableExtra::kbl() %>%
-  kableExtra::kable_styling("condensed")
+  kableExtra::kable_styling(bootstrap_options = c("striped", "bordered", "responsive", "condensed"))
 ```
 
 ### Om registeret:
