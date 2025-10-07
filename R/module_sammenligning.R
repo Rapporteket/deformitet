@@ -98,6 +98,10 @@ module_sammenligning_UI <- function(id) {
             "Figur",
             shiny::plotOutput(outputId = ns("sam_plot")),
             shiny::downloadButton(ns("nedlastning_sam_plot"), "Last ned figur"),
+          ),
+          bslib::nav_panel(
+            "Tabell",
+            DT::DTOutput(outputId = ns("konf_tbl"))
           )
         )
       )
@@ -166,12 +170,13 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       # Lagre brukervalg i et datasett
       brukervalg_reactive <- reactive({
         x <- format(input$dato, "%d/%m/%y")
-        brukervalg <- data.frame(c(input$sam_var,
-                                   input$kjoenn_var,
-                                   x[1], x[2],
-                                   input$alder_var[1],
-                                   input$alder_var[2],
-                                   "Primæroperasjon"))
+        brukervalg <- tidyr::tibble(variabel = input$sam_var,
+                                    kjoenn = input$kjoenn_var,
+                                    dato1 = x[1],
+                                    dato2 = x[2],
+                                    alder1 = input$alder_var[1],
+                                    alder2 = input$alder_var[2],
+                                    "Primæroperasjon")
         return(brukervalg)
       })
 
@@ -191,6 +196,11 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
         deformitet::vask_sam_tabell(nye_navn_reactive(), input$sam_var)
       })
 
+      # Finn konfidensintervall for variabler til density plot
+      sam_finn_konf_reactive <- reactive({
+        deformitet::finn_sam_konfidensint(ren_sam_tabell_reactive())
+      })
+
       # Lag fine navn til ggplot
       gg_data_sam_reactive <- reactive({
         deformitet::ggdata_sam_plot(input$sam_var)
@@ -200,8 +210,6 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       sam_variabler_reactive <- reactive({
         deformitet::finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
       })
-
-      # Finn konfidensintervall for variabler til density plot
 
 
       # Lag plot
@@ -217,6 +225,10 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       output$sam_plot <- renderPlot({
         sam_plot_reactive()
         })
+
+      output$konf_tbl <- DT::renderDataTable({
+        sam_finn_konf_reactive()
+      })
 
       # Lag nedlastning
       output$nedlastning_sam_plot <-  downloadHandler(

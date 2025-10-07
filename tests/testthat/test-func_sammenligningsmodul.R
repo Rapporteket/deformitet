@@ -4,23 +4,26 @@ library(dplyr)
 library(tidyr)
 library(forcats)
 
+
 # Test for `finn_variabler`
 test_that("finn_variabler returns correct column names", {
   result <- finn_variabler("Funksjon")
   expected <- c("SRS22_FUNCTION_SCORE",
                 "SRS22_FUNCTION_SCORE_patient3mths",
                 "SRS22_FUNCTION_SCORE_patient12mths",
-                "SRS22_FUNCTION_SCORE_patient60mths")
+                "SRS22_FUNCTION_SCORE_patient60mths"
+                )
   expect_equal(result, expected)
 })
 
 # Test for `lag_sam_tabell`
 test_that("lag_sam_tabell returns data in long format", {
-  data <- tibble(Sykehus = c("A", "B"),
+  data <- dplyr::tibble(Sykehus = c("A", "B"),
                  SRS22_FUNCTION_SCORE = c(1, 2),
                  SRS22_FUNCTION_SCORE_patient3mths = c(3, 4),
                  SRS22_FUNCTION_SCORE_patient12mths = c(4,4),
-                 SRS22_FUNCTION_SCORE_patient60mths = c(5, 4))
+                 SRS22_FUNCTION_SCORE_patient60mths = c(5,4)
+                 )
   result <- lag_sam_tabell(data, "Funksjon")
   expect_equal(nrow(result), 8)
   expect_equal(colnames(result), c("Sykehus", "Punkt", "Score"))
