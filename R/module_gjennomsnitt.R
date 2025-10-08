@@ -210,12 +210,14 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       #Aggregate data in table format
 
       table_data <- reactive({
-        deformitet::table_freq_time(data_reactive(),
-                                    map_var_reactive(),
-                                    map_data,
-                                    input$tidsenhet,
-                                    input$type_view,
-                                    userUnitId())
+        table <- deformitet::table_freq_time(data_reactive(),
+                                             map_var_reactive(),
+                                             map_data,
+                                             input$tidsenhet,
+                                             input$type_view,
+                                             userUnitId())
+        table <- table %>%
+          dplyr::rename("gjennomsnitt" = "gjen")
       })
 
 
