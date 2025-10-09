@@ -74,143 +74,26 @@
 
 
 <div class="section level1">
-<div class="page-header"><h1 id="lag-et-register-i-rapporteket-">Lag et register i Rapporteket <img src="reference/figures/logo.svg" align="right" height="150"><a class="anchor" aria-label="anchor" href="#lag-et-register-i-rapporteket-"></a>
+<div class="page-header"><h1 id="rapporteket-for-deformitet-">Rapporteket for Deformitet <img src="reference/figures/logo.svg" align="right" height="150"><a class="anchor" aria-label="anchor" href="#rapporteket-for-deformitet-"></a>
 </h1></div>
-<p>Beskrivelsen under er ikke nødvendigvis utfyllende og forutsetter kjennskap til RStudio og bruk av git og GitHub. Som en ekstra støtte anbefales <a href="http://r-pkgs.had.co.nz/" class="external-link">R pacakges</a> av Hadley Wickham og spesielt <a href="http://r-pkgs.had.co.nz/git.html#git-rstudio" class="external-link">beskrivelsen av git og GitHub</a>.</p>
+<p>Deformitet er et under-register i Nasjonalt kvalitetsregister for ryggkirurgi. Dette er R-pakken som lager Rapporteket til Deformitet.</p>
 <div class="section level2">
-<h2 id="prøv-templatet">Prøv templatet<a class="anchor" aria-label="anchor" href="#pr%C3%B8v-templatet"></a>
+<h2 id="last-ned">Last ned<a class="anchor" aria-label="anchor" href="#last-ned"></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li>Installér pakken <a href="https://github.com/Rapporteket/rapRegTemplate" class="external-link">rapRegTemplate</a> i RStudio (<code>devtools::install_github("Rapporteket/rapRegTemplate")</code>)</li>
-<li>Hent ned prosjektet <a href="https://github.com/Rapporteket/rapRegTemplate" class="external-link">rapRegTemplate</a> til RStudio (for mer info, se <a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects" class="external-link">her</a>)</li>
-<li>Åpne fila inst/shinyApps/app1/ui.R og start Shiny-applikasjonen (“Run App”)</li>
-<li>Navigér i applikasjonen for å se på struktur og farger (innhold mangler)</li>
-</ol>
-</div>
-<div class="section level2">
-<h2 id="valgfritt-lag-ditt-eget-prosjekt-basert-på-templatet">Valgfritt: lag ditt eget prosjekt basert på templatet<a class="anchor" aria-label="anchor" href="#valgfritt-lag-ditt-eget-prosjekt-basert-p%C3%A5-templatet"></a>
-</h2>
-<p>Denne delen er satt som valgfri men kan likevel være relevant, særlig om det er ønskelig å benytte templatetet som utgangspunkt for etablering av nye registre på Rapporteket.</p>
-<ol style="list-style-type: decimal">
-<li>Lag et nytt prosjekt i RStudio som en R-pakke</li>
-<li>Gi pakken et navn som gjerne gjenspeiler overordnet funksjon i pakken, eksempelvis “testRegister”</li>
-<li>Valgfritt: hak gjerne av for “Create a git repository” også da det vil gi nyttig kunnskap når egne registre skal utvikles seinere</li>
-<li>Trykk “Create Project”.</li>
-<li>Kopier inn alle filer fra katalogene “inst/” og “R/” i “rapRegTemplate” og legg disse i tilsvarende kataloger i den nye pakken</li>
-<li>I toppen av “server.ui” endre avhengigheten til R-pakken “rapRegTemplate” til din egen R-pakke</li>
-<li>Endre DESCRIPTION-fila slik at den blir nogenlunde tilssvarende den som finnes i “rapRegTemplate”, særlig det som er gitt under “Depends:”, “Imports:” og “Remotes:”</li>
-<li>Bygg, installér og last pakken i R</li>
-<li>Test gjerne at innebygget Shiny-applikasjon fungerer på samme vis som i prosjektet “rapRegTemplate”</li>
-</ol>
-</div>
-<div class="section level2">
-<h2 id="last-registerdata">Last registerdata<a class="anchor" aria-label="anchor" href="#last-registerdata"></a>
-</h2>
-<div class="section level3">
-<h3 id="alternativ-1-med-docker-for-rapporteket">Alternativ 1: med Docker for Rapporteket<a class="anchor" aria-label="anchor" href="#alternativ-1-med-docker-for-rapporteket"></a>
-</h3>
-<ol style="list-style-type: decimal">
-<li>Åpne fila R/GetRegData.R</li>
-<li>Se på de tre delene av funksjonen som definerer registernavn og sql-spørringen samt den som bruker de to forrige til å hente data (og som returnerer ei dataramme fra funksjonen)</li>
-<li>Sjekk at egen konfigurasjon (i fila /home/rstudio/rap_config) er i henhold til det datagrunnlaget som er gjort tilgjengelig</li>
-<li>Endre i SQL-spørringen slik at den er i henhold til datagrunnlaget som ønskes benyttet</li>
-<li>Prøv funksjonen fra kommandolinja (Console i RStudio), <em>e.g.</em> <code>df &lt;- getRegData("navn_på_register")</code>
-</li>
-<li>Sjekk at du får returnert ei dataramme med X observasjoner for Y variabler, <em>e.g.</em> <code>attributes(df)</code>
-</li>
-</ol>
-</div>
-<div class="section level3">
-<h3 id="alternativ-2-uten-docker-for-rapporteket">Alternativ 2: uten Docker for Rapporteket<a class="anchor" aria-label="anchor" href="#alternativ-2-uten-docker-for-rapporteket"></a>
-</h3>
-<ol style="list-style-type: decimal">
-<li>Åpne fila R/GetFakeRegData.R</li>
-<li>Se at funksjonen returnerer et kjedelig og irrelevant innebygget datasett :-(</li>
-<li>Prøv funksjonen fra kommandolinja (Console i RStudio), <em>e.g.</em> <code>df &lt;- getFakeRegData()</code>
-</li>
-<li>Sjekk at du får returnert ei dataramme med X observasjoner for Y variabler, <em>e.g.</em> <code>attributes(df)</code>
-</li>
-</ol>
-</div>
-</div>
-<div class="section level2">
-<h2 id="lag-innhold-i-shiny-applikasjonen-steg-1">Lag innhold i Shiny-applikasjonen, steg 1<a class="anchor" aria-label="anchor" href="#lag-innhold-i-shiny-applikasjonen-steg-1"></a>
-</h2>
-<p>Utgangspunket for de neste stegene er bruk av det innebygde datasettet “mtcars”, jf. “Alternativ 2” over.</p>
-<ol style="list-style-type: decimal">
-<li>I shiny-applikasjonen, naviger til arkfanen “Figur og tabell”</li>
-<li>Åpne fila inst/shinyApps/app1/ui.R</li>
-<li>Bla ned til linja <code>tabPanel("Figur og tabell"</code>
-</li>
-<li>Kommenter inn linjene under, lagre fila og last applikasjonen på nytt (“Reload App”)</li>
-<li>Sjekk at det er kommet inn GUI-elementer i arkfanen “Figur og tabell” som før var tom</li>
-<li>Prøv gjerne de brukervalg som er i venstre kolonne</li>
-<li>Oppgave: gjør endringer i inst/shinyApps/app1/ui.R (på de linjene som nettopp er kommentert inn) slik at maks antall grupper endres fra 10 til 12 i applikasjonen</li>
-</ol>
-</div>
-<div class="section level2">
-<h2 id="lag-innhold-i-shiny-applikasjonen-steg-2">Lag innhold i Shiny-applikasjonen, steg 2<a class="anchor" aria-label="anchor" href="#lag-innhold-i-shiny-applikasjonen-steg-2"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li>Ãpne fila inst/shinyApps/app1/server.R</li>
-<li>Bla ned til kommentaren <code># Last inn data</code> og kommenter inn linja under</li>
-<li>Bla videre ned til kommentaren <code># Figur og tabell</code> og kommenter inn de linjene som ligger under <code>## Figur</code> og <code>## Tabell</code>, hhv</li>
-<li>Sjekk at det er samsvar mellom id-ene definert i inst/shinyApps/app1/ui.R og de datastrukturene (<code>output$distPlot</code> og <code>output$distTable</code>) du nå har definert i inst/shinyApps/app1/server.R</li>
-<li>Se at <code>regData</code> gis inn til de funksjoner som lager figur og tabell, hhv</li>
-<li>Se også at de samme funksjonene tar i mot de brukervalg som er definert i inst/shinyApps/app1/ui.R (<code>input$var</code> og <code>input$bins</code>)</li>
-<li>Valgfritt: ta en titt på funksjonen som lager innholdet i figur og tabell: <code>?makeHist</code>
-</li>
-<li>Lagre fila, start applikasjonen på nytt og sjekk at figur og tabell er på plass og at disse reagerer på ulike brukervalg</li>
-<li>Oppgave A: lag en ny arkfane “Sammendrag” (etter “Figur” og “Tabell”) ved å legge til kode i inst/shinyApps/app1/ui.R</li>
-<li>Oppgave B: fyll “Sammendrag” med en tabell som viser <code>summary</code> av valgt variabel ved å legge til kode i inst/shinyApps/app1/server.R</li>
-</ol>
-<p>Tips til oppgave B:</p>
+<p>Pakken kan lastes ned direkte i R. Installer først devtools-pakken (hvis du ikke allerede har den installert).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Sammendrag</span></span>
-<span><span class="va">output</span><span class="op">$</span><span class="va">distSummary</span> <span class="op">&lt;-</span> <span class="fu">renderTable</span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">regData</span>, <span class="va">summary</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">input</span><span class="op">$</span><span class="va">var</span><span class="op">]</span></span>
-<span><span class="op">}</span>, rownames <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtool"</span><span class="op">)</span></span></code></pre></div>
+<p>Deretter installerer du rapbase (en R-pakke med basisfunksjoner til Rapportek):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Rapporteket/rapbase"</span><span class="op">)</span></span></code></pre></div>
+<p>Deretter installerer du denne pakken:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Rapporteket/deformitet"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="lag-innhold-i-shiny-applikasjonen-steg-3">Lag innhold i Shiny-applikasjonen, steg 3<a class="anchor" aria-label="anchor" href="#lag-innhold-i-shiny-applikasjonen-steg-3"></a>
+<h2 id="utviklingsbidrag">Utviklingsbidrag<a class="anchor" aria-label="anchor" href="#utviklingsbidrag"></a>
 </h2>
-<p>Bruk samme tilnærming som over, men for “Samlerapport”. Her er det en del nye elementer, bl.a.</p>
-<ul>
-<li>bruk av en Rmd-fil som rapportmal</li>
-<li>funksjonalitet for nedlasting av rapporten</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="lag-innhold-i-shiny-applikasjonen-steg-4">Lag innhold i Shiny-applikasjonen, steg 4<a class="anchor" aria-label="anchor" href="#lag-innhold-i-shiny-applikasjonen-steg-4"></a>
-</h2>
-<p>Denne delen forutsetter bruk av <a href="https://github.com/Rapporteket/docker" class="external-link">Docker for Rapporteket</a> eller tilsvarende utviklingsmiljø¸ som “simulerer” Rapporteket. Her skal hver enkelt bruker kunne bestille rutinemessig tilsending per epost av gitte rapporter, eksempelvis slik som samlerapporten over med predefinerte verdier for “Variabel” og “Antall grupper”. Tilnærmingen introduserer noen nye elementer, slik som:</p>
-<ul>
-<li>reaktive verdier</li>
-<li>lagring av innstillinger som er “varige” også etter at appliksjonen er avsluttet</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="valgfritt-sjekk-inn-endringer-i-git">Valgfritt: sjekk inn endringer i git<a class="anchor" aria-label="anchor" href="#valgfritt-sjekk-inn-endringer-i-git"></a>
-</h2>
-<p>Git er et verktøy for versjonskontroll som gir mulighet for å spore endringer og samarbeide om kode. Basale funksjoner i git er svært nyttinge, men kan virke forvirrende i starten. Sørg for at egen kode (bestandig) versjonshåndteres (i git) og at koden finnes sentralisert og tilgjengelig for deg selv og andre (på GitHub).</p>
-<ol style="list-style-type: decimal">
-<li>Sett opp git lokalt og etabler et sentralt repository for din R-pakke gjennom å følge <a href="http://r-pkgs.had.co.nz/git.html#git-rstudio" class="external-link">Hadley Wickhams veiledning</a>
-</li>
-<li>Om du ikke har det fra før, etabler et ssh-nøkkelpar for sikker kommunikasjon med GitHub</li>
-</ol>
-<p>NB Ved etablering av et nøkkelpar for bruk av Secure Shell (ssh) i kommunikasjonen med GitHub (generelt lurt men også nødvendig for avansert bruk av Rapporteket) er det viktig å påse at disse blir etablert på din egen fysiske datamaskin (og eksempelvi ikke inne i en docker-container om det er i bruk)</p>
-</div>
-<div class="section level2">
-<h2 id="valgfritt-dytt-push-r-pakken-til-github">Valgfritt: dytt (push) R-pakken til GitHub<a class="anchor" aria-label="anchor" href="#valgfritt-dytt-push-r-pakken-til-github"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li>Om du ikke allerede har gjort det, lag din egen bruker på GitHub (se over)</li>
-<li>Om du ikke allerede har gjort det, <a href="https://help.github.com/en/articles/adding-a-new-ssh-key-to-your-github-account" class="external-link">legg ut den offentlige delen av ditt ssh-nøkkelpar på din github-konto</a>
-</li>
-<li>Om du ikke allerede har gjort det, bli medlem av organisasjonen Rapporteket på GitHub</li>
-<li>Under din egen side på GitHub, opprett et Repository med navn tilsvarende din egen pakke (<em>e.g.</em> “testRegister”)</li>
-<li>I RStudio, push pakken til ditt nye Repository på GitHub</li>
-</ol>
+<p>Dersom du ønsker å bidra til denne pakken kan du legge til kode i greina “utvikling”.</p>
 </div>
 </div>
 
