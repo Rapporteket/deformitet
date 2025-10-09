@@ -93,7 +93,8 @@ module_spc_server <- function (id) {
                                       input$date[1],
                                       input$date[2],
                                       alder1 = 0,
-                                      alder2 = 100)
+                                      alder2 = 100,
+                                      "filtrer_reshId")
       })
 
       #### MAKE SPC DATA FRAME (SORTED BY TIME PERIOD) #########################
