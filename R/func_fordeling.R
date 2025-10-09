@@ -79,7 +79,6 @@ makeTable <- function(data, var_reshID, choice_var){
 
 
   }
-  data_full <- dplyr::full_join(data_hosp, data_all)
 
 
   if(choice_var == "hver enhet"){
@@ -100,7 +99,7 @@ makeTable <- function(data, var_reshID, choice_var){
 # nolint start
 
 # Test to see if it works
-##g <- makeTable(rr, 103240, "egen enhet")
+##g <- makeTable(r, 103240, "egen enhet")
 ## g <- makeTable(rr, 103240, "enhet")
 # nolint end
 
