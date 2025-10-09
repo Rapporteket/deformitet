@@ -158,7 +158,7 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
 # nolint start
 ## test for å sjekke at det fungerer:
 ## r <- count_kvalind(regdata, "ee", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
-
+# nolint end
 
 #' @export
 
