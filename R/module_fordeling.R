@@ -97,9 +97,9 @@ module_fordeling_UI <- function (id) {
             inputId = ns("date"),
             label = "Tidsintervall:",
             start = "2023-01-02",
-            end = "2024-09-02",
+            end = "2026-09-02",
             min = "2023-01-01",
-            max = "2025-09-02",
+            max = "2026-09-02",
             format = "dd-mm-yyyy",
             separator = " - ")
           ),
@@ -305,8 +305,6 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       ########### DISPLAY DATA-------------------------------------------------------
 
       ### TABLE
-
-      ###### FIKSE SÅ JEG KAN OGSÅ SE KOMPLIKASJONSTYPER ETTER 12 MNDer!!
 
       text_reactive <- reactive({
         if (! input$x_var %in% c("Komplikasjonstype", "Komplikasjonstype_12mnd")) {
