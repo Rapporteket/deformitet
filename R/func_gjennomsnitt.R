@@ -167,7 +167,7 @@ over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time
 
   tid_plot <-
     ggplot2::ggplot(data, ggplot2::aes(
-      x = .data$tid, y = .data$gjen,
+      x = .data$tid, y = .data$gjennomsnitt,
       color = .data$Sykehus, group = .data$Sykehus
     )) +
     ggplot2::geom_line(linewidth = 1.2) +
