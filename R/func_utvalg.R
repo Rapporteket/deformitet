@@ -2,12 +2,16 @@
 #'
 #' @export
 
-utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, alder2) {
+utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, alder2, bruk_av_funk) {
 
-  # Filter by unit
+  # Filter by unit (if desirable)
 
-  data <- data %>%
-    dplyr::filter(CENTREID == user_unit)
+  if (bruk_av_funk != "ikke_filtrer_reshId") {
+    data <- data %>%
+      dplyr::filter(CENTREID == user_unit)
+  } else {
+    data <- data
+  }
 
   # Filter by gender
 
@@ -47,6 +51,6 @@ return (data)
 ## TEST AT DET FUNGERER:
 ##
 ##
-##g <- utvalg_basic(regdata, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100)
+##g <- utvalg_basic(regdata, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100, "ikke_filtrer_reshId")
 
 # nolint end
