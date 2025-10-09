@@ -2,24 +2,10 @@
 #' @title Kvalitetsindikatortelling
 #' @export
 
-count_kvalind <- function (data, kjoenn, type_op, var, userRole, userUnitId, map_data) {
+count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   # Legge til kolonne med telling av komplikasjoner der smerte er tatt ut
   data <- ny_komplikasjon3mnd_usmerte(data)
-
-
-  # Filtrere på type operasjon:
-  data <- data %>%
-    dplyr::filter(dplyr::case_when({{kjoenn}} == "kvinne" ~ Kjønn == "kvinne",
-                                   {{kjoenn}} == "mann" ~ Kjønn == "mann",
-                                   .default = Kjønn %in% c("kvinne", "mann")))
-
-
-  # Filtrere på kjønn:
-  data <- data %>%
-    dplyr::filter(dplyr::case_when({{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
-                                   {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
-                                   {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
 
   # Telle forløp
@@ -173,36 +159,6 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
 ## test for å sjekke at det fungerer:
 ## r <- count_kvalind(regdata, "ee", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
 
-#### FUNCTION FOR MAKING PLOT FOR KVALITETSINDIKATORER #########################
-#### GGPLOT2 ###################################################################
-
-#
-# # Tester med "PRE_MAIN_CURVE"
-# ##
-#   r <- count_kvalind(regdata, "kvinne", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
-#
-# # Test of the function
-#
-#   gg_data <- data.frame("title" = "Pasienter med pre-operativ kurve over 70 grader",
-#                         "ylab" = "Pre-operativ kurve over 70 grader",
-#                         "ymin" = 0,
-#                         "ymax" = 10)
-#
-#   data_var <- data.frame(c("PRE_MAIN_CURVE",
-#                            "begge",
-#                            as.Date("2023-01-01"),
-#                            as.Date("2026-01-01"),
-#                            10,
-#                            65,
-#                            "Primæroperasjon"))
-#
-#
-
-# data should be data that has been undergoing PrepVar() and kval_count()
-# gg_data is made under PrepVar()
-# data_var should be reactive data that stores UI choices for PrepVar
-# choice_kjønn will be a radio button indicating "fordelt på kjønn?" "ja" vs. "nei"
-# nolint end
 
 #' @export
 
