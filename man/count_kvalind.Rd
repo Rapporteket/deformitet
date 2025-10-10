@@ -4,7 +4,7 @@
 \alias{count_kvalind}
 \title{Kvalitetsindikatortelling}
 \usage{
-count_kvalind(data, kjoenn, type_op, var, userRole, userUnitId, map_data)
+count_kvalind(data, kjoenn, var, userRole, userUnitId, map_data)
 }
 \description{
 Kvalitetsindikatortelling

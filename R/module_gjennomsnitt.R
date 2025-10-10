@@ -206,21 +206,21 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
 
       ######## AGGREGATE DATA-------------------------------------------------------
-
       #Aggregate data in table format
 
       table_data <- reactive({
-        deformitet::table_freq_time(data_reactive(),
-                                    map_var_reactive(),
-                                    map_data,
-                                    input$tidsenhet,
-                                    input$type_view,
-                                    userUnitId())
+        table <- deformitet::table_freq_time(data_reactive(),
+                                             map_var_reactive(),
+                                             map_data,
+                                             input$tidsenhet,
+                                             input$type_view,
+                                             userUnitId())
+        table <- table %>%
+          dplyr::rename("gjennomsnitt" = "gjen")
       })
 
 
       ########### DISPLAY DATA-------------------------------------------------------
-
       ### TABLE
 
       output$table <- renderTable({
@@ -246,22 +246,17 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                      input$tidsenhet)
       })
 
-
       output$my_text <- renderText({
         if(check() == "Drop") {
           "For få verdier for visse variabler. Gjør nytt utvalg. Se tabell i neste fane."
         }
         })
 
-
       output$my_plot <- renderPlot({
         if(check() == "Keep") {
           my_plot()
         }
         },  width = 800, height = 600)
-
-
-
 
       ##### NEDLASTING ###############################################################
       output$download_gjennomsnittsfig <-  downloadHandler(

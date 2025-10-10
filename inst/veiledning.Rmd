@@ -14,6 +14,13 @@ output:
 Velkommen til Rapporteket for Deformitetsregisteret. I rapporteket er det mulig å se figurer og tabeller med oppdaterte data, samt å laste ned og abonnere på rapporter der figurer og tabeller er inkludert.  
 Dersom du ikke tilhører registerledelsen vil figurene sammenligne din enhet med resten av landet. Det vil si at det ikke er mulig å se tall for hver enkelt av de andre enhetene.
 
+### Om registeret:
+Deformitetsregisteret er en del av NKR (Nasjonalt kvalitetsregister for ryggkirurgi). Fra 01.01.23 registreres alle operasjoner for idiopatisk skoliose utført i Norge, uavhengig av pasientens alder. Idiopatisk skoliose er en tilstand som debuterer hos barn og ungdom, og de fleste som opereres gjør dette i tenårene. Kirurgi er omfattende med fare for alvorlige komplikasjoner både på kort og lang sikt. Kirurgi medfører en livsvarig lang avstiving av ryggsøylen med metallimplantater. Det har stor verdi for kvalitetsforbedrende arbeid og forskning at disse pasientene er registrert i et nasjonalt register. Oppfølging med pasientrapporterte data samlet i register er nødvendig for å kunne oppdage endring i livskvalitet og eventuelle komplikasjoner på lang sikt. 
+I Norge behandles idiopatisk skoliose ved Haukeland Universitetssjukehus, St.Olavs hospital og Rikshospitalet-OUS. Alle 3 sykehus rapporterer sine operasjoner til registeret. 
+
+Ved inkludering i registeret fyller pasienten ut samtykke og preoperativt skjema. Kirurg fyller ut legeskjema etter operasjon. Pasienter fyller ut skjema postoperativt etter 6 måneder, 2år og 5 år. Dette blir tilsendt og fylles ut elektronisk.
+Alle reoperasjoner skal registreres. Dersom pasienter med skoliose opereres for en annen degenerativ rygglidelse (spinal stenose, prolaps etc.) registreres dette i NKR degenerativ, ikke i Deformitet.
+
 ### Nøkkeltall:
 
 ```{r, include=FALSE, echo=FALSE}
@@ -35,8 +42,8 @@ age_curve_data <- regdata %>%
   group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
-  summarize("Antall opererte" = as.character(n_distinct(PID)),
-            "Pre Cobbvinkel" = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
+  summarize(n_opererte = as.character(n_distinct(PID)),
+            pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
             Alder_median = round(median(Alder_num), digits = 1),
             Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
   mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
@@ -51,8 +58,8 @@ gender_data <- regdata %>%
   count(f = Kjønn == "kvinne") %>%
   mutate(total = sum(n)) %>%
   filter(f == TRUE) %>%
-  mutate("Prosentandel kvinner" = as.character(round((n / total * 100), digits = 0))) %>%
-  select("Prosentandel kvinner")
+  mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%
+  select(pro_kvinne)
 
 key_data <- left_join(age_curve_data, gender_data)
 
@@ -64,8 +71,8 @@ nasjonalt_age_curve_data <- regdata %>%
   group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
-  summarize("Antall opererte" = as.character(n_distinct(PID)),
-            "Pre Cobbvinkel" = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
+  summarize(n_opererte = as.character(n_distinct(PID)),
+            pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
             Alder_median = round(median(Alder_num), digits = 1),
             Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
   mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
@@ -79,8 +86,8 @@ nasjonalt_gender_data <- regdata %>%
   count(f =  Kjønn == "kvinne") %>%
   mutate(total = sum(n)) %>%
   filter(f == TRUE) %>%
-  mutate("Prosentandel kvinner" = as.character(round((n / total * 100), digits = 0))) %>%
-  select("Prosentandel kvinner")
+  mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%
+  select(pro_kvinne)
 
 nasjonalt_key_data <- left_join(nasjonalt_age_curve_data, nasjonalt_gender_data) %>%
   mutate(Sykehus = "Nasjonalt") %>%
@@ -95,18 +102,17 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 ```{r, include=FALSE, echo=FALSE}
 # Lag tabellen
 key_data_table <- key_data %>%
-  pivot_longer(!c(Sykehus, year), names_to = "Variabler", values_to = "Verdier") %>%
-  mutate(Verdier = if_else(Variabler == "Prosentandel kvinner",
-                           paste(Verdier, "%", sep = ""),
-                           if_else(Variabler == "Pre Cobbvinkel",
-                                   paste(Verdier, intToUtf8(176), sep = ""),
-                                   paste(Verdier, "", sep = "")),
-                           paste(Verdier, "", sep = ""))) %>%
-  pivot_wider(names_from = year, values_from = Verdier)
+  mutate(pro_kvinne = paste(pro_kvinne, "%", sep = ""),
+         pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>% 
+  rename("År" = "year",
+         "Prosentandel kvinner" = pro_kvinne,
+         "Preoperativ Cobbvinkel" = pre_cobb,
+         "Antall opererte" = n_opererte)
 
 # Få ønsket rekkefølge på Sykehus
 key_data_table <- key_data_table %>%
-  arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav")))
+  arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>% 
+  filter(Sykehus == "Nasjonalt") # lagt til denne filtreringen siden reg.leder kun ønsker visning av nasjonalt
 
 ```
 
@@ -114,13 +120,8 @@ key_data_table <- key_data_table %>%
 
 key_data_table %>%
   kableExtra::kbl() %>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "bordered", "responsive", "condensed"))
+  kableExtra::kable_styling(bootstrap_options = c("bordered", "responsive", "condensed"))
 ```
 
-### Om registeret:
-Deformitetsregisteret er en del av NKR (Nasjonalt kvalitetsregister for ryggkirurgi). Fra 01.01.23 registreres alle operasjoner for idiopatisk skoliose utført i Norge, uavhengig av pasientens alder. Idiopatisk skoliose er en tilstand som debuterer hos barn og ungdom, og de fleste som opereres gjør dette i tenårene. Kirurgi er omfattende med fare for alvorlige komplikasjoner både på kort og lang sikt. Kirurgi medfører en livsvarig lang avstiving av ryggsøylen med metallimplantater. Det har stor verdi for kvalitetsforbedrende arbeid og forskning at disse pasientene er registrert i et nasjonalt register. Oppfølging med pasientrapporterte data samlet i register er nødvendig for å kunne oppdage endring i livskvalitet og eventuelle komplikasjoner på lang sikt. 
-I Norge behandles idiopatisk skoliose ved Haukeland Universitetssjukehus, St.Olavs hospital og Rikshospitalet-OUS. Alle 3 sykehus rapporterer sine operasjoner til registeret. 
 
-Ved inkludering i registeret fyller pasienten ut samtykke og preoperativt skjema. Kirurg fyller ut legeskjema etter operasjon. Pasienter fyller ut skjema postoperativt etter 6 måneder, 2år og 5 år. Dette blir tilsendt og fylles ut elektronisk.
-Alle reoperasjoner skal registreres. Dersom pasienter med skoliose opereres for en annen degenerativ rygglidelse (spinal stenose, prolaps etc.) registreres dette i NKR degenerativ, ikke i Deformitet.
 

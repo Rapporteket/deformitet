@@ -2,10 +2,10 @@
 % Please edit documentation in R/module_fordeling.R
 \name{module_fordeling_UI}
 \alias{module_fordeling_UI}
-\title{Module fordeling}
+\title{Fordelingsmodul}
 \usage{
 module_fordeling_UI(id)
 }
 \description{
-Module fordeling
+Fordelingsmodul
 }
