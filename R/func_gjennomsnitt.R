@@ -83,7 +83,6 @@ table_freq_time <- function(data,
 
   data_nasjonalt <- dplyr::left_join(data_nasjonalt, data_nasjonalt_tally)
 
-
   data <- rbind(data_sykehus, data_nasjonalt) # Bind disse to sammen
 
   map_data <- map_data %>%
@@ -117,17 +116,11 @@ table_freq_time <- function(data,
                              str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
                              str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")))
 
-
     data$tid <- as.factor(data$tid)
 
     data <- data %>%
       select(-c(tid1, tid_as_character))
-
   }
-
-
-
-
   return(data)
 }
 

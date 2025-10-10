@@ -145,8 +145,6 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
               "Liggetid" ~ 10,
               "Komplikasjoner_3mnd" ~ 10,
               "CURRENT_SURGERY" ~ 5)
-
-
           )
       })
 

@@ -6,6 +6,13 @@
 \usage{
 lag_gjen_tabell(data)
 }
+\arguments{
+\item{data}{data som har vært gjennom prepVar()}
+}
 \description{
 lag_gjen_tabell
+}
+\examples{
+tabell <- lag_gjen_tabell(data)
+
 }

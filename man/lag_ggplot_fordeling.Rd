@@ -7,7 +7,7 @@
 lag_ggplot_fordeling(data, gg_data, data_var, visning)
 }
 \arguments{
-\item{data}{data som har vært gjennom prepVar()}
+\item{data}{data som kommer ut fra lagTabell()}
 
 \item{gg_data}{gg-data som kommer fra prepVar()}
 

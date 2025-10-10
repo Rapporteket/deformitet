@@ -6,6 +6,17 @@
 \usage{
 lagTabell(data, var_reshID, visning)
 }
+\arguments{
+\item{data}{data som har vært gjennom prepVar()}
+
+\item{var_reshID}{reshID (valg kun tilgj. som SC-bruker)}
+
+\item{visning}{valg av visning}
+}
 \description{
 lagTabell
+}
+\examples{
+tabell <- lagTabell(data, 103240, "egen enhet")
+
 }
