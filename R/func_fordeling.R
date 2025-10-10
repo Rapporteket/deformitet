@@ -1,126 +1,121 @@
-# There are two functions in this file - makeTable and makeFreqTable
+# There are two functions in this file - lagTabell and laggjenTabell
 
 ################################################################################
-################################ MAKE TABLE ####################################
+################################ LAG  TABLE ####################################
 ################################################################################
 
 
-#' @title makeTable
+#' @title lagTabell
+#'
+#' @param data data som har vært gjennom prepVar()
+#' @param var_reshID reshID (valg kun tilgj. som SC-bruker)
+#' @param visning valg av visning
+#'
+#' @examples
+#' tabell <- lagTabell(data, 103240, "egen enhet")
 #'
 #' @export
 
 
-# New table function based on prepVar
+lagTabell <- function(data, var_reshID, visning){
 
-
-makeTable <- function(data, var_reshID, choice_var){
-
-# Make user's hospital vs. the rest in the table based on reshID of user
-
-  if(choice_var != "hver enhet"){
-    data_hosp <- data %>%
+  if(visning != "hver enhet"){
+    data_sykeh <- data %>%
       dplyr::select(-c(CURRENT_SURGERY)) %>%
       dplyr::filter(CENTREID == {{var_reshID}})
 
-    data_hosp <- data_hosp %>%
+    data_sykeh <- data_sykeh %>%
       dplyr::select(-c(CENTREID, Kjønn)) %>%
       dplyr::add_tally(name = "n") %>%
-      dplyr::group_by(data_hosp[3]) %>%
+      dplyr::group_by(data_sykeh[3]) %>%
       dplyr::add_count(name = "by_var") %>%
       dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
       dplyr::rename("n pr variabel" = by_var) %>%
       dplyr::distinct()
 
-    data_hosp <- data_hosp %>%
+    data_sykeh <- data_sykeh %>%
       dplyr::relocate(Prosent, .before = n)
 
   }
 
-  if(choice_var == "hver enhet"){
-    data_hosp_all <- data
+  if(visning == "hver enhet"){
+    data_sykeh_alle <- data
 
-    data_hosp_all <- data_hosp_all %>%
+    data_sykeh_alle <- data_sykeh_alle %>%
       dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
       dplyr::group_by(Sykehus) %>%
       dplyr::add_tally(name = "n") %>%
       dplyr::ungroup() %>%
-      dplyr::group_by(Sykehus, data_hosp_all[3]) %>%
+      dplyr::group_by(Sykehus, data_sykeh_alle[3]) %>%
       dplyr::add_count(name = "by_var") %>%
       dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
       dplyr::rename("n pr variabel" = by_var) %>%
       dplyr::distinct()
 
-    data_hosp_all <- data_hosp_all %>%
+    data_sykeh_alle <- data_sykeh_alle %>%
       dplyr::relocate(Prosent, .before = n)
 
   }
 
   else{
-    data_all <- data
+    data_alle <- data
 
-    data_all <- data_all %>%
+    data_alle <- data_alle %>%
     dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
     dplyr::mutate(Sykehus = recode(Sykehus,
                                    "Haukeland" = "Alle",
                                    "Rikshospitalet" = "Alle",
                                    "St.Olav" = "Alle")) %>%
     dplyr::add_tally(name = "n") %>%
-    dplyr::group_by(data_all[3]) %>%
+    dplyr::group_by(data_alle[3]) %>%
     dplyr::add_count(name = "by_var") %>%
     dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
     dplyr::rename("n pr variabel" = by_var) %>%
     dplyr::distinct()
 
 
-  data_full <- dplyr::full_join(data_hosp, data_all)
+  data_komplett <- dplyr::full_join(data_sykeh, data_alle)
 
-  data_full <- data_full %>%
+  data_komplett <- data_komplett %>%
     dplyr::relocate(Prosent, .before = n)
 
-
   }
 
 
-  if(choice_var == "hver enhet"){
-    return(data_hosp_all)
+  if(visning == "hver enhet"){
+    return(data_sykeh_alle)
   }
 
-  if(choice_var == "egen enhet"){
-    return(data_hosp)
+  if(visning == "egen enhet"){
+    return(data_sykeh)
   }
-  if(choice_var == "hele landet, uten sammenligning"){
-    data_all <- data_all %>%
+  if(visning == "hele landet, uten sammenligning"){
+    data_alle <- data_alle %>%
       dplyr::relocate(Prosent, .before = n)
 
-    return(data_all)
+    return(data_alle)
   } else {
-    return(data_full)} # => hele landet med sammenligning
+    return(data_komplett)} # => hele landet med sammenligning
 }
-# nolint start
-
-# Test to see if it works
-##g <- makeTable(r, 103240, "egen enhet")
-## g <- makeTable(rr, 103240, "enhet")
-# nolint end
 
 
 ################################################################################
-############################## MAKE FREQ TABLE #################################
+############################## LAG GJEN TABELL #################################
 ################################################################################
 
-#' @title mapping_old_name_new_name
+#' @title mapping_navn
+#' @param data rådata (data som ikke har vært gjennom prepros)
+#' @param x_var valgt variabel i UI-delen
+#'
+#' @examples
+#' map <- mapping_navn(raw_regdata, "BMI_kategori")
 #'
 #' @export
 
-
-# Jeg må bruke rådatatabellen (raw_regdata) _før_ noe har blitt konvertert til
-# faktorer osv. Jeg må da lage mapping mellom x_var og navnet på denne kolonnen i
-# raw_regdata.
-
-mapping_old_name_new_name <- function (data, x_var) {
+mapping_navn <- function (data, x_var) {
 
 
-  new_data <- data.frame(old_name =
+  ny_data <- data.frame(gammelt_navn =
                            c("Helsetilstand",
                              "Helsetilstand_3mnd",
                              "Helsetilstand_12mnd",
@@ -165,7 +160,7 @@ mapping_old_name_new_name <- function (data, x_var) {
                              "SRS22_fornoyd_60mnd"),
 
 
-                         new_name = c("HELSETILSTAND_SCALE",
+                         nytt_navn = c("HELSETILSTAND_SCALE",
                                       "HEALTH_CONDITION_SCALE",
                                       "HEALTH_CONDITION_SCALE_patient12mths",
                                       "HEALTH_CONDITION_SCALE_patient_60_mths",
@@ -208,107 +203,94 @@ mapping_old_name_new_name <- function (data, x_var) {
                                       "SRS22_SATISFACTION_SCORE_patient12mths",
                                       "SRS22_SATISFACTION_SCORE_patient60mths"))
 
-  select_data <- new_data %>%
-      dplyr::filter(old_name == {{x_var}}) %>%
-      dplyr::select(new_name)
+  valgt_data <- ny_data %>%
+      dplyr::filter(gammelt_navn == {{x_var}}) %>%
+      dplyr::select(nytt_navn)
 
-  select_value <- select_data[1,1]
+  valgt_variabel <- valgt_data[1,1]
 
-  return (select_value)
+  return (valgt_variabel)
 }
 
-# nolint start
-# Test to check
-## ggg<- mapping_old_name_new_name(raw_regdata, "BMI_kategori")
-#
-# nolint end
-
-#' @title add_freq_var_to_dataframe
+#' @title gjen_var_til_data
+#'
+#' Denne funksjonen tar ei kolonne fra ei dataramme og legger den til
+#' ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
+#' får navnet "gjen_var"
+#'
+#' @param raw_data rå-regdata
+#' @param data regdata som har vært gjennom prepros
+#' @param gjen_var valgt variabel
+#'
+#' @examples
+#' check <- gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
 #'
 #' @export
 
-# Denne funksjonen tar ei kolonne fra ei dataramme og legger den til
-# ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
-# får navnet "freq_var"
+gjen_var_til_data <- function (raw_data, data, gjen_var) {
 
-add_freq_var_to_dataframe <- function (raw_data, data, freq_var) {
+  if (gjen_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
-  if (freq_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
+    gjen_data <- data %>%
+      dplyr::mutate(gjen_var = dplyr::case_when({{gjen_var}} == "Alder" ~ Alder_num,
+                                                {{gjen_var}} == "Knivtid" ~ kniv_tid,
+                                                {{gjen_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
 
-    freq_data <- data %>%
-      mutate(freq_var = case_when({{freq_var}} == "Alder" ~ Alder_num,
-                                  {{freq_var}} == "Knivtid" ~ kniv_tid,
-                                  {{freq_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
-
-    return (freq_data)
+    return (gjen_data)
 
   } else {
-    select_raw <- raw_data %>%
-      dplyr::select(all_of(freq_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
+    valg_rå <- raw_data %>%
+      dplyr::select(all_of(gjen_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
 
-    freq_data <- dplyr::left_join(data, select_raw, by = "MCEID")
+    gjen_data <- dplyr::left_join(data, valg_rå, by = "MCEID")
 
-    colnames(freq_data)[ncol(freq_data)] = "freq_var"
+    colnames(gjen_data)[ncol(gjen_data)] = "gjen_var"
 
-    return (freq_data)
+    return (gjen_data)
     }
 
 }
 
-# nolint start
-##
-## rrr <- add_freq_var_to_dataframe(raw_regdata, regdata, "Diff_prosent_kurve")
-# nolint end
 
-
-
-# nolint start
-## HER KJØRER PREPVAR ##################
-##x <- prepVar(rrr, "freq_var", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon")
-## xx <- data.frame(x[1])
-# nolint end
-
-#' @title make_freq_table
+#' @title lag_gjen_tabell
+#'
+#' @param data data som har vært gjennom prepVar()
+#'
+#' @examples
+#' tabell <- lag_gjen_tabell(data)
 #'
 #' @export
 
 
-make_freq_table <- function (data) {
+lag_gjen_tabell <- function (data) {
 
-  freq <- data %>%
-    dplyr::filter(!is.na(freq_var))
+  gjen <- data %>%
+    dplyr::filter(!is.na(gjen_var))
 
-  freq_pr_sykehus <- freq %>%
+  gjen_pr_sykehus <- gjen %>%
     dplyr::group_by(Sykehus) %>%
-    dplyr::summarise(gjennomsnitt = round(mean(freq_var), 2),
-                     median = median(freq_var)) %>%
+    dplyr::summarise(gjennomsnitt = round(mean(gjen_var), 2),
+                     median = median(gjen_var)) %>%
     dplyr::ungroup()
 
 
-  freq_total <- freq %>%
-    dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(freq_var), 2),
-                     "median nasjonalt" = median(freq_var))
+  gjen_total <- gjen %>%
+    dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(gjen_var), 2),
+                     "median nasjonalt" = median(gjen_var))
 
-  freq_table <- merge(freq_pr_sykehus, freq_total)
+  gjen_tabell <- merge(gjen_pr_sykehus, gjen_total)
 
 
-  freq_n <- freq %>%
+  gjen_n <- gjen %>%
     group_by(Sykehus) %>%
     tally(n = "antall") %>%
     mutate("antall nasjonalt"= sum(antall))
 
-  freq_table2 <- merge(freq_table, freq_n)
+  gjen_tabell2 <- merge(gjen_tabell, gjen_n)
 
-  freq_table2 <- freq_table2 %>%
+  gjen_tabell2 <- gjen_tabell2 %>%
     dplyr::relocate(antall, .before = "gjennomsnitt nasjonalt")
 
-   return(freq_table2)
-
-
+   return(gjen_tabell2)
 }
-
-# nolint start
-# test:
-## d <- make_freq_table(xx)
-# nolint end
 
