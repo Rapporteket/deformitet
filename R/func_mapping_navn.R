@@ -7,7 +7,9 @@
 #' @param x_var valgt variabel i UI-delen
 #'
 #' @examples
-#' map <- mapping_navn(raw_regdata, "BMI_kategori")
+#' \donttest{
+#' mapping_navn(raw_regdata, "BMI_kategori")
+#' }
 #'
 #' @export
 

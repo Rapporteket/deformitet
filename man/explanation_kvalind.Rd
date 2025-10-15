@@ -6,6 +6,15 @@
 \usage{
 explanation_kvalind(kjønn_choice, var)
 }
+\arguments{
+\item{kjønn_choice}{brukervalg på visning kjønn}
+
+\item{var}{brukervalg på variabel}
+}
 \description{
 Function for getting explanations for kvalitetsindikatorer
+}
+\examples{
+expl <- explanation_kvalind("begge", "SRS22_spm22_3mnd")
+
 }

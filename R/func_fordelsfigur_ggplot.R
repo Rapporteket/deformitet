@@ -5,7 +5,10 @@
 #' @param data_var data som lagrer brukerens valg
 #' @param visning valg av visning
 #'
-#' @examples lag_ggplot_fordeling(data, gg_data, data_var, "egen enhet")
+#' @examples
+#' \donttest{
+#' lag_ggplot_fordeling(data, gg_data, data_var, "egen enhet")
+#' }
 #' @export
 
 #### LAG ANDELSPLOT ####

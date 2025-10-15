@@ -1,23 +1,25 @@
 ## GJENNOMSNITT OVER TID ##
+## Hvilke variabler som er inkludert her bør gjennomgås kritisk (nå er bare alle
+## inkludert og det er ikke bra!)
 
-# Funksjon for å regne gjennomsnitt pr. kvartal, pr. sykehus og nasjonalt
-### Siden dette er en kontinuerlig variabel:
-### Mapping kjører først
-### Deretter kjører prep_var med mapping som input
-### Deretter kjører table_freq_time med mapping som input
-
-# nolint start
-# Nødvendig data for å teste funksjonene i over_tid
-#map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
-#prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
-#prep_data_var <- data.frame(prep_data[1])
-#gg_data <- data.frame(prep_data[2])
-# nolint end
 
 #' @title Tabell - gjennomsnitt over tid
+#'
+#' @param data data som har vært gjennom mapping_navn() og prepVar()
+#' @param var brukervalg av variabel
+#' @param map_data mapping-data mellom reshId og sykehusnavn
+#' @param tidsenhet brukervalg av tid
+#' @param visning brukervalg av visning
+#' @param userUnidIt brukerens enhetstilhørighet
+#'
+#' @examples
+#' \donttest{
+#' tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961)
+#' }
+#'
 #' @export
 
-table_freq_time <- function(data,
+tabell_gjen_tid <- function(data,
                             var,
                             map_data,
                             tidsenhet = "kvartal",
@@ -124,23 +126,29 @@ table_freq_time <- function(data,
   return(data)
 }
 
-# nolint start
-## Test:
-###t <- table_freq_time(prep_data_var, map_var, map_db_resh, "kvartal", "hver enhet", 111961)
-# nolint end
-
-
-# Funksjon for å lage plot
 
 #' @title Plot - gjennomsnitt over tid
+#'
+#' @param data data som har vært gjennom tabell_gjen_tid()
+#' @param visning valgt visning
+#' @param gg_data data fra prepVar()[2]
+#' @param map_var data som mapper mellom variabler (faktornivå og "kontinuerlig variabel")
+#' @param tidsenhet valgt tidsenhet
+#' @param data_var datasett med brukerens UI-valg
+#'
+#' @examples
+#' \donttest{
+#' over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+#' }
+#'
 #' @export
 
-over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time()
-                          visning, # valgt visning -> hele landet, egen enhet osv.
-                          gg_data, # data med limits på y-aksen
-                          map_var, # data som mapper mellom variabel med faktornivå og kontinuerlig variabel
-                          tidsenhet, # valgt tidsenhet -> kvartal eller år
-                          data_var # data som lagrer UI-valg
+over_tid_plot <- function(data,
+                          visning,
+                          gg_data,
+                          map_var,
+                          tidsenhet,
+                          data_var
                           ) {
   data$Sykehus <- as.factor(data$Sykehus)
 
@@ -194,12 +202,6 @@ over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time
 
   return(tid_plot)
 }
-
-# nolint start
-# Test for å sjekke om det fungerer:
-## r <- over_tid_plot(t, "egen enhet", gg_data, map_var, "kvartal")
-## r
-# nolint end
 
 
 # Oversikt variabler pr. skjema

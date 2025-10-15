@@ -12,7 +12,9 @@
 #' @param visning valg av visning
 #'
 #' @examples
-#' tabell <- lagTabell(data, 103240, "egen enhet")
+#' \donttest{
+#' lagTabell(data, 103240, "egen enhet")
+#' }
 #'
 #' @export
 
@@ -115,7 +117,9 @@ lagTabell <- function(data, var_reshID, visning){
 #' @param gjen_var valgt variabel
 #'
 #' @examples
-#' check <- gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+#' \donttest{
+#' gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+#' }
 #'
 #' @export
 
@@ -148,7 +152,9 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 #' @param data data som har vært gjennom prepVar()
 #'
 #' @examples
-#' tabell <- lag_gjen_tabell(data)
+#' \donttest{
+#' lag_gjen_tabell(data)
+#' }
 #'
 #' @export
 

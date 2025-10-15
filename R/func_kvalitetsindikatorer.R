@@ -8,11 +8,12 @@
 #' @param var brukerens valg av variabel
 #' @param userRole brukerens brukerrolle
 #' @param userUnitId brukuers reshId
-#' @map_data datasett som mapper reshId og sykehusnavn
+#' @param map_data datasett som mapper reshId og sykehusnavn
 #'
 #' @examples
-#' tbl <- count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
-#'
+#' \donttest{
+#' count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
+#' }
 #'
 #' @export
 
@@ -172,7 +173,9 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
 #' @param choice_kjønn brukervalg på visning på kjønn
 #'
 #' @examples
-#' plot <- kval_plot(data, gg_data, data_var, "nei")
+#' \donttest{
+#' kval_plot(data, gg_data, data_var, "nei")
+#' }
 #'
 #' @export
 
@@ -246,7 +249,9 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 #' @param var brukervalg på variabel
 #'
 #' @examples
-#' expl <- explanation_kvalind("begge", "SRS22_spm22_3mnd")
+#' \donttest{
+#' explanation_kvalind("begge", "SRS22_spm22_3mnd")
+#' }
 #'
 #' @export
 

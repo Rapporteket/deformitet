@@ -2,10 +2,7 @@
 % Please edit documentation in R/func_mapping_navn.R
 \name{mapping_navn}
 \alias{mapping_navn}
-\title{mapping_navn
-
-Denne funksjonen lager mapping mellom variabler som har vært gjennom prePros()
-og variabler som kommer fra rådataen}
+\title{mapping_navn}
 \usage{
 mapping_navn(data, x_var)
 }
@@ -15,8 +12,6 @@ mapping_navn(data, x_var)
 \item{x_var}{valgt variabel i UI-delen}
 }
 \description{
-mapping_navn
-
 Denne funksjonen lager mapping mellom variabler som har vært gjennom prePros()
 og variabler som kommer fra rådataen
 }

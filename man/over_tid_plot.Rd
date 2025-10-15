@@ -6,6 +6,23 @@
 \usage{
 over_tid_plot(data, visning, gg_data, map_var, tidsenhet, data_var)
 }
+\arguments{
+\item{data}{data som har vært gjennom tabell_gjen_tid()}
+
+\item{visning}{valgt visning}
+
+\item{gg_data}{data fra prepVar()[2]}
+
+\item{map_var}{data som mapper mellom variabler (faktornivå og "kontinuerlig variabel")}
+
+\item{tidsenhet}{valgt tidsenhet}
+
+\item{data_var}{datasett med brukerens UI-valg}
+}
 \description{
 Plot - gjennomsnitt over tid
+}
+\examples{
+plot <- over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+
 }

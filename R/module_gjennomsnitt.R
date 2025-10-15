@@ -68,7 +68,7 @@ module_gjennomsnitt_UI <- function(id) {
 
                           shinyjs::hidden(uiOutput(outputId = ns("view_type"))), # second select
 
-                          radioButtons( # third select
+                          radioButtons( # second select
                             inputId = ns("tidsenhet"),
                             label = "Tidsenhet",
                             choices = c("År" = "aar",
@@ -76,7 +76,7 @@ module_gjennomsnitt_UI <- function(id) {
                             selected = "kvartal"
                           ),
 
-                          dateRangeInput( # fourth select
+                          dateRangeInput( # third select
                             inputId = ns("date"),
                             label = "Tidsintervall:",
                             start = "2023-01-02",
@@ -86,7 +86,7 @@ module_gjennomsnitt_UI <- function(id) {
                             format = "dd-mm-yyyy",
                             separator = " - "),
 
-                          sliderInput( # fifth select
+                          sliderInput( # fourth select
                             inputId = ns("alder_var"),
                             label = "Aldersintervall:",
                             min = 0,
@@ -94,7 +94,7 @@ module_gjennomsnitt_UI <- function(id) {
                             value = c(10, 20),
                             dragRange = TRUE),
 
-                          selectInput( # sixth select
+                          selectInput( # fifth select
                             inputId = ns("kjønn_var"),
                             label = "Utvalg basert på kjønn",
                             choices = c("begge", "mann", "kvinne"),
@@ -139,7 +139,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       output$view_type <- renderUI({
         ns <- session$ns
         if(userRole() == "SC") {
-          shiny::radioButtons( # second select
+          shiny::radioButtons( # seventh select
             inputId = ns("type_view"),
             label = "Vis rapport for:",
             choices = c("Hele landet" = "hele landet",
@@ -149,7 +149,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                         ),
             selected = "hele landet")
           } else {
-            shiny::radioButtons( # second select
+            shiny::radioButtons( # seventh select
               inputId = ns("type_view"),
               label = "Vis rapport for:",
               choices = c("Hele landet" = "hele landet",
@@ -209,7 +209,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       #Aggregate data in table format
 
       table_data <- reactive({
-        table <- deformitet::table_freq_time(data_reactive(),
+        table <- deformitet::tabell_gjen_tid(data_reactive(),
                                              map_var_reactive(),
                                              map_data,
                                              input$tidsenhet,

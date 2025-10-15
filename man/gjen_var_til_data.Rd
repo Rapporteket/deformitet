@@ -2,11 +2,7 @@
 % Please edit documentation in R/func_fordeling.R
 \name{gjen_var_til_data}
 \alias{gjen_var_til_data}
-\title{gjen_var_til_data
-
-Denne funksjonen tar ei kolonne fra ei dataramme og legger den til
-ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
-får navnet "gjen_var"}
+\title{gjen_var_til_data}
 \usage{
 gjen_var_til_data(raw_data, data, gjen_var)
 }
@@ -18,8 +14,6 @@ gjen_var_til_data(raw_data, data, gjen_var)
 \item{gjen_var}{valgt variabel}
 }
 \description{
-gjen_var_til_data
-
 Denne funksjonen tar ei kolonne fra ei dataramme og legger den til
 ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
 får navnet "gjen_var"
