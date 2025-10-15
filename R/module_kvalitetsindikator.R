@@ -53,8 +53,26 @@ module_kvalitetsindikator_UI <- function(id){
           choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
           selected = "Begge"),
         ns = NS(id)
-      )),
+      ),
 
+      sliderInput( # fourth select
+        inputId = ns("alder_var"),
+        label = "Aldersintervall:",
+        min = 0,
+        max = 100,
+        value = c(10, 20),
+        dragRange = TRUE),
+
+      dateRangeInput( # fifth select
+        inputId = ns("date"),
+        label = "Tidsintervall:",
+        start = "2023-01-02",
+        end = "2024-09-02",
+        min = "2023-01-01",
+        max = "2025-09-02",
+        format = "dd-mm-yyyy",
+        separator = " - ")
+      ),
 
       shiny::mainPanel(
         bslib::navset_card_underline(
@@ -88,25 +106,6 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
   moduleServer(
     id,
     function(input, output, session){
-
-
-      date1_reactive <- reactive({
-        date1 <- min(data$SURGERY_DATE)
-      })
-
-      date2_reactive <- reactive({
-        date2 <- max(data$SURGERY_DATE)
-      })
-
-      age1_reactive <- reactive({
-        age1 <- min(data$Alder_num)
-      })
-
-      age2_reactive <-reactive({
-        age2 = max(data$Alder_num)
-      })
-
-
 
       # Make gg-data for plot
       gg_data <- data.frame(title = "") # Jeg skal legge alt dette inn i en funksjon
@@ -146,8 +145,6 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
               "Liggetid" ~ 10,
               "Komplikasjoner_3mnd" ~ 10,
               "CURRENT_SURGERY" ~ 5)
-
-
           )
       })
 
@@ -158,19 +155,33 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
         my_data <- data.frame(c(input$kval_var,
                                 if(input$kjønn_var == "nei"){"begge"}
                                 else{input$kjønn_var},
-                                format(date1_reactive(), "%d%m%y"),
-                                format(date2_reactive(), "%d%m%y"),
-                                age1_reactive(), age2_reactive(),
+                                format(input$date[1], "%d%m%y"),
+                                format(input$date[2], "%d%m%y"),
+                                input$alder_var[1],
+                                input$alder_var[2],
                                 input$type_op))
       })
 
 
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
+      # Basic utvalg
+      df_reactive <- reactive({
+        deformitet::utvalg_basic(data,
+                                 userUnitId(),
+                                 input$kjønn_var,
+                                 input$type_op,
+                                 input$date[1],
+                                 input$date[2],
+                                 input$alder_var[1],
+                                 input$alder_var[2],
+                                 "ikke_filtrer_reshId")
+      })
+
+
       kval_df_reactive <- reactive({
-        x <- deformitet::count_kvalind(data,
+        x <- deformitet::count_kvalind(df_reactive(),
                                        input$kjønn_var,
-                                       input$type_op,
                                        input$kval_var,
                                        userRole(),
                                        userUnitId(),

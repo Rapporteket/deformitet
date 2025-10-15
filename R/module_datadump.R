@@ -131,17 +131,9 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
       output$datadump <- DT::renderDT({
         if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
           table <- DT::datatable(select_datadump_reactive(),
-                                 extensions = 'Buttons',
-                                 options = list(
-                                   dom = 'Bfrtip',
-                                   buttons = c('copy', 'csv', 'excel','pdf')),
                                  class = 'white-space:nowrap compact')
         } else {
             table <- DT::datatable(clean_datadump_reactive(),
-                                   extensions = 'Buttons',
-                                   options = list(
-                                     dom = 'Bfrtip',
-                                     buttons = c('copy', 'csv', 'excel','pdf')),
                                    class = 'white-space:nowrap compact')
             }
       })

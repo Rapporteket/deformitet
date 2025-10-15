@@ -2,10 +2,13 @@
 % Please edit documentation in R/func_kvalitetsindikatorer.R
 \name{ny_komplikasjon3mnd_usmerte}
 \alias{ny_komplikasjon3mnd_usmerte}
-\title{Ny komplikasjonskolonne}
+\title{Funksjon som regner komplikasjoner}
 \usage{
 ny_komplikasjon3mnd_usmerte(data)
 }
+\arguments{
+\item{data}{data som har vært gjennom utvalg_basic()}
+}
 \description{
-Ny komplikasjonskolonne
+Funksjonen regner antall komplikasjoner med unntak av smerte.
 }
