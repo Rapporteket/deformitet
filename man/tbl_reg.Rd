@@ -6,6 +6,19 @@
 \usage{
 tbl_reg(date1, date2, data)
 }
+\arguments{
+\item{date1}{dato-valg (min) gjort av brukeren}
+
+\item{date2}{dato-valg (max) gjort av brukeren}
+
+\item{data}{datasett -> datasett som har vært gjennom prePros()}
+}
 \description{
 tabell registreringer
+}
+\examples{
+\donttest{
+tbl_reg("01-09-2024", "01-01-2025", regdata)
+}
+
 }

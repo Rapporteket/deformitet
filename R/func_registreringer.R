@@ -2,8 +2,16 @@
 ## FUNKSJON SOM LAGER TABELL MED REGISTRERINGER PR OPERASJONSDATO ##
 ################################################################################
 
-#'@title tabell registreringer
-#'@export
+#' @title tabell registreringer
+#' @param date1 dato-valg (min) gjort av brukeren
+#' @param date2 dato-valg (max) gjort av brukeren
+#' @param data datasett -> datasett som har vært gjennom prePros()
+#' @examples
+#' \donttest{
+#' tbl_reg("01-09-2024", "01-01-2025", regdata)
+#' }
+#'
+#' @export
 
 tbl_reg <- function(date1, date2, data) {
 
@@ -31,18 +39,21 @@ tbl_reg <- function(date1, date2, data) {
 
 }
 
-# nolint start
-# sjekk
-## rr <- tbl_reg("01-09-2024", "01-01-2025", regdata)
-# nolint end
-
 
 ################################################################################
-## FUNKSJON SOM LAGER OVERSIKT OVER REGISTRERINGER PR OPERASJONSDATO PR SKJEMA #
+## FUNKSJON SOM LAGER OVERSIKT OVER REGISTRERINGER PR SKJEMA ##
 ################################################################################
 
-#'@title tabell registreringer pr skjema
-#'@export
+#' @title tabell registreringer pr skjema
+#' @param date1 dato-valg (min) gjort av brukeren
+#' @param date2 dato-valg (max) gjort av brukeren
+#' @param data data -> data som har vært gjennom prePros()
+#' @examples
+#' \donttest{
+#' tbl_skjema_reg("01-09-2024", "01-01-2025", regdata)
+#' }
+#'
+#' @export
 
 tbl_skjema_reg <- function (date1, date2, data) {
 
@@ -72,9 +83,3 @@ tbl_skjema_reg <- function (date1, date2, data) {
 
   return(tbl_skjema)
 }
-
-# nolint start
-# sjekk:
-## gg <- tbl_skjema_reg("01-09-2024", "01-01-2025", regdata)
-# nolint end
-
