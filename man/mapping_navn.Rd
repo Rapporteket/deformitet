@@ -16,6 +16,8 @@ Denne funksjonen lager mapping mellom variabler som har vært gjennom prePros()
 og variabler som kommer fra rådataen
 }
 \examples{
-map <- mapping_navn(raw_regdata, "BMI_kategori")
+\donttest{
+mapping_navn(raw_regdata, "BMI_kategori")
+}
 
 }

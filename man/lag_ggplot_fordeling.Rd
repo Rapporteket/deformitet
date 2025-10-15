@@ -19,5 +19,7 @@ lag_ggplot_fordeling(data, gg_data, data_var, visning)
 Make gg_plot for fordelingsfirgurer og -tabeller
 }
 \examples{
+\donttest{
 lag_ggplot_fordeling(data, gg_data, data_var, "egen enhet")
+}
 }

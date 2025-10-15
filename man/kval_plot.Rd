@@ -17,6 +17,8 @@ kval_plot(data, gg_data, data_var, choice_kjønn)
 Funksjon som lager kvalitetsindikatorplot
 }
 \examples{
-plot <- kval_plot(data, gg_data, data_var, "nei")
+\donttest{
+kval_plot(data, gg_data, data_var, "nei")
+}
 
 }

@@ -19,6 +19,8 @@ ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
 får navnet "gjen_var"
 }
 \examples{
-check <- gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+\donttest{
+gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+}
 
 }

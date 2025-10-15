@@ -13,6 +13,8 @@ lag_gjen_tabell(data)
 lag_gjen_tabell
 }
 \examples{
-tabell <- lag_gjen_tabell(data)
+\donttest{
+lag_gjen_tabell(data)
+}
 
 }

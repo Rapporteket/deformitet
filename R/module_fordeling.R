@@ -373,7 +373,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Finne variabelen som bruker velger i datasettet:
 
       navn_reactive <- reactive({
-       navn <- deformitet::mapping_old_name_new_name(raw_data, input$x_var)
+       navn <- deformitet::mapping_navn(raw_data, input$x_var)
        })
 
       gjen_added_reactive <- reactive({

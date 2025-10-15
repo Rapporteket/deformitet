@@ -23,6 +23,8 @@ over_tid_plot(data, visning, gg_data, map_var, tidsenhet, data_var)
 Plot - gjennomsnitt over tid
 }
 \examples{
-plot <- over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+\donttest{
+over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+}
 
 }

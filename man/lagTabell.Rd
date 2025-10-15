@@ -17,6 +17,8 @@ lagTabell(data, var_reshID, visning)
 lagTabell
 }
 \examples{
-tabell <- lagTabell(data, 103240, "egen enhet")
+\donttest{
+lagTabell(data, 103240, "egen enhet")
+}
 
 }

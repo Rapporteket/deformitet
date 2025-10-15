@@ -15,6 +15,8 @@ explanation_kvalind(kjønn_choice, var)
 Function for getting explanations for kvalitetsindikatorer
 }
 \examples{
-expl <- explanation_kvalind("begge", "SRS22_spm22_3mnd")
+\donttest{
+explanation_kvalind("begge", "SRS22_spm22_3mnd")
+}
 
 }

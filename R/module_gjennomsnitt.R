@@ -77,7 +77,7 @@ module_gjennomsnitt_UI <- function(id) {
                           ),
 
                           dateRangeInput( # third select
-                            inputId = ns("date"),
+                            inputId = ns("dato"),
                             label = "Tidsintervall:",
                             start = "2023-01-02",
                             end = "2025-09-02",
@@ -140,7 +140,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         ns <- session$ns
         if(userRole() == "SC") {
           shiny::radioButtons( # seventh select
-            inputId = ns("type_view"),
+            inputId = ns("visningstype"),
             label = "Vis rapport for:",
             choices = c("Hele landet" = "hele landet",
                         "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -150,7 +150,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
             selected = "hele landet")
           } else {
             shiny::radioButtons( # seventh select
-              inputId = ns("type_view"),
+              inputId = ns("visningstype"),
               label = "Vis rapport for:",
               choices = c("Hele landet" = "hele landet",
                           "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -161,7 +161,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       })
 
       map_var_reactive <- reactive({
-        deformitet::mapping_old_name_new_name(data, input$x_var)
+        deformitet::mapping_navn(data, input$x_var)
       })
 
       prepVar_reactive <- reactive({
@@ -169,8 +169,8 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
           data,
           map_var_reactive(),
           input$kjønn_var,
-          input$date[1],
-          input$date[2],
+          input$dato[1],
+          input$dato[2],
           input$alder_var[1],
           input$alder_var[2],
           input$type_op,
@@ -181,7 +181,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       # Make data frame where UI choices are stored
 
       my_data_reactive <- reactive({
-        x <- format(input$date, "%d/%m/%y")
+        x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var,
                                 input$kjønn_var,
                                 x[1],
@@ -213,7 +213,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                                              map_var_reactive(),
                                              map_data,
                                              input$tidsenhet,
-                                             input$type_view,
+                                             input$visningstype,
                                              userUnitId())
         table <- table %>%
           dplyr::rename("gjennomsnitt" = "gjen")
@@ -231,7 +231,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
       my_plot <- reactive({
         deformitet::over_tid_plot(table_data(),
-                                  input$type_view,
+                                  input$visningstype,
                                   gg_data_reactive(),
                                   map_var_reactive(),
                                   input$tidsenhet,
@@ -241,8 +241,8 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       check <- reactive({
         sjekk_antall(data,
                      table_data(),
-                     input$date[1],
-                     input$date[2],
+                     input$dato[1],
+                     input$dato[2],
                      input$tidsenhet)
       })
 

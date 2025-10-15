@@ -23,7 +23,8 @@ count_kvalind(data, kjoenn, var, userRole, userUnitId, map_data)
 Funksjon som teller tilfeller av visse vilkår til kvalitetsindikatorer
 }
 \examples{
-tbl <- count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
-
+\donttest{
+count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
+}
 
 }

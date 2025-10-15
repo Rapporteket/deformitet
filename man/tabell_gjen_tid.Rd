@@ -30,6 +30,8 @@ tabell_gjen_tid(
 Tabell - gjennomsnitt over tid
 }
 \examples{
-tabell <- tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961)
+\donttest{
+tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961)
+}
 
 }
