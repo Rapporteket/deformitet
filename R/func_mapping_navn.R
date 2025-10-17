@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \donttest{
-#' mapping_navn(raw_regdata, "BMI_kategori")
+#' try(mapping_navn(raw_regdata, "BMI_kategori"))
 #' }
 #'
 #' @export

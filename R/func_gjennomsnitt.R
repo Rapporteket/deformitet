@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \donttest{
-#' tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961)
+#' try(tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961))
 #' }
 #'
 #' @export
@@ -138,7 +138,7 @@ tabell_gjen_tid <- function(data,
 #'
 #' @examples
 #' \donttest{
-#' over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+#' try(over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal"))
 #' }
 #'
 #' @export
@@ -376,7 +376,7 @@ usethis::use_data(skjema, overwrite = TRUE)
 #' @param var variabel som velges av bruker i UI-delen
 #' @examples
 #' \donttest{
-#' ylimits_gjen(SRS22_MAIN_SCORE)
+#' try(ylimits_gjen(SRS22_MAIN_SCORE))
 #' }
 #'
 #' @export
@@ -426,7 +426,7 @@ y_limits_gjen <- function(var) {
 #'
 #' @examples
 #' \donttest{
-#' sjekk_antall(regdata, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar")
+#' try(sjekk_antall(regdata, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
 #' }
 #' @export
 

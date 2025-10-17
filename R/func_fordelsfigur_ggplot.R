@@ -7,7 +7,7 @@
 #'
 #' @examples
 #' \donttest{
-#' lag_ggplot_fordeling(data, gg_data, data_var, "egen enhet")
+#' try(lag_ggplot_fordeling(data, gg_data, data_var, "egen enhet"))
 #' }
 #' @export
 

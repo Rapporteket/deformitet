@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \donttest{
-#' lagTabell(data, 103240, "egen enhet")
+#' try(lagTabell(data, 103240, "egen enhet"))
 #' }
 #'
 #' @export
@@ -118,7 +118,7 @@ lagTabell <- function(data, var_reshID, visning){
 #'
 #' @examples
 #' \donttest{
-#' gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+#' try(gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve"))
 #' }
 #'
 #' @export
@@ -153,7 +153,7 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 #'
 #' @examples
 #' \donttest{
-#' lag_gjen_tabell(data)
+#' try(lag_gjen_tabell(data))
 #' }
 #'
 #' @export

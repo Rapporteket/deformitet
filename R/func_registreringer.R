@@ -8,7 +8,7 @@
 #' @param data datasett -> datasett som har vært gjennom prePros()
 #' @examples
 #' \donttest{
-#' tbl_reg("01-09-2024", "01-01-2025", regdata)
+#' try(tbl_reg("01-09-2024", "01-01-2025", regdata))
 #' }
 #'
 #' @export
@@ -50,7 +50,7 @@ tbl_reg <- function(date1, date2, data) {
 #' @param data data -> data som har vært gjennom prePros()
 #' @examples
 #' \donttest{
-#' tbl_skjema_reg("01-09-2024", "01-01-2025", regdata)
+#' try(tbl_skjema_reg("01-09-2024", "01-01-2025", regdata))
 #' }
 #'
 #' @export

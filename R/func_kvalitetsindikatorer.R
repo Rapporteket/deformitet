@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' \donttest{
-#' count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh)
+#' try(count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
 #' }
 #'
 #' @export
@@ -174,7 +174,7 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
 #'
 #' @examples
 #' \donttest{
-#' kval_plot(data, gg_data, data_var, "nei")
+#' try(kval_plot(data, gg_data, data_var, "nei"))
 #' }
 #'
 #' @export
@@ -250,7 +250,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 #'
 #' @examples
 #' \donttest{
-#' explanation_kvalind("begge", "SRS22_spm22_3mnd")
+#' try(explanation_kvalind("begge", "SRS22_spm22_3mnd"))
 #' }
 #'
 #' @export
