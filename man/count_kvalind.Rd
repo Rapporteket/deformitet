@@ -4,8 +4,27 @@
 \alias{count_kvalind}
 \title{Kvalitetsindikatortelling}
 \usage{
-count_kvalind(data, kjoenn, type_op, var, userRole, userUnitId, map_data)
+count_kvalind(data, kjoenn, var, userRole, userUnitId, map_data)
+}
+\arguments{
+\item{data}{data som har vært gjennom prepVar()}
+
+\item{kjoenn}{brukerens valg på kjønn}
+
+\item{var}{brukerens valg av variabel}
+
+\item{userRole}{brukerens brukerrolle}
+
+\item{userUnitId}{brukuers reshId}
+
+\item{map_data}{datasett som mapper reshId og sykehusnavn}
 }
 \description{
-Kvalitetsindikatortelling
+Funksjon som teller tilfeller av visse vilkår til kvalitetsindikatorer
+}
+\examples{
+\donttest{
+try(count_kvalind(regdata, "begge", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
+}
+
 }

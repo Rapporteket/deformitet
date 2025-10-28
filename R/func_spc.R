@@ -11,7 +11,7 @@ prepros_SPC <- function (data, var, time_grouping) {
 
   # ## GROUP BY CHOICE ###########
 
-  spc_data <- spc_data |>
+  spc_data <- spc_data %>%
     dplyr::group_by(tidsperiode = cut(.data$SURGERY_DATE, time_grouping)) %>%
     dplyr::summarize(value = mean(.data[[var]]))  %>%
     dplyr::mutate(value = round(value, 2))

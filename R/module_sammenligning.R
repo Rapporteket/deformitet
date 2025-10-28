@@ -151,7 +151,8 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
                                 input$dato[1],
                                 input$dato[2],
                                 input$alder_var[1],
-                                input$alder_var[2]
+                                input$alder_var[2],
+                                "filtrer_reshId"
                                 )
           } else {
             x <- deformitet::utvalg_basic(data,
@@ -161,7 +162,8 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
                                         input$dato[1],
                                         input$dato[2],
                                         input$alder_var[1],
-                                        input$alder_var[2]
+                                        input$alder_var[2],
+                                        "filtrer_reshId"
                                         )
 
       }

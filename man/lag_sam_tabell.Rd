@@ -2,7 +2,10 @@
 % Please edit documentation in R/func_sammenligningsmodul.R
 \name{lag_sam_tabell}
 \alias{lag_sam_tabell}
-\title{Lag tabell til sammenligning}
+\title{Lag tabell til sammenligning
+Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
+alle kolonnene av interesse i et langt format. Det er kun variabelene som er
+valgt, samt Sykehus som blir med i funksjonen.}
 \usage{
 lag_sam_tabell(data, var)
 }
@@ -16,4 +19,13 @@ datasett/tabell i langt format
 }
 \description{
 Lag tabell til sammenligning
+Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
+alle kolonnene av interesse i et langt format. Det er kun variabelene som er
+valgt, samt Sykehus som blir med i funksjonen.
+}
+\examples{
+\donttest{
+try(lag_sam_tabell(regdata, "Funksjon"))
+}
+
 }

@@ -68,7 +68,7 @@ module_gjennomsnitt_UI <- function(id) {
 
                           shinyjs::hidden(uiOutput(outputId = ns("view_type"))), # second select
 
-                          radioButtons( # third select
+                          radioButtons( # second select
                             inputId = ns("tidsenhet"),
                             label = "Tidsenhet",
                             choices = c("År" = "aar",
@@ -76,8 +76,8 @@ module_gjennomsnitt_UI <- function(id) {
                             selected = "kvartal"
                           ),
 
-                          dateRangeInput( # fourth select
-                            inputId = ns("date"),
+                          dateRangeInput( # third select
+                            inputId = ns("dato"),
                             label = "Tidsintervall:",
                             start = "2023-01-02",
                             end = "2025-09-02",
@@ -86,7 +86,7 @@ module_gjennomsnitt_UI <- function(id) {
                             format = "dd-mm-yyyy",
                             separator = " - "),
 
-                          sliderInput( # fifth select
+                          sliderInput( # fourth select
                             inputId = ns("alder_var"),
                             label = "Aldersintervall:",
                             min = 0,
@@ -94,7 +94,7 @@ module_gjennomsnitt_UI <- function(id) {
                             value = c(10, 20),
                             dragRange = TRUE),
 
-                          selectInput( # sixth select
+                          selectInput( # fifth select
                             inputId = ns("kjønn_var"),
                             label = "Utvalg basert på kjønn",
                             choices = c("begge", "mann", "kvinne"),
@@ -139,8 +139,8 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       output$view_type <- renderUI({
         ns <- session$ns
         if(userRole() == "SC") {
-          shiny::radioButtons( # second select
-            inputId = ns("type_view"),
+          shiny::radioButtons( # seventh select
+            inputId = ns("visningstype"),
             label = "Vis rapport for:",
             choices = c("Hele landet" = "hele landet",
                         "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -149,8 +149,8 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                         ),
             selected = "hele landet")
           } else {
-            shiny::radioButtons( # second select
-              inputId = ns("type_view"),
+            shiny::radioButtons( # seventh select
+              inputId = ns("visningstype"),
               label = "Vis rapport for:",
               choices = c("Hele landet" = "hele landet",
                           "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -161,7 +161,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       })
 
       map_var_reactive <- reactive({
-        deformitet::mapping_old_name_new_name(data, input$x_var)
+        deformitet::mapping_navn(data, input$x_var)
       })
 
       prepVar_reactive <- reactive({
@@ -169,8 +169,8 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
           data,
           map_var_reactive(),
           input$kjønn_var,
-          input$date[1],
-          input$date[2],
+          input$dato[1],
+          input$dato[2],
           input$alder_var[1],
           input$alder_var[2],
           input$type_op,
@@ -181,7 +181,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       # Make data frame where UI choices are stored
 
       my_data_reactive <- reactive({
-        x <- format(input$date, "%d/%m/%y")
+        x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var,
                                 input$kjønn_var,
                                 x[1],
@@ -206,21 +206,21 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
 
       ######## AGGREGATE DATA-------------------------------------------------------
-
       #Aggregate data in table format
 
       table_data <- reactive({
-        deformitet::table_freq_time(data_reactive(),
-                                    map_var_reactive(),
-                                    map_data,
-                                    input$tidsenhet,
-                                    input$type_view,
-                                    userUnitId())
+        table <- deformitet::tabell_gjen_tid(data_reactive(),
+                                             map_var_reactive(),
+                                             map_data,
+                                             input$tidsenhet,
+                                             input$visningstype,
+                                             userUnitId())
+        table <- table %>%
+          dplyr::rename("gjennomsnitt" = "gjen")
       })
 
 
       ########### DISPLAY DATA-------------------------------------------------------
-
       ### TABLE
 
       output$table <- renderTable({
@@ -231,7 +231,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
       my_plot <- reactive({
         deformitet::over_tid_plot(table_data(),
-                                  input$type_view,
+                                  input$visningstype,
                                   gg_data_reactive(),
                                   map_var_reactive(),
                                   input$tidsenhet,
@@ -241,11 +241,10 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       check <- reactive({
         sjekk_antall(data,
                      table_data(),
-                     input$date[1],
-                     input$date[2],
+                     input$dato[1],
+                     input$dato[2],
                      input$tidsenhet)
       })
-
 
       output$my_text <- renderText({
         if(check() == "Drop") {
@@ -253,15 +252,11 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         }
         })
 
-
       output$my_plot <- renderPlot({
         if(check() == "Keep") {
           my_plot()
         }
         },  width = 800, height = 600)
-
-
-
 
       ##### NEDLASTING ###############################################################
       output$download_gjennomsnittsfig <-  downloadHandler(

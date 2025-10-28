@@ -1,23 +1,25 @@
 ## GJENNOMSNITT OVER TID ##
+## Hvilke variabler som er inkludert her bør gjennomgås kritisk (nå er bare alle
+## inkludert og det er ikke bra!)
 
-# Funksjon for å regne gjennomsnitt pr. kvartal, pr. sykehus og nasjonalt
-### Siden dette er en kontinuerlig variabel:
-### Mapping kjører først
-### Deretter kjører prep_var med mapping som input
-### Deretter kjører table_freq_time med mapping som input
-
-# nolint start
-# Nødvendig data for å teste funksjonene i over_tid
-#map_var <- deformitet::mapping_old_name_new_name(regdata, "SRS22_total_3mnd")
-#prep_data <- prepVar(regdata, map_var, "mm", "2024-01-01", "2025-01-01", 1, 20, "Begge", "over_tid")
-#prep_data_var <- data.frame(prep_data[1])
-#gg_data <- data.frame(prep_data[2])
-# nolint end
 
 #' @title Tabell - gjennomsnitt over tid
+#'
+#' @param data data som har vært gjennom mapping_navn() og prepVar()
+#' @param var brukervalg av variabel
+#' @param map_data mapping-data mellom reshId og sykehusnavn
+#' @param tidsenhet brukervalg av tid
+#' @param visning brukervalg av visning
+#' @param userUnidIt brukerens enhetstilhørighet
+#'
+#' @examples
+#' \donttest{
+#' try(tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961))
+#' }
+#'
 #' @export
 
-table_freq_time <- function(data,
+tabell_gjen_tid <- function(data,
                             var,
                             map_data,
                             tidsenhet = "kvartal",
@@ -83,7 +85,6 @@ table_freq_time <- function(data,
 
   data_nasjonalt <- dplyr::left_join(data_nasjonalt, data_nasjonalt_tally)
 
-
   data <- rbind(data_sykehus, data_nasjonalt) # Bind disse to sammen
 
   map_data <- map_data %>%
@@ -117,37 +118,37 @@ table_freq_time <- function(data,
                              str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
                              str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")))
 
-
     data$tid <- as.factor(data$tid)
 
     data <- data %>%
       select(-c(tid1, tid_as_character))
-
   }
-
-
-
-
   return(data)
 }
 
-# nolint start
-## Test:
-###t <- table_freq_time(prep_data_var, map_var, map_db_resh, "kvartal", "hver enhet", 111961)
-# nolint end
-
-
-# Funksjon for å lage plot
 
 #' @title Plot - gjennomsnitt over tid
+#'
+#' @param data data som har vært gjennom tabell_gjen_tid()
+#' @param visning valgt visning
+#' @param gg_data data fra prepVar()[2]
+#' @param map_var data som mapper mellom variabler (faktornivå og "kontinuerlig variabel")
+#' @param tidsenhet valgt tidsenhet
+#' @param data_var datasett med brukerens UI-valg
+#'
+#' @examples
+#' \donttest{
+#' try(over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal"))
+#' }
+#'
 #' @export
 
-over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time()
-                          visning, # valgt visning -> hele landet, egen enhet osv.
-                          gg_data, # data med limits på y-aksen
-                          map_var, # data som mapper mellom variabel med faktornivå og kontinuerlig variabel
-                          tidsenhet, # valgt tidsenhet -> kvartal eller år
-                          data_var # data som lagrer UI-valg
+over_tid_plot <- function(data,
+                          visning,
+                          gg_data,
+                          map_var,
+                          tidsenhet,
+                          data_var
                           ) {
   data$Sykehus <- as.factor(data$Sykehus)
 
@@ -167,7 +168,7 @@ over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time
 
   tid_plot <-
     ggplot2::ggplot(data, ggplot2::aes(
-      x = .data$tid, y = .data$gjen,
+      x = .data$tid, y = .data$gjennomsnitt,
       color = .data$Sykehus, group = .data$Sykehus
     )) +
     ggplot2::geom_line(linewidth = 1.2) +
@@ -201,12 +202,6 @@ over_tid_plot <- function(data, # data som kommer fra funksjonen table_freq_time
 
   return(tid_plot)
 }
-
-# nolint start
-# Test for å sjekke om det fungerer:
-## r <- over_tid_plot(t, "egen enhet", gg_data, map_var, "kvartal")
-## r
-# nolint end
 
 
 # Oversikt variabler pr. skjema
@@ -376,8 +371,14 @@ skjema <- data.frame(
 usethis::use_data(skjema, overwrite = TRUE)
 
 
-####### Function to set appropriate limits on y-axis ##############
 #' @title Y-axis limits
+#' Funksjon som setter fornuftige øvre og nedre grenser på yaksen.
+#' @param var variabel som velges av bruker i UI-delen
+#' @examples
+#' \donttest{
+#' try(ylimits_gjen(SRS22_MAIN_SCORE))
+#' }
+#'
 #' @export
 
 y_limits_gjen <- function(var) {
@@ -411,12 +412,23 @@ y_limits_gjen <- function(var) {
     )
 }
 
-# nolint start
-# Test to see if it works:
-## rr <- r("PER_BLOOD_LOSS_VALUE")
-# nolint end
 
-# Funksjon for å sjekke størrelse
+
+#' @title Sjekke antall
+#' Funksjon for å sjekke størrelse på datagrunnlaget. Funksjonen gjør at man
+#' dropper å vise variabelen om det ikke finnes noen registreringer på gitt variabel
+#' i hoveddataen og om det er na i datasettet som er regnet om med tabell_gjen_tid()
+#' @param data datasett som ikke har blitt omgjort
+#' @param data1 datasett som har vært gjennom tabell_gjen_tid()
+#' @param date1 brukerens valg for første dato
+#' @param date2 brukerens valg for siste dato
+#' @param tidsenhet brukerens valg av tidsenhet (kvartal vs. år)
+#'
+#' @examples
+#' \donttest{
+#' try(sjekk_antall(regdata, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
+#' }
+#' @export
 
 sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
   if (tidsenhet == "kvartal") {
@@ -460,10 +472,6 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
 
     sample_year <- sample_data$n_year[1]
 
-    # check <- if_else(FALSE %in% sample_data$check, "Drop",
-    #                  if_else(true_year == 0, "Drop",
-    #                          if_else(is.na(sample_year), "Drop", "Keep")))
-
     check <- dplyr::if_else(true_year == 0, "Drop",
       dplyr::if_else(is.na(sample_year), "Drop", "Keep")
     )
@@ -471,8 +479,3 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
     return(check)
   }
 }
-
-# nolint start
-# test for å se om det fungerer:
-## r  <- sjekk_antall(regdata, t, "2024-01-01", "2025-01-01", "aar")
-# nolint end

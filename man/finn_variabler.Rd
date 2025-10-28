@@ -15,3 +15,10 @@ en vektor med navn på kolonner som hører til valgt variabel
 \description{
 Finn variabler over tid
 }
+\examples{
+\donttest{
+try(finn_variabler("Funksjon"))
+}
+
+
+}

@@ -1,18 +1,19 @@
-################################################################################
-# Funksjoner til sammenligningsmodul
-# Funksjonene lager to plot: density plot og boxplot
-################################################################################
-
 
 #### ------------------------------- BOXPLOT -------------------------------####
 
 # Først en funksjon som finner navn på kolonner. Brukeren velger variabel og
 # denne funksjonen finner alle kolonnene som hører til denne variabelen over tid.
 
-#' Finn variabler over tid
+#' @title Finn variabler over tid
 #'
 #' @param var input fra UI - valg av variabel
 #' @return en vektor med navn på kolonner som hører til valgt variabel
+#'
+#' @examples
+#' \donttest{
+#' try(finn_variabler("Funksjon"))
+#' }
+#'
 #'
 #' @export
 
@@ -56,22 +57,24 @@ finn_variabler <- function(var) {
 
 }
 
-# Sjekk at funksjonen fungerer
-# nolint start
-#x <- finn_variabler("Funksjon")
-# nolint end
 
 
-# Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
-# alle kolonnene av interesse i et langt format. Det er kun variabelene som er
-# valgt, samt Sykehus som blir mer i funksjonen.
 
-#' Lag tabell til sammenligning
+#' @title Lag tabell til sammenligning
+#' Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med
+#' alle kolonnene av interesse i et langt format. Det er kun variabelene som er
+#' valgt, samt Sykehus som blir med i funksjonen.
 #'
 #' @param data datasett
 #' @param var variabelen som skal brukes i finn_variabler()
 #'
 #' @return datasett/tabell i langt format
+#'
+#' @examples
+#' \donttest{
+#' try(lag_sam_tabell(regdata, "Funksjon"))
+#' }
+#'
 #' @export
 
 lag_sam_tabell <- function(data, var) {
@@ -85,61 +88,54 @@ lag_sam_tabell <- function(data, var) {
   data_long
 }
 
-# Sjekk at funksjonen fungerer
-# nolint start
-##
-#r <- lag_sam_tabell(regdata, "Funksjon")
-# nolint end
 
-
-# Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
-# "før operasjon", "3mnd", "2 år" og "5 år".
-
-#' Lage nye navn på kolonne
+#' @title Lage nye navn på kolonne
+#' Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
+#' "før operasjon", "3mnd", "2 år" og "5 år".
 #'
 #' @param data datasett som skal endres
 #' @return datasett med nye kolonnenavn
+#'
+#' @examples
+#' \donttest{
+#' try(nye_navn(data))
+#' }
 #'
 #' @export
 
 nye_navn <- function(data) {
 
   data <- data %>%
-    mutate(Punkt = case_match(Punkt, c("SRS22_MAIN_SCORE",
-                                       "SRS22_FUNCTION_SCORE",
-                                       "SRS22_SELFIMAGE_SCORE",
-                                       "SRS22_MENTALHEALTH_SCORE",
-                                       "SRS22_PAIN_SCORE",
-                                       "HELSETILSTAND_SCALE") ~ "Pre-operativt",
-                              c("SRS22_FULL_SCORE",
-                                "SRS22_FUNCTION_SCORE_patient3mths",
-                                "SRS22_SELFIMAGE_SCORE_patient3mths",
-                                "SRS22_MENTALHEALTH_SCORE_patient3mths",
-                                "SRS22_PAIN_SCORE_patient3mths",
-                                "HEALTH_CONDITION_SCALE",
-                                "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
-                              c("SRS22_FULL_SCORE_patient12mths",
-                              "SRS22_FUNCTION_SCORE_patient12mths",
-                              "SRS22_SELFIMAGE_SCORE_patient12mths",
-                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
-                              "SRS22_PAIN_SCORE_patient12mths",
-                              "HEALTH_CONDITION_SCALE_patient12mths",
-                              "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
-                              c("SRS22_FULL_SCORE_patient60mths",
-                              "SRS22_FUNCTION_SCORE_patient60mths",
-                              "SRS22_SELFIMAGE_SCORE_patient60mths",
-                              "SRS22_MENTALHEALTH_SCORE_patient60mths",
-                              "SRS22_PAIN_SCORE_patient60mths",
-                              "HEALTH_CONDITION_SCALE_patient60mths",
-                              "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
+    dplyr::mutate(Punkt = dplyr::case_match(Punkt, c("SRS22_MAIN_SCORE",
+                                                     "SRS22_FUNCTION_SCORE",
+                                                     "SRS22_SELFIMAGE_SCORE",
+                                                     "SRS22_MENTALHEALTH_SCORE",
+                                                     "SRS22_PAIN_SCORE",
+                                                     "HELSETILSTAND_SCALE") ~ "Pre-operativt",
+                                            c("SRS22_FULL_SCORE",
+                                              "SRS22_FUNCTION_SCORE_patient3mths",
+                                              "SRS22_SELFIMAGE_SCORE_patient3mths",
+                                              "SRS22_MENTALHEALTH_SCORE_patient3mths",
+                                              "SRS22_PAIN_SCORE_patient3mths",
+                                              "HEALTH_CONDITION_SCALE",
+                                              "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
+                                            c("SRS22_FULL_SCORE_patient12mths",
+                                              "SRS22_FUNCTION_SCORE_patient12mths",
+                                              "SRS22_SELFIMAGE_SCORE_patient12mths",
+                                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
+                                              "SRS22_PAIN_SCORE_patient12mths",
+                                              "HEALTH_CONDITION_SCALE_patient12mths",
+                                              "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
+                                            c("SRS22_FULL_SCORE_patient60mths",
+                                              "SRS22_FUNCTION_SCORE_patient60mths",
+                                              "SRS22_SELFIMAGE_SCORE_patient60mths",
+                                              "SRS22_MENTALHEALTH_SCORE_patient60mths",
+                                              "SRS22_PAIN_SCORE_patient60mths",
+                                              "HEALTH_CONDITION_SCALE_patient60mths",
+                                              "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
 
   data
 }
-
-# Sjekk at funksjonen fungerer:
-# nolint start
-##g <- nye_navn(r)
-# nolint end
 
 
 # Videre vask av datasettet. Nå tas NA-er ut. Deretter grupper der det er
@@ -157,27 +153,25 @@ nye_navn <- function(data) {
 vask_sam_tabell <- function(data, var) {
 
   data <- data %>%
-    mutate(Punkt = forcats::as_factor(Punkt),
-           Punkt = case_when({{var}} %in% c("SRS22 totalskår", "Funksjon",
-                                            "Selvbilde", "Mental helse",
-                                            "Smerte", "Helsetilstand") ~
-                               forcats::fct_relevel(Punkt, "Pre-operativt",
-                                                    "3 mnd", "12 mnd", "5 aar"),
-
-                             {{var}} == "Tilfredshet" ~
-                               forcats::fct_relevel(Punkt, "3 mnd",
-                                                    "12 mnd", "5 aar")))
-
+    dplyr::mutate(Punkt = forcats::as_factor(Punkt),
+                  Punkt = dplyr::case_when({{var}} %in% c("SRS22 totalskår", "Funksjon",
+                                                          "Selvbilde", "Mental helse",
+                                                          "Smerte", "Helsetilstand") ~
+                                             forcats::fct_relevel(Punkt, "Pre-operativt",
+                                                                  "3 mnd", "12 mnd", "5 aar"),
+                                           {{var}} == "Tilfredshet" ~
+                                             forcats::fct_relevel(Punkt, "3 mnd",
+                                                                  "12 mnd", "5 aar")))
 
   data <- data %>%
-    filter(!is.na(Score))
+    dplyr::filter(!is.na(Score))
 
   data <- data %>%
-    group_by(Punkt, Sykehus) %>%
-    add_count(Punkt)
+    dplyr::group_by(Punkt, Sykehus) %>%
+    dplyr::add_count(Punkt)
 
   data <- data %>%
-    filter(n > 5)
+    dplyr::filter(n > 5)
 
 }
 
@@ -195,12 +189,12 @@ vask_sam_tabell <- function(data, var) {
 finn_sam_konfidensint <- function(data) {
 
   konf_data <- data %>%
-    group_by(Punkt, Sykehus) %>%
-    mutate(gjennomsnitt = round(mean(Score), 2),
-           "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
-           "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) %>%
-    select(-c(Score, n)) %>%
-    distinct()
+    dplyr::group_by(Punkt, Sykehus) %>%
+    dplyr::mutate(gjennomsnitt = round(mean(Score), 2),
+                  "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
+                  "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) %>%
+    dplyr::select(-c(Score, n)) %>%
+    dplyr::distinct()
 
   return(konf_data)
 }
@@ -223,13 +217,20 @@ ggdata_sam_plot <- function(var) {
   gg_data <- data.frame(forklaring = "")
 
   gg_data <- gg_data %>%
-    dplyr::mutate(forklaring = case_when({{var}} == "SRS22 totalskår" ~ "SRS22 totalskår (1: dårlig - 5: bra)",
-                                         {{var}} == "Funksjon" ~ "SRS22 funksjon (1: dårlig - 5: bra)",
-                                         {{var}} == "Selvbilde" ~ "SRS22 selvbilde (1: dårlig - 5: bra)",
-                                         {{var}} == "Mental helse" ~ "SRS22 mental helse (1: dårlig - 5: bra)",
-                                         {{var}} == "Smerte" ~ "SRS22 smerte (1: dårlig - 5: bra)",
-                                         {{var}} == "Helsetilstand" ~ "Helsetilstand (0-100)",
-                                         {{var}} == "Tilfredshet" ~ "SRS22 tilfredshet (1: dårlig - 5: bra)"))
+    dplyr::mutate(forklaring = dplyr::case_when({{var}} == "SRS22 totalskår" ~
+                                                  "SRS22 totalskår (1: dårlig - 5: bra)",
+                                                {{var}} == "Funksjon" ~
+                                                  "SRS22 funksjon (1: dårlig - 5: bra)",
+                                                {{var}} == "Selvbilde" ~
+                                                  "SRS22 selvbilde (1: dårlig - 5: bra)",
+                                                {{var}} == "Mental helse" ~
+                                                  "SRS22 mental helse (1: dårlig - 5: bra)",
+                                                {{var}} == "Smerte" ~
+                                                  "SRS22 smerte (1: dårlig - 5: bra)",
+                                                {{var}} == "Helsetilstand" ~
+                                                  "Helsetilstand (0-100)",
+                                                {{var}} == "Tilfredshet" ~
+                                                  "SRS22 tilfredshet (1: dårlig - 5: bra)"))
   gg_data
 
 }
@@ -372,9 +373,3 @@ density_sam <- function(data, gg_data, input_data) {
 ##p <-  density_sam(r, h, input_data)
 ##p
 # nolint end
-
-
-
-
-
-

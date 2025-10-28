@@ -2,10 +2,21 @@
 % Please edit documentation in R/func_gjennomsnitt.R
 \name{y_limits_gjen}
 \alias{y_limits_gjen}
-\title{Y-axis limits}
+\title{Y-axis limits
+Funksjon som setter fornuftige øvre og nedre grenser på yaksen.}
 \usage{
 y_limits_gjen(var)
 }
+\arguments{
+\item{var}{variabel som velges av bruker i UI-delen}
+}
 \description{
 Y-axis limits
+Funksjon som setter fornuftige øvre og nedre grenser på yaksen.
+}
+\examples{
+\donttest{
+try(ylimits_gjen(SRS22_MAIN_SCORE))
+}
+
 }

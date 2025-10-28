@@ -1,18 +1,16 @@
-#'@title Module fordeling
+#'@title Fordelingsmodul
 #'@export
 
 module_fordeling_UI <- function (id) {
   ns <- NS(id)
   shiny::tagList(
       shiny::sidebarLayout(
-
-        # Inputs: select variables to plot
         shiny::sidebarPanel(
           width = 3,
 
 
-          # Select variable for x-axis
-          selectInput( # First select
+          # Velg variabel for x-aksen
+          selectInput( # Første valg
             inputId = ns("x_var"),
             label = "Variabel:",
             choices = c("Helsetilstand" = "Helsetilstand",
@@ -67,14 +65,13 @@ module_fordeling_UI <- function (id) {
             selected = "BMI_kategori"),
 
 
-          selectInput( # second select
+          selectInput( # andre valg
             inputId = ns("kjønn_var"),
             label = "Utvalg basert på kjønn",
             choices = c("begge", "mann", "kvinne"),
             selected = "begge"),
 
-          #shinyWidgets::chooseSliderSkin("Flat", color = "#112446"),
-          sliderInput( # fourth select
+          sliderInput( # tredje valg
             inputId = ns("alder_var"),
             label = "Aldersintervall:",
             min = 0,
@@ -84,22 +81,22 @@ module_fordeling_UI <- function (id) {
 
           shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
 
-          radioButtons( # sixth select
+          radioButtons( # fjerde valg
             inputId = ns("type_op"),
             label = "Type operasjon",
             choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
             selected = "Primæroperasjon"
             ),
 
-          shinyjs::hidden(uiOutput(outputId = ns('view_type'))),
+          shinyjs::hidden(uiOutput(outputId = ns('visning_type'))),
 
-          dateRangeInput( # third select
-            inputId = ns("date"),
+          dateRangeInput( # femte valg
+            inputId = ns("dato"),
             label = "Tidsintervall:",
             start = "2023-01-02",
-            end = "2024-09-02",
+            end = "2026-09-02",
             min = "2023-01-01",
-            max = "2025-09-02",
+            max = "2026-09-02",
             format = "dd-mm-yyyy",
             separator = " - ")
           ),
@@ -109,26 +106,26 @@ module_fordeling_UI <- function (id) {
     mainPanel(
       tabsetPanel(id = ns("tab"),
                   tabPanel("Figur", value = "fig",
-                           plotOutput(outputId = ns("my_plot"), height = "auto"),
+                           plotOutput(outputId = ns("figur"), height = "auto"),
                            downloadButton(ns("download_fordelingsfig"),
                                           "Last ned figur")),
                   tabPanel("Tabell", value = "tab",
                            bslib::card_body(
                              bslib::card_header(
-                               textOutput(outputId = ns("title_table")
+                               textOutput(outputId = ns("tittel_tabell")
                                )
                              )
                            ),
-                           DT::DTOutput(outputId = ns("table")),
+                           DT::DTOutput(outputId = ns("tabell")),
                            downloadButton(ns("download_fordelingstbl"),
                                           "Last ned tabell")
                   ),
-                  tabPanel("Frekvens", value = "freq",
-                           DT::DTOutput(outputId = ns("freq_table")),
-                           downloadButton(ns("download_fordelingsfreqtable"),
+                  tabPanel("Gjennomsnitt", value = "gjen",
+                           DT::DTOutput(outputId = ns("gjen_tabell")),
+                           downloadButton(ns("download_fordelingsgjentabell"),
                                           "Last ned tabell"),
                            bslib::card_body(
-                             bslib::card_title("Om frekvenstabellen"),
+                             bslib::card_title("Om tabellen"),
                              bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
                                               Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
                                               som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
@@ -153,12 +150,12 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
     function(input, output, session){
 
 
-      # Define constants for complication types
-      COMPLICATION_TYPES <- c("Komplikasjonstype", "Komplikasjonstype_12mnd", "Komplikasjonstype_60mnd")
+      # Definere konstant for komplikasjonstyper
+      komplikasjon_typer <- c("Komplikasjonstype", "Komplikasjonstype_12mnd", "Komplikasjonstype_60mnd")
 
       output$reshid <- renderUI({
         ns <- session$ns
-        if (userRole() == 'SC') { # fifth select
+        if (userRole() == 'SC') { # sjette valg
           shiny::selectInput(
             inputId = ns("reshId_var"),
             label = "Enhet",
@@ -168,11 +165,11 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         }
       })
 
-      output$view_type <- renderUI({
+      output$visning_type <- renderUI({
         ns <- session$ns
         if(userRole() == 'SC') {
-          shiny::radioButtons( # seventh select
-            inputId = ns("type_view"),
+          shiny::radioButtons( # sjuende valg
+            inputId = ns("visning_type"),
             label = "Vis rapport for:",
             choices = c("Hele landet" = "hele landet",
                         "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -180,8 +177,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
                         "Egen enhet" = "egen enhet"
             ))
         } else {
-          shiny::radioButtons( # seventh select
-            inputId = ns("type_view"),
+          shiny::radioButtons( # sjuende valg
+            inputId = ns("visning_type"),
             label = "Vis rapport for:",
             choices = c("Hele landet" = "hele landet",
                         "Hele landet, uten sammenligning" = "hele landet, uten sammenligning",
@@ -190,74 +187,75 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         }
       })
 
+      # Klargjøring av data
+      # data som sendes til modulen går gjennom prepVar()-funksjonen
+
       prepVar_reactive <- reactive({
         deformitet::prepVar(
           data,
           input$x_var,
           input$kjønn_var,
-          input$date[1],
-          input$date[2],
+          input$dato[1],
+          input$dato[2],
           input$alder_var[1],
           input$alder_var[2],
           input$type_op
         )
       })
 
-      # Make data frame where UI choices are stored
-
-      ### ALSO DOCUMENT ALL ACCESS EACH USER ROLE HAS
+      # Lagring av ui-valg i dataramme
 
       my_data_reactive <- reactive({
-        x <- format(input$date, "%d/%m/%y")
+        x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
       })
 
 
-      # prepVar() returns a list
-      # Unpack part 1 of list: data
+      # prepVar() returnerer ei liste
+      # Pakk ut del 1 av lista: data som har blitt filtrert
 
       data_reactive <- reactive({
         data <- data.frame(prepVar_reactive()[1])
       })
 
-      # Unpack part 2 of list: gg-data
+      # Pakk ut del 2 av lista: gg-data - fine titler osv
 
       gg_data_reactive <- reactive({
         gg_data <- data.frame(prepVar_reactive()[2])
       })
 
 
-      ######## AGGREGATE DATA-------------------------------------------------------
+      ######## Aggreger data ---------------------------------------------------
 
-      #Aggregate data in table format
+      # Alle variabler utenom komplikasjonstype
+      # Lagre data i tabellformat - bruker funksjonen lagTabell()
 
-      table_reactive <- reactive({
+      tabell_reactive <- reactive({
        if (userRole() == 'SC') {
          reshid = input$reshId_var
        } else {
          reshid = userUnitId()
        }
-        req(input$type_view)
-        deformitet::makeTable(data_reactive(), reshid, input$type_view)
+        req(input$visning_type)
+        deformitet::lagTabell(data_reactive(), reshid, input$visning_type)
       })
 
-
-        # First get a dataset based on UI choices
+      # Komplikasjonstyper:
+      # Filtrer data
 
         kompl_data_reative <- reactive({
           deformitet::kompl_data(data,
                                  input$x_var,
                                  input$kjønn_var,
-                                 input$date[1],
-                                 input$date[2],
+                                 input$dato[1],
+                                 input$dato[2],
                                  input$alder_var[1],
                                  input$alder_var[2],
                                  input$type_op,
                                  map_data)
       })
 
-      # Next, get a dataset with number of patients who have registered whether
-      # or not they have had a complication (to calculate rates)
+        # Få oversikt over antall pr. komplikasjonstype:
 
         kompl_prepVar_reactive <- reactive({
           if (input$x_var == "Komplikasjonstype") {
@@ -274,8 +272,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
             data,
             var,
             input$kjønn_var,
-            input$date[1],
-            input$date[2],
+            input$dato[1],
+            input$dato[2],
             input$alder_var[1],
             input$alder_var[2],
             input$type_op
@@ -283,6 +281,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
           data <- data.frame(data_prep[1])
           })
+
+        # Lagre det i tabellformat:
 
         kompl_tbl_reactive <- reactive({
             if (userRole() == 'SC') {
@@ -295,23 +295,22 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
             kompl_prepVar_reactive(),
             kompl_data_reative(),
             input$kjønn_var,
-            input$type_view,
+            input$visning_type,
             reshid
             )
           })
 
 
 
-      ########### DISPLAY DATA-------------------------------------------------------
+      ########### VIS DATA -----------------------------------------------------
 
-      ### TABLE
-
-      ###### FIKSE SÅ JEG KAN OGSÅ SE KOMPLIKASJONSTYPER ETTER 12 MNDer!!
+        ### Tabell
+        # Tittel på tabellen:
 
       text_reactive <- reactive({
         if (! input$x_var %in% c("Komplikasjonstype", "Komplikasjonstype_12mnd")) {
           gg_data_4tbl <- data.frame(prepVar_reactive()[2])
-          gg_data_4tbl$title
+          gg_data_4tbl$tittel
         } else {
           if (input$x_var == "Komplikasjonstype") {
             "Selvrapportert komplikasjonstype 3-6 måneders oppfølging"
@@ -321,132 +320,142 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         }
       })
 
-      output$title_table <- renderText(
+      output$tittel_tabell <- renderText(
        text_reactive()
       )
 
-      table <- reactive ({
-        if(input$x_var %in% COMPLICATION_TYPES) { # if "komplikasjonstype" is chosen, use kompl_reactive
+      # Lag tabellen:
+
+      tabell <- reactive ({
+        if(input$x_var %in% komplikasjon_typer) { # hvis "komplikasjonstype" er valgt, bruk kompl_reactive()
           x <- kompl_tbl_reactive()
         }
         else{
-          x <- table_reactive()
+          x <- tabell_reactive()
         }
       })
 
+      # Vis tabellen:
 
-      output$table <- DT::renderDT({
-        datatable(table())
+      output$tabell <- DT::renderDT({
+        datatable(tabell())
       })
 
-      ### FIGURE ###
+      ### FIGUR ###
+      # Lag figuren:
 
-      my_plot <- reactive ({
-        if(input$x_var %in% COMPLICATION_TYPES) {
+      figur <- reactive ({
+        if(input$x_var %in% komplikasjon_typer) {
            deformitet::kompl_plot(kompl_tbl_reactive(),
                                       input$x_var,
                                       my_data_reactive())
                    }
         else{
           gg_data <- data.frame(gg_data_reactive())
-          # Generate the plot using the selected table, ggplot data, and user input.
-          # The `input$type_view` parameter determines the type of view (e.g., "Hele landet", "Egen enhet") for the plot.
-          deformitet::makePlot_gg(table_reactive(),
+          deformitet::lag_ggplot_fordeling(tabell_reactive(),
                                   gg_data,
                                   my_data_reactive(),
-                                  input$type_view)
+                                  input$visning_type)
         }
       })
 
-      output$my_plot <- renderPlot({
-        my_plot()
+      # Vis figuren:
+
+      output$figur <- renderPlot({
+        figur()
       }, width = 800, height = 600)
 
-      ####### FREKVENSTABELL ##########################################################
+      ####### Gjennomsnitt #####################################################
 
-      name_reactive <- reactive({
-       name <- deformitet::mapping_old_name_new_name(raw_data, input$x_var)
+      # Tabell som viser gjennomsnitt
+      # Denne bruker rådataen som IKKE har vært gjennom preprosessering
+
+      # Finne variabelen som bruker velger i datasettet:
+
+      navn_reactive <- reactive({
+       navn <- deformitet::mapping_navn(raw_data, input$x_var)
        })
 
-      freq_added_reactive <- reactive({
+      gjen_added_reactive <- reactive({
 
         if (input$x_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
-          freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, input$x_var)
+          gjen_added <- deformitet::add_gjen_var_to_dataframe(raw_data, data, input$x_var)
 
         } else {
 
-          freq_added <- deformitet::add_freq_var_to_dataframe(raw_data, data, name_reactive())
+          gjen_added <- deformitet::add_gjen_var_to_dataframe(raw_data, data, navn_reactive())
         }
 
       })
 
-      freq_prepVar_reactive <- reactive({
+      # Filtrer basert på brukerens:
+
+      gjen_prepVar_reactive <- reactive({
         deformitet::prepVar(
-          freq_added_reactive(),
-          "freq_var",
+          gjen_added_reactive(),
+          "gjen_var",
           input$kjønn_var,
-          input$date[1],
-          input$date[2],
+          input$dato[1],
+          input$dato[2],
           input$alder_var[1],
           input$alder_var[2],
           input$type_op
           )
         })
 
+      # Pakk ut lista som returnerers av prepVar()
 
-      freq_data_reactive <- reactive({
-        data <- data.frame(freq_prepVar_reactive()[1])
-      })
-      # prepVar() returns a list
-      # Unpack part 1 of list: data
-
-      freq_table_reactive <- reactive ({
-      #   if (input$x_var %in% COMPLICATION_TYPES) {
-      #     freq_data <- data.frame("Variabel" = "Det er ikke mulig å regne gjennomsnitt for denne variabelen")
-      # } else {
-      #   freq_data <- deformitet::make_freq_table(freq_data_reactive())
-      # }
-        freq_data <- deformitet::make_freq_table(freq_data_reactive())
+      gjen_data_reactive <- reactive({
+        data <- data.frame(gjen_prepVar_reactive()[1])
       })
 
-      output$freq_table <- DT::renderDT({
+      # Lag tabell:
+
+      gjen_tabell_reactive <- reactive ({
+        gjen_data <- deformitet::lag_gjen_tabell(gjen_data_reactive())
+      })
+
+      # Vis tabell:
+
+      output$gjen_tabell <- DT::renderDT({
         ns <- session$ns
-        datatable(freq_table_reactive())
+        datatable(gjen_tabell_reactive())
       })
 
 
-      # ##### NEDLASTING ###############################################################
+      ###### NEDLASTING ########################################################
+      # Figur:
       output$download_fordelingsfig <-  downloadHandler(
         filename = function(){
           paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
         },
         content = function(file){
           pdf(file, onefile = TRUE, width = 15, height = 9)
-          plot(my_plot())
+          plot(figur())
           dev.off()
         }
       )
 
+      # Fordelingstabell:
       output$download_fordelingstbl <- downloadHandler(
         filename = function(){
           paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },
         content = function(file){
-          write.csv(table(), file)
+          write.csv(tabell(), file)
         }
       )
 
-      output$dowload_fordelingsfreqtable <- downloadHandler(
+      # Tabell nr. 2:
+      output$dowload_fordelingsgjentabell <- downloadHandler(
         filename = function(){
-          paste("Frekvenstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
+          paste("Gjennomsnittstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },
         content = function(file){
-          write.csv(freq_table_reactive(), file)
+          write.csv(gjen_tabell_reactive(), file)
         }
       )
     }
     )
 }
-
-
