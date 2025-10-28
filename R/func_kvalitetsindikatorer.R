@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' \donttest{
-#' try(count_kvalind(regdata, "begge", "Primæroperasjon", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
+#' try(count_kvalind(regdata, "begge", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
 #' }
 #'
 #' @export

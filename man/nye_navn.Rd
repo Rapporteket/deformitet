@@ -2,7 +2,9 @@
 % Please edit documentation in R/func_sammenligningsmodul.R
 \name{nye_navn}
 \alias{nye_navn}
-\title{Lage nye navn på kolonne}
+\title{Lage nye navn på kolonne
+Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
+"før operasjon", "3mnd", "2 år" og "5 år".}
 \usage{
 nye_navn(data)
 }
@@ -14,4 +16,12 @@ datasett med nye kolonnenavn
 }
 \description{
 Lage nye navn på kolonne
+Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får
+"før operasjon", "3mnd", "2 år" og "5 år".
+}
+\examples{
+\donttest{
+try(nye_navn(data))
+}
+
 }

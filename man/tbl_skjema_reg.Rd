@@ -18,7 +18,7 @@ tabell registreringer pr skjema
 }
 \examples{
 \donttest{
-tbl_skjema_reg("01-09-2024", "01-01-2025", regdata)
+try(tbl_skjema_reg("01-09-2024", "01-01-2025", regdata))
 }
 
 }

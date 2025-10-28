@@ -18,7 +18,7 @@ Funksjon som lager kvalitetsindikatorplot
 }
 \examples{
 \donttest{
-kval_plot(data, gg_data, data_var, "nei")
+try(kval_plot(data, gg_data, data_var, "nei"))
 }
 
 }

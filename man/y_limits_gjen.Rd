@@ -16,7 +16,7 @@ Funksjon som setter fornuftige øvre og nedre grenser på yaksen.
 }
 \examples{
 \donttest{
-ylimits_gjen(SRS22_MAIN_SCORE)
+try(ylimits_gjen(SRS22_MAIN_SCORE))
 }
 
 }

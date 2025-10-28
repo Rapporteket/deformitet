@@ -16,7 +16,7 @@ Function for getting explanations for kvalitetsindikatorer
 }
 \examples{
 \donttest{
-explanation_kvalind("begge", "SRS22_spm22_3mnd")
+try(explanation_kvalind("begge", "SRS22_spm22_3mnd"))
 }
 
 }

@@ -14,7 +14,7 @@ lag_gjen_tabell
 }
 \examples{
 \donttest{
-lag_gjen_tabell(data)
+try(lag_gjen_tabell(data))
 }
 
 }

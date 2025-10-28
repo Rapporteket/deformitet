@@ -20,7 +20,7 @@ får navnet "gjen_var"
 }
 \examples{
 \donttest{
-gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve")
+try(gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve"))
 }
 
 }

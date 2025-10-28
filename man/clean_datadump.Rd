@@ -4,7 +4,36 @@
 \alias{clean_datadump}
 \title{Clean_datadump}
 \usage{
-clean_datadump(data, var1a, var1b, var2, var3a, var3b, userRole, userUnitId)
+clean_datadump(
+  data,
+  dato1,
+  dato2,
+  kjoenn,
+  alder1,
+  alder2,
+  userRole,
+  userUnitId
+)
+}
+\arguments{
+\item{data}{datasett}
+
+\item{dato1}{brukervalg - dato min}
+
+\item{dato2}{brukervalg - dato max}
+
+\item{kjoenn}{brukervalg - kjønn}
+
+\item{alder1}{brukervalg - alder min}
+
+\item{alder2}{brukervalg - alder max}
+
+\item{userRole}{brukerrolle}
+
+\item{userUnitId}{brukertilhørighet}
+}
+\value{
+datasett filtrert på brukervalg
 }
 \description{
 Clean data for module data dump

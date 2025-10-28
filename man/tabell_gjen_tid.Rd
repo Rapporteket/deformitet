@@ -31,7 +31,7 @@ Tabell - gjennomsnitt over tid
 }
 \examples{
 \donttest{
-tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961)
+try(tabell_gjen_tid(prep_data, var, map_db_resh, "kvartal", "hver enhet", 111961))
 }
 
 }

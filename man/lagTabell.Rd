@@ -18,7 +18,7 @@ lagTabell
 }
 \examples{
 \donttest{
-lagTabell(data, 103240, "egen enhet")
+try(lagTabell(data, 103240, "egen enhet"))
 }
 
 }

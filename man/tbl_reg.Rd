@@ -18,7 +18,7 @@ tabell registreringer
 }
 \examples{
 \donttest{
-tbl_reg("01-09-2024", "01-01-2025", regdata)
+try(tbl_reg("01-09-2024", "01-01-2025", regdata))
 }
 
 }

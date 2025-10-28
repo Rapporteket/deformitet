@@ -24,7 +24,7 @@ Plot - gjennomsnitt over tid
 }
 \examples{
 \donttest{
-over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal")
+try(over_tid_plot(data, "egen enhet", gg_data, map_var, "kvartal"))
 }
 
 }
