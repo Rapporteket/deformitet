@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Clean_datadump</h1>
-    <small class="dont-index">Source: <a href="http://github.com/Rapporteket/deformitet/blob/main/R/func_clean_datadump.R" class="external-link"><code>R/func_clean_datadump.R</code></a></small>
+    <small class="dont-index">Source: <a href="http://github.com/Rapporteket/deformitet/blob/main/R/func_datadump.R" class="external-link"><code>R/func_datadump.R</code></a></small>
     <div class="hidden name"><code>clean_datadump.Rd</code></div>
     </div>
 
@@ -53,9 +53,58 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">clean_datadump</span><span class="op">(</span><span class="va">data</span>, <span class="va">var1a</span>, <span class="va">var1b</span>, <span class="va">var2</span>, <span class="va">var3a</span>, <span class="va">var3b</span>, <span class="va">userRole</span>, <span class="va">userUnitId</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">clean_datadump</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">dato1</span>,</span>
+<span>  <span class="va">dato2</span>,</span>
+<span>  <span class="va">kjoenn</span>,</span>
+<span>  <span class="va">alder1</span>,</span>
+<span>  <span class="va">alder2</span>,</span>
+<span>  <span class="va">userRole</span>,</span>
+<span>  <span class="va">userUnitId</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
+
+
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>datasett</p></dd>
+
+
+<dt id="arg-dato-">dato1<a class="anchor" aria-label="anchor" href="#arg-dato-"></a></dt>
+<dd><p>brukervalg - dato min</p></dd>
+
+
+<dt id="arg-dato-">dato2<a class="anchor" aria-label="anchor" href="#arg-dato-"></a></dt>
+<dd><p>brukervalg - dato max</p></dd>
+
+
+<dt id="arg-kjoenn">kjoenn<a class="anchor" aria-label="anchor" href="#arg-kjoenn"></a></dt>
+<dd><p>brukervalg - kjønn</p></dd>
+
+
+<dt id="arg-alder-">alder1<a class="anchor" aria-label="anchor" href="#arg-alder-"></a></dt>
+<dd><p>brukervalg - alder min</p></dd>
+
+
+<dt id="arg-alder-">alder2<a class="anchor" aria-label="anchor" href="#arg-alder-"></a></dt>
+<dd><p>brukervalg - alder max</p></dd>
+
+
+<dt id="arg-userrole">userRole<a class="anchor" aria-label="anchor" href="#arg-userrole"></a></dt>
+<dd><p>brukerrolle</p></dd>
+
+
+<dt id="arg-userunitid">userUnitId<a class="anchor" aria-label="anchor" href="#arg-userunitid"></a></dt>
+<dd><p>brukertilhørighet</p></dd>
+
+</dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    <p>datasett filtrert på brukervalg</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

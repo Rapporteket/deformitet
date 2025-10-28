@@ -56,7 +56,33 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tbl_skjema_reg</span><span class="op">(</span><span class="va">date1</span>, <span class="va">date2</span>, <span class="va">data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
 
+
+<dl><dt id="arg-date-">date1<a class="anchor" aria-label="anchor" href="#arg-date-"></a></dt>
+<dd><p>dato-valg (min) gjort av brukeren</p></dd>
+
+
+<dt id="arg-date-">date2<a class="anchor" aria-label="anchor" href="#arg-date-"></a></dt>
+<dd><p>dato-valg (max) gjort av brukeren</p></dd>
+
+
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>data -&gt; data som har vært gjennom prePros()</p></dd>
+
+</dl></div>
+
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">tbl_skjema_reg</span><span class="op">(</span><span class="st">"01-09-2024"</span>, <span class="st">"01-01-2025"</span>, <span class="va">regdata</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in select(., c(Sykehus, personopplysninger, Skjema_1a_Pasientoppl_preop,  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   could not find function "select"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

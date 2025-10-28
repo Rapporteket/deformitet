@@ -51,10 +51,6 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="add_freq_var_to_dataframe.html">add_freq_var_to_dataframe()</a></code> </p>
-        </td>
-        <td><p>add_freq_var_to_dataframe</p></td>
-      </tr><tr><td>
           <p><code><a href="app_server.html">app_server()</a></code> </p>
         </td>
         <td><p>Server logic for the deformitet app</p></td>
@@ -103,6 +99,10 @@
         </td>
         <td><p>Data for gg-plotting</p></td>
       </tr><tr><td>
+          <p><code><a href="gjen_var_til_data.html">gjen_var_til_data()</a></code> </p>
+        </td>
+        <td><p>gjen_var_til_data</p></td>
+      </tr><tr><td>
           <p><code><a href="kompl_data.html">kompl_data()</a></code> </p>
         </td>
         <td><p>Komplikasjonstyper</p></td>
@@ -115,29 +115,33 @@
         </td>
         <td><p>Komplikasjonstyper - tabell</p></td>
       </tr><tr><td>
+          <p><code><a href="kval_plot.html">kval_plot()</a></code> </p>
+        </td>
+        <td><p>Funksjon som lager kvalitetsindikatorplot</p></td>
+      </tr><tr><td>
+          <p><code><a href="lagTabell.html">lagTabell()</a></code> </p>
+        </td>
+        <td><p>lagTabell</p></td>
+      </tr><tr><td>
+          <p><code><a href="lag_ggplot_fordeling.html">lag_ggplot_fordeling()</a></code> </p>
+        </td>
+        <td><p>Make gg_plot for fordelingsfirgurer og -tabeller</p></td>
+      </tr><tr><td>
+          <p><code><a href="lag_gjen_tabell.html">lag_gjen_tabell()</a></code> </p>
+        </td>
+        <td><p>lag_gjen_tabell</p></td>
+      </tr><tr><td>
           <p><code><a href="lag_sam_tabell.html">lag_sam_tabell()</a></code> </p>
         </td>
-        <td><p>Lag tabell til sammenligning</p></td>
+        <td><p>Lag tabell til sammenligning Denne funksjonen bruker funksjonen over til å lage et datasett/tabell med alle kolonnene av interesse i et langt format. Det er kun variabelene som er valgt, samt Sykehus som blir med i funksjonen.</p></td>
       </tr><tr><td>
           <p><code><a href="les_og_flate_ut.html">les_og_flate_ut()</a></code> </p>
         </td>
         <td><p>Les og flate ut</p></td>
       </tr><tr><td>
-          <p><code><a href="makePlot_gg.html">makePlot_gg()</a></code> </p>
+          <p><code><a href="mapping_navn.html">mapping_navn()</a></code> </p>
         </td>
-        <td><p>Make gg_plot for fordelingsfirgurer og -tabeller</p></td>
-      </tr><tr><td>
-          <p><code><a href="makeTable.html">makeTable()</a></code> </p>
-        </td>
-        <td><p>makeTable</p></td>
-      </tr><tr><td>
-          <p><code><a href="make_freq_table.html">make_freq_table()</a></code> </p>
-        </td>
-        <td><p>make_freq_table</p></td>
-      </tr><tr><td>
-          <p><code><a href="mapping_old_name_new_name.html">mapping_old_name_new_name()</a></code> </p>
-        </td>
-        <td><p>mapping_old_name_new_name</p></td>
+        <td><p>mapping_navn</p></td>
       </tr><tr><td>
           <p><code><a href="mergeRegData.html">mergeRegData()</a></code> </p>
         </td>
@@ -149,7 +153,7 @@
       </tr><tr><td>
           <p><code><a href="module_fordeling_UI.html">module_fordeling_UI()</a></code> </p>
         </td>
-        <td><p>Module fordeling</p></td>
+        <td><p>Fordelingsmodul</p></td>
       </tr><tr><td>
           <p><code><a href="module_fordeling_server.html">module_fordeling_server()</a></code> </p>
         </td>
@@ -193,11 +197,11 @@
       </tr><tr><td>
           <p><code><a href="ny_komplikasjon3mnd_usmerte.html">ny_komplikasjon3mnd_usmerte()</a></code> </p>
         </td>
-        <td><p>Ny komplikasjonskolonne</p></td>
+        <td><p>Funksjon som regner komplikasjoner</p></td>
       </tr><tr><td>
           <p><code><a href="nye_navn.html">nye_navn()</a></code> </p>
         </td>
-        <td><p>Lage nye navn på kolonne</p></td>
+        <td><p>Lage nye navn på kolonne Denne funksjonen gir nye navn til variablene i lag_sam_tabell slik at vi får "før operasjon", "3mnd", "2 år" og "5 år".</p></td>
       </tr><tr><td>
           <p><code><a href="over_tid_plot.html">over_tid_plot()</a></code> </p>
         </td>
@@ -223,6 +227,10 @@
         </td>
         <td><p>Run the imongr Shiny Application</p></td>
       </tr><tr><td>
+          <p><code><a href="sjekk_antall.html">sjekk_antall()</a></code> </p>
+        </td>
+        <td><p>Sjekke antall Funksjon for å sjekke størrelse på datagrunnlaget. Funksjonen gjør at man dropper å vise variabelen om det ikke finnes noen registreringer på gitt variabel i hoveddataen og om det er na i datasettet som er regnet om med tabell_gjen_tid()</p></td>
+      </tr><tr><td>
           <p><code><a href="spc_function.html">spc_function()</a></code> </p>
         </td>
         <td><p>Spc plot</p></td>
@@ -231,7 +239,7 @@
         </td>
         <td><p>Text function for spc-plot</p></td>
       </tr><tr><td>
-          <p><code><a href="table_freq_time.html">table_freq_time()</a></code> </p>
+          <p><code><a href="tabell_gjen_tid.html">tabell_gjen_tid()</a></code> </p>
         </td>
         <td><p>Tabell - gjennomsnitt over tid</p></td>
       </tr><tr><td>
@@ -253,7 +261,7 @@
       </tr><tr><td>
           <p><code><a href="y_limits_gjen.html">y_limits_gjen()</a></code> </p>
         </td>
-        <td><p>Y-axis limits</p></td>
+        <td><p>Y-axis limits Funksjon som setter fornuftige øvre og nedre grenser på yaksen.</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

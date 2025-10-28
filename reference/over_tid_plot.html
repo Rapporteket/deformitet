@@ -56,7 +56,44 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">over_tid_plot</span><span class="op">(</span><span class="va">data</span>, <span class="va">visning</span>, <span class="va">gg_data</span>, <span class="va">map_var</span>, <span class="va">tidsenhet</span>, <span class="va">data_var</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
 
+
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>data som har vært gjennom tabell_gjen_tid()</p></dd>
+
+
+<dt id="arg-visning">visning<a class="anchor" aria-label="anchor" href="#arg-visning"></a></dt>
+<dd><p>valgt visning</p></dd>
+
+
+<dt id="arg-gg-data">gg_data<a class="anchor" aria-label="anchor" href="#arg-gg-data"></a></dt>
+<dd><p>data fra prepVar()[2]</p></dd>
+
+
+<dt id="arg-map-var">map_var<a class="anchor" aria-label="anchor" href="#arg-map-var"></a></dt>
+<dd><p>data som mapper mellom variabler (faktornivå og "kontinuerlig variabel")</p></dd>
+
+
+<dt id="arg-tidsenhet">tidsenhet<a class="anchor" aria-label="anchor" href="#arg-tidsenhet"></a></dt>
+<dd><p>valgt tidsenhet</p></dd>
+
+
+<dt id="arg-data-var">data_var<a class="anchor" aria-label="anchor" href="#arg-data-var"></a></dt>
+<dd><p>datasett med brukerens UI-valg</p></dd>
+
+</dl></div>
+
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">over_tid_plot</span><span class="op">(</span><span class="va">data</span>, <span class="st">"egen enhet"</span>, <span class="va">gg_data</span>, <span class="va">map_var</span>, <span class="st">"kvartal"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in data$Sykehus : object of type 'closure' is not subsettable</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
