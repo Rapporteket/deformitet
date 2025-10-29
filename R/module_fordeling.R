@@ -380,11 +380,11 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
         if (input$x_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
-          gjen_added <- deformitet::add_gjen_var_to_dataframe(raw_data, data, input$x_var)
+          gjen_added <- deformitet::gjen_var_til_data(raw_data, data, input$x_var)
 
         } else {
 
-          gjen_added <- deformitet::add_gjen_var_to_dataframe(raw_data, data, navn_reactive())
+          gjen_added <- deformitet::gjen_var_til_data(raw_data, data, navn_reactive())
         }
 
       })
