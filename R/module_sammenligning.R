@@ -85,9 +85,9 @@ module_sammenligning_UI <- function(id) {
         inputId = ns("dato"),
         label = "Tidsintervall:",
         start = "2023-01-02",
-        end = "2025-12-12",
+        end = Sys.Date(), # "2025-12-12",
         min = "2023-01-01",
-        max = "2026-12-12",
+        max = Sys.Date(), # "2026-12-12",
         format = "dd-mm-yyyy",
         separator = " - "
       )),

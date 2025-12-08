@@ -41,8 +41,8 @@ module_datadump_UI <- function(id){
         dateRangeInput( # first select - var1
           inputId = ns("date"),
           label = "Tidsintervall:",
-          start = "2023-01-01",
-          end = "2026-01-01",
+          start = startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),  # "2023-01-01",
+          end = Sys.Date(),
           min = "2023-01-01",
           max = "2026-01-01",
           format = "dd-mm-yyyy",
@@ -99,7 +99,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
     id,
     function(input, output, session){
 
-      # do the cleaning
+      # filtrering
 
         clean_datadump_reactive <- reactive({
           data <- deformitet::clean_datadump(data,
@@ -118,6 +118,16 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
+      #------- Koble på selvvalgte navn----------
+      variabelTab <- rapbase::loadRegData(registryName = "deformitet",
+                                           query = "SELECT * FROM friendlyvars")
+      # I tabellen er det ingen variabel som identifiserer når et skjema er brukt
+      # eks etter 6 mnd, to år osv.
+      egnenavn <- variabelTab[!is.na(variabelTab$USER_SUGGESTION),
+                              c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION")]
+
+      # orgname = RegData$ShNavn[match(unique(RegData$ReshId), RegData$ReshId)])
+
       select_datadump_reactive <- reactive ({
         if (input$skjema_type == "Pasientskjema"){
           data <- clean_datadump_reactive() %>%
@@ -127,6 +137,10 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
               dplyr::select(any_of(colnames))
             }
         })
+
+     #  data <- regdata %>%
+     #    dplyr::select(-any_of(colnames))
+     # intersect(colnames, names(regdata))
 
       output$datadump <- DT::renderDT({
         if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
@@ -141,11 +155,11 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       output$download_data <- downloadHandler(
         filename = function() {
-          paste('data-', Sys.Date(), '.csv', sep = '')
+          paste('deformitet-', Sys.Date(), '.csv', sep = '')
         },
         content = function(file) {
           if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
-            write.csv(select_datadump_reactive(), file)
+            write.csv2(select_datadump_reactive(), file)
           } else {
             write.csv(clean_datadump_reactive(), file)
           }

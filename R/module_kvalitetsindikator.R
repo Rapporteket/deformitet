@@ -67,9 +67,9 @@ module_kvalitetsindikator_UI <- function(id){
         inputId = ns("date"),
         label = "Tidsintervall:",
         start = "2023-01-02",
-        end = "2024-09-02",
+        end = Sys.Date(), # "2024-09-02",
         min = "2023-01-01",
-        max = "2025-09-02",
+        max = Sys.Date(), # "2025-09-02",
         format = "dd-mm-yyyy",
         separator = " - ")
       ),

@@ -1,3 +1,48 @@
+#' Hent tabell fra Deformitets database
+#'
+#' @param tabellnavn Navn på tabell som skal lastes inn.
+#'                   Kan ha følgende verdier:
+#'                   mce
+#'                   mce_patient_data
+#'                   patient
+#'                   patientfollowup
+#'                   patientform
+#'                   surgeonfollowup
+#'                   surgeonform
+#' @export
+deformitetHentTabell <- function(tabellnavn = "surgeonform") {
+  registryName <- "data"
+  dbType <- "mysql"
+  query <- paste0("SELECT * FROM ", tabellnavn)
+
+  tabell <- rapbase::loadRegData(registryName, query, dbType)
+  return(tabell)
+}
+
+
+
+#' Les og flate ut
+#'
+#' @export
+les_og_flate_ut <- function() {
+
+  mce <- deformitet::deformitetHentTabell("mce")
+  centre <- deformitet::deformitetHentTabell("centre") %>%
+    dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
+  patient <- deformitet::deformitetHentTabell("patient")
+  patient_followup <- deformitet::deformitetHentTabell("patientfollowup")
+  patient_form <- deformitet::deformitetHentTabell("patientform")
+  surgeon_followup <- deformitet::deformitetHentTabell("surgeonfollowup")
+  surgeon_form <- deformitet::deformitetHentTabell("surgeonform")
+  regData <- deformitet::mergeRegData(
+    mce, centre, patient,
+    patient_followup, patient_form, surgeon_followup, surgeon_form
+  )
+
+  return(regData)
+}
+
+
 #' Les inn data og lag utflatet dataramme
 #'
 #' @export
@@ -27,23 +72,3 @@ mergeRegData <- function(mce, centre, patient,
 }
 
 
-#' Les og flate ut
-#'
-#' @export
-les_og_flate_ut <- function() {
-
-  mce <- deformitet::deformitetHentTabell("mce")
-  centre <- deformitet::deformitetHentTabell("centre") %>%
-    dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
-  patient <- deformitet::deformitetHentTabell("patient")
-  patient_followup <- deformitet::deformitetHentTabell("patientfollowup")
-  patient_form <- deformitet::deformitetHentTabell("patientform")
-  surgeon_followup <- deformitet::deformitetHentTabell("surgeonfollowup")
-  surgeon_form <- deformitet::deformitetHentTabell("surgeonform")
-  regData <- deformitet::mergeRegData(
-    mce, centre, patient,
-    patient_followup, patient_form, surgeon_followup, surgeon_form
-  )
-
-  return(regData)
-}

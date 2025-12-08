@@ -94,7 +94,7 @@ module_fordeling_UI <- function (id) {
             inputId = ns("dato"),
             label = "Tidsintervall:",
             start = "2023-01-02",
-            end = "2026-09-02",
+            end = Sys.Date(),
             min = "2023-01-01",
             max = "2026-09-02",
             format = "dd-mm-yyyy",
