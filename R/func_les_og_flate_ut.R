@@ -11,11 +11,11 @@
 #'                   surgeonform
 #' @export
 deformitetHentTabell <- function(tabellnavn = "surgeonform") {
-  registryName <- "data"
-  dbType <- "mysql"
+  # registryName <- "data"
+  # dbType <- "mysql"
   query <- paste0("SELECT * FROM ", tabellnavn)
-
-  tabell <- rapbase::loadRegData(registryName, query, dbType)
+  tabell <- rapbase::loadRegData(registryName = "data",
+                                 query = query)
   return(tabell)
 }
 
