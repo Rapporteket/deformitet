@@ -58,7 +58,10 @@ alleRegData <- function(egneVarNavn=0) {
     names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='PATIENT']
     patient <- rename(patient, all_of(Navn))
 
+
+#FORTSETT HER:
     # surgeon_form <- egneNavn(data = surgeon_form, tabNavn = 'SURGEONFORM', FriendlyVarTab)
+    surgeon_form$KNIFE_TIME_CALCULATED <- Beregnes
     Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
     names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
     test <- rename(surgeon_form, all_of(Navn))
