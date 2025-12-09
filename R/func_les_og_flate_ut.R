@@ -32,15 +32,15 @@ mergeRegData <- function(mce, centre, patient,
 #' @export
 les_og_flate_ut <- function() {
 
-  mce <- deformitet::deformitetHentTabell("mce")
-  centre <- deformitet::deformitetHentTabell("centre") %>%
+  mce <- deformitetHentTabell("mce")
+  centre <- deformitetHentTabell("centre") %>%
     dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
-  patient <- deformitet::deformitetHentTabell("patient")
-  patient_followup <- deformitet::deformitetHentTabell("patientfollowup")
-  patient_form <- deformitet::deformitetHentTabell("patientform")
-  surgeon_followup <- deformitet::deformitetHentTabell("surgeonfollowup")
-  surgeon_form <- deformitet::deformitetHentTabell("surgeonform")
-  regData <- deformitet::mergeRegData(
+  patient <- deformitetHentTabell("patient")
+  patient_followup <- deformitetHentTabell("patientfollowup")
+  patient_form <- deformitetHentTabell("patientform")
+  surgeon_followup <- deformitetHentTabell("surgeonfollowup")
+  surgeon_form <- deformitetHentTabell("surgeonform")
+  regData <- mergeRegData(
     mce, centre, patient,
     patient_followup, patient_form, surgeon_followup, surgeon_form
   )

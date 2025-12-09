@@ -63,23 +63,23 @@ lagTabell <- function(data, var_reshID, visning){
     data_alle <- data
 
     data_alle <- data_alle %>%
-    dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
-    dplyr::mutate(Sykehus = recode(Sykehus,
-                                   "Haukeland" = "Alle",
-                                   "Rikshospitalet" = "Alle",
-                                   "St.Olav" = "Alle")) %>%
-    dplyr::add_tally(name = "n") %>%
-    dplyr::group_by(data_alle[3]) %>%
-    dplyr::add_count(name = "by_var") %>%
-    dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
-    dplyr::rename("n pr variabel" = by_var) %>%
-    dplyr::distinct()
+      dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
+      dplyr::mutate(Sykehus = dplyr::recode(Sykehus,
+        "Haukeland" = "Alle",
+        "Rikshospitalet" = "Alle",
+        "St.Olav" = "Alle")) %>%
+      dplyr::add_tally(name = "n") %>%
+      dplyr::group_by(data_alle[3]) %>%
+      dplyr::add_count(name = "by_var") %>%
+      dplyr::mutate(Prosent = round(by_var/n*100, 2)) %>%
+      dplyr::rename("n pr variabel" = by_var) %>%
+      dplyr::distinct()
 
 
-  data_komplett <- dplyr::full_join(data_sykeh, data_alle)
+    data_komplett <- dplyr::full_join(data_sykeh, data_alle)
 
-  data_komplett <- data_komplett %>%
-    dplyr::relocate(Prosent, .before = n)
+    data_komplett <- data_komplett %>%
+      dplyr::relocate(Prosent, .before = n)
 
   }
 
@@ -97,7 +97,8 @@ lagTabell <- function(data, var_reshID, visning){
 
     return(data_alle)
   } else {
-    return(data_komplett)} # => hele landet med sammenligning
+    return(data_komplett)
+  } # => hele landet med sammenligning
 }
 
 
@@ -129,21 +130,21 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 
     gjen_data <- data %>%
       dplyr::mutate(gjen_var = dplyr::case_when({{gjen_var}} == "Alder" ~ Alder_num,
-                                                {{gjen_var}} == "Knivtid" ~ kniv_tid,
-                                                {{gjen_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
+        {{gjen_var}} == "Knivtid" ~ kniv_tid,
+        {{gjen_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
 
     return (gjen_data)
 
   } else {
     valg_rå <- raw_data %>%
-      dplyr::select(all_of(gjen_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
+      dplyr::select(dplyr::all_of(gjen_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
 
     gjen_data <- dplyr::left_join(data, valg_rå, by = "MCEID")
 
     colnames(gjen_data)[ncol(gjen_data)] = "gjen_var"
 
     return (gjen_data)
-    }
+  }
 }
 
 
@@ -167,26 +168,26 @@ lag_gjen_tabell <- function (data) {
   gjen_pr_sykehus <- gjen %>%
     dplyr::group_by(Sykehus) %>%
     dplyr::summarise(gjennomsnitt = round(mean(gjen_var), 2),
-                     median = median(gjen_var)) %>%
+      median = median(gjen_var)) %>%
     dplyr::ungroup()
 
 
   gjen_total <- gjen %>%
     dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(gjen_var), 2),
-                     "median nasjonalt" = median(gjen_var))
+      "median nasjonalt" = median(gjen_var))
 
   gjen_tabell <- merge(gjen_pr_sykehus, gjen_total)
 
 
   gjen_n <- gjen %>%
-    group_by(Sykehus) %>%
-    tally(n = "antall") %>%
-    mutate("antall nasjonalt"= sum(antall))
+    dplyr::group_by(Sykehus) %>%
+    dplyr::tally(n = "antall") %>%
+    dplyr::mutate("antall nasjonalt"= sum(antall))
 
   gjen_tabell2 <- merge(gjen_tabell, gjen_n)
 
   gjen_tabell2 <- gjen_tabell2 %>%
     dplyr::relocate(antall, .before = "gjennomsnitt nasjonalt")
 
-   return(gjen_tabell2)
+  return(gjen_tabell2)
 }

@@ -111,9 +111,9 @@ tabell_gjen_tid <- function(data,
 
   if (tidsenhet == "kvartal") {
     data <- data %>%
-      mutate(tid1 = lubridate::year(tid),
+      dplyr::mutate(tid1 = lubridate::year(tid),
              tid_as_character = as.character(tid),
-             tid = case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
+             tid = dplyr::case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
                              str_detect(tid, "04-01") == TRUE ~ paste(tid1, "2", sep = "-"),
                              str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
                              str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")))
@@ -121,7 +121,7 @@ tabell_gjen_tid <- function(data,
     data$tid <- as.factor(data$tid)
 
     data <- data %>%
-      select(-c(tid1, tid_as_character))
+      dplyr::select(-c("tid1", "tid_as_character"))
   }
   return(data)
 }

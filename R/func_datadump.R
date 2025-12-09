@@ -32,7 +32,7 @@ clean_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole,
 
   if (userRole != "SC") {
     data <- data %>%
-      dplyr::select(-contains(c("mths", "mnd"))) %>%
+      dplyr::select(-dplyr::contains(c("mths", "mnd"))) %>%
       dplyr::filter(CENTREID == userUnitId)
   }
 

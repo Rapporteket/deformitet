@@ -11,50 +11,35 @@
 
 app_server <- function(input, output, session) {
 
-
-  library(dplyr)
-  library(deformitet)
-  library(tidyr)
-  library(ggplot2)
-  library(DT)
-  library(shiny)
-  library(rapbase)
-  library(bslib)
-  library(shinyWidgets)
-  library(lubridate)
-  library(stringr)
-  library(usethis)
-
-  ######### DATA TIDYING----------------------------------------------------------
+  ######### DATA TIDYING------------------------------------------------------
   ### Read in data:
-  raw_regdata <- deformitet::les_og_flate_ut()
+  raw_regdata <- les_og_flate_ut()
 
   #### Clean and tidy data:
 
-  regdata <- deformitet::pre_pros(raw_regdata)
+  regdata <- pre_pros(raw_regdata)
 
-  ######## USER INFO--------------------------------------------------------------
+  ######## USER INFO----------------------------------------------------------
 
   # Make a df that can be used for mapping between resh-ids and hospital names
   # Must be organized as df with two columns: UnitId and orgname
   # in order for navbarWidgetServer2 to work properly
 
-  map_db_resh <- regdata %>%
-    select(Sykehus, CENTREID) %>% # select required columns
-    unique() %>% # keep only unique variables
-    mutate(UnitId = CENTREID, # make new column with new name
-           orgname = Sykehus) %>% # make new column with new name
-    select(-c(Sykehus, CENTREID)) # take out old columns
+  map_db_resh <- regdata |>
+    dplyr::select("Sykehus", "CENTREID") |> # select required columns
+    unique() |> # keep only unique variables
+    dplyr::mutate(UnitId = CENTREID, # make new column with new name
+                  orgname = Sykehus) |> # make new column with new name
+    dplyr::select(-c(Sykehus, CENTREID)) # take out old columns
 
 
-  user <- rapbase::navbarWidgetServer2("deformitetNavbarWidget", # denne skal bli navbarWidgetServer når alt er fikset i rapbase
-                                       "deformitet",
-                                       caller = "deformitet",
-                                       map_orgname = shiny::req(map_db_resh))
+  user <- rapbase::navbarWidgetServer("deformitetNavbarWidget",
+                                      "deformitet",
+                                      map_orgname = shiny::req(map_db_resh))
 
 
-  ################################################################################
-  ##### TAB: Startside ###########################################################
+  #####################################################################
+  ##### TAB: Startside ################################################
 
   # Veiledning
   output$veiledning <- shiny::renderUI({
@@ -64,71 +49,70 @@ app_server <- function(input, output, session) {
     )
   })
 
-################################################################################
-##### TAB: Fordelingsfigur- og tabell ##########################################
+  #######################################################################
+  ##### TAB: Fordelingsfigur- og tabell #################################
 
-  deformitet::module_fordeling_server("fordeling",
-                                      data = regdata,
-                                      raw_data = raw_regdata,
-                                      userRole = user$role,
-                                      userUnitId = user$org,
-                                      map_data = map_db_resh)
+  module_fordeling_server("fordeling",
+                          data = regdata,
+                          raw_data = raw_regdata,
+                          userRole = user$role,
+                          userUnitId = user$org,
+                          map_data = map_db_resh)
 
-################################################################################
-##### TAB: gjennomsnitt ########################################################
-
-
-deformitet::module_gjennomsnitt_server("gjen1",
-                                       data = regdata,
-                                       userRole = user$role,
-                                       userUnitId = user$org,
-                                       map_data = map_db_resh)
-
-################################################################################
-##### TAB: Kvalitetsindikatorer ################################################
+  #########################################################################
+  ##### TAB: gjennomsnitt #################################################
 
 
-  deformitet::module_kvalitetsindikator_server("kval1",
-                                               data = regdata,
-                                               map_data = map_db_resh,
-                                               userRole = user$role,
-                                               userUnitId = user$org)
+  module_gjennomsnitt_server("gjen1",
+                             data = regdata,
+                             userRole = user$role,
+                             userUnitId = user$org,
+                             map_data = map_db_resh)
 
-  ################################################################################
-  ##### TAB: Sammenligning #####################################################
-
-
-  deformitet::module_sammenligning_server("sam1",
-                                          data = regdata,
-                                          userRole = user$role,
-                                          userUnitId = user$org)
-
-  ################################################################################
-  ##### TAB: Registreringer #####################################################
+  #########################################################################
+  ##### TAB: Kvalitetsindikatorer #########################################
 
 
-  deformitet::module_registreringer_server("reg1",
-                                          data = regdata,
-                                          userRole = user$role,
-                                          userUnitId = user$org)
+  module_kvalitetsindikator_server("kval1",
+                                   data = regdata,
+                                   map_data = map_db_resh,
+                                   userRole = user$role,
+                                   userUnitId = user$org)
 
-  ################################################################################
-  ##### TAB: SPC #################################################################
+  #######################################################################
+  ##### TAB: Sammenligning ##############################################
+
+  module_sammenligning_server("sam1",
+                              data = regdata,
+                              userRole = user$role,
+                              userUnitId = user$org)
+
+  #######################################################################
+  ##### TAB: Registreringer #############################################
+
+
+  module_registreringer_server("reg1",
+                               data = regdata,
+                               userRole = user$role,
+                               userUnitId = user$org)
+
+  #######################################################################
+  ##### TAB: SPC ########################################################
 
   # Add ready-made module here if requested by registry
 
 
-  ################################################################################
-  ##### TAB: Nestlasting av datadump #############################################
+  #######################################################################
+  ##### TAB: Nestlasting av datadump ####################################
 
 
-  deformitet::module_datadump_server("module_1",
-                                     data = regdata,
-                                     userRole = user$role,
-                                     userUnitId = user$org)
+  module_datadump_server("module_1",
+                         data = regdata,
+                         userRole = user$role,
+                         userUnitId = user$org)
 
-################################################################################
-###### TAB: Exporting data #####################################################
+  #########################################################################
+  ###### TAB: Exporting data ##############################################
 
   shiny::observeEvent(
     shiny::req(user$role()), {
@@ -137,7 +121,8 @@ deformitet::module_gjennomsnitt_server("gjen1",
       } else {
         shiny::showTab("tabs", target = "Eksport")
       }
-  })
+    }
+  )
 
   # Brukerkontroller
 
@@ -149,4 +134,3 @@ deformitet::module_gjennomsnitt_server("gjen1",
 
 
 }
-
