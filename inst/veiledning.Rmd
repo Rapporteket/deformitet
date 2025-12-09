@@ -42,10 +42,12 @@ age_curve_data <- regdata %>%
   dplyr::group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   dplyr::mutate(year = format(year, "%Y")) %>%
   dplyr::filter(year != 2025) %>%
-  dplyr::summarize(n_opererte = as.character(dplyr::n_distinct(PID)),
+  dplyr::summarize(
+    n_opererte = as.character(dplyr::n_distinct(PID)),
     pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
     Alder_median = round(median(Alder_num), digits = 1),
-    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
+    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")
+  ) %>%
   dplyr::mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
   dplyr::select(-c(Alder_median, Alder_range))
 
@@ -71,10 +73,12 @@ nasjonalt_age_curve_data <- regdata %>%
   dplyr::group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   dplyr::mutate(year = format(year, "%Y")) %>%
   dplyr::filter(year != 2025) %>%
-  dplyr::summarize(n_opererte = as.character(dplyr::n_distinct(PID)),
+  dplyr::summarize(
+    n_opererte = as.character(dplyr::n_distinct(PID)),
     pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
     Alder_median = round(median(Alder_num), digits = 1),
-    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
+    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")
+  ) %>%
   dplyr::mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
   dplyr::select(-c(Alder_median, Alder_range))
 
@@ -103,15 +107,17 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 # Lag tabellen
 key_data_table <- key_data %>%
   dplyr::mutate(pro_kvinne = paste(pro_kvinne, "%", sep = ""),
-    pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>% 
-  dplyr::rename("År" = "year",
+    pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>%
+  dplyr::rename(
+    "År" = "year",
     "Prosentandel kvinner" = pro_kvinne,
     "Preoperativ Cobbvinkel" = pre_cobb,
-    "Antall opererte" = n_opererte)
+    "Antall opererte" = n_opererte
+  )
 
 # Få ønsket rekkefølge på Sykehus
 key_data_table <- key_data_table %>%
-  dplyr::arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>% 
+  dplyr::arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>%
   dplyr::filter(Sykehus == "Nasjonalt") # lagt til denne filtreringen siden reg.leder kun ønsker visning av nasjonalt
 
 ```

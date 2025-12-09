@@ -21,4 +21,3 @@ NULL
 #' @importFrom rlang .data .env
 #' @usage .data
 NULL
-

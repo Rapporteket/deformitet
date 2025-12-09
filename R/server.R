@@ -28,9 +28,9 @@ app_server <- function(input, output, session) {
   map_db_resh <- regdata |>
     dplyr::select("Sykehus", "CENTREID") |> # select required columns
     unique() |> # keep only unique variables
-    dplyr::mutate(UnitId = CENTREID, # make new column with new name
-                  orgname = Sykehus) |> # make new column with new name
-    dplyr::select(-c(Sykehus, CENTREID)) # take out old columns
+    dplyr::mutate(UnitId = .data$CENTREID, # make new column with new name
+                  orgname = .data$Sykehus) |> # make new column with new name
+    dplyr::select(-c("Sykehus", "CENTREID")) # take out old columns
 
 
   user <- rapbase::navbarWidgetServer("deformitetNavbarWidget",

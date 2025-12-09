@@ -7,81 +7,81 @@ module_kvalitetsindikator_UI <- function(id){
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-      selectInput( # First select
-        inputId = ns("kval_var"),
-        label = "Velg Kvalitetsindikator:",
-        choices = c("SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
-                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 12 mnd" = "SRS22_spm21_12mnd",
-                    #"SRS22 'Hvor fornøyd er du med behandlingen?' 60 mnd" = "SRS22_spm21_60mnd",
-                    "Pre-operativ kurve" = "PRE_MAIN_CURVE",
-                    #"Prosent korreksjon kurve" = "Diff_prosent_kurve",
-                    "Liggetid" = "Liggetid",
-                    "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                    # Komplikasjoner, 12 mnd
-                    # Komplikasjoner, 5 år
-                    "Reoperasjonsrate" = "CURRENT_SURGERY"
+        selectInput( # First select
+          inputId = ns("kval_var"),
+          label = "Velg Kvalitetsindikator:",
+          choices = c("SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
+            #"SRS22 'Hvor fornøyd er du med behandlingen?' 12 mnd" = "SRS22_spm21_12mnd",
+            #"SRS22 'Hvor fornøyd er du med behandlingen?' 60 mnd" = "SRS22_spm21_60mnd",
+            "Pre-operativ kurve" = "PRE_MAIN_CURVE",
+            #"Prosent korreksjon kurve" = "Diff_prosent_kurve",
+            "Liggetid" = "Liggetid",
+            "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
+            # Komplikasjoner, 12 mnd
+            # Komplikasjoner, 5 år
+            "Reoperasjonsrate" = "CURRENT_SURGERY"
+          ),
+          selected = "SRS22_spm22_3mnd"),
+
+
+        shiny::radioButtons( # second select
+          inputId = ns("kjønn_var"),
+          label = "Dele på kjønn?",
+          choices = c("kvinne" = "kvinne",
+            "mann" = "mann",
+            "begge" = "begge",
+            "se alle fordelinger" = "nei"),
+          selected = "begge"),
+
+
+        conditionalPanel(
+          condition = "input.kval_var == 'CURRENT_SURGERY'",
+          shiny::radioButtons( # third select, not visible when looking at rate of re-operations
+            inputId = ns("type_op"),
+            label = "Type operasjon",
+            choices = c("Begge"),
+            selected = "Begge"),
+          ns = NS(id)
         ),
-        selected = "SRS22_spm22_3mnd"),
 
 
-      shiny::radioButtons( # second select
-        inputId = ns("kjønn_var"),
-        label = "Dele på kjønn?",
-        choices = c("kvinne" = "kvinne",
-                    "mann" = "mann",
-                    "begge" = "begge",
-                    "se alle fordelinger" = "nei"),
-        selected = "begge"),
-
-
-      conditionalPanel(
-        condition = "input.kval_var == 'CURRENT_SURGERY'",
-        shiny::radioButtons( # third select, not visible when looking at rate of re-operations
-          inputId = ns("type_op"),
-          label = "Type operasjon",
-          choices = c("Begge"),
-          selected = "Begge"),
-        ns = NS(id)
+        conditionalPanel(
+          condition = "input.kval_var != 'CURRENT_SURGERY'",
+          shiny::radioButtons( # third select, not visible when looking at rate of re-operations
+            inputId = ns("type_op"),
+            label = "Type operasjon",
+            choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
+            selected = "Begge"),
+          ns = NS(id)
         ),
 
+        sliderInput( # fourth select
+          inputId = ns("alder_var"),
+          label = "Aldersintervall:",
+          min = 0,
+          max = 100,
+          value = c(10, 20),
+          dragRange = TRUE),
 
-      conditionalPanel(
-        condition = "input.kval_var != 'CURRENT_SURGERY'",
-        shiny::radioButtons( # third select, not visible when looking at rate of re-operations
-          inputId = ns("type_op"),
-          label = "Type operasjon",
-          choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
-          selected = "Begge"),
-        ns = NS(id)
-      ),
-
-      sliderInput( # fourth select
-        inputId = ns("alder_var"),
-        label = "Aldersintervall:",
-        min = 0,
-        max = 100,
-        value = c(10, 20),
-        dragRange = TRUE),
-
-      dateRangeInput( # fifth select
-        inputId = ns("date"),
-        label = "Tidsintervall:",
-        start = "2023-01-02",
-        end = "2024-09-02",
-        min = "2023-01-01",
-        max = "2025-09-02",
-        format = "dd-mm-yyyy",
-        separator = " - ")
+        dateRangeInput( # fifth select
+          inputId = ns("date"),
+          label = "Tidsintervall:",
+          start = "2023-01-02",
+          end = "2024-09-02",
+          min = "2023-01-01",
+          max = "2025-09-02",
+          format = "dd-mm-yyyy",
+          separator = " - ")
       ),
 
       shiny::mainPanel(
         bslib::navset_card_underline(
           bslib::nav_panel("Figur",
-                           shiny::plotOutput(outputId = ns("kval_plot")),
-                           shiny::downloadButton(ns("download_fig"), "Last ned figur")),
+            shiny::plotOutput(outputId = ns("kval_plot")),
+            shiny::downloadButton(ns("download_fig"), "Last ned figur")),
           bslib::nav_panel("Tabell",
-                           DT::DTOutput(outputId = ns("kval_table")),
-                           shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2"))
+            DT::DTOutput(outputId = ns("kval_table")),
+            shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2"))
           #bslib::nav_panel("Over tid", plotOutput(outputId = "kval_over_tid"))
         ),
         bslib::navset_card_underline(
@@ -91,8 +91,8 @@ module_kvalitetsindikator_UI <- function(id){
               shiny::textOutput(
                 outputId = ns("text_header")))),
           bslib::card_body(
-              shiny::htmlOutput(
-                outputId = ns("text_body")))
+            shiny::htmlOutput(
+              outputId = ns("text_body")))
         )
       )
     )
@@ -151,15 +151,18 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       # Store reactive choices in data set for caption in ggplot
       my_data_reactive <- reactive({
-        #date <- format(c(date1_reactive(), date2_reactive(), "%d/%m/%y"))
-        my_data <- data.frame(c(input$kval_var,
-                                if(input$kjønn_var == "nei"){"begge"}
-                                else{input$kjønn_var},
-                                format(input$date[1], "%d%m%y"),
-                                format(input$date[2], "%d%m%y"),
-                                input$alder_var[1],
-                                input$alder_var[2],
-                                input$type_op))
+        data.frame(
+          c(
+            input$kval_var,
+            if(input$kjønn_var == "nei"){"begge"}
+            else{input$kjønn_var},
+            format(input$date[1], "%d%m%y"),
+            format(input$date[2], "%d%m%y"),
+            input$alder_var[1],
+            input$alder_var[2],
+            input$type_op
+          )
+        )
       })
 
 
@@ -167,34 +170,38 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       # Basic utvalg
       df_reactive <- reactive({
-        deformitet::utvalg_basic(data,
-                                 userUnitId(),
-                                 input$kjønn_var,
-                                 input$type_op,
-                                 input$date[1],
-                                 input$date[2],
-                                 input$alder_var[1],
-                                 input$alder_var[2],
-                                 "ikke_filtrer_reshId")
+        deformitet::utvalg_basic(
+          data,
+          userUnitId(),
+          input$kjønn_var,
+          input$type_op,
+          input$date[1],
+          input$date[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          "ikke_filtrer_reshId"
+        )
       })
 
 
       kval_df_reactive <- reactive({
-        x <- deformitet::count_kvalind(df_reactive(),
-                                       input$kjønn_var,
-                                       input$kval_var,
-                                       userRole(),
-                                       userUnitId(),
-                                       map_data)
-        })
+        x <- deformitet::count_kvalind(
+          df_reactive(),
+          input$kjønn_var,
+          input$kval_var,
+          userRole(),
+          userUnitId(),
+          map_data
+        )
+      })
 
       ###### PLOT ####################################################################
 
       kval_plot <- reactive({
         deformitet::kval_plot(kval_df_reactive(),
-                              gg_data_reactive(),
-                              my_data_reactive(),
-                              input$kjønn_var)
+          gg_data_reactive(),
+          my_data_reactive(),
+          input$kjønn_var)
       })
 
       output$kval_plot <- renderPlot({
@@ -203,14 +210,17 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       ##### TABLE ####################################################################
 
-      output$kval_table <- DT::renderDT({datatable(kval_df_reactive(),
-                                                   class = 'white-space:nowrap compact',
-                                                   colnames = c("Sykehus",
-                                                                "Kjønn",
-                                                                "Antall",
-                                                                "Antall - kvalitetsindikator",
-                                                                "Andel - kvalitetsindikator"))
-        })
+      output$kval_table <- DT::renderDT({DT::datatable(kval_df_reactive(),
+        class = 'white-space:nowrap compact',
+        colnames = c(
+          "Sykehus",
+          "Kjønn",
+          "Antall",
+          "Antall - kvalitetsindikator",
+          "Andel - kvalitetsindikator"
+        )
+      )
+      })
 
       ##### KVALITETSINDIKATORER over tid ############################################
 
@@ -248,6 +258,3 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       })
     })
 }
-
-
-
