@@ -29,72 +29,106 @@ lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
 
   if (visning == "hele landet"){
     tabell1 <- tabell %>%
-      dplyr::filter(Sykehus != "Alle")
+      dplyr::filter(.data$Sykehus != "Alle")
 
     tabell2 <- tabell %>%
-      dplyr::filter(Sykehus == "Alle")
+      dplyr::filter(.data$Sykehus == "Alle")
 
     tabell1 <- tabell1 %>%
-      dplyr::mutate(Sykehus = paste(tabell1[,1], "n:", tabell1[,4]))
+      dplyr::mutate(Sykehus = paste(tabell1[, 1], "n:", tabell1[,4]))
 
     tabell2 <- tabell2 %>%
-      dplyr::mutate(Sykehus = paste(tabell2[,1], "n:", tabell2[,4]))
+      dplyr::mutate(Sykehus = paste(tabell2[, 1], "n:", tabell2[,4]))
 
-    label = c(paste(tabell1[,1],"n:", tabell1[,4]), paste(tabell2[,1], "n:", tabell2[,4]))
-  }
-
-  else{
+    c(
+      paste(
+        tabell1[, 1],
+        "n:",
+        tabell1[, 4]
+      ),
+      paste(
+        tabell2[,1],
+        "n:",
+        tabell2[,4]
+      )
+    )
+  } else {
     tabell <- tabell %>%
-    dplyr::rename(var = colnames(tabell[2])) %>%
-    dplyr::mutate(Sykehus = paste(tabell[,1], "n:", tabell[,4]))
+      dplyr::rename(var = colnames(tabell[2])) %>%
+      dplyr::mutate(Sykehus = paste(tabell[, 1], "n:", tabell[, 4]))
 
-    label = paste(tabell[,1],"n:", tabell[,4])
+    paste(tabell[, 1], "n:", tabell[, 4])
   }
 
 
   # Lage plot
 
-  fig_plot = ggplot()
+  fig_plot <- ggplot2::ggplot()
 
   if (visning == "hele landet"){ # => med sammenligning
-    fig_plot = fig_plot+
-      ggplot2::geom_col(data = tabell2, aes(x = var, y = Prosent,
-                                           color = Sykehus), fill = "#6CACE4")+
-      ggplot2::geom_point(data= tabell1, aes(x= var, y = Prosent,
-                                            color = Sykehus), shape = 23,
-                          fill = "#003087", size = 2.5)+
-
+    fig_plot <- fig_plot +
+      ggplot2::geom_col(
+        data = tabell2,
+        ggplot2::aes(
+          x = var,
+          y = Prosent,
+          color = Sykehus
+        ),
+        fill = "#6CACE4"
+      ) +
+      ggplot2::geom_point(
+        data = tabell1,
+        ggplot2::aes(
+          x = var,
+          y = Prosent,
+          color = Sykehus
+        ),
+        shape = 23,
+        fill = "#003087", size = 2.5
+      ) +
       ggplot2::scale_color_manual(values = # adding chosen colors
-                                  c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
+          c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
   }
 
-  if (visning != "hele landet"){ # => hvert sykehus og hele landet uten sammenligning
+  if (visning != "hele landet") { # => hvert sykehus og hele landet uten sammenligning
     fig_plot = fig_plot+
-      ggplot2::geom_col(data = tabell, aes(x = var, y = Prosent, fill = Sykehus), alpha = .9)+
+      ggplot2::geom_col(data = tabell, ggplot2::aes(x = var, y = Prosent, fill = Sykehus), alpha = .9) +
       ggplot2::facet_wrap(~Sykehus) +
-
       ggplot2::scale_fill_manual(values = # adding chosen colors
-                                    c("#6CACE4", "#ADDFB3", "#87189D", "black"))
+          c("#6CACE4", "#ADDFB3", "#87189D", "black"))
   }
 
 
-    # Change names of labels
-  fig_plot = fig_plot +
+  # Change names of labels
+  fig_plot <- fig_plot +
     ggplot2::xlab(gg_data$xlab)+
-    ggplot2::ylab("Andel")+
+    ggplot2::ylab("Andel") +
     ggplot2::labs(title = gg_data$title,
-                  caption = paste0("**Valgte variabler:**", "\n", data_var[1,], ", ", data_var[2,], "\n",
-                                   data_var[3,], "-", data_var[4,], "\n",
-                                   data_var[5,], "-", data_var[6,]))+
-
-
-    ggplot2::theme_bw(base_size = 16)+ # light theme
-
-    ggplot2::theme(plot.caption = element_text(color = "#87189D", # add caption
-                                               face = "italic"),
-                   axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-                   axis.text.y = element_text(size = 14),
-                   plot.title = element_text(size = 16))
+      caption = paste0(
+        "**Valgte variabler:**\n",
+        data_var[1, ],
+        ", ",
+        data_var[2, ],
+        "\n",
+        data_var[3, ],
+        "-",
+        data_var[4, ],
+        "\n",
+        data_var[5, ],
+        "-",
+        data_var[6, ]
+      )
+    ) +
+    ggplot2::theme_bw(base_size = 16) + # light theme
+    ggplot2::theme(
+      plot.caption = ggplot2::element_text(
+        color = "#87189D", # add caption
+        face = "italic"
+      ),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+      axis.text.y = ggplot2::element_text(size = 14),
+      plot.title = ggplot2::element_text(size = 16)
+    )
 
   return(fig_plot)
 }
