@@ -7,7 +7,7 @@
 prepVar(
   data,
   var,
-  var_kjønn,
+  var_kjonn,
   time1,
   time2,
   alder1,

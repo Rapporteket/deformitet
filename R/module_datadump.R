@@ -102,7 +102,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
       # filtrering
 
         clean_datadump_reactive <- reactive({
-          data <- deformitet::clean_datadump(data,
+          data <- deformitet::filtrer_datadump(data,
                                              input$date[1],
                                              input$date[2],
                                              input$kjønn_var,
@@ -113,8 +113,8 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
         })
 
 
-      colnames_surgeonform <- colnames(deformitet::deformitetHentTabell("surgeonform"))
-      colnames_surgeonfollowup <- colnames(deformitet::deformitetHentTabell("surgeonfollowup"))
+      colnames_surgeonform <- colnames(deformitet::defHentData("surgeonform"))
+      colnames_surgeonfollowup <- colnames(deformitet::defHentData("surgeonfollowup"))
 
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
@@ -138,9 +138,9 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
             }
         })
 
-     #  data <- regdata %>%
+     #  data <- RegData %>%
      #    dplyr::select(-any_of(colnames))
-     # intersect(colnames, names(regdata))
+     # intersect(colnames, names(RegData))
 
       output$datadump <- DT::renderDT({
         if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {

@@ -206,7 +206,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       output$kval_table <- DT::renderDT({datatable(kval_df_reactive(),
                                                    class = 'white-space:nowrap compact',
                                                    colnames = c("Sykehus",
-                                                                "Kjønn",
+                                                                "Kjonn",
                                                                 "Antall",
                                                                 "Antall - kvalitetsindikator",
                                                                 "Andel - kvalitetsindikator"))

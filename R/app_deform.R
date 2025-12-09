@@ -28,7 +28,7 @@ ui_deform <- function() {
           title = "Startside",
           shiny::mainPanel(
             width = 12,
-            #shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
+            shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
             rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE),
             tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico"))
           )
@@ -47,10 +47,10 @@ ui_deform <- function() {
         ################################################################################
         ##### TAB: Gjennomsnitt  #######################################################
 
-        shiny::tabPanel(
-          title = "Gjennomsnitt",
-          deformitet::module_gjennomsnitt_UI("gjen1")
-        ),
+        # shiny::tabPanel(
+        #   title = "Gjennomsnitt",
+        #   deformitet::module_gjennomsnitt_UI("gjen1")
+        # ),
 
 
         ################################################################################
@@ -90,7 +90,7 @@ ui_deform <- function() {
 
 
         shiny::tabPanel( # third tab
-          title = "Datautvalg",
+          title = "Registeradm",
           shiny::fluidPage(
             deformitet::module_datadump_UI(
               id = "module_1")
@@ -122,8 +122,6 @@ ui_deform <- function() {
 #' @return A shiny app server object
 #' @export
 
-### + eksport i server
-
 server_deform <- function(input, output, session) {
 
 
@@ -142,11 +140,11 @@ server_deform <- function(input, output, session) {
 
   ######### DATA TIDYING----------------------------------------------------------
   ### Read in data:
-  raw_regdata <- deformitet::les_og_flate_ut()
+  raw_regdata <- deformitet::alleRegData()
 
   #### Clean and tidy data:
 
-  regdata <- deformitet::pre_pros(raw_regdata)
+  RegData <- deformitet::pre_pros(raw_regdata)
 
   ######## USER INFO--------------------------------------------------------------
 
@@ -154,7 +152,7 @@ server_deform <- function(input, output, session) {
   # Must be organized as df with two columns: UnitId and orgname
   # in order for navbarWidgetServer2 to work properly
 
-  # map_db_resh <- regdata %>%
+  # map_db_resh <- RegData %>%
   #   dplyr::select(Sykehus, CENTREID) %>% # select required columns
   #   unique() %>% # keep only unique variables
   #   mutate(UnitId = CENTREID, # make new column with new name
@@ -162,9 +160,9 @@ server_deform <- function(input, output, session) {
   #   select(-c(Sykehus, CENTREID)) # take out old columns
 
   map_db_resh <- data.frame(  #map_avdeling <-
-    UnitId = unique(regdata$CENTREID),
-    orgname = regdata$Sykehus[match(unique(regdata$CENTREID),
-                                   regdata$CENTREID)])
+    UnitId = unique(RegData$CENTREID),
+    orgname = RegData$Sykehus[match(unique(RegData$CENTREID),
+                                   RegData$CENTREID)])
 
   user <- rapbase::navbarWidgetServer2(id = "deformitetNavbarWidget",
                                       orgName = "deformitet",
@@ -198,7 +196,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Fordelingsfigur- og tabell ##########################################
 
   deformitet::module_fordeling_server("fordeling",
-                                      data = regdata,
+                                      data = RegData,
                                       raw_data = raw_regdata,
                                       userRole = user$role,
                                       userUnitId = user$org(),
@@ -208,18 +206,18 @@ server_deform <- function(input, output, session) {
   ##### TAB: gjennomsnitt ########################################################
 
 
-  deformitet::module_gjennomsnitt_server("gjen1",
-                                         data = regdata,
-                                         userRole = user$role,
-                                         userUnitId = user$org,
-                                         map_data = map_db_resh)
+  # deformitet::module_gjennomsnitt_server("gjen1",
+  #                                        data = RegData,
+  #                                        userRole = user$role,
+  #                                        userUnitId = user$org,
+  #                                        map_data = map_db_resh)
 
   ################################################################################
   ##### TAB: Kvalitetsindikatorer ################################################
 
 
   deformitet::module_kvalitetsindikator_server("kval1",
-                                               data = regdata,
+                                               data = RegData,
                                                map_data = map_db_resh,
                                                userRole = user$role,
                                                userUnitId = user$org)
@@ -229,7 +227,7 @@ server_deform <- function(input, output, session) {
 
 
   deformitet::module_sammenligning_server("sam1",
-                                          data = regdata,
+                                          data = RegData,
                                           userRole = user$role,
                                           userUnitId = user$org)
 
@@ -238,7 +236,7 @@ server_deform <- function(input, output, session) {
 
 
   deformitet::module_registreringer_server("reg1",
-                                          data = regdata,
+                                          data = RegData,
                                           userRole = user$role,
                                           userUnitId = user$org())
 
@@ -253,7 +251,7 @@ server_deform <- function(input, output, session) {
 
 
   deformitet::module_datadump_server("module_1",
-                                     data = regdata,
+                                     data = RegData,
                                      userRole = user$role,
                                      userUnitId = user$org())
 

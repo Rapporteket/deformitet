@@ -72,7 +72,7 @@ finn_variabler <- function(var) {
 #'
 #' @examples
 #' \donttest{
-#' try(lag_sam_tabell(regdata, "Funksjon"))
+#' try(lag_sam_tabell(RegData, "Funksjon"))
 #' }
 #'
 #' @export

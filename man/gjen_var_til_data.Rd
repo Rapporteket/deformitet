@@ -7,9 +7,9 @@
 gjen_var_til_data(raw_data, data, gjen_var)
 }
 \arguments{
-\item{raw_data}{rå-regdata}
+\item{raw_data}{rå-RegData}
 
-\item{data}{regdata som har vært gjennom prepros}
+\item{data}{RegData som har vært gjennom prepros}
 
 \item{gjen_var}{valgt variabel}
 }
@@ -20,7 +20,7 @@ får navnet "gjen_var"
 }
 \examples{
 \donttest{
-try(gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve"))
+try(gjen_var_til_data(raw_regdata, RegData, "Diff_prosent_kurve"))
 }
 
 }

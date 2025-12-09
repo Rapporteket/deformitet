@@ -25,11 +25,11 @@ Alle reoperasjoner skal registreres. Dersom pasienter med skoliose opereres for 
 
 ```{r, include=FALSE, echo=FALSE}
 ### Read in data:
-raw_regdata <- deformitet::les_og_flate_ut()
+raw_regdata <- deformitet::alleRegData()
 
 #### Clean and tidy data:
 
-regdata <- deformitet::pre_pros(raw_regdata)
+RegData <- deformitet::pre_pros(raw_regdata)
 ```
 
 
@@ -37,7 +37,7 @@ regdata <- deformitet::pre_pros(raw_regdata)
 #### PER SYKEHUS #####
 
 #Alder, kobbvinkel og antall opererte
-age_curve_data <- regdata %>%
+age_curve_data <- RegData %>%
   filter(!is.na(PRE_MAIN_CURVE)) %>%
   group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
@@ -51,11 +51,11 @@ age_curve_data <- regdata %>%
 
 
 # Kjønn
-gender_data <- regdata %>%
+gender_data <- RegData %>%
   group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
-  count(f = Kjønn == "kvinne") %>%
+  count(f = Kjonn == "kvinne") %>%
   mutate(total = sum(n)) %>%
   filter(f == TRUE) %>%
   mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%
@@ -66,7 +66,7 @@ key_data <- left_join(age_curve_data, gender_data)
 
 #### NASJONALT ####
 # Alder, kobbvinkel og antall opererte
-nasjonalt_age_curve_data <- regdata %>%
+nasjonalt_age_curve_data <- RegData %>%
   filter(!is.na(PRE_MAIN_CURVE)) %>%
   group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
@@ -79,11 +79,11 @@ nasjonalt_age_curve_data <- regdata %>%
   select(-c(Alder_median, Alder_range))
 
 # Kjønn
-nasjonalt_gender_data <- regdata %>%
+nasjonalt_gender_data <- RegData %>%
   group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
-  count(f =  Kjønn == "kvinne") %>%
+  count(f =  Kjonn == "kvinne") %>%
   mutate(total = sum(n)) %>%
   filter(f == TRUE) %>%
   mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%

@@ -4,7 +4,7 @@
 #' @export
 #'
 
-prepVar <- function(data, var, var_kjønn,
+prepVar <- function(data, var, var_kjonn,
                     time1, time2,
                     alder1, alder2,
                     type_op,
@@ -17,9 +17,9 @@ prepVar <- function(data, var, var_kjønn,
   # Filter by gender
 
   data <- data %>%
-    dplyr::filter(Kjønn == dplyr::case_when({{var_kjønn}} == "kvinne" ~ "kvinne",
-                                            {{var_kjønn}} == "mann" ~ "mann",
-                                            {{var_kjønn}} != "kvinne" | {{var_kjønn}} != "mann" ~ Kjønn))
+    dplyr::filter(Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
+                                            {{var_kjonn}} == "mann" ~ "mann",
+                                            {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn))
 
   # Filter by operation type
 
@@ -353,7 +353,7 @@ prepVar <- function(data, var, var_kjønn,
       dplyr::select(c("Sykehus",
                       "CENTREID",
                       all_of({{var}}),
-                      "Kjønn",
+                      "Kjonn",
                       "CURRENT_SURGERY",
                       all_of(case_when({{var}} %in% skjema$tre_mnd_pas ~ "FILLING_DATE_patient3mths",
                                        {{var}} %in% skjema$tre_mnd_lege ~ "FILLING_DATE_surgeon3mths",
@@ -367,7 +367,7 @@ prepVar <- function(data, var, var_kjønn,
         dplyr::select(c("Sykehus",
                       "CENTREID",
                       all_of({{var}}),
-                      "Kjønn",
+                      "Kjonn",
                       "CURRENT_SURGERY"))
     }
 
@@ -378,7 +378,7 @@ prepVar <- function(data, var, var_kjønn,
 
 
 # Test of the function
-##x <- prepVar(regdata, "Kurve_pre", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
+##x <- prepVar(RegData, "Kurve_pre", "mm", "2023-01-02", "2024-10-02", 1, 20, "Primæroperasjon", "over_tid")
 # Inspect returned data frame (object 1 in list):
 ##rr <- data.frame(x[1])
 ## gg_data <- data.frame(x[2])
@@ -474,7 +474,7 @@ prep_var_na <- function (data, var) {
 
 # nolint start
 # sjekk at det fungerer:
-## r <- prep_var_na(regdata, "Helsetilstand_3mnd")
+## r <- prep_var_na(RegData, "Helsetilstand_3mnd")
 # nolint end
 
 

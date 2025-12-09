@@ -72,21 +72,21 @@ module_spc_server <- function (id) {
     function(input, output, session){
 
       ### Read in data:
-      regdata <- deformitet::les_og_flate_ut()
+      RegData <- deformitet::alleRegData()
 
       #### Clean and tidy data:
 
-      regdata <- deformitet::pre_pros(regdata)
+      RegData <- deformitet::pre_pros(RegData)
 
-      # regdata <- readRDS("../dev/fake_data_deformitet.rds")
+      # RegData <- readRDS("../dev/fake_data_deformitet.rds")
       #
-      # regdata <- pre_pros(regdata)
+      # RegData <- pre_pros(RegData)
 
 
       ##### MAKE BASIC UTVALG ##################################################
 
       data_reactive <- reactive({
-        x <- deformitet::utvalg_basic(regdata,
+        x <- deformitet::utvalg_basic(RegData,
                                       unit = input$unit,
                                       gender = "begge",
                                       type_op = "Begge",

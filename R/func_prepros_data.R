@@ -17,57 +17,62 @@
 # (xii) komplikasjoner - de ulike komplikasjonstypene. This is prepared in a
 # separate file
 
-##### This function is run on regdata after regdata is returned from
-##### les_og_flate_ut()
+##### This function is run on RegData after RegData is returned from
+##### alleRegData()
 ##### This function returns a complete data frame (no choices at this stage)
 
 
-pre_pros <- function(regdata){
+pre_pros <- function(RegData){
 
-  regdata <- regdata %>%
+  RegData <- RegData %>%
     dplyr::rename(PID = PATIENT_ID)
 
-  regdata <- regdata %>%
+  RegData <- RegData %>%
     dplyr::select(-starts_with("USERCOMMENT"))
 
 
-# SYKEHUS:
-regdata <- regdata %>%
+  RegData$ErMann = RegData$GENDER
+  RegData$ErMann[RegData$ErMann==2] <- 0
+
+  # SYKEHUS:
+  #new_name = old_name
+RegData <- RegData %>%
   dplyr::rename(Sykehus = CENTRESHORTNAME,
-                Kjønn = GENDER)  %>%
-  dplyr::mutate(Sykehus = dplyr::recode(Sykehus,
-                                        "Bergen" = "Haukeland",
-                                        "Riksen" = "Rikshospitalet"))
+                Kjonn = GENDER)
+# Dette må gjøres i QReg av registeret
+#  %>% dplyr::mutate(Sykehus = dplyr::recode(Sykehus, "Bergen" = "Haukeland", "Riksen" = "Rikshospitalet"))
 
 
-# (i) FOR KJØNN:
-# a. Turn into character
-regdata$Kjønn <- as.character(regdata$Kjønn)
+# KJØNN:
+RegData$Kjonn <- as.character(RegData$Kjonn)
+RegData <- RegData %>%
+  dplyr::mutate(Kjonn = dplyr::recode(Kjonn, "1" = "mann", "2" = "kvinne"))
 
-# b. Rename rows:
-regdata <- regdata %>%
-  dplyr::mutate(Kjønn = dplyr::recode(Kjønn, "1" = "mann", "2" = "kvinne"))
 
 # (ii) FOR ALDER:
 # a. Find number of years
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Alder =
                   (difftime(SURGERY_DATE, BIRTH_DATE,
-                            units = "weeks"))/52)
+                            units = "days"))/365.15)
 
 # b. Divide into age groups (defined by registry)
-regdata$Alder <- as.numeric(regdata$Alder)
-regdata$Alder_num <- as.integer(regdata$Alder)
+RegData$Alder <- as.numeric(RegData$Alder)
+RegData$Alder_num <- as.integer(RegData$Alder)
 
 
-regdata$Alder <- cut(regdata$Alder,
+
+
+# -----------Tilrettelegge variabler-----------------------
+
+RegData$Alder <- cut(RegData$Alder,
                      breaks = c(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 100),
                      labels = c("<9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20+"))
 
 
 # (iii) FOR BMI:
 # a. Make into a factor
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(BMI_kategori = as.factor(dplyr::recode(BMI_CATEGORY,
     "Alvorlig undervekt" = "Alvorlig undervekt < 16",
     "Moderat undervekt" = "Undervekt (16-17)",
@@ -78,7 +83,7 @@ regdata <- regdata %>%
     "Fedme, klasse II" = "Fedme, klasse II (35-40)",
     "Fedme, klasse III" = "Fedme, klasse III (40-50)")))
 
-regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
+RegData$BMI_kategori <- ordered(RegData$BMI_kategori,
                                 levels =c("Alvorlig undervekt < 16",
                                           "Undervekt (16-17)",
                                           "Mild undervekt (17-18,5)",
@@ -91,10 +96,10 @@ regdata$BMI_kategori <- ordered(regdata$BMI_kategori,
 
 # (iv) FOR PRE-OPERATIV KURVE:
   # a. Transform to numeric
-regdata$PRE_MAIN_CURVE <- as.numeric(regdata$PRE_MAIN_CURVE)
+RegData$PRE_MAIN_CURVE <- as.numeric(RegData$PRE_MAIN_CURVE)
 
   # b. Make curve groups (for easier visualization)
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Kurve_pre = cut(PRE_MAIN_CURVE,
                                 breaks = c(0, 40, 44, 49, 54, 59, 64, 69, 110),
                                 labels = c("< 40", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "> 70")))
@@ -102,16 +107,16 @@ regdata <- regdata %>%
 
 # (v) FOR POST-OPERATIV KURVE:
   # a. Transform to numeric
-regdata$POST_MAIN_CURVE <- as.numeric(regdata$POST_MAIN_CURVE)
+RegData$POST_MAIN_CURVE <- as.numeric(RegData$POST_MAIN_CURVE)
 
 # b. Make curve groups (for easier visualization)
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Kurve_post = cut(POST_MAIN_CURVE,
                                  breaks = c(0, 9, 19, 29, 39, 110),
                                  labels = c("0-9", "10-19", "20-29", "30-39", "> 40")))
 
 # b. FOR KURVE-DIFFERANSE PROSENT:
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Diff_prosent_kurve = (((PRE_MAIN_CURVE - POST_MAIN_CURVE)/PRE_MAIN_CURVE)*100),
                 Diff_prosent_kurve_raw = round(Diff_prosent_kurve, digits = 0),
                 Diff_prosent_kurve = cut(Diff_prosent_kurve_raw,
@@ -121,24 +126,24 @@ regdata <- regdata %>%
 
 # (vi) FOR LIGGETID:
 # a. Transform to numeric
-regdata$BED_DAYS_POSTOPERATIVE <- as.numeric(regdata$BED_DAYS_POSTOPERATIVE)
+RegData$BED_DAYS_POSTOPERATIVE <- as.numeric(RegData$BED_DAYS_POSTOPERATIVE)
 
 # b. Make curve groups (for easier visualization)
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Liggetid = cut(BED_DAYS_POSTOPERATIVE,
                                breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 40),
                                labels = c("1", "2", "3", "4", "5", "6", "7", "> 7")))
 
 
 # (vii) FOR KNIVTID:
-regdata <- regdata %>%
+RegData <- RegData %>%
   tidyr::unite("my_start", KNIFE_TIME_START_HOUR:KNIFE_TIME_START_MIN, sep = ":") %>%
   tidyr::unite("my_end", KNIFE_TIME_END_HOUR:KNIFE_TIME_END_MIN, sep = ":")
 
-regdata$my_start <- strptime(regdata$my_start, "%H:%M")
-regdata$my_end <- strptime(regdata$my_end, "%H:%M")
+RegData$my_start <- strptime(RegData$my_start, "%H:%M")
+RegData$my_end <- strptime(RegData$my_end, "%H:%M")
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(my_time_mins = my_end-my_start,
                 my_time_mins = gsub("mins", "", my_time_mins),
                 my_time_mins = as.numeric(my_time_mins),
@@ -152,7 +157,7 @@ regdata <- regdata %>%
   dplyr::select(-KNIFE_TIME_EXACT_MIN, -KNIFE_TIME_EXACT_TIMER, -my_time_mins,
                 -my_time_mins2, -my_start, -my_end)
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Knivtid = cut(kniv_tid,
                               breaks = c(0, 60, 90, 120, 150, 180, 210, 240,
                                          270, 300, 330, 360, 1000),
@@ -162,12 +167,12 @@ regdata <- regdata %>%
 
 # (viii) FOR BLODTAP:
 # a. Make groups (for easier visualization)
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Blodtap_100 = cut(PER_BLOOD_LOSS_VALUE,
                                   breaks = c(1, 99, 199, 299, 399, 499, 599, 699, 799, 899, 999, 1099, 1199, 1299, 1399, 1499, 2000),
                                   labels = c("< 100", "100-199", "200-299", "300-399", "400-499", "500-599", "600-699", "700-799", "800-899", "900-999", "1000-1099", "1100-1199", "1200-1299", "1300-1399", "1400-1499", "> 1500")))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Blodtap_200 = cut(PER_BLOOD_LOSS_VALUE,
                                   breaks = c(1, 199, 399, 599, 799, 999, 1199, 1399, 1599, 2000),
                                   labels = c("< 200", "200-399", "400-599", "600-799", "800-999", "1000-1199", "1200-1399", "1400-1599", "> 1600")))
@@ -175,22 +180,22 @@ regdata <- regdata %>%
 
 # (ix) FOR SRS22
 # MAIN FORM
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_total = cut(SRS22_MAIN_SCORE,
                                   breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                   labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_total_3mnd = cut(SRS22_FULL_SCORE,
                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_total_12mnd = cut(SRS22_FULL_SCORE_patient12mths,
                                        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_total_60mnd = cut(SRS22_FULL_SCORE_patient12mths,
                                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")))
@@ -198,7 +203,7 @@ regdata <- regdata %>%
 
 # FUNCTION
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_funksjon = cut(SRS22_FUNCTION_SCORE,
                                      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")),
@@ -214,7 +219,7 @@ regdata <- regdata %>%
 
 # PAIN
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_smerte = cut(SRS22_PAIN_SCORE,
                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")),
@@ -230,7 +235,7 @@ regdata <- regdata %>%
 
 # SELF IMAGE
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_selvbilde = cut(SRS22_SELFIMAGE_SCORE,
                                       breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                       labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")),
@@ -246,7 +251,7 @@ regdata <- regdata %>%
 
 # MENTAL HEALTH
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_mhelse = cut(SRS22_MENTALHEALTH_SCORE,
                                    breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                    labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")),
@@ -262,7 +267,7 @@ regdata <- regdata %>%
 
 # SRS22 - SATISFACTION (21 og 21) - from patient followup
   # Preop; 3-6 mnd; 12 mnd; 60 mnd
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(SRS22_fornoyd_3mnd = cut(SRS22_SATISFACTION_SCORE,
                                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
                                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")),
@@ -299,7 +304,7 @@ regdata <- regdata %>%
 
 
 # (xi) FOR HELSETILSTAND
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Helsetilstand = cut(HELSETILSTAND_SCALE,
                                     breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
                                     labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")),
@@ -319,21 +324,21 @@ regdata <- regdata %>%
 
 # (xii) FOR KOMPLIKASJONER
   # Procedure complications as indicated by patient
-regdata$PROCEDURE_COMPLICATIONS <- as.character(regdata$PROCEDURE_COMPLICATIONS)
-regdata$PROCEDURE_COMPLICATIONS_patient12mths <- as.character(regdata$PROCEDURE_COMPLICATIONS_patient12mths)
-regdata$PROCEDURE_COMPLICATIONS_patient60mths <- as.character(regdata$PROCEDURE_COMPLICATIONS_patient60mths)
+RegData$PROCEDURE_COMPLICATIONS <- as.character(RegData$PROCEDURE_COMPLICATIONS)
+RegData$PROCEDURE_COMPLICATIONS_patient12mths <- as.character(RegData$PROCEDURE_COMPLICATIONS_patient12mths)
+RegData$PROCEDURE_COMPLICATIONS_patient60mths <- as.character(RegData$PROCEDURE_COMPLICATIONS_patient60mths)
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Komplikasjoner_3mnd = dplyr::recode(PROCEDURE_COMPLICATIONS, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Komplikasjoner_12mnd = dplyr::recode(PROCEDURE_COMPLICATIONS_patient12mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
-regdata <- regdata %>%
+RegData <- RegData %>%
   dplyr::mutate(Komplikasjoner_60mnd = dplyr::recode(PROCEDURE_COMPLICATIONS_patient60mths, "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"))
 
 
-return(regdata)
+return(RegData)
 }
 
 

@@ -1,7 +1,7 @@
-#' Clean data for module data dump
+#' Filtrer data for module data dump
 #' Funksjonen filtrerer data
 #'
-#' @title Clean_datadump
+#' @title Filtrer datadump
 #'
 #' @param data datasett
 #' @param dato1 brukervalg - dato min
@@ -15,7 +15,7 @@
 #' @export
 
 
-clean_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole, userUnitId) {
+filtrer_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole, userUnitId) {
 
 
   data <- data %>%
@@ -23,9 +23,9 @@ clean_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole,
 
 
   data <- data %>%
-    dplyr::filter(Kjønn == dplyr::case_when({{kjoenn}} == "kvinne" ~ "kvinne",
+    dplyr::filter(Kjonn == dplyr::case_when({{kjoenn}} == "kvinne" ~ "kvinne",
                                             {{kjoenn}} == "mann" ~ "mann",
-                                            {{kjoenn}} != "kvinne" | {{kjoenn}} != "mann" ~ Kjønn))
+                                            {{kjoenn}} != "kvinne" | {{kjoenn}} != "mann" ~ Kjonn))
 
   data <- data %>%
     dplyr::filter(dplyr::between(Alder_num, {{alder1}}, {{alder2}}))
@@ -60,9 +60,9 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
   # Filter by gender
 
   data <- data %>%
-    dplyr::filter(Kjønn == dplyr::case_when({{gender}} == "kvinne" ~ "kvinne",
+    dplyr::filter(Kjonn == dplyr::case_when({{gender}} == "kvinne" ~ "kvinne",
                                             {{gender}} == "mann" ~ "mann",
-                                            {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjønn))
+                                            {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjonn))
 
   # Filter by operation type
 
@@ -95,6 +95,6 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
 ## TEST AT DET FUNGERER:
 ##
 ##
-##g <- utvalg_basic(regdata, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100, "ikke_filtrer_reshId")
+##g <- utvalg_basic(RegData, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100, "ikke_filtrer_reshId")
 
 # nolint end
