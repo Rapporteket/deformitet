@@ -106,8 +106,10 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 ```{r, include=FALSE, echo=FALSE}
 # Lag tabellen
 key_data_table <- key_data %>%
-  dplyr::mutate(pro_kvinne = paste(pro_kvinne, "%", sep = ""),
-    pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>%
+  dplyr::mutate(
+    pro_kvinne = paste(pro_kvinne, "%", sep = ""),
+    pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")
+  ) %>%
   dplyr::rename(
     "År" = "year",
     "Prosentandel kvinner" = pro_kvinne,

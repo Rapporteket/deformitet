@@ -18,22 +18,24 @@ clean_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole,
 
 
   data <- data %>%
-    dplyr::filter(dplyr::between(SURGERY_DATE, as.Date({{dato1}}), as.Date({{dato2}})))
+    dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date({{dato1}}), as.Date({{dato2}})))
 
 
   data <- data %>%
-    dplyr::filter(Kjønn == dplyr::case_when({{kjoenn}} == "kvinne" ~ "kvinne",
-                                            {{kjoenn}} == "mann" ~ "mann",
-                                            {{kjoenn}} != "kvinne" | {{kjoenn}} != "mann" ~ Kjønn))
+    dplyr::filter(.data$Kjønn == dplyr::case_when(
+      {{kjoenn}} == "kvinne" ~ "kvinne",
+      {{kjoenn}} == "mann" ~ "mann",
+      {{kjoenn}} != "kvinne" | {{kjoenn}} != "mann" ~ Kjønn
+    ))
 
   data <- data %>%
-    dplyr::filter(dplyr::between(Alder_num, {{alder1}}, {{alder2}}))
+    dplyr::filter(dplyr::between(.data$Alder_num, {{alder1}}, {{alder2}}))
 
 
   if (userRole != "SC") {
     data <- data %>%
       dplyr::select(-dplyr::contains(c("mths", "mnd"))) %>%
-      dplyr::filter(CENTREID == userUnitId)
+      dplyr::filter(.data$CENTREID == userUnitId)
   }
 
   return(data)

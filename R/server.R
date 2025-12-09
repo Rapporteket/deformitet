@@ -33,9 +33,11 @@ app_server <- function(input, output, session) {
     dplyr::select(-c("Sykehus", "CENTREID")) # take out old columns
 
 
-  user <- rapbase::navbarWidgetServer("deformitetNavbarWidget",
-                                      "deformitet",
-                                      map_orgname = shiny::req(map_db_resh))
+  user <- rapbase::navbarWidgetServer2(
+    "deformitetNavbarWidget",
+                                       "deformitet",
+                                       map_orgname = shiny::req(map_db_resh)
+                                       )
 
 
   #####################################################################
