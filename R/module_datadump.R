@@ -4,6 +4,7 @@
 #'@export
 module_datadump_UI <- function(id){
   ns <- NS(id)
+
   shiny::tagList(
     shiny::fluidPage(
       shiny::sidebarPanel(
@@ -25,7 +26,7 @@ module_datadump_UI <- function(id){
           )),
 
         selectInput( # second select - var2
-          inputId = ns("kjønn_var"),
+          inputId = ns("kjonn_var"),
           label = "Utvalg basert på kjønn",
           choices = c("begge", "mann", "kvinne"),
           selected = "begge"),
@@ -38,12 +39,13 @@ module_datadump_UI <- function(id){
           value = c(0,100),
           dragRange = TRUE),
 
+        #startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01')
         dateRangeInput( # first select - var1
           inputId = ns("date"),
           label = "Tidsintervall:",
-          start = startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),  # "2023-01-01",
+          start = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),  # "2023-01-01",
           end = Sys.Date(),
-          min = "2023-01-01",
+          min = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'), # "2023-01-01",
           max = "2026-01-01",
           format = "dd-mm-yyyy",
           separator = " - "),
@@ -101,11 +103,11 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       # filtrering
 
-        clean_datadump_reactive <- reactive({
+        Datadump_reactive <- reactive({
           data <- deformitet::filtrer_datadump(data,
                                              input$date[1],
                                              input$date[2],
-                                             input$kjønn_var,
+                                             input$kjonn_var,
                                              input$alder_var[1],
                                              input$alder_var[2],
                                              userRole(),
@@ -118,26 +120,36 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
-      #------- Koble på selvvalgte navn----------
-      variabelTab <- rapbase::loadRegData(registryName = "deformitet",
-                                           query = "SELECT * FROM friendlyvars")
-      # I tabellen er det ingen variabel som identifiserer når et skjema er brukt
-      # eks etter 6 mnd, to år osv.
-      egnenavn <- variabelTab[!is.na(variabelTab$USER_SUGGESTION),
-                              c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION")]
+ #------- Datadump med selvvalgte navn----------
+
+      #NB: Enklest å lage hele datadumpen her uten å hente "tilsmussede data"...
+      #Mappe på navn skjema for skjema
+
+      # raw_regdata <- deformitet::alleRegData()
+      # RegData <- deformitet::pre_pros(raw_regdata)
+
+
+
+
+      # ----#Sjekk hvilke variabler som har originalnavn og kan endres
+      #Gå gjennom navneendringer i kode og gjør disse i samsvar med selvvalgte navn
+
+
+#      -------------------------------------------------------------------
 
       # orgname = RegData$ShNavn[match(unique(RegData$ReshId), RegData$ReshId)])
 
       select_datadump_reactive <- reactive ({
         if (input$skjema_type == "Pasientskjema"){
-          data <- clean_datadump_reactive() %>%
+          data <- Datadump_reactive() %>%
             dplyr::select(-any_of(colnames))
           } else {
-            data <- clean_datadump_reactive() %>%
+            data <- Datadump_reactive() %>%
               dplyr::select(any_of(colnames))
             }
         })
 
+      #sjekk:
      #  data <- RegData %>%
      #    dplyr::select(-any_of(colnames))
      # intersect(colnames, names(RegData))
@@ -147,7 +159,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
           table <- DT::datatable(select_datadump_reactive(),
                                  class = 'white-space:nowrap compact')
         } else {
-            table <- DT::datatable(clean_datadump_reactive(),
+            table <- DT::datatable(Datadump_reactive(),
                                    class = 'white-space:nowrap compact')
             }
       })
@@ -161,7 +173,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
           if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
             write.csv2(select_datadump_reactive(), file)
           } else {
-            write.csv(clean_datadump_reactive(), file)
+            write.csv(Datadump_reactive(), file)
           }
         }
       )

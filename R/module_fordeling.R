@@ -66,7 +66,7 @@ module_fordeling_UI <- function (id) {
 
 
           selectInput( # andre valg
-            inputId = ns("kjønn_var"),
+            inputId = ns("kjonn_var"),
             label = "Utvalg basert på kjønn",
             choices = c("begge", "mann", "kvinne"),
             selected = "begge"),
@@ -194,7 +194,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         deformitet::prepVar(
           data,
           input$x_var,
-          input$kjønn_var,
+          input$kjonn_var,
           input$dato[1],
           input$dato[2],
           input$alder_var[1],
@@ -207,7 +207,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       my_data_reactive <- reactive({
         x <- format(input$dato, "%d/%m/%y")
-        my_data <- data.frame(c(input$x_var, input$kjønn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
+        my_data <- data.frame(c(input$x_var, input$kjonn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
       })
 
 
@@ -246,7 +246,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         kompl_data_reative <- reactive({
           deformitet::kompl_data(data,
                                  input$x_var,
-                                 input$kjønn_var,
+                                 input$kjonn_var,
                                  input$dato[1],
                                  input$dato[2],
                                  input$alder_var[1],
@@ -271,7 +271,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
           data_prep <- deformitet::prepVar(
             data,
             var,
-            input$kjønn_var,
+            input$kjonn_var,
             input$dato[1],
             input$dato[2],
             input$alder_var[1],
@@ -294,7 +294,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
           deformitet::kompl_tbl(
             kompl_prepVar_reactive(),
             kompl_data_reative(),
-            input$kjønn_var,
+            input$kjonn_var,
             input$visning_type,
             reshid
             )
@@ -395,7 +395,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         deformitet::prepVar(
           gjen_added_reactive(),
           "gjen_var",
-          input$kjønn_var,
+          input$kjonn_var,
           input$dato[1],
           input$dato[2],
           input$alder_var[1],

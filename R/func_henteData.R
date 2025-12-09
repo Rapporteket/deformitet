@@ -23,7 +23,7 @@ defHentData <- function(tabellnavn = "surgeonform") {
 #' Ferdigstilte data
 #'
 #' @export
-alleRegData <- function() {
+alleRegData <- function(egneVarNavn=0) {
 
   mce <- defHentData("mce")
   centre <- defHentData("centre") # %>%
@@ -33,6 +33,42 @@ alleRegData <- function() {
   patient_form <- defHentData("patientform")
   surgeon_followup <- defHentData("surgeonfollowup")
   surgeon_form <- defHentData("surgeonform")
+
+  if (egneVarNavn==1){
+
+    FriendlyVarTab  <- defHentData('friendlyvars')
+    FriendlyVarTab <- FriendlyVarTab[!is.na(FriendlyVarTab$USER_SUGGESTION),
+                            c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
+    #Egenvalgte navn omfatter disse:
+    # TABLE_NAME: PATIENT, SURGEONFORM, PATIENTFOLLOWUP, PATIENTFORM, SURGEONFOLLOWUP
+    # REGISTRATION_TYPE:
+    # PATIENT, PATIENTFOLLOWUP, PATIENTFOLLOWUP12, PATIENTFORM,
+    # SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
+    #rename: new_name = old_name
+
+    egneNavn <- function(dataTab = patient, tabNavn = 'PATIENT', FriendlyVarTab){
+      Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME==tabNavn]
+      names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME==tabNavn]
+      data <- rename(dataTab, all_of(Navn))
+      return(data)
+      }
+
+    #patient <- egneNavn(patient, 'PATIENT', FriendlyVarTab)
+    Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME=='PATIENT']
+    names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='PATIENT']
+    patient <- rename(patient, all_of(Navn))
+
+    # surgeon_form <- egneNavn(data = surgeon_form, tabNavn = 'SURGEONFORM', FriendlyVarTab)
+    Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
+    names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
+    test <- rename(surgeon_form, all_of(Navn))
+
+    patient_form <- defHentData("patientform")
+
+    patient_followup <- defHentData("patientfollowup")
+    surgeon_followup <- defHentData("surgeonfollowup")
+
+  }
 
   RegData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
     merge(surgeon_form %>% dplyr::filter(STATUS == 1),

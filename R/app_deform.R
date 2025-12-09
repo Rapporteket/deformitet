@@ -93,7 +93,7 @@ ui_deform <- function() {
           title = "Registeradm",
           shiny::fluidPage(
             deformitet::module_datadump_UI(
-              id = "module_1")
+              id = "mod_datadump")
             )),
 
         shiny::tabPanel(
@@ -250,7 +250,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  deformitet::module_datadump_server("module_1",
+  deformitet::module_datadump_server("mod_datadump",
                                      data = RegData,
                                      userRole = user$role,
                                      userUnitId = user$org())
