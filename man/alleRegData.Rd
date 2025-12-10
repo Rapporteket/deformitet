@@ -5,7 +5,7 @@
 \title{Hente og koble sammen "alle" tabeller
 Ferdigstilte data}
 \usage{
-alleRegData()
+alleRegData(egneVarNavn = 0)
 }
 \description{
 Hente og koble sammen "alle" tabeller

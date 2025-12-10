@@ -5,15 +5,62 @@
 #'                   mce
 #'                   mce_patient_data
 #'                   patient
-#'                   patientfollowup
 #'                   patientform
-#'                   surgeonfollowup
+#'                   patientfollowup
 #'                   surgeonform
+#'                   surgeonfollowup
+#'
+#' @param egneVarNavn 0 - Qreg-navn benyttes.
+#'                    1 - selvvalgte navn fra Friendlyvar benyttes
+#' mce og mce_patient_data har ingen selvvalgte navn
+#' Egenvalgte navn omfatter REGISTRATION_TYPE:
+#' PATIENT, PATIENTFOLLOWUP, PATIENTFOLLOWUP12, ,
+#' SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
+#' NB: Hvis egendefinerte navn velges for oppfølgingsskjema, flates skjemaet ut.
+#'
+#'
 #' @export
-defHentData <- function(tabellnavn = "surgeonform") {
+
+defHentData <- function(tabellnavn = "surgeonform", egneVarNavn=0) {
+
   query <- paste0("SELECT * FROM ", tabellnavn)
   tabell <- rapbase::loadRegData(registryName = "data",
                                  query = query)
+
+  if (egneVarNavn==1){
+    FriendlyVarTab  <- rapbase::loadRegData(registryName = "data",
+                                            query = "SELECT * FROM friendlyvars")
+    FriendlyVarTab <- FriendlyVarTab[
+      !is.na(FriendlyVarTab$USER_SUGGESTION),
+      c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
+
+    tabMegneNavn <- function(tabell, tabType){
+      indTabType <- which(FriendlyVarTab$REGISTRATION_TYPE %in% tabType)
+      Navn <- FriendlyVarTab$FIELD_NAME[indTabType]
+      names(Navn) <- FriendlyVarTab$USER_SUGGESTION[indTabType]
+      tabell <- dplyr::rename(tabell, all_of(Navn))
+    }
+
+    if (tabellnavn == "surgeonform") {
+        tabell$KNIFE_TIME_CALCULATED <- 0}
+
+    if (tabellnavn %in% c('patientfollowup', 'surgeonfollowup')){
+
+      tabell12 <- tabell %>% dplyr::filter(FOLLOWUP == 12)
+      tabell12 <- tabMegneNavn(tabell=tabell12,
+                               tabType=paste0(toupper(tabellnavn), '12'))
+      tabell3 <- tabell %>% dplyr::filter(FOLLOWUP == 3)
+      tabell3 <- tabMegneNavn(tabell=tabell3,
+                              tabType=toupper(tabellnavn))
+      # dblNavn <- intersect(names(tabell3), names(tabell12[,-which(names(tabell12)=='MCEID')]))
+      # tabell <- merge(tabell3, tabell12[,-which(names(tabell12) %in% dblNavn)], by='MCEID')
+      tabell <- merge(tabell3, tabell12, by='MCEID', suffixes = c('3mnd', '12mnd'))
+    } else {
+      tabell <- tabMegneNavn(tabell=tabell,
+                             tabType=toupper(tabellnavn))
+    }
+  }
+
   return(tabell)
 }
 
@@ -25,54 +72,20 @@ defHentData <- function(tabellnavn = "surgeonform") {
 #' @export
 alleRegData <- function(egneVarNavn=0) {
 
+  #Endre så får med melding
+  # stopifnot(egneVarNavn %in% 0:1,
+  #           'Ugyldig valg for parameter "egneVarNavn"')
+
   mce <- defHentData("mce")
   centre <- defHentData("centre") # %>%
  #   dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
-  patient <- defHentData("patient")
-  patient_followup <- defHentData("patientfollowup")
-  patient_form <- defHentData("patientform")
-  surgeon_followup <- defHentData("surgeonfollowup")
-  surgeon_form <- defHentData("surgeonform")
+  patient <- defHentData("patient", egneVarNavn = egneVarNavn)
+  patient_followup <- defHentData("patientfollowup", egneVarNavn = egneVarNavn)
+  patient_form <- defHentData("patientform", egneVarNavn = egneVarNavn)
+  surgeon_followup <- defHentData("surgeonfollowup", egneVarNavn = egneVarNavn)
+  surgeon_form <- defHentData("surgeonform", egneVarNavn = egneVarNavn)
 
-  if (egneVarNavn==1){
-
-    FriendlyVarTab  <- defHentData('friendlyvars')
-    FriendlyVarTab <- FriendlyVarTab[!is.na(FriendlyVarTab$USER_SUGGESTION),
-                            c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
-    #Egenvalgte navn omfatter disse:
-    # TABLE_NAME: PATIENT, SURGEONFORM, PATIENTFOLLOWUP, PATIENTFORM, SURGEONFOLLOWUP
-    # REGISTRATION_TYPE:
-    # PATIENT, PATIENTFOLLOWUP, PATIENTFOLLOWUP12, PATIENTFORM,
-    # SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
-    #rename: new_name = old_name
-
-    egneNavn <- function(dataTab = patient, tabNavn = 'PATIENT', FriendlyVarTab){
-      Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME==tabNavn]
-      names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME==tabNavn]
-      data <- rename(dataTab, all_of(Navn))
-      return(data)
-      }
-
-    #patient <- egneNavn(patient, 'PATIENT', FriendlyVarTab)
-    Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME=='PATIENT']
-    names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='PATIENT']
-    patient <- rename(patient, all_of(Navn))
-
-
-#FORTSETT HER:
-    # surgeon_form <- egneNavn(data = surgeon_form, tabNavn = 'SURGEONFORM', FriendlyVarTab)
-    surgeon_form$KNIFE_TIME_CALCULATED <- Beregnes
-    Navn <- FriendlyVarTab$FIELD_NAME[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
-    names(Navn) <- FriendlyVarTab$USER_SUGGESTION[FriendlyVarTab$TABLE_NAME=='SURGEONFORM']
-    test <- rename(surgeon_form, all_of(Navn))
-
-    patient_form <- defHentData("patientform")
-
-    patient_followup <- defHentData("patientfollowup")
-    surgeon_followup <- defHentData("surgeonfollowup")
-
-  }
-
+if (egneVarNavn==0) {
   RegData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
     merge(surgeon_form %>% dplyr::filter(STATUS == 1),
           by = "MCEID", suffixes = c("", "_surgeon")) %>%
@@ -90,7 +103,22 @@ alleRegData <- function(egneVarNavn=0) {
           suffixes = c("", "_surgeon3mths"), by = "MCEID", all.x = TRUE) %>%
     merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 12 & STATUS == 1),
           suffixes = c("", "_surgeon12mths"), by = "MCEID", all.x = TRUE)
+}
 
+  if (egneVarNavn == 1) {
+    #NB: status-variabel har endret navn. Ta med filtrering på status før endrer navn
+    RegData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
+      merge(surgeon_form %>% dplyr::filter(STATUS == 1),
+            by = "MCEID", suffixes = c("", "_lege")) %>%
+      merge(patient_form %>% dplyr::filter(STATUS == 1),
+            by = "MCEID", suffixes = c("", "_pasient"), all.x = TRUE) %>%
+      merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_pasOppl"),
+            by.y = "ID") %>%
+      merge(patient_followup %>% dplyr::filter(STATUS == 1),
+            suffixes = c("", "_pasOppf"), by = "MCEID", all.x = TRUE) %>%
+      merge(surgeon_followup %>% dplyr::filter(STATUS == 1),
+            suffixes = c("", "_legeOppf"), by = "MCEID", all.x = TRUE)
+  }
   return(RegData)
 }
 

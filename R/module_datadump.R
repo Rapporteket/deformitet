@@ -122,14 +122,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       #------- Datadump med selvvalgte navn----------
 
-      #NB: Enklest å lage hele datadumpen her uten å hente "tilsmussede data"...
-      #Mappe på navn skjema for skjema
-
-      # raw_regdata <- deformitet::alleRegData()
-      # RegData <- deformitet::pre_pros(raw_regdata)
-
-
-
+      RegDataEgneNavn <- deformitet::alleRegData(egneVarNavn=1)
 
       # ----#Sjekk hvilke variabler som har originalnavn og kan endres
       #Gå gjennom navneendringer i kode og gjør disse i samsvar med selvvalgte navn

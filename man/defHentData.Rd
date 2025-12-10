@@ -4,7 +4,7 @@
 \alias{defHentData}
 \title{Hent datatabell fra Deformitets database}
 \usage{
-defHentData(tabellnavn = "surgeonform")
+defHentData(tabellnavn = "surgeonform", egneVarNavn = 0)
 }
 \arguments{
 \item{tabellnavn}{Navn på tabell som skal lastes inn.
@@ -12,10 +12,18 @@ Kan ha følgende verdier:
 mce
 mce_patient_data
 patient
-patientfollowup
 patientform
-surgeonfollowup
-surgeonform}
+patientfollowup
+surgeonform
+surgeonfollowup}
+
+\item{egneVarNavn}{0 - Qreg-navn benyttes.
+                   1 - selvvalgte navn fra Friendlyvar benyttes
+mce og mce_patient_data har ingen selvvalgte navn
+Egenvalgte navn omfatter REGISTRATION_TYPE:
+PATIENT, PATIENTFOLLOWUP, PATIENTFOLLOWUP12, ,
+SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
+NB: Hvis egendefinerte navn velges for oppfølgingsskjema, flates skjemaet ut.}
 }
 \description{
 Hent datatabell fra Deformitets database
