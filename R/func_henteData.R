@@ -21,11 +21,15 @@
 #'
 #' @export
 
-defHentData <- function(tabellnavn = "surgeonform", egneVarNavn=0) {
+defHentData <- function(tabellnavn = "surgeonform", egneVarNavn=0, status=1) {
 
   query <- paste0("SELECT * FROM ", tabellnavn)
   tabell <- rapbase::loadRegData(registryName = "data",
                                  query = query)
+
+if ('STATUS' %in% names(tabell)) {
+  tabell <- tabell[tabell$STATUS == status, ]
+}
 
   if (egneVarNavn==1){
     FriendlyVarTab  <- rapbase::loadRegData(registryName = "data",
@@ -86,37 +90,37 @@ alleRegData <- function(egneVarNavn=0) {
   surgeon_form <- defHentData("surgeonform", egneVarNavn = egneVarNavn)
 
 if (egneVarNavn==0) {
-  RegData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
-    merge(surgeon_form %>% dplyr::filter(STATUS == 1),
+  RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) %>%
+    merge(surgeon_form ,
           by = "MCEID", suffixes = c("", "_surgeon")) %>%
-    merge(patient_form %>% dplyr::filter(STATUS == 1),
+    merge(patient_form ,
           by = "MCEID", suffixes = c("", "_patient_form"), all.x = TRUE) %>%
     merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_patient"),
           by.y = "ID") %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 3 & STATUS == 1),
+    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 3),
           suffixes = c("", "_patient3mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 12 & STATUS == 1),
+    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 12),
           suffixes = c("", "_patient12mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 60 & STATUS == 1),
+    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 60),
           suffixes = c("", "_patient60mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 3 & STATUS == 1),
+    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 3),
           suffixes = c("", "_surgeon3mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 12 & STATUS == 1),
+    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 12),
           suffixes = c("", "_surgeon12mths"), by = "MCEID", all.x = TRUE)
 }
 
   if (egneVarNavn == 1) {
     #NB: status-variabel har endret navn. Ta med filtrering på status før endrer navn
-    RegData <- merge(mce, centre, by.y = "ID", by.x = "CENTREID", all.y = TRUE) %>%
-      merge(surgeon_form %>% dplyr::filter(STATUS == 1),
-            by = "MCEID", suffixes = c("", "_lege")) %>%
-      merge(patient_form %>% dplyr::filter(STATUS == 1),
-            by = "MCEID", suffixes = c("", "_pasient"), all.x = TRUE) %>%
+    RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) %>%
       merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_pasOppl"),
-            by.y = "ID") %>%
-      merge(patient_followup %>% dplyr::filter(STATUS == 1),
+            by.y = "PasientID") %>%
+      merge(surgeon_form ,
+            by = "MCEID", suffixes = c("", "_lege")) %>%
+      merge(patient_form ,
+            by = "MCEID", suffixes = c("", "_pasient"), all.x = TRUE) %>%
+      merge(patient_followup ,
             suffixes = c("", "_pasOppf"), by = "MCEID", all.x = TRUE) %>%
-      merge(surgeon_followup %>% dplyr::filter(STATUS == 1),
+      merge(surgeon_followup ,
             suffixes = c("", "_legeOppf"), by = "MCEID", all.x = TRUE)
   }
   return(RegData)

@@ -12,9 +12,11 @@ module_datadump_UI <- function(id){
         selectInput(
           inputId = ns("choice_datadump"),
           label = "Ønsket datautvalg:",
-          choices = c("Datasett basert på utvalg",
-                      "Datasett basert på skjematype og utvalg"),
-          selected = "Datasett basert på utvalg"),
+          choices = c(
+            "Datasett med egne navn",
+            "Datasett basert på utvalg",
+            "Datasett basert på skjematype og utvalg"),
+          selected = "Datasett med egne navn"),
 
         conditionalPanel(
           condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
@@ -63,9 +65,10 @@ module_datadump_UI <- function(id){
                              ),
                              bslib::card_body(
                                h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
-              data som allerede tilhører brukerens enhet (allerede journalført data,
-                 dvs. ikke PROM)"),
+              data som allerede tilhører brukerens enhet (allerede journalført data, dvs. ikke PROM)"),
+                               h4('Lena: Jeg foreslår at vi første omgang bare lar SC-bruker laste ned data'),
                                h3("Datasett basert på utvalg"),
+                               h3("Datasett med selvvalgte navn har foreløpig ingen filtreringmuligheter og kan heller ikke forhåndsvises"),
                                p("Dersom 'Datasett basert på utvalg' velges vil flere valg bli
               tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra -
               aldersintervall, tidsintervall, pasientens kjønn. Instillingene som er satt
@@ -122,10 +125,12 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       #------- Datadump med selvvalgte navn----------
 
-      RegDataEgneNavn <- deformitet::alleRegData(egneVarNavn=1)
 
-      # ----#Sjekk hvilke variabler som har originalnavn og kan endres
-      #Gå gjennom navneendringer i kode og gjør disse i samsvar med selvvalgte navn
+      output$datadumpEgneNavn <- DT::renderDT({
+        if (input$choice_datadump == "Datasett med selvvalgte navn") {
+          table <- deformitet::alleRegData(egneVarNavn=1)
+        }
+      })
 
 
       #      -------------------------------------------------------------------
@@ -142,10 +147,6 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
         }
       })
 
-      #sjekk:
-      #  data <- RegData %>%
-      #    dplyr::select(-any_of(colnames))
-      # intersect(colnames, names(RegData))
 
       output$datadump <- DT::renderDT({
         if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
@@ -160,16 +161,21 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       output$download_data <- downloadHandler(
         filename = function() {
-          paste('deformitet-', Sys.Date(), '.csv', sep = '')
+          paste0('deformitet-', Sys.Date(), '.csv')
         },
         content = function(file) {
           if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
             write.csv2(select_datadump_reactive(), file)
           } else {
-            write.csv(Datadump_reactive(), file)
+            if (input$choice_datadump == "Datasett med selvvalgte navn") {
+              write.csv2(datadumpEgneNavn(), file)
+                } else {
+            write.csv2(Datadump_reactive(), file)}
           }
         }
-      )
+      ) #lastned rådump
+
+
     }
   )
 }
