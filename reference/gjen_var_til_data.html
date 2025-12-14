@@ -46,7 +46,7 @@ får navnet "gjen_var"'><meta property="og:image" content="/logo.svg"><!-- mathj
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>gjen_var_til_data</h1>
-    <small class="dont-index">Source: <a href="http://github.com/Rapporteket/deformitet/blob/v1.4.0/R/func_fordeling.R" class="external-link"><code>R/func_fordeling.R</code></a></small>
+    <small class="dont-index">Source: <a href="http://github.com/Rapporteket/deformitet/blob/v1.4.1/R/func_fordeling.R" class="external-link"><code>R/func_fordeling.R</code></a></small>
     <div class="hidden name"><code>gjen_var_til_data.Rd</code></div>
     </div>
 
@@ -65,11 +65,11 @@ får navnet "gjen_var"</p>
 
 
 <dl><dt id="arg-raw-data">raw_data<a class="anchor" aria-label="anchor" href="#arg-raw-data"></a></dt>
-<dd><p>rå-regdata</p></dd>
+<dd><p>rå-RegData</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>regdata som har vært gjennom prepros</p></dd>
+<dd><p>RegData som har vært gjennom prepros</p></dd>
 
 
 <dt id="arg-gjen-var">gjen_var<a class="anchor" aria-label="anchor" href="#arg-gjen-var"></a></dt>
@@ -80,8 +80,8 @@ får navnet "gjen_var"</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">gjen_var_til_data</span><span class="op">(</span><span class="va">raw_regdata</span>, <span class="va">regdata</span>, <span class="st">"Diff_prosent_kurve"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir) : object 'regdata' not found</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">gjen_var_til_data</span><span class="op">(</span><span class="va">raw_regdata</span>, <span class="va">RegData</span>, <span class="st">"Diff_prosent_kurve"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir) : object 'RegData' not found</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
