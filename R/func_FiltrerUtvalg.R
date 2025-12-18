@@ -6,29 +6,16 @@
 #' @param data datasett
 #' @param dato1 brukervalg - dato min
 #' @param dato2 brukervalg - dato max
-#' @param kjoenn brukervalg - kjønn
-#' @param alder1 brukervalg - alder min
-#' @param alder2 brukervalg - alder max
 #' @param userRole brukerrolle
 #' @param userUnitId brukertilhørighet
 #' @return datasett filtrert på brukervalg
 #' @export
 
 
-filtrer_datadump <- function(data, dato1, dato2, kjoenn, alder1, alder2, userRole, userUnitId) {
-
+filtrer_datadump <- function(data, dato1, dato2, userRole, userUnitId) { #
 
   data <- data %>%
     dplyr::filter(dplyr::between(SURGERY_DATE, as.Date({{dato1}}), as.Date({{dato2}})))
-
-
-  data <- data %>%
-    dplyr::filter(Kjonn == dplyr::case_when({{kjoenn}} == "kvinne" ~ "kvinne",
-                                            {{kjoenn}} == "mann" ~ "mann",
-                                            {{kjoenn}} != "kvinne" | {{kjoenn}} != "mann" ~ Kjonn))
-
-  data <- data %>%
-    dplyr::filter(dplyr::between(Alder_num, {{alder1}}, {{alder2}}))
 
 
   if (userRole != "SC") {

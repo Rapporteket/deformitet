@@ -13,10 +13,10 @@ module_datadump_UI <- function(id){
           inputId = ns("choice_datadump"),
           label = "Ønsket datautvalg:",
           choices = c(
-            "Datasett med egne navn",
+            "Datasett med selvvalgte navn",
             "Datasett basert på utvalg",
             "Datasett basert på skjematype og utvalg"),
-          selected = "Datasett med egne navn"),
+          selected = "Datasett med selvvalgte navn"),
 
         conditionalPanel(
           condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
@@ -27,34 +27,19 @@ module_datadump_UI <- function(id){
                         "Kirurgskjema")
           )),
 
-        selectInput( # second select - var2
-          inputId = ns("kjonn_var"),
-          label = "Utvalg basert på kjønn",
-          choices = c("begge", "mann", "kvinne"),
-          selected = "begge"),
-
-        sliderInput( # third select - var3
-          inputId = ns("alder_var"),
-          label = "Aldersintervall:",
-          min = 0,
-          max = 100,
-          value = c(0,100),
-          dragRange = TRUE),
-
-        #startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01')
-        dateRangeInput( # first select - var1
+       #startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01')
+        dateRangeInput(
           inputId = ns("date"),
           label = "Tidsintervall:",
-          start = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),  # "2023-01-01",
+          start = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),
           end = Sys.Date(),
-          min = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'), # "2023-01-01",
-          max = "2026-01-01",
+          min = "2023-01-01",
+          max = Sys.Date(),
           format = "dd-mm-yyyy",
           separator = " - "),
 
         shiny::downloadButton(ns("download_data"), "Last ned data")
       ),
-
 
       mainPanel(
         bslib::navset_card_underline(
@@ -66,14 +51,9 @@ module_datadump_UI <- function(id){
                              bslib::card_body(
                                h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
               data som allerede tilhører brukerens enhet (allerede journalført data, dvs. ikke PROM)"),
-                               h4('Lena: Jeg foreslår at vi første omgang bare lar SC-bruker laste ned data'),
                                h3("Datasett basert på utvalg"),
-                               h3("Datasett med selvvalgte navn har foreløpig ingen filtreringmuligheter og kan heller ikke forhåndsvises"),
-                               p("Dersom 'Datasett basert på utvalg' velges vil flere valg bli
-              tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra -
-              aldersintervall, tidsintervall, pasientens kjønn. Instillingene som er satt
-              som default inkluderer hele datasettet. Dersom ingen av instillingene endres
-              vil brukeren laste ned all data som er tilgjengelig for denne brukeren."),
+                               p("Dersom 'Datasett basert på utvalg' velges, vil flere valg bli
+              tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra tidsintervall."),
                                h3("Datasett basert på skjematype"),
                                p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å laste ned et datasett fra hvert eller
                 flere av skjemaene som registeret sender inn. Det vil også her være mulig å begrense utvalget.",
@@ -99,41 +79,37 @@ module_datadump_UI <- function(id){
 
 
 #'@export
+
 module_datadump_server <- function(id, data, userRole, userUnitId){
   moduleServer(
     id,
     function(input, output, session){
 
+    datadumpEgneNavn <- reactive({
+        if (input$choice_datadump == "Datasett med selvvalgte navn") {
+          data <- deformitet::alleRegData(egneVarNavn=1) %>%
+            dplyr::filter(dplyr::between(InnDato, as.Date(input$date[1]), as.Date(input$date[2])))
+          }
+      })
+
+
       # filtrering
 
       Datadump_reactive <- reactive({
+        head(names(data))
         data <- deformitet::filtrer_datadump(data,
                                              input$date[1],
                                              input$date[2],
-                                             input$kjonn_var,
-                                             input$alder_var[1],
-                                             input$alder_var[2],
                                              userRole(),
                                              userUnitId())
       })
 
+      #      -------------------------------------------------------------------
 
       colnames_surgeonform <- colnames(deformitet::defHentData("surgeonform"))
       colnames_surgeonfollowup <- colnames(deformitet::defHentData("surgeonfollowup"))
-
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
-      #------- Datadump med selvvalgte navn----------
-
-
-      output$datadumpEgneNavn <- DT::renderDT({
-        if (input$choice_datadump == "Datasett med selvvalgte navn") {
-          table <- deformitet::alleRegData(egneVarNavn=1)
-        }
-      })
-
-
-      #      -------------------------------------------------------------------
 
       # orgname = RegData$ShNavn[match(unique(RegData$ReshId), RegData$ReshId)])
 
@@ -147,16 +123,14 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
         }
       })
 
-
-      output$datadump <- DT::renderDT({
-        if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
-          table <- DT::datatable(select_datadump_reactive(),
-                                 class = 'white-space:nowrap compact')
-        } else {
-          table <- DT::datatable(Datadump_reactive(),
-                                 class = 'white-space:nowrap compact')
-        }
-      })
+         output$datadump <- DT::renderDT({
+             table <- DT::datatable(
+               switch(input$choice_datadump,
+                      "Datasett basert på skjematype og utvalg" = select_datadump_reactive(),
+                      "Datasett basert på utvalg" = Datadump_reactive(),
+                      "Datasett med selvvalgte navn" = datadumpEgneNavn()),
+               class = 'white-space:nowrap compact')
+           })
 
 
       output$download_data <- downloadHandler(
@@ -164,19 +138,27 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
           paste0('deformitet-', Sys.Date(), '.csv')
         },
         content = function(file) {
-          if (input$choice_datadump == "Datasett basert på skjematype og utvalg") {
-            write.csv2(select_datadump_reactive(), file)
-          } else {
-            if (input$choice_datadump == "Datasett med selvvalgte navn") {
-              write.csv2(datadumpEgneNavn(), file)
-                } else {
-            write.csv2(Datadump_reactive(), file)}
-          }
+          switch(input$choice_datadump,
+                        "Datasett basert på skjematype og utvalg" = write.csv2(select_datadump_reactive(), file),
+                        "Datasett med selvvalgte navn" = write.csv2(datadumpEgneNavn(), file),
+                        "Datasett basert på utvalg" = write.csv2(Datadump_reactive()(), file))
         }
-      ) #lastned rådump
-
+      ) #download
 
     }
   )
 }
+
+# module_datadump_server <- function(id, data, userRole, userUnitId){
+ #
+#      select_datadump_reactive <- reactive ({
+ #        if (input$skjema_type == "Pasientskjema"){
+ #          data <- data() #Datadump_reactive() %>%
+ #            dplyr::select(-any_of(colnames))
+ #        } else {
+ #          data <- data() #Datadump_reactive() %>%
+ #            dplyr::select(any_of(colnames))
+ #        }
+ #      })
+
 

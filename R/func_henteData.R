@@ -38,12 +38,14 @@ if ('STATUS' %in% names(tabell)) {
       !is.na(FriendlyVarTab$USER_SUGGESTION),
       c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
 
+    #Funksjon
     tabMegneNavn <- function(tabell, tabType){
       indTabType <- which(FriendlyVarTab$REGISTRATION_TYPE %in% tabType)
       Navn <- FriendlyVarTab$FIELD_NAME[indTabType]
       names(Navn) <- FriendlyVarTab$USER_SUGGESTION[indTabType]
       tabell <- dplyr::rename(tabell, all_of(Navn))
     }
+
 
     if (tabellnavn == "surgeonform") {
         tabell$KNIFE_TIME_CALCULATED <- 0}
@@ -111,7 +113,8 @@ if (egneVarNavn==0) {
 
   if (egneVarNavn == 1) {
     #NB: status-variabel har endret navn. Ta med filtrering på status før endrer navn
-    RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) %>%
+    RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID",
+                     suffixes = c("", 'Shus'), all.y = TRUE) %>%
       merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_pasOppl"),
             by.y = "PasientID") %>%
       merge(surgeon_form ,

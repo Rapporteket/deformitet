@@ -4,16 +4,7 @@
 \alias{filtrer_datadump}
 \title{Filtrer datadump}
 \usage{
-filtrer_datadump(
-  data,
-  dato1,
-  dato2,
-  kjoenn,
-  alder1,
-  alder2,
-  userRole,
-  userUnitId
-)
+filtrer_datadump(data, dato1, dato2, userRole, userUnitId)
 }
 \arguments{
 \item{data}{datasett}
@@ -21,12 +12,6 @@ filtrer_datadump(
 \item{dato1}{brukervalg - dato min}
 
 \item{dato2}{brukervalg - dato max}
-
-\item{kjoenn}{brukervalg - kjønn}
-
-\item{alder1}{brukervalg - alder min}
-
-\item{alder2}{brukervalg - alder max}
 
 \item{userRole}{brukerrolle}
 

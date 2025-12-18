@@ -4,7 +4,7 @@
 \alias{defHentData}
 \title{Hent datatabell fra Deformitets database}
 \usage{
-defHentData(tabellnavn = "surgeonform", egneVarNavn = 0)
+defHentData(tabellnavn = "surgeonform", egneVarNavn = 0, status = 1)
 }
 \arguments{
 \item{tabellnavn}{Navn på tabell som skal lastes inn.
