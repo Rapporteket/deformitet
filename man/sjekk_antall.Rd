@@ -28,6 +28,6 @@ i hoveddataen og om det er na i datasettet som er regnet om med tabell_gjen_tid(
 }
 \examples{
 \donttest{
-try(sjekk_antall(regdata, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
+try(sjekk_antall(RegData, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
 }
 }

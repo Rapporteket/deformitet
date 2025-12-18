@@ -1,3 +1,34 @@
+#' Filtrer data for module data dump
+#' Funksjonen filtrerer data
+#'
+#' @title Filtrer datadump
+#'
+#' @param data datasett
+#' @param dato1 brukervalg - dato min
+#' @param dato2 brukervalg - dato max
+#' @param userRole brukerrolle
+#' @param userUnitId brukertilhørighet
+#' @return datasett filtrert på brukervalg
+#' @export
+
+
+filtrer_datadump <- function(data, dato1, dato2, userRole, userUnitId) { #
+
+  data <- data %>%
+    dplyr::filter(dplyr::between(SURGERY_DATE, as.Date({{dato1}}), as.Date({{dato2}})))
+
+
+  if (userRole != "SC") {
+    data <- data %>%
+      dplyr::select(-contains(c("mths", "mnd"))) %>%
+      dplyr::filter(CENTREID == userUnitId)
+  }
+
+  return(data)
+}
+
+
+
 #' @title Utvalgsfunksjon
 #'
 #' @export
@@ -16,9 +47,9 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
   # Filter by gender
 
   data <- data %>%
-    dplyr::filter(Kjønn == dplyr::case_when({{gender}} == "kvinne" ~ "kvinne",
+    dplyr::filter(Kjonn == dplyr::case_when({{gender}} == "kvinne" ~ "kvinne",
                                             {{gender}} == "mann" ~ "mann",
-                                            {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjønn))
+                                            {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjonn))
 
   # Filter by operation type
 
@@ -34,16 +65,16 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
                                  as.Date({{tid1}}),
                                  as.Date({{tid2}})))
 
-# Add filter on age-----------------------------------------------------------
+  # Add filter on age-----------------------------------------------------------
 
-# Using column "Alder_num" in which alder is given as an integer
+  # Using column "Alder_num" in which alder is given as an integer
   data <- data %>%
     dplyr::filter(dplyr::between(Alder_num,
                                  {{alder1}},
                                  {{alder2}}))
 
 
-return (data)
+  return (data)
 
 }
 
@@ -51,6 +82,6 @@ return (data)
 ## TEST AT DET FUNGERER:
 ##
 ##
-##g <- utvalg_basic(regdata, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100, "ikke_filtrer_reshId")
+##g <- utvalg_basic(RegData, 111961, "mann", "Primæroperasjon", "2023-01-01", "2025-12-01", 1, 100, "ikke_filtrer_reshId")
 
 # nolint end

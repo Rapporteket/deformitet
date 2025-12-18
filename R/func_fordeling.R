@@ -27,7 +27,7 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::filter(CENTREID == {{var_reshID}})
 
     data_sykeh <- data_sykeh %>%
-      dplyr::select(-c(CENTREID, Kjønn)) %>%
+      dplyr::select(-c(CENTREID, Kjonn)) %>%
       dplyr::add_tally(name = "n") %>%
       dplyr::group_by(data_sykeh[3]) %>%
       dplyr::add_count(name = "by_var") %>%
@@ -44,7 +44,7 @@ lagTabell <- function(data, var_reshID, visning){
     data_sykeh_alle <- data
 
     data_sykeh_alle <- data_sykeh_alle %>%
-      dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
+      dplyr::select(-c(CENTREID, Kjonn, CURRENT_SURGERY)) %>%
       dplyr::group_by(Sykehus) %>%
       dplyr::add_tally(name = "n") %>%
       dplyr::ungroup() %>%
@@ -63,7 +63,7 @@ lagTabell <- function(data, var_reshID, visning){
     data_alle <- data
 
     data_alle <- data_alle %>%
-    dplyr::select(-c(CENTREID, Kjønn, CURRENT_SURGERY)) %>%
+    dplyr::select(-c(CENTREID, Kjonn, CURRENT_SURGERY)) %>%
     dplyr::mutate(Sykehus = recode(Sykehus,
                                    "Haukeland" = "Alle",
                                    "Rikshospitalet" = "Alle",
@@ -112,13 +112,13 @@ lagTabell <- function(data, var_reshID, visning){
 #' ei annen dataramme. Dette gjøres pr. forløps-id. Kolonnen som legges til
 #' får navnet "gjen_var"
 #'
-#' @param raw_data rå-regdata
-#' @param data regdata som har vært gjennom prepros
+#' @param raw_data rå-RegData
+#' @param data RegData som har vært gjennom prepros
 #' @param gjen_var valgt variabel
 #'
 #' @examples
 #' \donttest{
-#' try(gjen_var_til_data(raw_regdata, regdata, "Diff_prosent_kurve"))
+#' try(gjen_var_til_data(raw_regdata, RegData, "Diff_prosent_kurve"))
 #' }
 #'
 #' @export

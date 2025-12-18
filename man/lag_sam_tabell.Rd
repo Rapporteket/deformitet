@@ -25,7 +25,7 @@ valgt, samt Sykehus som blir med i funksjonen.
 }
 \examples{
 \donttest{
-try(lag_sam_tabell(regdata, "Funksjon"))
+try(lag_sam_tabell(RegData, "Funksjon"))
 }
 
 }

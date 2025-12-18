@@ -426,7 +426,7 @@ y_limits_gjen <- function(var) {
 #'
 #' @examples
 #' \donttest{
-#' try(sjekk_antall(regdata, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
+#' try(sjekk_antall(RegData, tabell_gjen_tid, "2024-01-01", "2025-01-01", "aar"))
 #' }
 #' @export
 

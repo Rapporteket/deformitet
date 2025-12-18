@@ -80,9 +80,9 @@ module_gjennomsnitt_UI <- function(id) {
                             inputId = ns("dato"),
                             label = "Tidsintervall:",
                             start = "2023-01-02",
-                            end = "2025-09-02",
+                            end = Sys.Date(),  #"2025-09-02",
                             min = "2023-01-01",
-                            max = "2025-09-02",
+                            max = Sys.Date(),  # "2025-09-02",
                             format = "dd-mm-yyyy",
                             separator = " - "),
 
@@ -95,7 +95,7 @@ module_gjennomsnitt_UI <- function(id) {
                             dragRange = TRUE),
 
                           selectInput( # fifth select
-                            inputId = ns("kjønn_var"),
+                            inputId = ns("kjonn_var"),
                             label = "Utvalg basert på kjønn",
                             choices = c("begge", "mann", "kvinne"),
                             selected = "begge"),
@@ -168,7 +168,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         deformitet::prepVar(
           data,
           map_var_reactive(),
-          input$kjønn_var,
+          input$kjonn_var,
           input$dato[1],
           input$dato[2],
           input$alder_var[1],
@@ -183,7 +183,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       my_data_reactive <- reactive({
         x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var,
-                                input$kjønn_var,
+                                input$kjonn_var,
                                 x[1],
                                 x[2],
                                 input$alder_var[1],

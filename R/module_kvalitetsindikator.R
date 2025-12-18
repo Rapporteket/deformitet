@@ -25,7 +25,7 @@ module_kvalitetsindikator_UI <- function(id){
 
 
       shiny::radioButtons( # second select
-        inputId = ns("kjønn_var"),
+        inputId = ns("kjonn_var"),
         label = "Dele på kjønn?",
         choices = c("kvinne" = "kvinne",
                     "mann" = "mann",
@@ -67,9 +67,9 @@ module_kvalitetsindikator_UI <- function(id){
         inputId = ns("date"),
         label = "Tidsintervall:",
         start = "2023-01-02",
-        end = "2024-09-02",
+        end = Sys.Date(), # "2024-09-02",
         min = "2023-01-01",
-        max = "2025-09-02",
+        max = Sys.Date(), # "2025-09-02",
         format = "dd-mm-yyyy",
         separator = " - ")
       ),
@@ -153,8 +153,8 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       my_data_reactive <- reactive({
         #date <- format(c(date1_reactive(), date2_reactive(), "%d/%m/%y"))
         my_data <- data.frame(c(input$kval_var,
-                                if(input$kjønn_var == "nei"){"begge"}
-                                else{input$kjønn_var},
+                                if(input$kjonn_var == "nei"){"begge"}
+                                else{input$kjonn_var},
                                 format(input$date[1], "%d%m%y"),
                                 format(input$date[2], "%d%m%y"),
                                 input$alder_var[1],
@@ -169,7 +169,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       df_reactive <- reactive({
         deformitet::utvalg_basic(data,
                                  userUnitId(),
-                                 input$kjønn_var,
+                                 input$kjonn_var,
                                  input$type_op,
                                  input$date[1],
                                  input$date[2],
@@ -181,7 +181,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       kval_df_reactive <- reactive({
         x <- deformitet::count_kvalind(df_reactive(),
-                                       input$kjønn_var,
+                                       input$kjonn_var,
                                        input$kval_var,
                                        userRole(),
                                        userUnitId(),
@@ -194,7 +194,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
         deformitet::kval_plot(kval_df_reactive(),
                               gg_data_reactive(),
                               my_data_reactive(),
-                              input$kjønn_var)
+                              input$kjonn_var)
       })
 
       output$kval_plot <- renderPlot({
@@ -206,7 +206,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       output$kval_table <- DT::renderDT({datatable(kval_df_reactive(),
                                                    class = 'white-space:nowrap compact',
                                                    colnames = c("Sykehus",
-                                                                "Kjønn",
+                                                                "Kjonn",
                                                                 "Antall",
                                                                 "Antall - kvalitetsindikator",
                                                                 "Andel - kvalitetsindikator"))
@@ -238,12 +238,12 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       #### RENDER TEXT ##############################################################
       output$text_header <- renderText({
-        data <- explanation_kvalind(input$kjønn_var, input$kval_var)
+        data <- explanation_kvalind(input$kjonn_var, input$kval_var)
         data$header
       })
 
       output$text_body <- renderText({
-        data <- explanation_kvalind(input$kjønn_var, input$kval_var)
+        data <- explanation_kvalind(input$kjonn_var, input$kval_var)
         data$text
       })
     })

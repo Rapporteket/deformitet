@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' \donttest{
-#' try(count_kvalind(regdata, "begge", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
+#' try(count_kvalind(RegData, "begge", "PRE_MAIN_CURVE", "SC", 111961, map_db_resh))
 #' }
 #'
 #' @export
@@ -25,7 +25,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   # Telle forløp
   my_tiny_data <- data %>%
-    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::group_by(Sykehus, Kjonn) %>%
     dplyr::add_tally(name = "n") %>% # antall pasienter per sykehus per kjønn
     dplyr::ungroup() %>%
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
@@ -41,17 +41,17 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
-    dplyr::group_by(Sykehus, Kjønn) %>%
+    dplyr::group_by(Sykehus, Kjonn) %>%
     dplyr::add_count(name = "antall_kval_syk_kjønn") %>%
     dplyr::ungroup() %>%
-    dplyr::select(Sykehus, Kjønn, n, antall_kval_syk_kjønn) %>%
+    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) %>%
     dplyr::distinct()
 
   my_tiny_data_nasj <- data %>%
-    dplyr::group_by(Kjønn) %>%
+    dplyr::group_by(Kjonn) %>%
     dplyr::add_tally(name = "n") %>%
     dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::relocate(Sykehus, .before = "Kjønn") %>%
+    dplyr::relocate(Sykehus, .before = "Kjonn") %>%
     dplyr::ungroup() %>%
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
                                      PRE_MAIN_CURVE > 70,
@@ -66,10 +66,10 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
-    dplyr::group_by(Kjønn) %>%
+    dplyr::group_by(Kjonn) %>%
     dplyr::add_count(name = "antall_kval_syk_kjønn") %>%
     dplyr::ungroup() %>%
-    dplyr::select(Sykehus, Kjønn, n, antall_kval_syk_kjønn) %>%
+    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) %>%
     dplyr::distinct()
 
   my_tiny_data_total <- rbind(my_tiny_data_nasj, my_tiny_data)
@@ -78,9 +78,9 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::group_by(Sykehus) %>%
     dplyr::mutate(n = sum(n),
                   antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) %>%
-    dplyr::select(-c(Kjønn)) %>%
-    dplyr::mutate(Kjønn = "begge") %>%
-    dplyr::relocate(Kjønn, .before = "n") %>%
+    dplyr::select(-c(Kjonn)) %>%
+    dplyr::mutate(Kjonn = "begge") %>%
+    dplyr::relocate(Kjonn, .before = "n") %>%
     dplyr::distinct()
 
   data_total <- full_join(my_tiny_data_total, my_begge)
@@ -97,17 +97,17 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   if(kjoenn == "begge"){
     data_total <- data_total %>%
-      dplyr::filter(Kjønn == "begge")
+      dplyr::filter(Kjonn == "begge")
   }
   else{
     if(kjoenn == "kvinne"){
       data_total <- data_total %>%
-        dplyr::filter(Kjønn == "kvinne")
+        dplyr::filter(Kjonn == "kvinne")
     }
     else{
       if(kjoenn == "mann"){
         data_total <- data_total %>%
-          dplyr::filter(Kjønn == "mann")
+          dplyr::filter(Kjonn == "mann")
       }
     }
   }
@@ -208,7 +208,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
     ggplot2::labs(title = gg_data$title,
                   caption = paste0("**Valgte variabler:**", "\n", data_var[1,],
-                                   ", ", "\n", "Kjønn: ", data_var[2,], "\n",
+                                   ", ", "\n", "Kjonn: ", data_var[2,], "\n",
                                    "Dato: ", data_var[3,], "-", data_var[4,], "\n",
                                    "Alder: ", data_var[5,], "-", data_var[6,]))+
 
@@ -217,7 +217,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjønn){
                         position = position_dodge(.9), hjust = -.01, size = 3,
                         alpha = .8)+
 
-    ggplot2::facet_wrap(~Kjønn) +
+    ggplot2::facet_wrap(~Kjonn) +
 
 
     ##### THEME AND COLOURS ####################################################

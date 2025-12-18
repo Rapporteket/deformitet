@@ -4,7 +4,7 @@
 \alias{kompl_tbl}
 \title{Komplikasjonstyper - tabell}
 \usage{
-kompl_tbl(data1, data2, var_kjønn, type_view, reshId)
+kompl_tbl(data1, data2, var_kjonn, type_view, reshId)
 }
 \description{
 Komplikasjonstyper - tabell

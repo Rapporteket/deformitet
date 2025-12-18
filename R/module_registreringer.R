@@ -24,9 +24,9 @@ module_registreringer_UI <- function (id) {
             inputId = ns("date"),
             label = "Egendefinert tidsintervall:",
             start = "2024-01-01",
-            end = "2025-12-01",
+            end = Sys.Date(), # "2025-12-01",
             min = "2023-01-01",
-            max = "2025-12-01",
+            max = Sys.Date(), #  "2025-12-01",
             format = "dd-mm-yyyy",
             separator = " - "),
           ns = NS(id)

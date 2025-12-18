@@ -4,7 +4,7 @@
 \alias{pre_pros}
 \title{Preprosessering}
 \usage{
-pre_pros(regdata)
+pre_pros(RegData)
 }
 \description{
 Preprosessering

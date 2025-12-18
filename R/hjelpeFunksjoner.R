@@ -3,8 +3,8 @@
 #' @return An object representeing the imongr app
 #' @export
 
-run_app <- function() {
-  shiny::shinyApp(ui = app_ui, server = app_server)}
+kjor_appDeform <- function() {
+  shiny::shinyApp(ui = ui_deform, server = server_deform)}
 
 # Dette angir funksjon og ikke fil
 
