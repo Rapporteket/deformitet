@@ -11,79 +11,79 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
   if (var == "Komplikasjonstype") {
     kompl <- RegData |>
       dplyr::mutate(Blødning =
-                      dplyr::case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
                     UVI =
-                      dplyr::case_match(COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
                     Lunge =
-                      dplyr::case_match(COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
                     DVT =
-                      dplyr::case_match(COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
                     Emboli =
-                      dplyr::case_match(COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
                     Inf_over =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_WOUND, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND, 1 ~ "infeks. overfladisk", 0 ~ "0"),
                     Inf_dyp =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_DEEP, 1 ~ "infeks. dyp", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP, 1 ~ "infeks. dyp", 0 ~ "0"),
                     Inf_reop =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_REOP, 1 ~ "infeks. reop", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP, 1 ~ "infeks. reop", 0 ~ "0"),
                     Lam =
-                      dplyr::case_match(COMPLICATIONS_NUMBNESS, 1 ~"lam", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_NUMBNESS, 1 ~"lam", 0 ~ "0"),
                     Smerte =
-                      dplyr::case_match(COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
                     Annet =
-                      dplyr::case_match(COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0"))
+                      dplyr::case_match(.data$COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0"))
 
     }
   if (var == "Komplikasjonstype_12mnd") {
     kompl <- RegData |>
         dplyr::mutate(Blødning =
-                        dplyr::case_match(COMPLICATIONS_BLEEDING_patient12mths, 1 ~ "blødning", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_BLEEDING_patient12mths, 1 ~ "blødning", 0 ~ "0"),
                       UVI =
-                        dplyr::case_match(COMPLICATIONS_UTI_patient12mths, 1 ~ "uvi", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_UTI_patient12mths, 1 ~ "uvi", 0 ~ "0"),
                       Lunge =
-                        dplyr::case_match(COMPLICATIONS_PNEUMONIA_patient12mths, 1 ~ "lunge", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA_patient12mths, 1 ~ "lunge", 0 ~ "0"),
                       DVT =
-                        dplyr::case_match(COMPLICATIONS_DVT_patient12mths, 1 ~ "DVT", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_DVT_patient12mths, 1 ~ "DVT", 0 ~ "0"),
                       Emboli =
-                        dplyr::case_match(COMPLICATIONS_PE_patient12mths, 1 ~ "emboli", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_PE_patient12mths, 1 ~ "emboli", 0 ~ "0"),
                       Inf_over =
-                        dplyr::case_match(COMPLICATIONS_INFECTION_WOUND_patient12mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND_patient12mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
                       Inf_dyp =
-                        dplyr::case_match(COMPLICATIONS_INFECTION_DEEP_patient12mths, 1 ~ "infeks. dyp", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP_patient12mths, 1 ~ "infeks. dyp", 0 ~ "0"),
                       Inf_reop =
-                        dplyr::case_match(COMPLICATIONS_INFECTION_REOP_patient12mths, 1 ~ "infeks. reop", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP_patient12mths, 1 ~ "infeks. reop", 0 ~ "0"),
                       Lam =
-                        dplyr::case_match(COMPLICATIONS_NUMBNESS_patient12mths, 1 ~"lam", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_NUMBNESS_patient12mths, 1 ~"lam", 0 ~ "0"),
                       Smerte =
-                        dplyr::case_match(COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
+                        dplyr::case_match(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
                       Annet =
-                        dplyr::case_match(COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0"))
+                        dplyr::case_match(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0"))
       }
 
   if (var == "Komplikasjonstype_60mnd") {
     kompl <- RegData |>
           dplyr::mutate(Blødning =
-                          dplyr::case_match(COMPLICATIONS_BLEEDING_patient60mths, 1 ~ "blødning", 0 ~ "0"),
+                          dplyr::case_match(.data$COMPLICATIONS_BLEEDING_patient60mths, 1 ~ "blødning", 0 ~ "0"),
                     UVI =
-                      dplyr::case_match(COMPLICATIONS_UTI_patient60mths, 1 ~ "uvi", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_UTI_patient60mths, 1 ~ "uvi", 0 ~ "0"),
                     Lunge =
-                      dplyr::case_match(COMPLICATIONS_PNEUMONIA_patient60mths, 1 ~ "lunge", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA_patient60mths, 1 ~ "lunge", 0 ~ "0"),
                     DVT =
-                      dplyr::case_match(COMPLICATIONS_DVT_patient60mths, 1 ~ "DVT", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_DVT_patient60mths, 1 ~ "DVT", 0 ~ "0"),
                     Emboli =
-                      dplyr::case_match(COMPLICATIONS_PE_patient60mths, 1 ~ "emboli", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PE_patient60mths, 1 ~ "emboli", 0 ~ "0"),
                     Inf_over =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_WOUND_patient60mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND_patient60mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
                     Inf_dyp =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_DEEP_patient60mths, 1 ~ "infeks. dyp", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP_patient60mths, 1 ~ "infeks. dyp", 0 ~ "0"),
                     Inf_reop =
-                      dplyr::case_match(COMPLICATIONS_INFECTION_REOP_patient60mths, 1 ~ "infeks. reop", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP_patient60mths, 1 ~ "infeks. reop", 0 ~ "0"),
                     Lam =
-                      dplyr::case_match(COMPLICATIONS_NUMBNESS_patient60mths, 1 ~"lam", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_NUMBNESS_patient60mths, 1 ~"lam", 0 ~ "0"),
                     Smerte =
-                      dplyr::case_match(COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
+                      dplyr::case_match(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
                     Annet =
-                      dplyr::case_match(COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0"))
+                      dplyr::case_match(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0"))
       }
 
 

@@ -34,7 +34,7 @@ tabell_gjen_tid <- function(data,
         date = 6
       ) |>
       dplyr::mutate(
-        quarter = lubridate::floor_date(date, unit = "quarter"),
+        quarter = lubridate::floor_date(.data$date, unit = "quarter"),
         tid = lubridate::ymd(.data$quarter)
       )
   } else {
@@ -44,7 +44,7 @@ tabell_gjen_tid <- function(data,
         date = 6
       ) |>
       dplyr::mutate(
-        aar = lubridate::floor_date(date, unit = "year"),
+        aar = lubridate::floor_date(.data$date, unit = "year"),
         tid = format(.data$aar, "%Y")
       )
   }
@@ -111,7 +111,7 @@ tabell_gjen_tid <- function(data,
 
   if (tidsenhet == "kvartal") {
     data <- data |>
-      mutate(tid1 = lubridate::year(tid),
+      dplyr::mutate(tid1 = lubridate::year(.data$tid),
              tid_as_character = as.character(tid),
              tid = case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
                              str_detect(tid, "04-01") == TRUE ~ paste(tid1, "2", sep = "-"),

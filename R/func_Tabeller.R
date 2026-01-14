@@ -22,10 +22,10 @@ tbl_reg <- function(date1, date2, data) {
     dplyr::filter(dplyr::between(.data$SURGERY_DATE, d1, d2))
 
   data <- data |>
-    dplyr::group_by(lubridate::year(SURGERY_DATE), lubridate::month(SURGERY_DATE)) |>
+    dplyr::group_by(lubridate::year(.data$SURGERY_DATE), lubridate::month(.data$SURGERY_DATE)) |>
     dplyr::count(Sykehus) |>
-    dplyr::rename(mnd = `lubridate::month(SURGERY_DATE)`,
-           aar = `lubridate::year(SURGERY_DATE)`)
+    dplyr::rename(mnd = `lubridate::month(.data$SURGERY_DATE)`,
+           aar = `lubridate::year(.data$SURGERY_DATE)`)
 
   reg_tbl <- data |>
     tidyr::pivot_wider(names_from = c(mnd, aar),names_sep = "-", values_from = n) |>

@@ -64,7 +64,7 @@ lagTabell <- function(data, var_reshID, visning){
 
     data_alle <- data_alle |>
     dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
-    dplyr::mutate(Sykehus = recode(Sykehus,
+    dplyr::mutate(Sykehus = recode(.data$Sykehus,
                                    "Haukeland" = "Alle",
                                    "Rikshospitalet" = "Alle",
                                    "St.Olav" = "Alle")) |>
