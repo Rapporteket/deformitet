@@ -17,7 +17,7 @@ prepVar <- function(data, var, var_kjonn,
   # Filter by gender
 
   data <- data |>
-    dplyr::filter(Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
+    dplyr::filter(.data$Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
                                             {{var_kjonn}} == "mann" ~ "mann",
                                             {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn))
 
@@ -456,17 +456,17 @@ prep_var_na <- function (data, var) {
 
  if (var %in% oppflg$tre) {
    data <- data |>
-     dplyr::filter(FOLLOWUP == 3)
+     dplyr::filter(.data$FOLLOWUP == 3)
  }
 
   if (var %in% oppflg$tolv) {
     data <- data |>
-      dplyr::filter(FOLLOWUP_patient12mths == 12)
+      dplyr::filter(.data$FOLLOWUP_patient12mths == 12)
   }
 
   if (var %in% oppflg$seksti) {
     data <- data |>
-      dplyr::filter(FOLLOWUP_patient60mths == 60)
+      dplyr::filter(.data$FOLLOWUP_patient60mths == 60)
   }
 
   return (data)

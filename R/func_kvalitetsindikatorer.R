@@ -97,17 +97,17 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   if(kjoenn == "begge"){
     data_total <- data_total |>
-      dplyr::filter(Kjonn == "begge")
+      dplyr::filter(.data$Kjonn == "begge")
   }
   else{
     if(kjoenn == "kvinne"){
       data_total <- data_total |>
-        dplyr::filter(Kjonn == "kvinne")
+        dplyr::filter(.data$Kjonn == "kvinne")
     }
     else{
       if(kjoenn == "mann"){
         data_total <- data_total |>
-          dplyr::filter(Kjonn == "mann")
+          dplyr::filter(.data$Kjonn == "mann")
       }
     }
   }
@@ -124,7 +124,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   if (userRole != "SC") {
     data_total <- data_total |>
-      dplyr::filter(CENTREID == {{userUnitId}} | CENTREID == "0")
+      dplyr::filter(.data$CENTREID == {{userUnitId}} | CENTREID == "0")
   }
 
   data_total <- data_total |>

@@ -29,10 +29,10 @@ lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
 
   if (visning == "hele landet"){
     tabell1 <- tabell |>
-      dplyr::filter(Sykehus != "Alle")
+      dplyr::filter(.data$Sykehus != "Alle")
 
     tabell2 <- tabell |>
-      dplyr::filter(Sykehus == "Alle")
+      dplyr::filter(.data$Sykehus == "Alle")
 
     tabell1 <- tabell1 |>
       dplyr::mutate(Sykehus = paste(tabell1[,1], "n:", tabell1[,4]))

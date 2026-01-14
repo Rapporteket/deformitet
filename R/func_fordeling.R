@@ -24,7 +24,7 @@ lagTabell <- function(data, var_reshID, visning){
   if(visning != "hver enhet"){
     data_sykeh <- data |>
       dplyr::select(-c("CURRENT_SURGERY")) |>
-      dplyr::filter(CENTREID == {{var_reshID}})
+      dplyr::filter(.data$CENTREID == {{var_reshID}})
 
     data_sykeh <- data_sykeh |>
       dplyr::select(-c("CENTREID", "Kjonn")) |>
@@ -162,7 +162,7 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 lag_gjen_tabell <- function (data) {
 
   gjen <- data |>
-    dplyr::filter(!is.na(gjen_var))
+    dplyr::filter(!is.na(.data$gjen_var))
 
   gjen_pr_sykehus <- gjen |>
     dplyr::group_by(Sykehus) |>

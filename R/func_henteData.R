@@ -52,10 +52,10 @@ if ('STATUS' %in% names(tabell)) {
 
     if (tabellnavn %in% c('patientfollowup', 'surgeonfollowup')){
 
-      tabell12 <- tabell |> dplyr::filter(FOLLOWUP == 12)
+      tabell12 <- tabell |> dplyr::filter(.data$FOLLOWUP == 12)
       tabell12 <- tabMegneNavn(tabell=tabell12,
                                tabType=paste0(toupper(tabellnavn), '12'))
-      tabell3 <- tabell |> dplyr::filter(FOLLOWUP == 3)
+      tabell3 <- tabell |> dplyr::filter(.data$FOLLOWUP == 3)
       tabell3 <- tabMegneNavn(tabell=tabell3,
                               tabType=toupper(tabellnavn))
       # dblNavn <- intersect(names(tabell3), names(tabell12[,-which(names(tabell12)=='MCEID')]))
@@ -84,7 +84,6 @@ alleRegData <- function(egneVarNavn=0) {
 
   mce <- defHentData("mce")
   centre <- defHentData("centre") # |>
- #   dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
   patient <- defHentData("patient", egneVarNavn = egneVarNavn)
   patient_followup <- defHentData("patientfollowup", egneVarNavn = egneVarNavn)
   patient_form <- defHentData("patientform", egneVarNavn = egneVarNavn)
@@ -99,15 +98,15 @@ if (egneVarNavn==0) {
           by = "MCEID", suffixes = c("", "_patient_form"), all.x = TRUE) |>
     merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_patient"),
           by.y = "ID") |>
-    merge(patient_followup |> dplyr::filter(FOLLOWUP == 3),
+    merge(patient_followup |> dplyr::filter(.data$FOLLOWUP == 3),
           suffixes = c("", "_patient3mths"), by = "MCEID", all.x = TRUE) |>
-    merge(patient_followup |> dplyr::filter(FOLLOWUP == 12),
+    merge(patient_followup |> dplyr::filter(.data$FOLLOWUP == 12),
           suffixes = c("", "_patient12mths"), by = "MCEID", all.x = TRUE) |>
-    merge(patient_followup |> dplyr::filter(FOLLOWUP == 60),
+    merge(patient_followup |> dplyr::filter(.data$FOLLOWUP == 60),
           suffixes = c("", "_patient60mths"), by = "MCEID", all.x = TRUE) |>
-    merge(surgeon_followup |> dplyr::filter(FOLLOWUP == 3),
+    merge(surgeon_followup |> dplyr::filter(.data$FOLLOWUP == 3),
           suffixes = c("", "_surgeon3mths"), by = "MCEID", all.x = TRUE) |>
-    merge(surgeon_followup |> dplyr::filter(FOLLOWUP == 12),
+    merge(surgeon_followup |> dplyr::filter(.data$FOLLOWUP == 12),
           suffixes = c("", "_surgeon12mths"), by = "MCEID", all.x = TRUE)
 }
 

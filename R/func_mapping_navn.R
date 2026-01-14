@@ -105,7 +105,7 @@ mapping_navn <- function (data, x_var) {
                                       "SRS22_SATISFACTION_SCORE_patient60mths"))
 
   valgt_data <- ny_data |>
-    dplyr::filter(gammelt_navn == {{x_var}}) |>
+    dplyr::filter(.data$gammelt_navn == {{x_var}}) |>
     dplyr::select("nytt_navn")
 
   valgt_variabel <- valgt_data[1,1]

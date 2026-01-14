@@ -164,14 +164,14 @@ vask_sam_tabell <- function(data, var) {
                                                                   "12 mnd", "5 aar")))
 
   data <- data |>
-    dplyr::filter(!is.na(Score))
+    dplyr::filter(!is.na(.data$Score))
 
   data <- data |>
     dplyr::group_by(Punkt, Sykehus) |>
     dplyr::add_count(Punkt)
 
   data <- data |>
-    dplyr::filter(n > 5)
+    dplyr::filter(.data$n > 5)
 
 }
 
@@ -309,13 +309,13 @@ boxplot_sam <- function(data, gg_data, input_data) {
 finn_sam_variabler <- function(data, valg_sam) {
 
   data <- data |>
-    dplyr::filter(Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
+    dplyr::filter(.data$Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
                                             {{valg_sam}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
                                             {{valg_sam}} == "Før operasjon - 5 år" ~ "Pre-operativt",
                                             {{valg_sam}} == "3 mnd - 12 mnd" ~ "3 mnd",
                                             {{valg_sam}} == "3 mnd - 5 år" ~ "3 mnd",
                                             {{valg_sam}} == "12 mnd - 5 år" ~ "12 mnd") |
-                    Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
+                    .data$Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
                                               {{valg_sam}} == "Før operasjon - 12 mnd" ~ "12 mnd",
                                               {{valg_sam}} == "Før operasjon - 5 år" ~ "5 aar",
                                               {{valg_sam}} == "3 mnd - 12 mnd" ~ "12 mnd",

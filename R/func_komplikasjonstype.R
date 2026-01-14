@@ -93,7 +93,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
   ### by gender:
 
   kompl <- kompl |>
-    dplyr::filter(Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
+    dplyr::filter(.data$Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
                                             {{var_kjonn}} == "mann" ~ "mann",
                                             {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn)) |>
     dplyr::mutate(Kjonn = dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
@@ -143,7 +143,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # remove columns with no complications
   kompl <- kompl |>
-    dplyr::filter(Komplikasjonstype != "0")
+    dplyr::filter(.data$Komplikasjonstype != "0")
 
   # # make data frames of tables
   kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjonn, kompl$CURRENT_SURGERY))
@@ -202,7 +202,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
 
   if(type_view == "egen enhet"){
     kompl_tbl_hosp <- kompl_tbl |>
-      dplyr::filter(UnitId == {{reshId}})
+      dplyr::filter(.data$UnitId == {{reshId}})
 
     return(kompl_tbl_hosp)
   }
