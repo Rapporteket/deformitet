@@ -167,7 +167,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       # Basic utvalg
       df_reactive <- reactive({
-        deformitet::utvalg_basic(data,
+        utvalg_basic(data,
                                  userUnitId(),
                                  input$kjonn_var,
                                  input$type_op,
@@ -180,7 +180,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
 
       kval_df_reactive <- reactive({
-        x <- deformitet::count_kvalind(df_reactive(),
+        x <- count_kvalind(df_reactive(),
                                        input$kjonn_var,
                                        input$kval_var,
                                        userRole(),
@@ -190,15 +190,15 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       ###### PLOT ####################################################################
 
-      kval_plot <- reactive({
-        deformitet::kval_plot(kval_df_reactive(),
+      kval_plot_reactive <- reactive({
+        kval_plot(kval_df_reactive(),
                               gg_data_reactive(),
                               my_data_reactive(),
                               input$kjonn_var)
       })
 
       output$kval_plot <- renderPlot({
-        kval_plot()
+        kval_plot_reactive()
       })
 
       ##### TABLE ####################################################################
@@ -222,7 +222,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
         },
         content = function(file){
           pdf(file, onefile = TRUE, width = 15, height = 9)
-          plot(kval_plot())
+          plot(kval_plot_reactive())
           dev.off()
         }
       )

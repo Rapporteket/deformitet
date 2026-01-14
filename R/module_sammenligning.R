@@ -144,7 +144,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       data_sam_reactive <- reactive({
 
         if (userRole() == "SC") {
-          x <- deformitet::utvalg_basic(data,
+          x <- utvalg_basic(data,
                                 reshid$reshId_var,
                                 input$kjoenn_var,
                                 "Primæroperasjon",
@@ -155,7 +155,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
                                 "filtrer_reshId"
                                 )
           } else {
-            x <- deformitet::utvalg_basic(data,
+            x <- utvalg_basic(data,
                                         userUnitId(),
                                         input$kjoenn_var,
                                         "Primæroperasjon",
@@ -185,41 +185,41 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
 
       # Lag tabell til sammenligning
       sam_tabell_reactive <- reactive({
-        deformitet::lag_sam_tabell(data_sam_reactive(), input$sam_var)
+        lag_sam_tabell(data_sam_reactive(), input$sam_var)
       })
 
       # Lag nye navn
       nye_navn_reactive <- reactive({
-        deformitet::nye_navn(sam_tabell_reactive())
+        nye_navn(sam_tabell_reactive())
       })
 
       # Vask datasett
       ren_sam_tabell_reactive <- reactive({
-        deformitet::vask_sam_tabell(nye_navn_reactive(), input$sam_var)
+        vask_sam_tabell(nye_navn_reactive(), input$sam_var)
       })
 
       # Finn konfidensintervall for variabler til density plot
       sam_finn_konf_reactive <- reactive({
-        deformitet::finn_sam_konfidensint(ren_sam_tabell_reactive())
+        finn_sam_konfidensint(ren_sam_tabell_reactive())
       })
 
       # Lag fine navn til ggplot
       gg_data_sam_reactive <- reactive({
-        deformitet::ggdata_sam_plot(input$sam_var)
+        ggdata_sam_plot(input$sam_var)
       })
 
       # Finn variabler til density plot
       sam_variabler_reactive <- reactive({
-        deformitet::finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
+        finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
       })
 
 
       # Lag plot
       sam_plot_reactive <- reactive({
         if (input$plot_valg == "Boksplot") {
-          deformitet::boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
+          boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
         } else {
-          deformitet::density_sam(sam_variabler_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
+          density_sam(sam_variabler_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
           }
         })
 

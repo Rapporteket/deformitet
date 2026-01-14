@@ -161,11 +161,11 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       })
 
       map_var_reactive <- reactive({
-        deformitet::mapping_navn(data, input$x_var)
+        mapping_navn(data, input$x_var)
       })
 
       prepVar_reactive <- reactive({
-        deformitet::prepVar(
+        prepVar(
           data,
           map_var_reactive(),
           input$kjonn_var,
@@ -209,7 +209,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       #Aggregate data in table format
 
       table_data <- reactive({
-        table <- deformitet::tabell_gjen_tid(data_reactive(),
+        table <- tabell_gjen_tid(data_reactive(),
                                              map_var_reactive(),
                                              map_data,
                                              input$tidsenhet,
@@ -230,7 +230,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       ### FIGURE ###
 
       my_plot <- reactive({
-        deformitet::over_tid_plot(table_data(),
+        over_tid_plot(table_data(),
                                   input$visningstype,
                                   gg_data_reactive(),
                                   map_var_reactive(),

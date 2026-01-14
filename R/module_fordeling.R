@@ -191,7 +191,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # data som sendes til modulen går gjennom prepVar()-funksjonen
 
       prepVar_reactive <- reactive({
-        deformitet::prepVar(
+        prepVar(
           data,
           input$x_var,
           input$kjonn_var,
@@ -237,14 +237,14 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
          reshid = userUnitId()
        }
         req(input$visning_type)
-        deformitet::lagTabell(data_reactive(), reshid, input$visning_type)
+        lagTabell(data_reactive(), reshid, input$visning_type)
       })
 
       # Komplikasjonstyper:
       # Filtrer data
 
         kompl_data_reative <- reactive({
-          deformitet::kompl_data(data,
+          kompl_data(data,
                                  input$x_var,
                                  input$kjonn_var,
                                  input$dato[1],
@@ -268,7 +268,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
             }
           }
 
-          data_prep <- deformitet::prepVar(
+          data_prep <- prepVar(
             data,
             var,
             input$kjonn_var,
@@ -291,7 +291,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
               reshid = userUnitId()
             }
 
-          deformitet::kompl_tbl(
+          kompl_tbl(
             kompl_prepVar_reactive(),
             kompl_data_reative(),
             input$kjonn_var,
@@ -346,13 +346,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       figur <- reactive ({
         if(input$x_var %in% komplikasjon_typer) {
-           deformitet::kompl_plot(kompl_tbl_reactive(),
+           kompl_plot(kompl_tbl_reactive(),
                                       input$x_var,
                                       my_data_reactive())
                    }
         else{
           gg_data <- data.frame(gg_data_reactive())
-          deformitet::lag_ggplot_fordeling(tabell_reactive(),
+          lag_ggplot_fordeling(tabell_reactive(),
                                   gg_data,
                                   my_data_reactive(),
                                   input$visning_type)
@@ -373,18 +373,18 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Finne variabelen som bruker velger i datasettet:
 
       navn_reactive <- reactive({
-       navn <- deformitet::mapping_navn(raw_data, input$x_var)
+       navn <- mapping_navn(raw_data, input$x_var)
        })
 
       gjen_added_reactive <- reactive({
 
         if (input$x_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
-          gjen_added <- deformitet::gjen_var_til_data(raw_data, data, input$x_var)
+          gjen_added <- gjen_var_til_data(raw_data, data, input$x_var)
 
         } else {
 
-          gjen_added <- deformitet::gjen_var_til_data(raw_data, data, navn_reactive())
+          gjen_added <- gjen_var_til_data(raw_data, data, navn_reactive())
         }
 
       })
@@ -392,7 +392,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Filtrer basert på brukerens:
 
       gjen_prepVar_reactive <- reactive({
-        deformitet::prepVar(
+        prepVar(
           gjen_added_reactive(),
           "gjen_var",
           input$kjonn_var,
@@ -413,7 +413,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Lag tabell:
 
       gjen_tabell_reactive <- reactive ({
-        gjen_data <- deformitet::lag_gjen_tabell(gjen_data_reactive())
+        gjen_data <- lag_gjen_tabell(gjen_data_reactive())
       })
 
       # Vis tabell:

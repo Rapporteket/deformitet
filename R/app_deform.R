@@ -41,24 +41,15 @@ ui_deform <- function() {
 
         shiny::tabPanel(
           title = "Fordelingsfigur og -tabell",
-          deformitet::module_fordeling_UI("fordeling")
+          module_fordeling_UI("fordeling")
         ),
-
-        ################################################################################
-        ##### TAB: Gjennomsnitt  #######################################################
-
-        # shiny::tabPanel(
-        #   title = "Gjennomsnitt",
-        #   deformitet::module_gjennomsnitt_UI("gjen1")
-        # ),
-
 
         ################################################################################
         ##### TAB: Kvalitetsindikatorer ################################################
 
         shiny::tabPanel(
           title = "Kvalitetsindikatorer",
-          deformitet::module_kvalitetsindikator_UI("kval1")
+          module_kvalitetsindikator_UI("kval1")
         ),
 
 
@@ -68,7 +59,7 @@ ui_deform <- function() {
 
         shiny::tabPanel(
           title = "Sammenligning",
-          deformitet::module_sammenligning_UI("sam1")
+          module_sammenligning_UI("sam1")
         ),
 
         ################################################################################
@@ -76,7 +67,7 @@ ui_deform <- function() {
 
         shiny::tabPanel(
           title = "Registreringer",
-          deformitet::module_registreringer_UI("reg1")
+          module_registreringer_UI("reg1")
         ),
 
         ################################################################################
@@ -92,7 +83,7 @@ ui_deform <- function() {
         shiny::tabPanel( # third tab
           title = "Registeradm",
           shiny::fluidPage(
-            deformitet::module_datadump_UI(
+            module_datadump_UI(
               id = "mod_datadump")
             )),
 
@@ -126,7 +117,6 @@ server_deform <- function(input, output, session) {
 
 
   library(dplyr)
-  library(deformitet)
   library(tidyr)
   library(ggplot2)
   library(DT)
@@ -177,7 +167,7 @@ server_deform <- function(input, output, session) {
   ################################################################################
   ##### TAB: Fordelingsfigur- og tabell ##########################################
 
-  deformitet::module_fordeling_server("fordeling",
+  module_fordeling_server("fordeling",
                                       data = RegData,
                                       raw_data = raw_regdata,
                                       userRole = user$role,
@@ -185,20 +175,10 @@ server_deform <- function(input, output, session) {
                                       map_data = map_db_resh)
 
   ################################################################################
-  ##### TAB: gjennomsnitt ########################################################
-
-
-  # deformitet::module_gjennomsnitt_server("gjen1",
-  #                                        data = RegData,
-  #                                        userRole = user$role,
-  #                                        userUnitId = user$org,
-  #                                        map_data = map_db_resh)
-
-  ################################################################################
   ##### TAB: Kvalitetsindikatorer ################################################
 
 
-  deformitet::module_kvalitetsindikator_server("kval1",
+  module_kvalitetsindikator_server("kval1",
                                                data = RegData,
                                                map_data = map_db_resh,
                                                userRole = user$role,
@@ -208,7 +188,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Sammenligning #####################################################
 
 
-  deformitet::module_sammenligning_server("sam1",
+  module_sammenligning_server("sam1",
                                           data = RegData,
                                           userRole = user$role,
                                           userUnitId = user$org)
@@ -217,7 +197,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Registreringer #####################################################
 
 
-  deformitet::module_registreringer_server("reg1",
+  module_registreringer_server("reg1",
                                           data = RegData,
                                           userRole = user$role,
                                           userUnitId = user$org())
@@ -232,7 +212,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  deformitet::module_datadump_server("mod_datadump",
+  module_datadump_server("mod_datadump",
                                      data = RegData,
                                      userRole = user$role,
                                      userUnitId = user$org())

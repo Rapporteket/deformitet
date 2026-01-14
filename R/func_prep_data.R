@@ -11,7 +11,7 @@ prepVar <- function(data, var, var_kjonn,
                     visning = "uten_tid"){
 
 
-  data <- deformitet::prep_var_na(data, var)
+  data <- prep_var_na(data, var)
 
 
   # Filter by gender

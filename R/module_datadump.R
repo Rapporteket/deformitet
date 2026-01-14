@@ -87,7 +87,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
     datadumpEgneNavn <- reactive({
         if (input$choice_datadump == "Datasett med selvvalgte navn") {
-          data <- deformitet::alleRegData(egneVarNavn=1) |>
+          data <- alleRegData(egneVarNavn=1) |>
             dplyr::filter(dplyr::between(.data$InnDato, as.Date(input$date[1]), as.Date(input$date[2])))
           }
       })
@@ -97,7 +97,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       Datadump_reactive <- reactive({
         head(names(data))
-        data <- deformitet::filtrer_datadump(data,
+        data <- filtrer_datadump(data,
                                              input$date[1],
                                              input$date[2],
                                              userRole(),
@@ -106,8 +106,8 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       #      -------------------------------------------------------------------
 
-      colnames_surgeonform <- colnames(deformitet::defHentData("surgeonform"))
-      colnames_surgeonfollowup <- colnames(deformitet::defHentData("surgeonfollowup"))
+      colnames_surgeonform <- colnames(defHentData("surgeonform"))
+      colnames_surgeonfollowup <- colnames(defHentData("surgeonfollowup"))
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
 
