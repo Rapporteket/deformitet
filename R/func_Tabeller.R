@@ -28,7 +28,7 @@ tbl_reg <- function(date1, date2, data) {
            aar = `lubridate::year(.data$SURGERY_DATE)`)
 
   reg_tbl <- data |>
-    tidyr::pivot_wider(names_from = c(mnd, aar),names_sep = "-", values_from = n) |>
+    tidyr::pivot_wider(names_from = c("mnd", "aar"), names_sep = "-", values_from = "n") |>
 
     dplyr::mutate_all(~replace(., is.na(.), 0)) |>
     dplyr::mutate(Totalt = rowSums(dplyr::across(dplyr::where(is.numeric))))

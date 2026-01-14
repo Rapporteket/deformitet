@@ -133,7 +133,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # # pivot longer
   kompl <- kompl |>
-    tidyr::pivot_longer(!c(PID, Sykehus, Kjonn, CURRENT_SURGERY), names_to = "type", values_to = "Komplikasjonstype") |>
+    tidyr::pivot_longer(!c("PID", "Sykehus", "Kjonn", "CURRENT_SURGERY"), names_to = "type", values_to = "Komplikasjonstype") |>
     dplyr::select(-"type")
 
   # # remove "unknown" and nas
