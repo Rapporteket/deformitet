@@ -51,7 +51,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::group_by(.data$Kjonn) |>
     dplyr::add_tally(name = "n") |>
     dplyr::mutate(Sykehus = "Nasjonalt") |>
-    dplyr::relocate(Sykehus, .before = "Kjonn") |>
+    dplyr::relocate(.data$Sykehus, .before = .data$Kjonn) |>
     dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
                                      PRE_MAIN_CURVE > 70,
@@ -80,7 +80,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                   antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) |>
     dplyr::select(-c("Kjonn")) |>
     dplyr::mutate(Kjonn = "begge") |>
-    dplyr::relocate(Kjonn, .before = "n") |>
+    dplyr::relocate(.data$Kjonn, .before = .data$n) |>
     dplyr::distinct()
 
   data_total <- full_join(my_tiny_data_total, my_begge)

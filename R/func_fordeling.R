@@ -55,7 +55,7 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::distinct()
 
     data_sykeh_alle <- data_sykeh_alle |>
-      dplyr::relocate(Prosent, .before = n)
+      dplyr::relocate(.data$Prosent, .before = .data$n)
 
   }
 
@@ -79,7 +79,7 @@ lagTabell <- function(data, var_reshID, visning){
   data_komplett <- dplyr::full_join(data_sykeh, data_alle)
 
   data_komplett <- data_komplett |>
-    dplyr::relocate(Prosent, .before = n)
+    dplyr::relocate(.data$Prosent, .before = .data$n)
 
   }
 
@@ -93,7 +93,7 @@ lagTabell <- function(data, var_reshID, visning){
   }
   if(visning == "hele landet, uten sammenligning"){
     data_alle <- data_alle |>
-      dplyr::relocate(Prosent, .before = n)
+      dplyr::relocate(.data$Prosent, .before = .data$n)
 
     return(data_alle)
   } else {
@@ -186,7 +186,7 @@ lag_gjen_tabell <- function (data) {
   gjen_tabell2 <- merge(gjen_tabell, gjen_n)
 
   gjen_tabell2 <- gjen_tabell2 |>
-    dplyr::relocate(antall, .before = "gjennomsnitt nasjonalt")
+    dplyr::relocate(.data$antall, .before = "gjennomsnitt nasjonalt")
 
    return(gjen_tabell2)
 }
