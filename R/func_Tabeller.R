@@ -22,16 +22,16 @@ tbl_reg <- function(date1, date2, data) {
     dplyr::filter(dplyr::between(.data$SURGERY_DATE, d1, d2))
 
   data <- data |>
-    group_by(lubridate::year(SURGERY_DATE), lubridate::month(SURGERY_DATE)) |>
-    count(Sykehus) |>
-    rename(mnd = `lubridate::month(SURGERY_DATE)`,
+    dplyr::group_by(lubridate::year(SURGERY_DATE), lubridate::month(SURGERY_DATE)) |>
+    dplyr::count(Sykehus) |>
+    dplyr::rename(mnd = `lubridate::month(SURGERY_DATE)`,
            aar = `lubridate::year(SURGERY_DATE)`)
 
   reg_tbl <- data |>
-    pivot_wider(names_from = c(mnd, aar),names_sep = "-", values_from = n) |>
+    tidyr::pivot_wider(names_from = c(mnd, aar),names_sep = "-", values_from = n) |>
 
-    mutate_all(~replace(., is.na(.), 0)) |>
-    mutate(Totalt = rowSums(across(where(is.numeric))))
+    dplyr::mutate_all(~replace(., is.na(.), 0)) |>
+    dplyr::mutate(Totalt = rowSums(dplyr::across(dplyr::where(is.numeric))))
 
 
 
@@ -61,7 +61,7 @@ tbl_skjema_reg <- function (date1, date2, data) {
     dplyr::filter(dplyr::between(.data$SURGERY_DATE,
                                  as.Date({{date1}}, format = "%d-%m-%Y"),
                                  as.Date({{date2}}, format = "%d-%m-%Y"))) |>
-    dplyr::group_by(Sykehus) |>
+    dplyr::group_by(.data$Sykehus) |>
     dplyr::mutate(personopplysninger = sum(!is.na(REGISTERED_DATE)),
            Skjema_1a_Pasientoppl_preop = sum(!is.na(FILLING_DATE)),
            Skjema_2a_Sykepleier_lege_preop = sum(!is.na(SURGERY_DATE)),

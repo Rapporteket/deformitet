@@ -25,7 +25,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   # Telle forløp
   my_tiny_data <- data |>
-    dplyr::group_by(Sykehus, Kjonn) |>
+    dplyr::group_by(.data$Sykehus, .data$Kjonn) |>
     dplyr::add_tally(name = "n") |> # antall pasienter per sykehus per kjønn
     dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
@@ -41,14 +41,14 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) |>
-    dplyr::group_by(Sykehus, Kjonn) |>
+    dplyr::group_by(.data$Sykehus, .data$Kjonn) |>
     dplyr::add_count(name = "antall_kval_syk_kjønn") |>
     dplyr::ungroup() |>
     dplyr::select("Sykehus", "Kjonn", "n", "antall_kval_syk_kjønn") |>
     dplyr::distinct()
 
   my_tiny_data_nasj <- data |>
-    dplyr::group_by(Kjonn) |>
+    dplyr::group_by(.data$Kjonn) |>
     dplyr::add_tally(name = "n") |>
     dplyr::mutate(Sykehus = "Nasjonalt") |>
     dplyr::relocate(Sykehus, .before = "Kjonn") |>
@@ -66,7 +66,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
                                      CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) |>
-    dplyr::group_by(Kjonn) |>
+    dplyr::group_by(.data$Kjonn) |>
     dplyr::add_count(name = "antall_kval_syk_kjønn") |>
     dplyr::ungroup() |>
     dplyr::select("Sykehus", "Kjonn", "n", "antall_kval_syk_kjønn") |>
@@ -75,7 +75,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
   my_tiny_data_total <- rbind(my_tiny_data_nasj, my_tiny_data)
 
   my_begge <- my_tiny_data_total |>
-    dplyr::group_by(Sykehus) |>
+    dplyr::group_by(.data$Sykehus) |>
     dplyr::mutate(n = sum(n),
                   antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) |>
     dplyr::select(-c("Kjonn")) |>

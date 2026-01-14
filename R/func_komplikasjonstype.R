@@ -183,7 +183,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
                                       {{var_kjonn}} != "kvinne" ~ "begge"))
 
   data_based_on_UI_choices <- data_based_on_UI_choices |>
-    dplyr::group_by(Sykehus, Kjonn) |>
+    dplyr::group_by(.data$Sykehus, .data$Kjonn) |>
     dplyr::tally()
 
 
@@ -209,7 +209,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
 
   if(type_view == "hele landet, uten sammenligning"){
     kompl_tbl_all <- kompl_tbl |>
-      dplyr::group_by(Komplikasjonstype) |>
+      dplyr::group_by(.data$Komplikasjonstype) |>
       dplyr::mutate(Antall = sum(antall),
                     n = sum(n)) |>
       dplyr::select("Komplikasjonstype", "Kjonn", "Antall", "n") |>

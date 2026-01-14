@@ -31,8 +31,8 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::add_tally(name = "n") |>
       dplyr::group_by(data_sykeh[3]) |>
       dplyr::add_count(name = "by_var") |>
-      dplyr::mutate(Prosent = round(by_var/n*100, 2)) |>
-      dplyr::rename("n pr variabel" = by_var) |>
+      dplyr::mutate(Prosent = round(.data$by_var/.data$n*100, 2)) |>
+      dplyr::rename("n pr variabel" = .data$by_var) |>
       dplyr::distinct()
 
     data_sykeh <- data_sykeh |>
@@ -45,10 +45,10 @@ lagTabell <- function(data, var_reshID, visning){
 
     data_sykeh_alle <- data_sykeh_alle |>
       dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
-      dplyr::group_by(Sykehus) |>
+      dplyr::group_by(.data$Sykehus) |>
       dplyr::add_tally(name = "n") |>
       dplyr::ungroup() |>
-      dplyr::group_by(Sykehus, data_sykeh_alle[3]) |>
+      dplyr::group_by(.data$Sykehus, data_sykeh_alle[3]) |>
       dplyr::add_count(name = "by_var") |>
       dplyr::mutate(Prosent = round(by_var/n*100, 2)) |>
       dplyr::rename("n pr variabel" = by_var) |>
@@ -165,7 +165,7 @@ lag_gjen_tabell <- function (data) {
     dplyr::filter(!is.na(.data$gjen_var))
 
   gjen_pr_sykehus <- gjen |>
-    dplyr::group_by(Sykehus) |>
+    dplyr::group_by(.data$Sykehus) |>
     dplyr::summarise(gjennomsnitt = round(mean(gjen_var), 2),
                      median = median(gjen_var)) |>
     dplyr::ungroup()
@@ -179,9 +179,9 @@ lag_gjen_tabell <- function (data) {
 
 
   gjen_n <- gjen |>
-    group_by(Sykehus) |>
-    tally(n = "antall") |>
-    mutate("antall nasjonalt"= sum(antall))
+    dplyr::group_by(.data$Sykehus) |>
+    dplyr::tally(n = "antall") |>
+    dplyr::mutate("antall nasjonalt" = sum(.data$antall))
 
   gjen_tabell2 <- merge(gjen_tabell, gjen_n)
 
