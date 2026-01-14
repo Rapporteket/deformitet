@@ -82,7 +82,7 @@ lag_sam_tabell <- function(data, var) {
   variables <- finn_variabler({{var}})
 
   data_long <- data |>
-    dplyr::select(Sykehus, dplyr::all_of(variables)) |>
+    dplyr::select("Sykehus", dplyr::all_of(variables)) |>
     tidyr::pivot_longer(cols = dplyr::all_of(variables), names_to = "Punkt", values_to = "Score")
 
   data_long
@@ -193,7 +193,7 @@ finn_sam_konfidensint <- function(data) {
     dplyr::mutate(gjennomsnitt = round(mean(Score), 2),
                   "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
                   "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) |>
-    dplyr::select(-c(Score, n)) |>
+    dplyr::select(-c("Score", "n")) |>
     dplyr::distinct()
 
   return(konf_data)

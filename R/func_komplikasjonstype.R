@@ -110,7 +110,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
   ### by surgery date:
 
   kompl <- kompl |>
-    dplyr::filter(dplyr::between(SURGERY_DATE,
+    dplyr::filter(dplyr::between(.data$SURGERY_DATE,
                                  as.Date({{time1}}),
                                  as.Date({{time2}})))
 
@@ -119,13 +119,13 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
   # Using column "Alder_num" in which alder is given as an integer
 
   kompl <- kompl |>
-    dplyr::filter(dplyr::between(Alder_num,
+    dplyr::filter(dplyr::between(.data$Alder_num,
                                  {{alder1}},
                                  {{alder2}}))
 
   kompl <- kompl |>
-    dplyr::select(PID, Sykehus, Kjonn, CURRENT_SURGERY, Blødning, UVI, Lunge, DVT,
-                  Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
+    dplyr::select("PID", "Sykehus", "Kjonn", "CURRENT_SURGERY", "Blødning", "UVI", "Lunge", "DVT",
+                  "Emboli", "Inf_over", "Inf_dyp", "Inf_reop", "Lam", "Smerte", "Annet")
 
 
 ################ TIDYING AND COUNTING ##########################################
@@ -134,7 +134,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
   # # pivot longer
   kompl <- kompl |>
     tidyr::pivot_longer(!c(PID, Sykehus, Kjonn, CURRENT_SURGERY), names_to = "type", values_to = "Komplikasjonstype") |>
-    dplyr::select(-type)
+    dplyr::select(-"type")
 
   # # remove "unknown" and nas
   kompl <- kompl |>
@@ -212,7 +212,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
       dplyr::group_by(Komplikasjonstype) |>
       dplyr::mutate(Antall = sum(antall),
                     n = sum(n)) |>
-      dplyr::select(Komplikasjonstype, Kjonn, Antall, n) |>
+      dplyr::select("Komplikasjonstype", "Kjonn", "Antall", "n") |>
       dplyr::mutate(Sykehus = "Alle",
                     andel = round(Antall/n*100, 2)) |>
       dplyr::distinct()

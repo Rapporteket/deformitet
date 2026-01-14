@@ -19,7 +19,7 @@ tbl_reg <- function(date1, date2, data) {
   d2 <- as.Date(date2, format = "%d-%m-%Y")
 
   data <- data |>
-    dplyr::filter(dplyr::between(SURGERY_DATE, d1, d2))
+    dplyr::filter(dplyr::between(.data$SURGERY_DATE, d1, d2))
 
   data <- data |>
     group_by(lubridate::year(SURGERY_DATE), lubridate::month(SURGERY_DATE)) |>
@@ -58,11 +58,11 @@ tbl_reg <- function(date1, date2, data) {
 tbl_skjema_reg <- function (date1, date2, data) {
 
   tbl_skjema <- data |>
-    dplyr::filter(dplyr::between(SURGERY_DATE,
+    dplyr::filter(dplyr::between(.data$SURGERY_DATE,
                                  as.Date({{date1}}, format = "%d-%m-%Y"),
                                  as.Date({{date2}}, format = "%d-%m-%Y"))) |>
-    group_by(Sykehus) |>
-    mutate(personopplysninger = sum(!is.na(REGISTERED_DATE)),
+    dplyr::group_by(Sykehus) |>
+    dplyr::mutate(personopplysninger = sum(!is.na(REGISTERED_DATE)),
            Skjema_1a_Pasientoppl_preop = sum(!is.na(FILLING_DATE)),
            Skjema_2a_Sykepleier_lege_preop = sum(!is.na(SURGERY_DATE)),
            Skjema_1a_Pasientoppl_3mnd = sum(!is.na(FOLLOWUP)),
@@ -70,15 +70,15 @@ tbl_skjema_reg <- function (date1, date2, data) {
            Skjema_1a_Pasientoppl_12mnd = sum(!is.na(FOLLOWUP_patient12mths)),
            Skjema_2a_Sykepleier_lege_12mnd = sum(!is.na(FOLLOWUP_surgeon12mths)),
            Skjema_1a_Pasientoppl_60mnd = sum(!is.na(FOLLOWUP_patient60mths))) |>
-    select(c(Sykehus,
-             personopplysninger,
-             Skjema_1a_Pasientoppl_preop,
-             Skjema_2a_Sykepleier_lege_preop,
-             Skjema_1a_Pasientoppl_3mnd,
-             Skjema_2a_Sykepleier_lege_3mnd,
-             Skjema_1a_Pasientoppl_12mnd,
-             Skjema_2a_Sykepleier_lege_12mnd,
-             Skjema_1a_Pasientoppl_60mnd)) |>
+    dplyr::select(c("Sykehus",
+             "personopplysninger",
+             "Skjema_1a_Pasientoppl_preop",
+             "Skjema_2a_Sykepleier_lege_preop",
+             "Skjema_1a_Pasientoppl_3mnd",
+             "Skjema_2a_Sykepleier_lege_3mnd",
+             "Skjema_1a_Pasientoppl_12mnd",
+             "Skjema_2a_Sykepleier_lege_12mnd",
+             "Skjema_1a_Pasientoppl_60mnd")) |>
     unique()
 
   return(tbl_skjema)

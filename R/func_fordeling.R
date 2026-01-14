@@ -23,11 +23,11 @@ lagTabell <- function(data, var_reshID, visning){
 
   if(visning != "hver enhet"){
     data_sykeh <- data |>
-      dplyr::select(-c(CURRENT_SURGERY)) |>
+      dplyr::select(-c("CURRENT_SURGERY")) |>
       dplyr::filter(CENTREID == {{var_reshID}})
 
     data_sykeh <- data_sykeh |>
-      dplyr::select(-c(CENTREID, Kjonn)) |>
+      dplyr::select(-c("CENTREID", "Kjonn")) |>
       dplyr::add_tally(name = "n") |>
       dplyr::group_by(data_sykeh[3]) |>
       dplyr::add_count(name = "by_var") |>
@@ -44,7 +44,7 @@ lagTabell <- function(data, var_reshID, visning){
     data_sykeh_alle <- data
 
     data_sykeh_alle <- data_sykeh_alle |>
-      dplyr::select(-c(CENTREID, Kjonn, CURRENT_SURGERY)) |>
+      dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
       dplyr::group_by(Sykehus) |>
       dplyr::add_tally(name = "n") |>
       dplyr::ungroup() |>
@@ -63,7 +63,7 @@ lagTabell <- function(data, var_reshID, visning){
     data_alle <- data
 
     data_alle <- data_alle |>
-    dplyr::select(-c(CENTREID, Kjonn, CURRENT_SURGERY)) |>
+    dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
     dplyr::mutate(Sykehus = recode(Sykehus,
                                    "Haukeland" = "Alle",
                                    "Rikshospitalet" = "Alle",
@@ -136,7 +136,7 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 
   } else {
     valg_rå <- raw_data |>
-      dplyr::select(all_of(gjen_var), MCEID)  # kun velge variablene vi er interessert i og forløps-id
+      dplyr::select(dplyr::all_of(gjen_var), "MCEID")  # kun velge variablene vi er interessert i og forløps-id
 
     gjen_data <- dplyr::left_join(data, valg_rå, by = "MCEID")
 

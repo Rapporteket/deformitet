@@ -44,7 +44,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::group_by(Sykehus, Kjonn) |>
     dplyr::add_count(name = "antall_kval_syk_kjønn") |>
     dplyr::ungroup() |>
-    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) |>
+    dplyr::select("Sykehus", "Kjonn", "n", "antall_kval_syk_kjønn") |>
     dplyr::distinct()
 
   my_tiny_data_nasj <- data |>
@@ -69,7 +69,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::group_by(Kjonn) |>
     dplyr::add_count(name = "antall_kval_syk_kjønn") |>
     dplyr::ungroup() |>
-    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) |>
+    dplyr::select("Sykehus", "Kjonn", "n", "antall_kval_syk_kjønn") |>
     dplyr::distinct()
 
   my_tiny_data_total <- rbind(my_tiny_data_nasj, my_tiny_data)
@@ -78,7 +78,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::group_by(Sykehus) |>
     dplyr::mutate(n = sum(n),
                   antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) |>
-    dplyr::select(-c(Kjonn)) |>
+    dplyr::select(-c("Kjonn")) |>
     dplyr::mutate(Kjonn = "begge") |>
     dplyr::relocate(Kjonn, .before = "n") |>
     dplyr::distinct()
@@ -128,7 +128,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
   }
 
   data_total <- data_total |>
-    select(-c(CENTREID))
+    dplyr::select(-c("CENTREID"))
 
 
   return (data_total)

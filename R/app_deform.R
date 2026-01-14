@@ -30,7 +30,7 @@ ui_deform <- function() {
             width = 12,
             shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
             rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE),
-            tags$head(tags$link(rel="shortcut icon", href="rap/favicon.ico"))
+            shiny::tags$head(shiny::tags$link(rel="shortcut icon", href="rap/favicon.ico"))
           )
         ),
 
@@ -151,13 +151,6 @@ server_deform <- function(input, output, session) {
   # Make a df that can be used for mapping between resh-ids and hospital names
   # Must be organized as df with two columns: UnitId and orgname
   # in order for navbarWidgetServer2 to work properly
-
-  # map_db_resh <- RegData %>%
-  #   dplyr::select(Sykehus, CENTREID) %>% # select required columns
-  #   unique() %>% # keep only unique variables
-  #   mutate(UnitId = CENTREID, # make new column with new name
-  #          orgname = Sykehus) %>% # make new column with new name
-  #   select(-c(Sykehus, CENTREID)) # take out old columns
 
   map_db_resh <- data.frame(  #map_avdeling <-
     UnitId = unique(RegData$CENTREID),

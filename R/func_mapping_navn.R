@@ -106,7 +106,7 @@ mapping_navn <- function (data, x_var) {
 
   valgt_data <- ny_data |>
     dplyr::filter(gammelt_navn == {{x_var}}) |>
-    dplyr::select(nytt_navn)
+    dplyr::select("nytt_navn")
 
   valgt_variabel <- valgt_data[1,1]
 

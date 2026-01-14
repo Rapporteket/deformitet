@@ -28,7 +28,7 @@ pre_pros <- function(RegData){
     dplyr::rename(PID = PATIENT_ID)
 
   RegData <- RegData |>
-    dplyr::select(-starts_with("USERCOMMENT"))
+    dplyr::select(-dplyr::starts_with("USERCOMMENT"))
 
 
   RegData$ErMann = RegData$GENDER
@@ -154,8 +154,8 @@ RegData <- RegData |>
                 my_time_mins2 = KNIFE_TIME_EXACT_TIMER+KNIFE_TIME_EXACT_MIN,
                 my_time_mins2 = tidyr::replace_na(my_time_mins2, 0),
                 kniv_tid = my_time_mins+my_time_mins2) |>
-  dplyr::select(-KNIFE_TIME_EXACT_MIN, -KNIFE_TIME_EXACT_TIMER, -my_time_mins,
-                -my_time_mins2, -my_start, -my_end)
+  dplyr::select(-"KNIFE_TIME_EXACT_MIN", -"KNIFE_TIME_EXACT_TIMER", -"my_time_mins",
+                -"my_time_mins2", -"my_start", -"my_end")
 
 RegData <- RegData |>
   dplyr::mutate(Knivtid = cut(kniv_tid,

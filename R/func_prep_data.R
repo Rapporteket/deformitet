@@ -31,7 +31,7 @@ prepVar <- function(data, var, var_kjonn,
   # Add filter on surgery date--------------------------------------------------
 
   data <- data |>
-    dplyr::filter(dplyr::between(SURGERY_DATE,
+    dplyr::filter(dplyr::between(.data$SURGERY_DATE,
                                  as.Date({{time1}}),
                                  as.Date({{time2}})))
 
@@ -40,7 +40,7 @@ prepVar <- function(data, var, var_kjonn,
   # Using column "Alder_num" in which alder is given as an integer
 
   data <- data |>
-    dplyr::filter(dplyr::between(Alder_num,
+    dplyr::filter(dplyr::between(.data$Alder_num,
                                  {{alder1}},
                                  {{alder2}}))
 

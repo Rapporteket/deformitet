@@ -121,7 +121,7 @@ tabell_gjen_tid <- function(data,
     data$tid <- as.factor(data$tid)
 
     data <- data |>
-      select(-c(tid1, tid_as_character))
+      select(-c("tid1", "tid_as_character"))
   }
   return(data)
 }
@@ -433,7 +433,7 @@ y_limits_gjen <- function(var) {
 sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
   if (tidsenhet == "kvartal") {
     true_data <- data |>
-      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
+      dplyr::filter(dplyr::between(.data$.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
       dplyr::mutate(quarter = lubridate::floor_date(.data$SURGERY_DATE, unit = "quarter")) |>
       dplyr::select(.data$quarter) |>
       unique() |>
@@ -456,7 +456,7 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
 
   } else {
     true_data <- data |>
-      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
+      dplyr::filter(dplyr::between(.data$.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
       dplyr::mutate(year = lubridate::floor_date(.data$SURGERY_DATE, unit = "year")) |>
       dplyr::select(.data$year) |>
       unique() |>
