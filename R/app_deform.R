@@ -7,102 +7,102 @@
 
 ui_deform <- function() {
 
-  startDato <- paste0(as.numeric(format(Sys.Date()-200, "%Y")), '-01-01')
 
+  shiny::tagList( # Needed for "about the user" tags
+    shiny::navbarPage( # type of page
 
-    shiny::tagList( # Needed for "about the user" tags
-      shiny::navbarPage( # type of page
+      ###### Graphics ----------------------------------------------------------
+      title = rapbase::title("Rapporteket for deformitet"),
+      windowTitle = "Rapporteket for deformitet",
+      theme = rapbase::theme(version = 5),
+      id = "tabs",
 
-        ###### Graphics ----------------------------------------------------------
-        title = rapbase::title("Rapporteket for deformitet"),
-        windowTitle = "Rapporteket for deformitet",
-        theme = rapbase::theme(version = 5),
-        id = "tabs",
+      ################################################################################
+      ######## TAB user info----------------------------------------------------------
 
-        ################################################################################
-        ######## TAB user info----------------------------------------------------------
+      ##### Startside (info about Rapporteket and the registry)-----------------------
 
-        ##### Startside (info about Rapporteket and the registry)-----------------------
+      shiny::tabPanel( # First tab
+        title = "Startside",
+        shiny::mainPanel(
+          width = 12,
+          shiny::htmlOutput("veiledning", inline = TRUE), # This file is found in folder "inst"
+          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE),
+          shiny::tags$head(shiny::tags$link(rel = "shortcut icon", href = "rap/favicon.ico"))
+        )
+      ),
 
-        shiny::tabPanel( # First tab
-          title = "Startside",
-          shiny::mainPanel(
-            width = 12,
-            shiny::htmlOutput("veiledning", inline = TRUE), # load in the htmloutput wanted. This file is found in folder "inst"
-            rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE),
-            shiny::tags$head(shiny::tags$link(rel="shortcut icon", href="rap/favicon.ico"))
-          )
-        ),
+      ################################################################################
+      ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-        ################################################################################
-        ##### TAB: Fordelingsfigur og -tabell ##########################################
+      ### Fordelingsfigur og -tabell--------------------------------------------------
 
-        ### Fordelingsfigur og -tabell--------------------------------------------------
+      shiny::tabPanel(
+        title = "Fordelingsfigur og -tabell",
+        module_fordeling_UI("fordeling")
+      ),
 
-        shiny::tabPanel(
-          title = "Fordelingsfigur og -tabell",
-          module_fordeling_UI("fordeling")
-        ),
+      ################################################################################
+      ##### TAB: Kvalitetsindikatorer ################################################
 
-        ################################################################################
-        ##### TAB: Kvalitetsindikatorer ################################################
-
-        shiny::tabPanel(
-          title = "Kvalitetsindikatorer",
-          module_kvalitetsindikator_UI("kval1")
-        ),
+      shiny::tabPanel(
+        title = "Kvalitetsindikatorer",
+        module_kvalitetsindikator_UI("kval1")
+      ),
 
 
 
-        ################################################################################
-        ##### TAB: Sammenligning  ######################################################
+      ################################################################################
+      ##### TAB: Sammenligning  ######################################################
 
-        shiny::tabPanel(
-          title = "Sammenligning",
-          module_sammenligning_UI("sam1")
-        ),
+      shiny::tabPanel(
+        title = "Sammenligning",
+        module_sammenligning_UI("sam1")
+      ),
 
-        ################################################################################
-        ##### TAB: Registreringer  #####################################################
+      ################################################################################
+      ##### TAB: Registreringer  #####################################################
 
-        shiny::tabPanel(
-          title = "Registreringer",
-          module_registreringer_UI("reg1")
-        ),
+      shiny::tabPanel(
+        title = "Registreringer",
+        module_registreringer_UI("reg1")
+      ),
 
-        ################################################################################
-        ##### TAB: spc  ################################################################
+      ################################################################################
+      ##### TAB: spc  ################################################################
 
-        # Add ready-made spc-module here if requested by the registry
-
-
-        ################################################################################
-        ##### TAB: Nestlasting av datadump #############################################
+      # Add ready-made spc-module here if requested by the registry
 
 
-        shiny::tabPanel( # third tab
-          title = "Registeradm",
-          shiny::fluidPage(
-            module_datadump_UI(
-              id = "mod_datadump")
-            )),
+      ################################################################################
+      ##### TAB: Nestlasting av datadump #############################################
 
-        shiny::tabPanel(
-          title = "Eksport",
-          shiny::sidebarLayout(
-            shiny::sidebarPanel(
-              rapbase::exportUCInput("deformitetExport")
-            ),
-            shiny::mainPanel(
-              rapbase::exportGuideUI("deformitetExportGuide")
-            )
+
+      shiny::tabPanel( # third tab
+        title = "Registeradm",
+        shiny::fluidPage(
+          module_datadump_UI(
+            id = "mod_datadump"
           )
         )
+      ),
+
+      shiny::tabPanel(
+        title = "Eksport",
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            rapbase::exportUCInput("deformitetExport")
+          ),
+          shiny::mainPanel(
+            rapbase::exportGuideUI("deformitetExportGuide")
+          )
+        )
+      )
 
 
-      ) # navbarPage
-    ) # tagList
-  }
+    ) # navbarPage
+  ) # tagList
+}
 
 #' Server logic for the deformitet app
 #'
@@ -134,7 +134,7 @@ server_deform <- function(input, output, session) {
 
   #### Clean and tidy data:
 
-  RegData <- pre_pros(raw_regdata)
+  regData <- pre_pros(raw_regdata)
 
   ######## USER INFO--------------------------------------------------------------
 
@@ -143,14 +143,19 @@ server_deform <- function(input, output, session) {
   # in order for navbarWidgetServer2 to work properly
 
   map_db_resh <- data.frame(  #map_avdeling <-
-    UnitId = unique(RegData$CENTREID),
-    orgname = RegData$Sykehus[match(unique(RegData$CENTREID),
-                                   RegData$CENTREID)])
+    UnitId = unique(regData$CENTREID),
+    orgname = regData$Sykehus[match(
+      unique(regData$CENTREID),
+      regData$CENTREID
+    )]
+  )
 
-  user <- rapbase::navbarWidgetServer2(id = "deformitetNavbarWidget",
-                                      orgName = "deformitet",
-                                      caller = "deformitet",
-                                      map_orgname = shiny::req(map_db_resh))
+  user <- rapbase::navbarWidgetServer2(
+    id = "deformitetNavbarWidget",
+    orgName = "deformitet",
+    caller = "deformitet",
+    map_orgname = shiny::req(map_db_resh)
+  )
 
 
   ################################################################################
@@ -167,40 +172,48 @@ server_deform <- function(input, output, session) {
   ################################################################################
   ##### TAB: Fordelingsfigur- og tabell ##########################################
 
-  module_fordeling_server("fordeling",
-                                      data = RegData,
-                                      raw_data = raw_regdata,
-                                      userRole = user$role,
-                                      userUnitId = user$org(),
-                                      map_data = map_db_resh)
+  module_fordeling_server(
+    "fordeling",
+    data = regData,
+    raw_data = raw_regdata,
+    userRole = user$role,
+    userUnitId = user$org(),
+    map_data = map_db_resh
+  )
 
   ################################################################################
   ##### TAB: Kvalitetsindikatorer ################################################
 
 
-  module_kvalitetsindikator_server("kval1",
-                                               data = RegData,
-                                               map_data = map_db_resh,
-                                               userRole = user$role,
-                                               userUnitId = user$org)
+  module_kvalitetsindikator_server(
+    "kval1",
+    data = regData,
+    map_data = map_db_resh,
+    userRole = user$role,
+    userUnitId = user$org
+  )
 
   ################################################################################
   ##### TAB: Sammenligning #####################################################
 
 
-  module_sammenligning_server("sam1",
-                                          data = RegData,
-                                          userRole = user$role,
-                                          userUnitId = user$org)
+  module_sammenligning_server(
+    "sam1",
+    data = regData,
+    userRole = user$role,
+    userUnitId = user$org
+  )
 
   ################################################################################
   ##### TAB: Registreringer #####################################################
 
 
-  module_registreringer_server("reg1",
-                                          data = RegData,
-                                          userRole = user$role,
-                                          userUnitId = user$org())
+  module_registreringer_server(
+    "reg1",
+    data = regData,
+    userRole = user$role,
+    userUnitId = user$org()
+  )
 
   ################################################################################
   ##### TAB: SPC #################################################################
@@ -212,10 +225,12 @@ server_deform <- function(input, output, session) {
   ##### TAB: Nestlasting av datadump #############################################
 
 
-  module_datadump_server("mod_datadump",
-                                     data = RegData,
-                                     userRole = user$role,
-                                     userUnitId = user$org())
+  module_datadump_server(
+    "mod_datadump",
+    data = regData,
+    userRole = user$role,
+    userUnitId = user$org()
+  )
 
   ################################################################################
   ###### TAB: Exporting data #####################################################
@@ -227,7 +242,8 @@ server_deform <- function(input, output, session) {
       } else {
         shiny::showTab("tabs", target = "Eksport")
       }
-    })
+    }
+  )
 
   # Brukerkontroller
 
