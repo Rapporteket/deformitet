@@ -190,9 +190,9 @@ finn_sam_konfidensint <- function(data) {
 
   konf_data <- data |>
     dplyr::group_by(.data$Punkt, .data$Sykehus) |>
-    dplyr::mutate(gjennomsnitt = round(mean(Score), 2),
-                  "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
-                  "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) |>
+    dplyr::mutate(gjennomsnitt = round(mean(.data$Score), 2),
+                  "konfidensintervall lav" = round(t.test(.data$Score)$conf.int[1], 2),
+                  "konfidensintervall hoey" = round(t.test(.data$Score)$conf.int[2], 2)) |>
     dplyr::select(-c("Score", "n")) |>
     dplyr::distinct()
 

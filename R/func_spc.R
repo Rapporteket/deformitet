@@ -14,13 +14,13 @@ prepros_SPC <- function (data, var, time_grouping) {
   spc_data <- spc_data |>
     dplyr::group_by(tidsperiode = cut(.data$SURGERY_DATE, time_grouping)) |>
     dplyr::summarize(value = mean(.data[[var]]))  |>
-    dplyr::mutate(value = round(value, 2))
+    dplyr::mutate(value = round(.data$value, 2))
 
   spc_data$tidsperiode <- as.Date(spc_data$tidsperiode)
 
 
 
-  return (spc_data)
+  return(spc_data)
 
 }
 

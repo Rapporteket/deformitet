@@ -90,7 +90,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
   data_total <- data_total |>
     dplyr::mutate(
       andel_per_syk_kjønn =
-        round(antall_kval_syk_kjønn/n*100, 2))
+        round(.data$antall_kval_syk_kjønn / .data$n * 100, 2))
 
 
   ##### BRUKERVALG: #####

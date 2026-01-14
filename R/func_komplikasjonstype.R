@@ -190,7 +190,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
   kompl_tbl <- left_join(data_based_on_UI_choices, data2)
 
   kompl_tbl <- kompl_tbl |>
-    dplyr::mutate(andel = round(antall/n*100, 2))
+    dplyr::mutate(andel = round(.data$antall / .data$n * 100, 2))
 
   # Filtrering basert på "type_view":
 
@@ -214,7 +214,7 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
                     n = sum(n)) |>
       dplyr::select("Komplikasjonstype", "Kjonn", "Antall", "n") |>
       dplyr::mutate(Sykehus = "Alle",
-                    andel = round(Antall/n*100, 2)) |>
+                    andel = round(.data$Antall / .data$n * 100, 2)) |>
       dplyr::distinct()
 
     return(kompl_tbl_all)

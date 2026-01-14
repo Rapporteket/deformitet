@@ -31,12 +31,12 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::add_tally(name = "n") |>
       dplyr::group_by(data_sykeh[3]) |>
       dplyr::add_count(name = "by_var") |>
-      dplyr::mutate(Prosent = round(.data$by_var/.data$n*100, 2)) |>
+      dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
       dplyr::rename("n pr variabel" = .data$by_var) |>
       dplyr::distinct()
 
     data_sykeh <- data_sykeh |>
-      dplyr::relocate(Prosent, .before = n)
+      dplyr::relocate(.data$Prosent, .before = .data$n)
 
   }
 
@@ -50,7 +50,7 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::ungroup() |>
       dplyr::group_by(.data$Sykehus, data_sykeh_alle[3]) |>
       dplyr::add_count(name = "by_var") |>
-      dplyr::mutate(Prosent = round(by_var/n*100, 2)) |>
+      dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
       dplyr::rename("n pr variabel" = by_var) |>
       dplyr::distinct()
 
@@ -71,7 +71,7 @@ lagTabell <- function(data, var_reshID, visning){
     dplyr::add_tally(name = "n") |>
     dplyr::group_by(data_alle[3]) |>
     dplyr::add_count(name = "by_var") |>
-    dplyr::mutate(Prosent = round(by_var/n*100, 2)) |>
+    dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
     dplyr::rename("n pr variabel" = by_var) |>
     dplyr::distinct()
 
@@ -166,14 +166,14 @@ lag_gjen_tabell <- function (data) {
 
   gjen_pr_sykehus <- gjen |>
     dplyr::group_by(.data$Sykehus) |>
-    dplyr::summarise(gjennomsnitt = round(mean(gjen_var), 2),
-                     median = median(gjen_var)) |>
+    dplyr::summarise(gjennomsnitt = round(mean(.data$gjen_var), 2),
+                     median = median(.data$gjen_var)) |>
     dplyr::ungroup()
 
 
   gjen_total <- gjen |>
-    dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(gjen_var), 2),
-                     "median nasjonalt" = median(gjen_var))
+    dplyr::summarize("gjennomsnitt nasjonalt" = round(mean(.data$gjen_var), 2),
+                     "median nasjonalt" = median(.data$gjen_var))
 
   gjen_tabell <- merge(gjen_pr_sykehus, gjen_total)
 
