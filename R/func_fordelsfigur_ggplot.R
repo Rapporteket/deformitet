@@ -21,31 +21,31 @@ lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
 
   tabell <- data.frame(data)
 
-  tabell <- tabell %>%
+  tabell <- tabell |>
     dplyr::rename(var = colnames(tabell[2]))
 
 
   # Del data i to tabeller - alle vs. valgt enhet
 
   if (visning == "hele landet"){
-    tabell1 <- tabell %>%
+    tabell1 <- tabell |>
       dplyr::filter(Sykehus != "Alle")
 
-    tabell2 <- tabell %>%
+    tabell2 <- tabell |>
       dplyr::filter(Sykehus == "Alle")
 
-    tabell1 <- tabell1 %>%
+    tabell1 <- tabell1 |>
       dplyr::mutate(Sykehus = paste(tabell1[,1], "n:", tabell1[,4]))
 
-    tabell2 <- tabell2 %>%
+    tabell2 <- tabell2 |>
       dplyr::mutate(Sykehus = paste(tabell2[,1], "n:", tabell2[,4]))
 
     label = c(paste(tabell1[,1],"n:", tabell1[,4]), paste(tabell2[,1], "n:", tabell2[,4]))
   }
 
   else{
-    tabell <- tabell %>%
-    dplyr::rename(var = colnames(tabell[2])) %>%
+    tabell <- tabell |>
+    dplyr::rename(var = colnames(tabell[2])) |>
     dplyr::mutate(Sykehus = paste(tabell[,1], "n:", tabell[,4]))
 
     label = paste(tabell[,1],"n:", tabell[,4])

@@ -16,21 +16,21 @@ prepVar <- function(data, var, var_kjonn,
 
   # Filter by gender
 
-  data <- data %>%
+  data <- data |>
     dplyr::filter(Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
                                             {{var_kjonn}} == "mann" ~ "mann",
                                             {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn))
 
   # Filter by operation type
 
-  data <- data %>%
+  data <- data |>
     dplyr::filter(dplyr::case_when({{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
                                    {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
                                    {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
   # Add filter on surgery date--------------------------------------------------
 
-  data <- data %>%
+  data <- data |>
     dplyr::filter(dplyr::between(SURGERY_DATE,
                                  as.Date({{time1}}),
                                  as.Date({{time2}})))
@@ -39,13 +39,13 @@ prepVar <- function(data, var, var_kjonn,
 
   # Using column "Alder_num" in which alder is given as an integer
 
-  data <- data %>%
+  data <- data |>
     dplyr::filter(dplyr::between(Alder_num,
                                  {{alder1}},
                                  {{alder2}}))
 
 
-  # data <- data %>%
+  # data <- data |>
   #   tidyr::drop_na({{var}})
 
   gg_data <- data.frame(title = "")
@@ -53,7 +53,7 @@ prepVar <- function(data, var, var_kjonn,
 
   # Add good titles on each variable--------------------------------------------
 
-  gg_data <- gg_data %>%
+  gg_data <- gg_data |>
     dplyr::mutate(title = dplyr::case_when({{var}} %in% c("BMI_kategori", "BMI") ~
                                              "Andel operasjoner fordelt på BMI-kategorier",
 
@@ -349,7 +349,7 @@ prepVar <- function(data, var, var_kjonn,
 
   #### Select and return the column of interest---------------------------------
   if (visning == "over_tid") {
-    my_data <- data %>%
+    my_data <- data |>
       dplyr::select(c("Sykehus",
                       "CENTREID",
                       all_of({{var}}),
@@ -363,7 +363,7 @@ prepVar <- function(data, var, var_kjonn,
                                        .default = "SURGERY_DATE")),
                       PID))
     } else {
-      my_data <- data %>%
+      my_data <- data |>
         dplyr::select(c("Sykehus",
                       "CENTREID",
                       all_of({{var}}),
@@ -455,17 +455,17 @@ prep_var_na <- function (data, var) {
                  "Komplikasjoner_60mnd"))
 
  if (var %in% oppflg$tre) {
-   data <- data %>%
+   data <- data |>
      dplyr::filter(FOLLOWUP == 3)
  }
 
   if (var %in% oppflg$tolv) {
-    data <- data %>%
+    data <- data |>
       dplyr::filter(FOLLOWUP_patient12mths == 12)
   }
 
   if (var %in% oppflg$seksti) {
-    data <- data %>%
+    data <- data |>
       dplyr::filter(FOLLOWUP_patient60mths == 60)
   }
 

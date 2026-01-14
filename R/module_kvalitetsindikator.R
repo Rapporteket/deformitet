@@ -111,7 +111,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       gg_data <- data.frame(title = "") # Jeg skal legge alt dette inn i en funksjon
 
       gg_data_reactive <- reactive({
-        gg_data <- gg_data %>%
+        gg_data <- gg_data |>
           dplyr::mutate(
             title = dplyr::case_match(
               input$kval_var,

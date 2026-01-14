@@ -28,21 +28,21 @@ tabell_gjen_tid <- function(data,
   data$PID <- as.character(data$PID)
 
   if (tidsenhet == "kvartal") {
-    data <- data %>%
+    data <- data |>
       dplyr::rename(
         mine = {{ var }},
         date = 6
-      ) %>%
+      ) |>
       dplyr::mutate(
         quarter = lubridate::floor_date(date, unit = "quarter"),
         tid = lubridate::ymd(.data$quarter)
       )
   } else {
-    data <- data %>%
+    data <- data |>
       dplyr::rename(
         mine = {{ var }},
         date = 6
-      ) %>%
+      ) |>
       dplyr::mutate(
         aar = lubridate::floor_date(date, unit = "year"),
         tid = format(.data$aar, "%Y")
@@ -51,48 +51,48 @@ tabell_gjen_tid <- function(data,
 
   ## Pr. sykehus
 
-  data_sykehus <- data %>%
-    dplyr::filter(!is.na(.data$mine)) %>%
-    dplyr::group_by(.data$Sykehus, .data$tid) %>%
-    dplyr::summarize(gjen = mean(.data$mine)) %>%
+  data_sykehus <- data |>
+    dplyr::filter(!is.na(.data$mine)) |>
+    dplyr::group_by(.data$Sykehus, .data$tid) |>
+    dplyr::summarize(gjen = mean(.data$mine)) |>
     dplyr::select(c(.data$Sykehus, .data$tid, .data$gjen))
 
-  data_tally <- data %>%
-    dplyr::group_by(.data$Sykehus, .data$tid) %>%
-    dplyr::add_tally(n = "antall") %>%
-    dplyr::select(.data$Sykehus, .data$tid, .data$antall) %>%
+  data_tally <- data |>
+    dplyr::group_by(.data$Sykehus, .data$tid) |>
+    dplyr::add_tally(n = "antall") |>
+    dplyr::select(.data$Sykehus, .data$tid, .data$antall) |>
     unique()
 
   data_sykehus <- dplyr::left_join(data_sykehus, data_tally)
 
   ## Nasjonalt
 
-  data_nasjonalt <- data %>%
-    dplyr::filter(!is.na(.data$mine)) %>%
-    dplyr::select(-.data$Sykehus) %>%
-    dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::group_by(.data$Sykehus, .data$tid) %>%
-    dplyr::summarize(gjen = mean(.data$mine)) %>%
+  data_nasjonalt <- data |>
+    dplyr::filter(!is.na(.data$mine)) |>
+    dplyr::select(-.data$Sykehus) |>
+    dplyr::mutate(Sykehus = "Nasjonalt") |>
+    dplyr::group_by(.data$Sykehus, .data$tid) |>
+    dplyr::summarize(gjen = mean(.data$mine)) |>
     dplyr::select(c(.data$Sykehus, .data$tid, .data$gjen))
 
-  data_nasjonalt_tally <- data %>%
-    dplyr::select(-.data$Sykehus) %>%
-    dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::group_by(.data$Sykehus, .data$tid) %>%
-    dplyr::add_tally(n = "antall") %>%
-    dplyr::select(.data$Sykehus, .data$tid, .data$antall) %>%
+  data_nasjonalt_tally <- data |>
+    dplyr::select(-.data$Sykehus) |>
+    dplyr::mutate(Sykehus = "Nasjonalt") |>
+    dplyr::group_by(.data$Sykehus, .data$tid) |>
+    dplyr::add_tally(n = "antall") |>
+    dplyr::select(.data$Sykehus, .data$tid, .data$antall) |>
     unique()
 
   data_nasjonalt <- dplyr::left_join(data_nasjonalt, data_nasjonalt_tally)
 
   data <- rbind(data_sykehus, data_nasjonalt) # Bind disse to sammen
 
-  map_data <- map_data %>%
+  map_data <- map_data |>
     dplyr::add_row(UnitId = "0", orgname = "Nasjonalt")
 
   data <- merge(data, map_data, by.x = "Sykehus", by.y = "orgname")
 
-  data <- data %>%
+  data <- data |>
     dplyr::filter(dplyr::case_when(
       {{ visning }} == "hele landet, uten sammenligning" ~
         Sykehus == "Nasjonalt",
@@ -103,14 +103,14 @@ tabell_gjen_tid <- function(data,
       .default = .data$Sykehus == .data$Sykehus
     ))
 
-  data <- data %>%
+  data <- data |>
     dplyr::select(-c(.data$UnitId))
 
 
   ##### GJØR DET MULIG Å PRINTE KVARTAL PENT #####
 
   if (tidsenhet == "kvartal") {
-    data <- data %>%
+    data <- data |>
       mutate(tid1 = lubridate::year(tid),
              tid_as_character = as.character(tid),
              tid = case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
@@ -120,7 +120,7 @@ tabell_gjen_tid <- function(data,
 
     data$tid <- as.factor(data$tid)
 
-    data <- data %>%
+    data <- data |>
       select(-c(tid1, tid_as_character))
   }
   return(data)
@@ -383,7 +383,7 @@ usethis::use_data(skjema, overwrite = TRUE)
 
 y_limits_gjen <- function(var) {
   data <- data.frame(ymin = "", ymax = "")
-  data <- data %>%
+  data <- data |>
     dplyr::mutate(
       ymin = dplyr::case_when(
         stringr::str_detect(var, "SRS22") == TRUE ~ 1,
@@ -432,19 +432,19 @@ y_limits_gjen <- function(var) {
 
 sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
   if (tidsenhet == "kvartal") {
-    true_data <- data %>%
-      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
-      dplyr::mutate(quarter = lubridate::floor_date(.data$SURGERY_DATE, unit = "quarter")) %>%
-      dplyr::select(.data$quarter) %>%
-      unique() %>%
-      dplyr::add_tally(n = "n_quarter") %>%
+    true_data <- data |>
+      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
+      dplyr::mutate(quarter = lubridate::floor_date(.data$SURGERY_DATE, unit = "quarter")) |>
+      dplyr::select(.data$quarter) |>
+      unique() |>
+      dplyr::add_tally(n = "n_quarter") |>
       dplyr::select(.data$quarter, .data$n_quarter)
 
     true_quarter <- true_data$n_quarter[1]
 
-    sample_data <- data1 %>%
-      dplyr::group_by(.data$Sykehus) %>%
-      dplyr::add_tally(n = "n_quarter") %>%
+    sample_data <- data1 |>
+      dplyr::group_by(.data$Sykehus) |>
+      dplyr::add_tally(n = "n_quarter") |>
       dplyr::mutate(check = dplyr::if_else(.data$n_quarter == true_quarter, TRUE, FALSE))
 
     sample_quarter <- sample_data$n_quarter[1]
@@ -455,19 +455,19 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
     return(check)
 
   } else {
-    true_data <- data %>%
-      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) %>%
-      dplyr::mutate(year = lubridate::floor_date(.data$SURGERY_DATE, unit = "year")) %>%
-      dplyr::select(.data$year) %>%
-      unique() %>%
-      dplyr::add_tally(n = "n_year") %>%
+    true_data <- data |>
+      dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>
+      dplyr::mutate(year = lubridate::floor_date(.data$SURGERY_DATE, unit = "year")) |>
+      dplyr::select(.data$year) |>
+      unique() |>
+      dplyr::add_tally(n = "n_year") |>
       dplyr::select(.data$year, .data$n_year)
 
     true_year <- true_data$n_year[1]
 
-    sample_data <- data1 %>%
-      dplyr::group_by(.data$Sykehus) %>%
-      dplyr::add_tally(n = "n_year") %>%
+    sample_data <- data1 |>
+      dplyr::group_by(.data$Sykehus) |>
+      dplyr::add_tally(n = "n_year") |>
       dplyr::mutate(check = dplyr::if_else(.data$n_year == true_year, TRUE, FALSE))
 
     sample_year <- sample_data$n_year[1]

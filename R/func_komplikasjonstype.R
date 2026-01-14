@@ -9,7 +9,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
 # Make data set smaller and more manageageble
   if (var == "Komplikasjonstype") {
-    kompl <- RegData %>%
+    kompl <- RegData |>
       dplyr::mutate(Blødning =
                       dplyr::case_match(COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
                     UVI =
@@ -35,7 +35,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
     }
   if (var == "Komplikasjonstype_12mnd") {
-    kompl <- RegData %>%
+    kompl <- RegData |>
         dplyr::mutate(Blødning =
                         dplyr::case_match(COMPLICATIONS_BLEEDING_patient12mths, 1 ~ "blødning", 0 ~ "0"),
                       UVI =
@@ -61,7 +61,7 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
       }
 
   if (var == "Komplikasjonstype_60mnd") {
-    kompl <- RegData %>%
+    kompl <- RegData |>
           dplyr::mutate(Blødning =
                           dplyr::case_match(COMPLICATIONS_BLEEDING_patient60mths, 1 ~ "blødning", 0 ~ "0"),
                     UVI =
@@ -92,24 +92,24 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   ### by gender:
 
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::filter(Kjonn == dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
                                             {{var_kjonn}} == "mann" ~ "mann",
-                                            {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn)) %>%
+                                            {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn)) |>
     dplyr::mutate(Kjonn = dplyr::case_when({{var_kjonn}} == "kvinne" ~ "kvinne",
                                            {{var_kjonn}} == "mann" ~ "mann",
                                            {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ "begge"))
 
   ### by operation type:
 
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::filter(dplyr::case_when({{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
                                    {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
                                    {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)))
 
   ### by surgery date:
 
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::filter(dplyr::between(SURGERY_DATE,
                                  as.Date({{time1}}),
                                  as.Date({{time2}})))
@@ -118,12 +118,12 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # Using column "Alder_num" in which alder is given as an integer
 
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::filter(dplyr::between(Alder_num,
                                  {{alder1}},
                                  {{alder2}}))
 
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::select(PID, Sykehus, Kjonn, CURRENT_SURGERY, Blødning, UVI, Lunge, DVT,
                   Emboli, Inf_over, Inf_dyp, Inf_reop, Lam, Smerte, Annet)
 
@@ -132,24 +132,24 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 #------------------------------------------------------------------------------#
 
   # # pivot longer
-  kompl <- kompl %>%
-    tidyr::pivot_longer(!c(PID, Sykehus, Kjonn, CURRENT_SURGERY), names_to = "type", values_to = "Komplikasjonstype") %>%
+  kompl <- kompl |>
+    tidyr::pivot_longer(!c(PID, Sykehus, Kjonn, CURRENT_SURGERY), names_to = "type", values_to = "Komplikasjonstype") |>
     dplyr::select(-type)
 
   # # remove "unknown" and nas
-  kompl <- kompl %>%
-    dplyr::mutate(Komplikasjonstype = tidyr::replace_na(Komplikasjonstype, "ukjent")) %>%
+  kompl <- kompl |>
+    dplyr::mutate(Komplikasjonstype = tidyr::replace_na(Komplikasjonstype, "ukjent")) |>
     dplyr::filter(Komplikasjonstype != "ukjent")
 
   # remove columns with no complications
-  kompl <- kompl %>%
+  kompl <- kompl |>
     dplyr::filter(Komplikasjonstype != "0")
 
   # # make data frames of tables
   kompl_df <- data.frame(table(kompl$Sykehus, kompl$Komplikasjonstype, kompl$Kjonn, kompl$CURRENT_SURGERY))
 
   # # rename columns
-  kompl_df <- kompl_df %>%
+  kompl_df <- kompl_df |>
     dplyr::rename(Sykehus = Var1,
                   Komplikasjonstype = Var2,
                   Kjonn = Var3,
@@ -178,18 +178,18 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
 kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
 
-  data_based_on_UI_choices <- data1 %>%
+  data_based_on_UI_choices <- data1 |>
     dplyr::mutate(Kjonn = case_when({{var_kjonn}} != "mann" |
                                       {{var_kjonn}} != "kvinne" ~ "begge"))
 
-  data_based_on_UI_choices <- data_based_on_UI_choices %>%
-    dplyr::group_by(Sykehus, Kjonn) %>%
+  data_based_on_UI_choices <- data_based_on_UI_choices |>
+    dplyr::group_by(Sykehus, Kjonn) |>
     dplyr::tally()
 
 
   kompl_tbl <- left_join(data_based_on_UI_choices, data2)
 
-  kompl_tbl <- kompl_tbl %>%
+  kompl_tbl <- kompl_tbl |>
     dplyr::mutate(andel = round(antall/n*100, 2))
 
   # Filtrering basert på "type_view":
@@ -201,20 +201,20 @@ kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
   }
 
   if(type_view == "egen enhet"){
-    kompl_tbl_hosp <- kompl_tbl %>%
+    kompl_tbl_hosp <- kompl_tbl |>
       dplyr::filter(UnitId == {{reshId}})
 
     return(kompl_tbl_hosp)
   }
 
   if(type_view == "hele landet, uten sammenligning"){
-    kompl_tbl_all <- kompl_tbl %>%
-      dplyr::group_by(Komplikasjonstype) %>%
+    kompl_tbl_all <- kompl_tbl |>
+      dplyr::group_by(Komplikasjonstype) |>
       dplyr::mutate(Antall = sum(antall),
-                    n = sum(n)) %>%
-      dplyr::select(Komplikasjonstype, Kjonn, Antall, n) %>%
+                    n = sum(n)) |>
+      dplyr::select(Komplikasjonstype, Kjonn, Antall, n) |>
       dplyr::mutate(Sykehus = "Alle",
-                    andel = round(Antall/n*100, 2)) %>%
+                    andel = round(Antall/n*100, 2)) |>
       dplyr::distinct()
 
     return(kompl_tbl_all)

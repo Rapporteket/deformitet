@@ -52,10 +52,10 @@ if ('STATUS' %in% names(tabell)) {
 
     if (tabellnavn %in% c('patientfollowup', 'surgeonfollowup')){
 
-      tabell12 <- tabell %>% dplyr::filter(FOLLOWUP == 12)
+      tabell12 <- tabell |> dplyr::filter(FOLLOWUP == 12)
       tabell12 <- tabMegneNavn(tabell=tabell12,
                                tabType=paste0(toupper(tabellnavn), '12'))
-      tabell3 <- tabell %>% dplyr::filter(FOLLOWUP == 3)
+      tabell3 <- tabell |> dplyr::filter(FOLLOWUP == 3)
       tabell3 <- tabMegneNavn(tabell=tabell3,
                               tabType=toupper(tabellnavn))
       # dblNavn <- intersect(names(tabell3), names(tabell12[,-which(names(tabell12)=='MCEID')]))
@@ -83,7 +83,7 @@ alleRegData <- function(egneVarNavn=0) {
   #           'Ugyldig valg for parameter "egneVarNavn"')
 
   mce <- defHentData("mce")
-  centre <- defHentData("centre") # %>%
+  centre <- defHentData("centre") # |>
  #   dplyr::filter(ID != "TESTNO" & ID != "TESTNO2" & ID != "TESTNO3") # Take out test hospitals
   patient <- defHentData("patient", egneVarNavn = egneVarNavn)
   patient_followup <- defHentData("patientfollowup", egneVarNavn = egneVarNavn)
@@ -92,37 +92,37 @@ alleRegData <- function(egneVarNavn=0) {
   surgeon_form <- defHentData("surgeonform", egneVarNavn = egneVarNavn)
 
 if (egneVarNavn==0) {
-  RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) %>%
+  RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) |>
     merge(surgeon_form ,
-          by = "MCEID", suffixes = c("", "_surgeon")) %>%
+          by = "MCEID", suffixes = c("", "_surgeon")) |>
     merge(patient_form ,
-          by = "MCEID", suffixes = c("", "_patient_form"), all.x = TRUE) %>%
+          by = "MCEID", suffixes = c("", "_patient_form"), all.x = TRUE) |>
     merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_patient"),
-          by.y = "ID") %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 3),
-          suffixes = c("", "_patient3mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 12),
-          suffixes = c("", "_patient12mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(patient_followup %>% dplyr::filter(FOLLOWUP == 60),
-          suffixes = c("", "_patient60mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 3),
-          suffixes = c("", "_surgeon3mths"), by = "MCEID", all.x = TRUE) %>%
-    merge(surgeon_followup %>% dplyr::filter(FOLLOWUP == 12),
+          by.y = "ID") |>
+    merge(patient_followup |> dplyr::filter(FOLLOWUP == 3),
+          suffixes = c("", "_patient3mths"), by = "MCEID", all.x = TRUE) |>
+    merge(patient_followup |> dplyr::filter(FOLLOWUP == 12),
+          suffixes = c("", "_patient12mths"), by = "MCEID", all.x = TRUE) |>
+    merge(patient_followup |> dplyr::filter(FOLLOWUP == 60),
+          suffixes = c("", "_patient60mths"), by = "MCEID", all.x = TRUE) |>
+    merge(surgeon_followup |> dplyr::filter(FOLLOWUP == 3),
+          suffixes = c("", "_surgeon3mths"), by = "MCEID", all.x = TRUE) |>
+    merge(surgeon_followup |> dplyr::filter(FOLLOWUP == 12),
           suffixes = c("", "_surgeon12mths"), by = "MCEID", all.x = TRUE)
 }
 
   if (egneVarNavn == 1) {
     #NB: status-variabel har endret navn. Ta med filtrering på status før endrer navn
     RegData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID",
-                     suffixes = c("", 'Shus'), all.y = TRUE) %>%
+                     suffixes = c("", 'Shus'), all.y = TRUE) |>
       merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_pasOppl"),
-            by.y = "PasientID") %>%
+            by.y = "PasientID") |>
       merge(surgeon_form ,
-            by = "MCEID", suffixes = c("", "_lege")) %>%
+            by = "MCEID", suffixes = c("", "_lege")) |>
       merge(patient_form ,
-            by = "MCEID", suffixes = c("", "_pasient"), all.x = TRUE) %>%
+            by = "MCEID", suffixes = c("", "_pasient"), all.x = TRUE) |>
       merge(patient_followup ,
-            suffixes = c("", "_pasOppf"), by = "MCEID", all.x = TRUE) %>%
+            suffixes = c("", "_pasOppf"), by = "MCEID", all.x = TRUE) |>
       merge(surgeon_followup ,
             suffixes = c("", "_legeOppf"), by = "MCEID", all.x = TRUE)
   }

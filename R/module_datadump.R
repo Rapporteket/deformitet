@@ -87,7 +87,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
     datadumpEgneNavn <- reactive({
         if (input$choice_datadump == "Datasett med selvvalgte navn") {
-          data <- deformitet::alleRegData(egneVarNavn=1) %>%
+          data <- deformitet::alleRegData(egneVarNavn=1) |>
             dplyr::filter(dplyr::between(InnDato, as.Date(input$date[1]), as.Date(input$date[2])))
           }
       })
@@ -115,10 +115,10 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       select_datadump_reactive <- reactive ({
         if (input$skjema_type == "Pasientskjema"){
-          data <- Datadump_reactive() %>%
+          data <- Datadump_reactive() |>
             dplyr::select(-any_of(colnames))
         } else {
-          data <- Datadump_reactive() %>%
+          data <- Datadump_reactive() |>
             dplyr::select(any_of(colnames))
         }
       })
@@ -153,10 +153,10 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
  #
 #      select_datadump_reactive <- reactive ({
  #        if (input$skjema_type == "Pasientskjema"){
- #          data <- data() #Datadump_reactive() %>%
+ #          data <- data() #Datadump_reactive() |>
  #            dplyr::select(-any_of(colnames))
  #        } else {
- #          data <- data() #Datadump_reactive() %>%
+ #          data <- data() #Datadump_reactive() |>
  #            dplyr::select(any_of(colnames))
  #        }
  #      })

@@ -24,10 +24,10 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
 
   # Telle forløp
-  my_tiny_data <- data %>%
-    dplyr::group_by(Sykehus, Kjonn) %>%
-    dplyr::add_tally(name = "n") %>% # antall pasienter per sykehus per kjønn
-    dplyr::ungroup() %>%
+  my_tiny_data <- data |>
+    dplyr::group_by(Sykehus, Kjonn) |>
+    dplyr::add_tally(name = "n") |> # antall pasienter per sykehus per kjønn
+    dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
                                      PRE_MAIN_CURVE > 70,
                                    {{var}} == "Komplikasjoner_3mnd" ~
@@ -40,19 +40,19 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                    {{var}} == "CURRENT_SURGERY" ~
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
-                                     CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
-    dplyr::group_by(Sykehus, Kjonn) %>%
-    dplyr::add_count(name = "antall_kval_syk_kjønn") %>%
-    dplyr::ungroup() %>%
-    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) %>%
+                                     CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) |>
+    dplyr::group_by(Sykehus, Kjonn) |>
+    dplyr::add_count(name = "antall_kval_syk_kjønn") |>
+    dplyr::ungroup() |>
+    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) |>
     dplyr::distinct()
 
-  my_tiny_data_nasj <- data %>%
-    dplyr::group_by(Kjonn) %>%
-    dplyr::add_tally(name = "n") %>%
-    dplyr::mutate(Sykehus = "Nasjonalt") %>%
-    dplyr::relocate(Sykehus, .before = "Kjonn") %>%
-    dplyr::ungroup() %>%
+  my_tiny_data_nasj <- data |>
+    dplyr::group_by(Kjonn) |>
+    dplyr::add_tally(name = "n") |>
+    dplyr::mutate(Sykehus = "Nasjonalt") |>
+    dplyr::relocate(Sykehus, .before = "Kjonn") |>
+    dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
                                      PRE_MAIN_CURVE > 70,
                                    {{var}} == "Komplikasjoner_3mnd" ~
@@ -65,29 +65,29 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
                                    {{var}} == "CURRENT_SURGERY" ~
                                      CURRENT_SURGERY == 2,
                                    TRUE ~
-                                     CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) %>%
-    dplyr::group_by(Kjonn) %>%
-    dplyr::add_count(name = "antall_kval_syk_kjønn") %>%
-    dplyr::ungroup() %>%
-    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) %>%
+                                     CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2)) |>
+    dplyr::group_by(Kjonn) |>
+    dplyr::add_count(name = "antall_kval_syk_kjønn") |>
+    dplyr::ungroup() |>
+    dplyr::select(Sykehus, Kjonn, n, antall_kval_syk_kjønn) |>
     dplyr::distinct()
 
   my_tiny_data_total <- rbind(my_tiny_data_nasj, my_tiny_data)
 
-  my_begge <- my_tiny_data_total %>%
-    dplyr::group_by(Sykehus) %>%
+  my_begge <- my_tiny_data_total |>
+    dplyr::group_by(Sykehus) |>
     dplyr::mutate(n = sum(n),
-                  antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) %>%
-    dplyr::select(-c(Kjonn)) %>%
-    dplyr::mutate(Kjonn = "begge") %>%
-    dplyr::relocate(Kjonn, .before = "n") %>%
+                  antall_kval_syk_kjønn = sum(antall_kval_syk_kjønn)) |>
+    dplyr::select(-c(Kjonn)) |>
+    dplyr::mutate(Kjonn = "begge") |>
+    dplyr::relocate(Kjonn, .before = "n") |>
     dplyr::distinct()
 
   data_total <- full_join(my_tiny_data_total, my_begge)
 
   ######################### Regne ut andeler ###################################
 
-  data_total <- data_total %>%
+  data_total <- data_total |>
     dplyr::mutate(
       andel_per_syk_kjønn =
         round(antall_kval_syk_kjønn/n*100, 2))
@@ -96,26 +96,26 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
   ##### BRUKERVALG: #####
 
   if(kjoenn == "begge"){
-    data_total <- data_total %>%
+    data_total <- data_total |>
       dplyr::filter(Kjonn == "begge")
   }
   else{
     if(kjoenn == "kvinne"){
-      data_total <- data_total %>%
+      data_total <- data_total |>
         dplyr::filter(Kjonn == "kvinne")
     }
     else{
       if(kjoenn == "mann"){
-        data_total <- data_total %>%
+        data_total <- data_total |>
           dplyr::filter(Kjonn == "mann")
       }
     }
   }
 
   # Filtrer basert på brukertilhørighet:
-  map_data <- map_data %>%
+  map_data <- map_data |>
     dplyr::rename(CENTREID = UnitId,
-                  Sykehus = orgname) %>%
+                  Sykehus = orgname) |>
     dplyr::add_row(CENTREID = "0",
                    Sykehus = "Nasjonalt")
 
@@ -123,11 +123,11 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
   data_total <- left_join(data_total, map_data)
 
   if (userRole != "SC") {
-    data_total <- data_total %>%
+    data_total <- data_total |>
       dplyr::filter(CENTREID == {{userUnitId}} | CENTREID == "0")
   }
 
-  data_total <- data_total %>%
+  data_total <- data_total |>
     select(-c(CENTREID))
 
 
@@ -145,7 +145,7 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
 ny_komplikasjon3mnd_usmerte <- function (data) {
 
-  data <- data %>%
+  data <- data |>
     dplyr::mutate(komplikasjoner_uSmerte_3mnd =
                     dplyr::if_else(COMPLICATIONS_BLEEDING == 1 |
                                      COMPLICATIONS_HEAD == 1 |
@@ -157,7 +157,7 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
                                      COMPLICATIONS_INFECTION_DEEP == 1 |
                                      COMPLICATIONS_INFECTION_REOP == 1 |
                                      COMPLICATIONS_NUMBNESS == 1 |
-                                     COMPLICATIONS_OTHER == 1, "ja", "nei")) %>%
+                                     COMPLICATIONS_OTHER == 1, "ja", "nei")) |>
     dplyr::mutate(komplikasjoner_uSmerte_3mnd =
                     if_else(is.na(komplikasjoner_uSmerte_3mnd), "nei",
                             if_else(komplikasjoner_uSmerte_3mnd == "nei", "nei", "ja")))
@@ -181,7 +181,7 @@ ny_komplikasjon3mnd_usmerte <- function (data) {
 
 kval_plot <- function(data, gg_data, data_var, choice_kjønn){
 
-  data <- data %>%
+  data <- data |>
     dplyr::mutate(Sykehus = forcats::fct_relevel(Sykehus, "Nasjonalt", after = Inf))
 
   kval_plot <-
@@ -261,7 +261,7 @@ explanation_kvalind <- function(kjønn_choice, var){
   data <- data.frame(header = "", text = "")
 
 
-  data <- data %>%
+  data <- data |>
     dplyr::mutate(text =
                     dplyr::case_when(
                       {{kjønn_choice}} == "begge" ~
