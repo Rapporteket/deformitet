@@ -16,7 +16,7 @@ ui_deform <- function() {
         ###### Graphics ----------------------------------------------------------
         title = rapbase::title("Rapporteket for deformitet"),
         windowTitle = "Rapporteket for deformitet",
-        theme = rapbase::theme(),
+        theme = rapbase::theme(version = 5),
         id = "tabs",
 
         ################################################################################
@@ -140,11 +140,11 @@ server_deform <- function(input, output, session) {
 
   ######### DATA TIDYING----------------------------------------------------------
   ### Read in data:
-  raw_regdata <- deformitet::alleRegData()
+  raw_regdata <- alleRegData()
 
   #### Clean and tidy data:
 
-  RegData <- deformitet::pre_pros(raw_regdata)
+  RegData <- pre_pros(raw_regdata)
 
   ######## USER INFO--------------------------------------------------------------
 
@@ -168,17 +168,6 @@ server_deform <- function(input, output, session) {
                                       orgName = "deformitet",
                                       caller = "deformitet",
                                       map_orgname = shiny::req(map_db_resh))
-
-  # User info in widget
-  userInfo <- rapbase::howWeDealWithPersonalData(session)
-  # observeEvent(input$userInfo, {
-  #   shinyalert::shinyalert("Dette vet Rapporteket om deg:", userInfo,
-  #                          type = "", imageUrl = "rap/logo.svg",
-  #                          closeOnEsc = TRUE, closeOnClickOutside = TRUE,
-  #                          html = TRUE, confirmButtonText = rapbase::noOptOutOk())
-  # })
-
-
 
 
   ################################################################################
