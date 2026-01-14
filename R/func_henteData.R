@@ -43,7 +43,7 @@ if ('STATUS' %in% names(tabell)) {
       indTabType <- which(FriendlyVarTab$REGISTRATION_TYPE %in% tabType)
       Navn <- FriendlyVarTab$FIELD_NAME[indTabType]
       names(Navn) <- FriendlyVarTab$USER_SUGGESTION[indTabType]
-      tabell <- dplyr::rename(tabell, all_of(Navn))
+      tabell <- dplyr::rename(tabell, dplyr::all_of(Navn))
     }
 
 

@@ -114,8 +114,8 @@ count_kvalind <- function (data, kjoenn, var, userRole, userUnitId, map_data) {
 
   # Filtrer basert på brukertilhørighet:
   map_data <- map_data |>
-    dplyr::rename(CENTREID = UnitId,
-                  Sykehus = orgname) |>
+    dplyr::rename(CENTREID = .data$UnitId,
+                  Sykehus = .data$orgname) |>
     dplyr::add_row(CENTREID = "0",
                    Sykehus = "Nasjonalt")
 

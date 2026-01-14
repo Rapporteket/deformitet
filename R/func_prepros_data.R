@@ -25,7 +25,7 @@
 pre_pros <- function(RegData){
 
   RegData <- RegData |>
-    dplyr::rename(PID = PATIENT_ID)
+    dplyr::rename(PID = .data$PATIENT_ID)
 
   RegData <- RegData |>
     dplyr::select(-dplyr::starts_with("USERCOMMENT"))
@@ -37,8 +37,8 @@ pre_pros <- function(RegData){
   # SYKEHUS:
   #new_name = old_name
 RegData <- RegData |>
-  dplyr::rename(Sykehus = CENTRESHORTNAME,
-                Kjonn = GENDER)
+  dplyr::rename(Sykehus = .data$CENTRESHORTNAME,
+                Kjonn = .data$GENDER)
 # Dette må gjøres i QReg av registeret
 #  |> dplyr::mutate(Sykehus = dplyr::recode(Sykehus, "Bergen" = "Haukeland", "Riksen" = "Rikshospitalet"))
 

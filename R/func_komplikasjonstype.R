@@ -150,11 +150,11 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # # rename columns
   kompl_df <- kompl_df |>
-    dplyr::rename(Sykehus = Var1,
-                  Komplikasjonstype = Var2,
-                  Kjonn = Var3,
-                  antall = Freq,
-                  Operasjon = Var4)
+    dplyr::rename(Sykehus = .data$Var1,
+                  Komplikasjonstype = .data$Var2,
+                  Kjonn = .data$Var3,
+                  antall = .data$Freq,
+                  Operasjon = .data$Var4)
 
   # Add reshId based on hospital name
   kompl_df <- dplyr::left_join(kompl_df, map_data, join_by(Sykehus == orgname))

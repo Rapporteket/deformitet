@@ -216,7 +216,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                                              input$visningstype,
                                              userUnitId())
         table <- table |>
-          dplyr::rename("gjennomsnitt" = "gjen")
+          dplyr::rename("gjennomsnitt" = .data$gjen)
       })
 
 

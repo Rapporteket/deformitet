@@ -51,7 +51,7 @@ lagTabell <- function(data, var_reshID, visning){
       dplyr::group_by(.data$Sykehus, data_sykeh_alle[3]) |>
       dplyr::add_count(name = "by_var") |>
       dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
-      dplyr::rename("n pr variabel" = by_var) |>
+      dplyr::rename("n pr variabel" = .data$by_var) |>
       dplyr::distinct()
 
     data_sykeh_alle <- data_sykeh_alle |>
@@ -72,7 +72,7 @@ lagTabell <- function(data, var_reshID, visning){
     dplyr::group_by(data_alle[3]) |>
     dplyr::add_count(name = "by_var") |>
     dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
-    dplyr::rename("n pr variabel" = by_var) |>
+    dplyr::rename("n pr variabel" = .data$by_var) |>
     dplyr::distinct()
 
 
