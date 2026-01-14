@@ -29,7 +29,7 @@ raw_regdata <- deformitet::alleRegData()
 
 #### Clean and tidy data:
 
-RegData <- deformitet::pre_pros(raw_regdata)
+regData <- deformitet::pre_pros(raw_regdata)
 ```
 
 
@@ -37,7 +37,7 @@ RegData <- deformitet::pre_pros(raw_regdata)
 #### PER SYKEHUS #####
 
 #Alder, kobbvinkel og antall opererte
-age_curve_data <- RegData %>%
+age_curve_data <- regData %>%
   filter(!is.na(PRE_MAIN_CURVE)) %>%
   group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
@@ -51,7 +51,7 @@ age_curve_data <- RegData %>%
 
 
 # Kjønn
-gender_data <- RegData %>%
+gender_data <- regData %>%
   group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
@@ -66,7 +66,7 @@ key_data <- left_join(age_curve_data, gender_data)
 
 #### NASJONALT ####
 # Alder, kobbvinkel og antall opererte
-nasjonalt_age_curve_data <- RegData %>%
+nasjonalt_age_curve_data <- regData %>%
   filter(!is.na(PRE_MAIN_CURVE)) %>%
   group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
@@ -79,7 +79,7 @@ nasjonalt_age_curve_data <- RegData %>%
   select(-c(Alder_median, Alder_range))
 
 # Kjønn
-nasjonalt_gender_data <- RegData %>%
+nasjonalt_gender_data <- regData %>%
   group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
   mutate(year = format(year, "%Y")) %>%
   filter(year != 2025) %>%
@@ -103,7 +103,7 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 # Lag tabellen
 key_data_table <- key_data %>%
   mutate(pro_kvinne = paste(pro_kvinne, "%", sep = ""),
-         pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>% 
+         pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>%
   rename("År" = "year",
          "Prosentandel kvinner" = pro_kvinne,
          "Preoperativ Cobbvinkel" = pre_cobb,
@@ -111,7 +111,7 @@ key_data_table <- key_data %>%
 
 # Få ønsket rekkefølge på Sykehus
 key_data_table <- key_data_table %>%
-  arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>% 
+  arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>%
   filter(Sykehus == "Nasjonalt") # lagt til denne filtreringen siden reg.leder kun ønsker visning av nasjonalt
 
 ```
