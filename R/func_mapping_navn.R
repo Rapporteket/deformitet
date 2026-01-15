@@ -13,7 +13,7 @@
 #'
 #' @export
 
-mapping_navn <- function (data, x_var) {
+mapping_navn <- function(data, x_var) {
 
 
   ny_data <- data.frame(gammelt_navn =
@@ -108,7 +108,7 @@ mapping_navn <- function (data, x_var) {
     dplyr::filter(.data$gammelt_navn == {{x_var}}) |>
     dplyr::select("nytt_navn")
 
-  valgt_variabel <- valgt_data[1,1]
+  valgt_variabel <- valgt_data[1, 1]
 
-  return (valgt_variabel)
+  return(valgt_variabel)
 }
