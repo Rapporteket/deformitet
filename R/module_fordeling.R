@@ -4,136 +4,136 @@
 module_fordeling_ui <- function (id) {
   ns <- shiny::NS(id)
   shiny::tagList(
-      shiny::sidebarLayout(
-        shiny::sidebarPanel(
-          width = 3,
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
+        width = 3,
 
 
-          # Velg variabel for x-aksen
-          shiny::selectInput( # Første valg
-            inputId = ns("x_var"),
-            label = "Variabel:",
-            choices = c("Helsetilstand" = "Helsetilstand",
-                        "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
-                        "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
-                        #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
-                        "SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
-                        "SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
-                        #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
-                        "SRS22 'Fornøyd med resultatet?' 3-6 mnd" =  "SRS22_spm21_3mnd",
-                        "SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
-                        #"SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
-                        "BMI-kategori" = "BMI_kategori",
-                        "Alder" = "Alder",
-                        "Pre-operativ kurve" = "Kurve_pre",
-                        "Post-operativ kurve" = "Kurve_post",
-                        "Prosent korreksjon kurve" = "Diff_prosent_kurve",
-                        "Liggetid" = "Liggetid",
-                        "Knvitid" = "Knivtid",
-                        "Blodtap pr. 100 ml" = "Blodtap_100",
-                        "Blodtap pr. 200 ml" = "Blodtap_200",
-                        "SRS22 totalscore preoperativt" = "SRS22_total",
-                        "SRS22 totalscore 3-6 mnd" = "SRS22_total_3mnd",
-                        "SRS22 totalscore 12 mnd" = "SRS22_total_12mnd",
-                        #"SRS22 totalscore 5 år" = "SRS22_total_60mnd",
-                        "SRS22 funksjon preoperativt" = "SRS22_funksjon",
-                        "SRS22 funksjon, 3-6 mnd" = "SRS22_funksjon_3mnd",
-                        "SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
-                        #"SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
-                        "SRS22 smerte preoperativt" = "SRS22_smerte",
-                        "SRS22 smerte, 3-6 mnd" = "SRS22_smerte_3mnd",
-                        "SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
-                        #"SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
-                        "SRS22 selvbilde preoperativt" = "SRS22_selvbilde",
-                        "SRS22 selvbilde, 3-6 mnd" = "SRS22_selvbilde_3mnd",
-                        "SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
-                        #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
-                        "SRS22 mental helse preoperativt" = "SRS22_mhelse",
-                        "SRS22 mental helse, 3-6 mnd" = "SRS22_mhelse_3mnd",
-                        "SRS22 mental helse, 12 mnd" = "SRS22_mhelse_12mnd",
-                        #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
-                        "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
-                        "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
-                        #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
-                        "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-                        "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
-                        #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
-                        "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
-                        "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
-                        #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
-            ),
-            selected = "BMI_kategori"),
-
-
-          shiny::selectInput( # andre valg
-            inputId = ns("kjonn_var"),
-            label = "Utvalg basert på kjønn",
-            choices = c("begge", "mann", "kvinne"),
-            selected = "begge"),
-
-          shiny::sliderInput( # tredje valg
-            inputId = ns("alder_var"),
-            label = "Aldersintervall:",
-            min = 0,
-            max = 100,
-            value = c(10, 20),
-            dragRange = TRUE),
-
-          shinyjs::hidden(shiny::uiOutput(outputId = ns('reshid'))),
-
-          shiny::radioButtons( # fjerde valg
-            inputId = ns("type_op"),
-            label = "Type operasjon",
-            choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
-            selected = "Primæroperasjon"
-            ),
-
-          shinyjs::hidden(shiny::uiOutput(outputId = ns('visning_type'))),
-
-          shiny::dateRangeInput( # femte valg
-            inputId = ns("dato"),
-            label = "Tidsintervall:",
-            start = "2023-01-02",
-            end = Sys.Date(),
-            min = "2023-01-01",
-            max = "2026-09-02",
-            format = "dd-mm-yyyy",
-            separator = " - ")
+        # Velg variabel for x-aksen
+        shiny::selectInput( # Første valg
+          inputId = ns("x_var"),
+          label = "Variabel:",
+          choices = c("Helsetilstand" = "Helsetilstand",
+                      "Helsetilstand 3-6 mnd" = "Helsetilstand_3mnd",
+                      "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
+                      #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
+                      "SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
+                      "SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
+                      #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
+                      "SRS22 'Fornøyd med resultatet?' 3-6 mnd" =  "SRS22_spm21_3mnd",
+                      "SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
+                      #"SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
+                      "BMI-kategori" = "BMI_kategori",
+                      "Alder" = "Alder",
+                      "Pre-operativ kurve" = "Kurve_pre",
+                      "Post-operativ kurve" = "Kurve_post",
+                      "Prosent korreksjon kurve" = "Diff_prosent_kurve",
+                      "Liggetid" = "Liggetid",
+                      "Knvitid" = "Knivtid",
+                      "Blodtap pr. 100 ml" = "Blodtap_100",
+                      "Blodtap pr. 200 ml" = "Blodtap_200",
+                      "SRS22 totalscore preoperativt" = "SRS22_total",
+                      "SRS22 totalscore 3-6 mnd" = "SRS22_total_3mnd",
+                      "SRS22 totalscore 12 mnd" = "SRS22_total_12mnd",
+                      #"SRS22 totalscore 5 år" = "SRS22_total_60mnd",
+                      "SRS22 funksjon preoperativt" = "SRS22_funksjon",
+                      "SRS22 funksjon, 3-6 mnd" = "SRS22_funksjon_3mnd",
+                      "SRS22 funksjon, 12 mnd" = "SRS22_funksjon_12mnd",
+                      #"SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
+                      "SRS22 smerte preoperativt" = "SRS22_smerte",
+                      "SRS22 smerte, 3-6 mnd" = "SRS22_smerte_3mnd",
+                      "SRS22 smerte, 12 mnd" = "SRS22_smerte_12mnd",
+                      #"SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
+                      "SRS22 selvbilde preoperativt" = "SRS22_selvbilde",
+                      "SRS22 selvbilde, 3-6 mnd" = "SRS22_selvbilde_3mnd",
+                      "SRS22 selvbilde, 12 mnd" = "SRS22_selvbilde_12mnd",
+                      #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
+                      "SRS22 mental helse preoperativt" = "SRS22_mhelse",
+                      "SRS22 mental helse, 3-6 mnd" = "SRS22_mhelse_3mnd",
+                      "SRS22 mental helse, 12 mnd" = "SRS22_mhelse_12mnd",
+                      #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
+                      "SRS22 tilfredshet, 3-6 mnd" = "SRS22_fornoyd_3mnd",
+                      "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd",
+                      #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
+                      "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
+                      "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
+                      #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
+                      "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+                      "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+                      #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
           ),
+          selected = "BMI_kategori"),
+
+
+        shiny::selectInput( # andre valg
+          inputId = ns("kjonn_var"),
+          label = "Utvalg basert på kjønn",
+          choices = c("begge", "mann", "kvinne"),
+          selected = "begge"),
+
+        shiny::sliderInput( # tredje valg
+          inputId = ns("alder_var"),
+          label = "Aldersintervall:",
+          min = 0,
+          max = 100,
+          value = c(10, 20),
+          dragRange = TRUE),
+
+        shinyjs::hidden(shiny::uiOutput(outputId = ns('reshid'))),
+
+        shiny::radioButtons( # fjerde valg
+          inputId = ns("type_op"),
+          label = "Type operasjon",
+          choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
+          selected = "Primæroperasjon"
+        ),
+
+        shinyjs::hidden(shiny::uiOutput(outputId = ns('visning_type'))),
+
+        shiny::dateRangeInput( # femte valg
+          inputId = ns("dato"),
+          label = "Tidsintervall:",
+          start = "2023-01-02",
+          end = Sys.Date(),
+          min = "2023-01-01",
+          max = "2026-09-02",
+          format = "dd-mm-yyyy",
+          separator = " - ")
+      ),
 
 
 
-        shiny::mainPanel(
-          shiny::tabsetPanel(id = ns("tab"),
-                             shiny::tabPanel("Figur", value = "fig",
-                                             shiny::plotOutput(outputId = ns("figur"), height = "auto"),
-                                             shiny::downloadButton(ns("download_fordelingsfig"),
-                                          "Last ned figur")),
-                             shiny::tabPanel("Tabell", value = "tab",
-                           bslib::card_body(
-                             bslib::card_header(
-                               shiny::textOutput(outputId = ns("tittel_tabell")
-                               )
-                             )
+      shiny::mainPanel(
+        shiny::tabsetPanel(id = ns("tab"),
+                           shiny::tabPanel("Figur", value = "fig",
+                                           shiny::plotOutput(outputId = ns("figur"), height = "auto"),
+                                           shiny::downloadButton(ns("download_fordelingsfig"),
+                                                                 "Last ned figur")),
+                           shiny::tabPanel("Tabell", value = "tab",
+                                           bslib::card_body(
+                                             bslib::card_header(
+                                               shiny::textOutput(outputId = ns("tittel_tabell")
+                                               )
+                                             )
+                                           ),
+                                           DT::DTOutput(outputId = ns("tabell")),
+                                           shiny::downloadButton(ns("download_fordelingstbl"),
+                                                                 "Last ned tabell")
                            ),
-                           DT::DTOutput(outputId = ns("tabell")),
-                           shiny::downloadButton(ns("download_fordelingstbl"),
-                                          "Last ned tabell")
-                  ),
-                  shiny::tabPanel("Gjennomsnitt", value = "gjen",
-                           DT::DTOutput(outputId = ns("gjen_tabell")),
-                           shiny::downloadButton(ns("download_fordelingsgjentabell"),
-                                          "Last ned tabell"),
-                           bslib::card_body(
-                             bslib::card_title("Om tabellen"),
-                             bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
+                           shiny::tabPanel("Gjennomsnitt", value = "gjen",
+                                           DT::DTOutput(outputId = ns("gjen_tabell")),
+                                           shiny::downloadButton(ns("download_fordelingsgjentabell"),
+                                                                 "Last ned tabell"),
+                                           bslib::card_body(
+                                             bslib::card_title("Om tabellen"),
+                                             bslib::card_body("Tabellen viser gjennomsnitt og median per sykehus og for hele landet.
                                               Bruker bestemmer selv hovedvariabel, kjønn, alder, type operasjon og tidsintervall
                                               som skal brukes i beregningen. Alle tilfeller av manglende verdier er tatt ut (både manglende
                                               registreringer av oppfølginger og tilfeller der pasienten enda ikke har vært til oppfølging). Antall
                                               pasienter som er inkludert i beregningen er oppgitt under 'antall'.")))
+        )
       )
-   )
-  )
+    )
   )
 }
 
@@ -231,11 +231,11 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Lagre data i tabellformat - bruker funksjonen lagTabell()
 
       tabell_reactive <- shiny::reactive({
-       if (userRole() == 'SC') {
-         reshid = input$reshId_var
-       } else {
-         reshid = userUnitId()
-       }
+        if (userRole() == 'SC') {
+          reshid = input$reshId_var
+        } else {
+          reshid = userUnitId()
+        }
         shiny::req(input$visning_type)
         lagTabell(data_reactive(), reshid, input$visning_type)
       })
@@ -243,69 +243,69 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Komplikasjonstyper:
       # Filtrer data
 
-        kompl_data_reative <- shiny::reactive({
-          kompl_data(data,
-                                 input$x_var,
-                                 input$kjonn_var,
-                                 input$dato[1],
-                                 input$dato[2],
-                                 input$alder_var[1],
-                                 input$alder_var[2],
-                                 input$type_op,
-                                 map_data)
+      kompl_data_reative <- shiny::reactive({
+        kompl_data(data,
+                   input$x_var,
+                   input$kjonn_var,
+                   input$dato[1],
+                   input$dato[2],
+                   input$alder_var[1],
+                   input$alder_var[2],
+                   input$type_op,
+                   map_data)
       })
 
-        # Få oversikt over antall pr. komplikasjonstype:
+      # Få oversikt over antall pr. komplikasjonstype:
 
-        kompl_prepVar_reactive <- shiny::reactive({
-          if (input$x_var == "Komplikasjonstype") {
-            var = "Komplikasjoner_3mnd"
+      kompl_prepVar_reactive <- shiny::reactive({
+        if (input$x_var == "Komplikasjonstype") {
+          var = "Komplikasjoner_3mnd"
+        } else {
+          if (input$x_var == "Komplikasjonstype_12mnd") {
+            var = "Komplikasjoner_12mnd"
           } else {
-            if (input$x_var == "Komplikasjonstype_12mnd") {
-              var = "Komplikasjoner_12mnd"
-            } else {
-              var = "Komplikasjoner_60mnd"
-            }
+            var = "Komplikasjoner_60mnd"
           }
+        }
 
-          data_prep <- prepVar(
-            data,
-            var,
-            input$kjonn_var,
-            input$dato[1],
-            input$dato[2],
-            input$alder_var[1],
-            input$alder_var[2],
-            input$type_op
-          )
+        data_prep <- prepVar(
+          data,
+          var,
+          input$kjonn_var,
+          input$dato[1],
+          input$dato[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op
+        )
 
-          data <- data.frame(data_prep[1])
-          })
+        data <- data.frame(data_prep[1])
+      })
 
-        # Lagre det i tabellformat:
+      # Lagre det i tabellformat:
 
-        kompl_tbl_reactive <- shiny::reactive({
-            if (userRole() == 'SC') {
-              reshid = input$reshId_var
-            } else {
-              reshid = userUnitId()
-            }
+      kompl_tbl_reactive <- shiny::reactive({
+        if (userRole() == 'SC') {
+          reshid = input$reshId_var
+        } else {
+          reshid = userUnitId()
+        }
 
-          kompl_tbl(
-            kompl_prepVar_reactive(),
-            kompl_data_reative(),
-            input$kjonn_var,
-            input$visning_type,
-            reshid
-            )
-          })
+        kompl_tbl(
+          kompl_prepVar_reactive(),
+          kompl_data_reative(),
+          input$kjonn_var,
+          input$visning_type,
+          reshid
+        )
+      })
 
 
 
       ########### VIS DATA -----------------------------------------------------
 
-        ### Tabell
-        # Tittel på tabellen:
+      ### Tabell
+      # Tittel på tabellen:
 
       text_reactive <- shiny::reactive({
         if (! input$x_var %in% c("Komplikasjonstype", "Komplikasjonstype_12mnd")) {
@@ -321,7 +321,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       })
 
       output$tittel_tabell <- shiny::renderText(
-       text_reactive()
+        text_reactive()
       )
 
       # Lag tabellen:
@@ -346,16 +346,16 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       figur <- shiny::reactive({
         if(input$x_var %in% komplikasjon_typer) {
-           kompl_plot(kompl_tbl_reactive(),
-                                      input$x_var,
-                                      my_data_reactive())
-                   }
+          kompl_plot(kompl_tbl_reactive(),
+                     input$x_var,
+                     my_data_reactive())
+        }
         else{
           gg_data <- data.frame(gg_data_reactive())
           lag_ggplot_fordeling(tabell_reactive(),
-                                  gg_data,
-                                  my_data_reactive(),
-                                  input$visning_type)
+                               gg_data,
+                               my_data_reactive(),
+                               input$visning_type)
         }
       })
 
@@ -373,8 +373,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Finne variabelen som bruker velger i datasettet:
 
       navn_reactive <- shiny::reactive({
-       navn <- mapping_navn(raw_data, input$x_var)
-       })
+        navn <- mapping_navn(raw_data, input$x_var)
+      })
 
       gjen_added_reactive <- shiny::reactive({
 
@@ -401,8 +401,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
           input$alder_var[1],
           input$alder_var[2],
           input$type_op
-          )
-        })
+        )
+      })
 
       # Pakk ut lista som returnerers av prepVar()
 
@@ -412,8 +412,8 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Lag tabell:
 
-      gjen_tabell_reactive <- shiny::reactive ({
-        gjen_data <- lag_gjen_tabell(gjen_data_reactive())
+      gjen_tabell_reactive <- shiny::reactive({
+        lag_gjen_tabell(gjen_data_reactive())
       })
 
       # Vis tabell:
@@ -427,10 +427,10 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       ###### NEDLASTING ########################################################
       # Figur:
       output$download_fordelingsfig <-  shiny::downloadHandler(
-        filename = function(){
-          paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
+        filename = function() {
+          paste("Figur_", input$x_var, "_", Sys.Date(), ".pdf", sep = "")
         },
-        content = function(file){
+        content = function(file) {
           pdf(file, onefile = TRUE, width = 15, height = 9)
           plot(figur())
           dev.off()
@@ -439,23 +439,23 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Fordelingstabell:
       output$download_fordelingstbl <- shiny::downloadHandler(
-        filename = function(){
+        filename = function() {
           paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },
-        content = function(file){
+        content = function(file) {
           write.csv(tabell(), file)
         }
       )
 
       # Tabell nr. 2:
       output$dowload_fordelingsgjentabell <- shiny::downloadHandler(
-        filename = function(){
+        filename = function() {
           paste("Gjennomsnittstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },
-        content = function(file){
+        content = function(file) {
           write.csv(gjen_tabell_reactive(), file)
         }
       )
     }
-    )
+  )
 }
