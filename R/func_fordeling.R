@@ -8,7 +8,7 @@
 #' @title lagTabell
 #'
 #' @param data data som har vært gjennom prepVar()
-#' @param var_reshID reshID (valg kun tilgj. som SC-bruker)
+#' @param var_reshid reshID (valg kun tilgj. som SC-bruker)
 #' @param visning valg av visning
 #'
 #' @examples
@@ -19,12 +19,12 @@
 #' @export
 
 
-lagTabell <- function(data, var_reshID, visning){
+lagTabell <- function(data, var_reshid, visning) {
 
-  if(visning != "hver enhet"){
+  if (visning != "hver enhet") {
     data_sykeh <- data |>
       dplyr::select(-c("CURRENT_SURGERY")) |>
-      dplyr::filter(.data$CENTREID == {{var_reshID}})
+      dplyr::filter(.data$CENTREID == {{var_reshid}})
 
     data_sykeh <- data_sykeh |>
       dplyr::select(-c("CENTREID", "Kjonn")) |>
@@ -40,7 +40,7 @@ lagTabell <- function(data, var_reshID, visning){
 
   }
 
-  if(visning == "hver enhet"){
+  if (visning == "hver enhet") {
     data_sykeh_alle <- data
 
     data_sykeh_alle <- data_sykeh_alle |>
@@ -57,47 +57,46 @@ lagTabell <- function(data, var_reshID, visning){
     data_sykeh_alle <- data_sykeh_alle |>
       dplyr::relocate(.data$Prosent, .before = .data$n)
 
-  }
-
-  else{
+  } else {
     data_alle <- data
 
     data_alle <- data_alle |>
-    dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
-    dplyr::mutate(Sykehus = recode(.data$Sykehus,
-                                   "Haukeland" = "Alle",
-                                   "Rikshospitalet" = "Alle",
-                                   "St.Olav" = "Alle")) |>
-    dplyr::add_tally(name = "n") |>
-    dplyr::group_by(data_alle[3]) |>
-    dplyr::add_count(name = "by_var") |>
-    dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
-    dplyr::rename("n pr variabel" = .data$by_var) |>
-    dplyr::distinct()
+      dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
+      dplyr::mutate(Sykehus = dplyr::recode(.data$Sykehus,
+                                            "Haukeland" = "Alle",
+                                            "Rikshospitalet" = "Alle",
+                                            "St.Olav" = "Alle")) |>
+      dplyr::add_tally(name = "n") |>
+      dplyr::group_by(data_alle[3]) |>
+      dplyr::add_count(name = "by_var") |>
+      dplyr::mutate(Prosent = round(.data$by_var / .data$n * 100, 2)) |>
+      dplyr::rename("n pr variabel" = .data$by_var) |>
+      dplyr::distinct()
 
 
-  data_komplett <- dplyr::full_join(data_sykeh, data_alle)
+    data_komplett <- dplyr::full_join(data_sykeh, data_alle)
 
-  data_komplett <- data_komplett |>
-    dplyr::relocate(.data$Prosent, .before = .data$n)
+    data_komplett <- data_komplett |>
+      dplyr::relocate(.data$Prosent, .before = .data$n)
 
   }
 
 
-  if(visning == "hver enhet"){
+  if (visning == "hver enhet") {
     return(data_sykeh_alle)
   }
 
-  if(visning == "egen enhet"){
+  if (visning == "egen enhet") {
     return(data_sykeh)
   }
-  if(visning == "hele landet, uten sammenligning"){
+  if (visning == "hele landet, uten sammenligning") {
     data_alle <- data_alle |>
       dplyr::relocate(.data$Prosent, .before = .data$n)
 
     return(data_alle)
   } else {
-    return(data_komplett)} # => hele landet med sammenligning
+    return(data_komplett)
+  } # => hele landet med sammenligning
 }
 
 
@@ -123,7 +122,7 @@ lagTabell <- function(data, var_reshID, visning){
 #'
 #' @export
 
-gjen_var_til_data <- function (raw_data, data, gjen_var) {
+gjen_var_til_data <- function(raw_data, data, gjen_var) {
 
   if (gjen_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
@@ -132,18 +131,18 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
                                                 {{gjen_var}} == "Knivtid" ~ kniv_tid,
                                                 {{gjen_var}} == "Diff_prosent_kurve" ~ Diff_prosent_kurve_raw))
 
-    return (gjen_data)
+    return(gjen_data)
 
   } else {
-    valg_rå <- raw_data |>
+    valg_raw <- raw_data |>
       dplyr::select(dplyr::all_of(gjen_var), "MCEID")  # kun velge variablene vi er interessert i og forløps-id
 
-    gjen_data <- dplyr::left_join(data, valg_rå, by = "MCEID")
+    gjen_data <- dplyr::left_join(data, valg_raw, by = "MCEID")
 
     colnames(gjen_data)[ncol(gjen_data)] = "gjen_var"
 
-    return (gjen_data)
-    }
+    return(gjen_data)
+  }
 }
 
 
@@ -159,7 +158,7 @@ gjen_var_til_data <- function (raw_data, data, gjen_var) {
 #' @export
 
 
-lag_gjen_tabell <- function (data) {
+lag_gjen_tabell <- function(data) {
 
   gjen <- data |>
     dplyr::filter(!is.na(.data$gjen_var))
@@ -188,5 +187,5 @@ lag_gjen_tabell <- function (data) {
   gjen_tabell2 <- gjen_tabell2 |>
     dplyr::relocate(.data$antall, .before = "gjennomsnitt nasjonalt")
 
-   return(gjen_tabell2)
+  return(gjen_tabell2)
 }

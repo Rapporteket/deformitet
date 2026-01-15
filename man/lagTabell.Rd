@@ -4,12 +4,12 @@
 \alias{lagTabell}
 \title{lagTabell}
 \usage{
-lagTabell(data, var_reshID, visning)
+lagTabell(data, var_reshid, visning)
 }
 \arguments{
 \item{data}{data som har vært gjennom prepVar()}
 
-\item{var_reshID}{reshID (valg kun tilgj. som SC-bruker)}
+\item{var_reshid}{reshID (valg kun tilgj. som SC-bruker)}
 
 \item{visning}{valg av visning}
 }
