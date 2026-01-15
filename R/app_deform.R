@@ -57,7 +57,7 @@ ui_deform <- function() {
 
       shiny::tabPanel(
         title = "Sammenligning",
-        module_sammenligning_UI("sam1")
+        module_sammenligning_ui("sam1")
       ),
 
       ################################################################################

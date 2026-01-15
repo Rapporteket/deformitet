@@ -7,7 +7,7 @@
 #'
 #'@export
 
-module_sammenligning_UI <- function(id) {
+module_sammenligning_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
@@ -15,80 +15,95 @@ module_sammenligning_UI <- function(id) {
         shiny::selectInput(# Første brukervalg
           inputId = ns("sam_var"),
           label = "Velg variabel",
-          choices = c("SRS22 totalskår",
-                      "Funksjon",
-                      "Selvbilde",
-                      "Mental helse",
-                      "Smerte",
-                      "Helsetilstand",
-                      "Tilfredshet"),
-          selected = "SRS22 totalskår"),
+          choices = c(
+            "SRS22 totalskår",
+            "Funksjon",
+            "Selvbilde",
+            "Mental helse",
+            "Smerte",
+            "Helsetilstand",
+            "Tilfredshet"
+          ),
+          selected = "SRS22 totalskår"
+        ),
 
         shiny::selectInput( # Andre brukervalg
           inputId = ns("plot_valg"),
           label = "Velg plot-type",
-          choices = c("Tetthetsplot",
-                      "Boksplot"),
+          choices = c("Tetthetsplot", "Boksplot"),
           selected = "Boksplot"
-          ),
+        ),
 
         # Vises kun hvis tetthetsplot er valgt og "tilfredshet" er valgt
         shiny::conditionalPanel(
-          condition = paste0("input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] == 'Tilfredshet'"),
+          condition = paste0(
+            "input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] == 'Tilfredshet'"
+          ),
           shiny::selectInput( # Tredje brukervalg
             inputId = ns("valg_sammenligning"),
             label = "Velg sammenligning",
-            choices = c("3 mnd - 12 mnd",
-                        "3 mnd - 5 år",
-                        "12 mnd - 5 år"),
+            choices = c(
+              "3 mnd - 12 mnd",
+              "3 mnd - 5 år",
+              "12 mnd - 5 år"
+            ),
             selected = "Før operasjon - 3 mnd"
-          )),
+          )
+        ),
 
         # Vises kun hvis tetthetsplot er valgt og "tilfredshet" ikke er valgt
         shiny::conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
-          condition = paste0("input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] != 'Tilfredshet'"),
+          condition = paste0(
+            "input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] != 'Tilfredshet'"
+          ),
           shiny::selectInput( # Tredje brukervalg
             inputId = ns("valg_sammenligning"),
             label = "Velg sammenligning",
-            choices = c("Før operasjon - 3 mnd",
-                        "Før operasjon - 12 mnd",
-                        "Før operasjon - 5 år",
-                        "3 mnd - 12 mnd",
-                        "3 mnd - 5 år",
-                        "12 mnd - 5 år"),
-          selected = "Før operasjon - 3 mnd"
-        )),
-
-      shiny::radioButtons( # Fjerde brukervalg
-        inputId = ns("kjoenn_var"),
-        label = "Dele på kjønn?",
-        choices = c("kvinne" = "kvinne",
-                    "mann" = "mann",
-                    "begge" = "begge"),
-        selected = "begge"
+            choices = c(
+              "Før operasjon - 3 mnd",
+              "Før operasjon - 12 mnd",
+              "Før operasjon - 5 år",
+              "3 mnd - 12 mnd",
+              "3 mnd - 5 år",
+              "12 mnd - 5 år"
+            ),
+            selected = "Før operasjon - 3 mnd"
+          )
         ),
 
-      shiny::sliderInput( # Femte brukervalg
-        inputId = ns("alder_var"),
-        label = "Aldersintervall:",
-        min = 0,
-        max = 100,
-        value = c(10, 20),
-        dragRange = TRUE
+        shiny::radioButtons( # Fjerde brukervalg
+          inputId = ns("kjoenn_var"),
+          label = "Dele på kjønn?",
+          choices = c(
+            "kvinne" = "kvinne",
+            "mann" = "mann",
+            "begge" = "begge"
+          ),
+          selected = "begge"
         ),
 
-      shinyjs::hidden(shiny::uiOutput(outputId = ns("reshid"))),
+        shiny::sliderInput( # Femte brukervalg
+          inputId = ns("alder_var"),
+          label = "Aldersintervall:",
+          min = 0,
+          max = 100,
+          value = c(10, 20),
+          dragRange = TRUE
+        ),
 
-      shiny::dateRangeInput( # Sjuende brukervalg
-        inputId = ns("dato"),
-        label = "Tidsintervall:",
-        start = "2023-01-02",
-        end = Sys.Date(), # "2025-12-12",
-        min = "2023-01-01",
-        max = Sys.Date(), # "2026-12-12",
-        format = "dd-mm-yyyy",
-        separator = " - "
-      )),
+        shinyjs::hidden(shiny::uiOutput(outputId = ns("reshid"))),
+
+        shiny::dateRangeInput( # Sjuende brukervalg
+          inputId = ns("dato"),
+          label = "Tidsintervall:",
+          start = "2023-01-02",
+          end = Sys.Date(), # "2025-12-12",
+          min = "2023-01-01",
+          max = Sys.Date(), # "2026-12-12",
+          format = "dd-mm-yyyy",
+          separator = " - "
+        )
+      ),
 
       shiny::mainPanel(
         bslib::navset_card_underline(
@@ -142,41 +157,44 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       data_sam_reactive <- shiny::reactive({
 
         if (userRole() == "SC") {
-          x <- utvalg_basic(data,
-                                reshid$reshId_var,
-                                input$kjoenn_var,
-                                "Primæroperasjon",
-                                input$dato[1],
-                                input$dato[2],
-                                input$alder_var[1],
-                                input$alder_var[2],
-                                "filtrer_reshId"
-                                )
-          } else {
-            x <- utvalg_basic(data,
-                                        userUnitId(),
-                                        input$kjoenn_var,
-                                        "Primæroperasjon",
-                                        input$dato[1],
-                                        input$dato[2],
-                                        input$alder_var[1],
-                                        input$alder_var[2],
-                                        "filtrer_reshId"
-                                        )
-
-      }
-    })
+          x <- utvalg_basic(
+            data,
+            reshid$reshId_var,
+            input$kjoenn_var,
+            "Primæroperasjon",
+            input$dato[1],
+            input$dato[2],
+            input$alder_var[1],
+            input$alder_var[2],
+            "filtrer_reshId"
+          )
+        } else {
+          x <- utvalg_basic(
+            data,
+            userUnitId(),
+            input$kjoenn_var,
+            "Primæroperasjon",
+            input$dato[1],
+            input$dato[2],
+            input$alder_var[1],
+            input$alder_var[2],
+            "filtrer_reshId"
+          )
+        }
+      })
 
       # Lagre brukervalg i et datasett
       brukervalg_reactive <- shiny::reactive({
         x <- format(input$dato, "%d/%m/%y")
-        brukervalg <- tidyr::tibble(variabel = input$sam_var,
-                                    kjoenn = input$kjoenn_var,
-                                    dato1 = x[1],
-                                    dato2 = x[2],
-                                    alder1 = input$alder_var[1],
-                                    alder2 = input$alder_var[2],
-                                    "Primæroperasjon")
+        brukervalg <- tidyr::tibble(
+          variabel = input$sam_var,
+          kjoenn = input$kjoenn_var,
+          dato1 = x[1],
+          dato2 = x[2],
+          alder1 = input$alder_var[1],
+          alder2 = input$alder_var[2],
+          "Primæroperasjon"
+        )
         return(brukervalg)
       })
 
@@ -218,13 +236,13 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
           boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
         } else {
           density_sam(sam_variabler_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
-          }
-        })
+        }
+      })
 
       # Render plot
       output$sam_plot <- shiny::renderPlot({
         sam_plot_reactive()
-        })
+      })
 
       output$konf_tbl <- DT::renderDataTable({
         sam_finn_konf_reactive()
