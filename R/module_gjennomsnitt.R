@@ -2,7 +2,7 @@
 #'@export
 
 module_gjennomsnitt_UI <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
 
@@ -10,7 +10,7 @@ module_gjennomsnitt_UI <- function(id) {
       shiny::sidebarPanel(width = 3,
 
                           # Select variable for x-axis
-                          selectInput( # First select
+                          shiny::selectInput( # First select
                             inputId = ns("x_var"),
                             label = "Variabel:",
                             choices = c("Helsetilstand" = "Helsetilstand",
@@ -66,9 +66,9 @@ module_gjennomsnitt_UI <- function(id) {
                                       ),
                             selected = "BMI_kategori"),
 
-                          shinyjs::hidden(uiOutput(outputId = ns("view_type"))), # second select
+                          shinyjs::hidden(shiny::uiOutput(outputId = ns("view_type"))), # second select
 
-                          radioButtons( # second select
+                          shiny::radioButtons( # second select
                             inputId = ns("tidsenhet"),
                             label = "Tidsenhet",
                             choices = c("År" = "aar",
@@ -76,7 +76,7 @@ module_gjennomsnitt_UI <- function(id) {
                             selected = "kvartal"
                           ),
 
-                          dateRangeInput( # third select
+                          shiny::dateRangeInput( # third select
                             inputId = ns("dato"),
                             label = "Tidsintervall:",
                             start = "2023-01-02",
@@ -86,7 +86,7 @@ module_gjennomsnitt_UI <- function(id) {
                             format = "dd-mm-yyyy",
                             separator = " - "),
 
-                          sliderInput( # fourth select
+                          shiny::sliderInput( # fourth select
                             inputId = ns("alder_var"),
                             label = "Aldersintervall:",
                             min = 0,
@@ -94,29 +94,29 @@ module_gjennomsnitt_UI <- function(id) {
                             value = c(10, 20),
                             dragRange = TRUE),
 
-                          selectInput( # fifth select
+                          shiny::selectInput( # fifth select
                             inputId = ns("kjonn_var"),
                             label = "Utvalg basert på kjønn",
                             choices = c("begge", "mann", "kvinne"),
                             selected = "begge"),
 
-                          radioButtons( # sixth select
+                          shiny::radioButtons( # sixth select
                             inputId = ns("type_op"),
                             label = "Type operasjon",
                             choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
                             selected = "Primæroperasjon")),
 
 
-      mainPanel(
-        tabsetPanel(id = ns("tab"),
-                    tabPanel("Figur", value = "fig",
-                             textOutput(outputId = ns("my_text")),
-                             plotOutput(outputId = ns("my_plot"), height = "auto"),
-                             downloadButton(ns("download_gjennomsnittsfig"),
+      shiny::mainPanel(
+        shiny::tabsetPanel(id = ns("tab"),
+                           shiny::tabPanel("Figur", value = "fig",
+                                           shiny::textOutput(outputId = ns("my_text")),
+                                           shiny::plotOutput(outputId = ns("my_plot"), height = "auto"),
+                                           shiny::downloadButton(ns("download_gjennomsnittsfig"),
                                             "Last ned figur")),
-                    tabPanel("Tabell", value = "tab",
-                             tableOutput(outputId = ns("table")),
-                             downloadButton(ns("download_gjennomsnittstbl"),
+                           shiny::tabPanel("Tabell", value = "tab",
+                                           shiny::tableOutput(outputId = ns("table")),
+                                           shiny::downloadButton(ns("download_gjennomsnittstbl"),
                                             "Last ned tabell")
                              )
                     )
@@ -132,11 +132,11 @@ module_gjennomsnitt_UI <- function(id) {
 #'@export
 
 module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data) {
-  moduleServer(
+  shiny::moduleServer(
     id,
     function(input, output, session) {
 
-      output$view_type <- renderUI({
+      output$view_type <- shiny::renderUI({
         ns <- session$ns
         if(userRole() == "SC") {
           shiny::radioButtons( # seventh select
@@ -160,11 +160,11 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         }
       })
 
-      map_var_reactive <- reactive({
+      map_var_reactive <- shiny::reactive({
         mapping_navn(data, input$x_var)
       })
 
-      prepVar_reactive <- reactive({
+      prepVar_reactive <- shiny::reactive({
         prepVar(
           data,
           map_var_reactive(),
@@ -180,7 +180,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
       # Make data frame where UI choices are stored
 
-      my_data_reactive <- reactive({
+      my_data_reactive <- shiny::reactive({
         x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var,
                                 input$kjonn_var,
@@ -194,13 +194,13 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       # prepVar() returns a list
       # Unpack part 1 of list: data
 
-      data_reactive <- reactive({
+      data_reactive <- shiny::reactive({
         data <- data.frame(prepVar_reactive()[1])
       })
 
       # Unpack part 2 of list: gg-data
 
-      gg_data_reactive <- reactive({
+      gg_data_reactive <- shiny::reactive({
         data.frame(prepVar_reactive()[2])
       })
 
@@ -208,7 +208,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       ######## AGGREGATE DATA-------------------------------------------------------
       #Aggregate data in table format
 
-      table_data <- reactive({
+      table_data <- shiny::reactive({
         table <- tabell_gjen_tid(data_reactive(),
                                              map_var_reactive(),
                                              map_data,
@@ -223,13 +223,13 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       ########### DISPLAY DATA-------------------------------------------------------
       ### TABLE
 
-      output$table <- renderTable({
+      output$table <- shiny::renderTable({
         table_data()
       })
 
       ### FIGURE ###
 
-      my_plot <- reactive({
+      my_plot <- shiny::reactive({
         over_tid_plot(table_data(),
                                   input$visningstype,
                                   gg_data_reactive(),
@@ -238,7 +238,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                                   my_data_reactive())
       })
 
-      check <- reactive({
+      check <- shiny::reactive({
         sjekk_antall(data,
                      table_data(),
                      input$dato[1],
@@ -246,20 +246,20 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
                      input$tidsenhet)
       })
 
-      output$my_text <- renderText({
+      output$my_text <- shiny::renderText({
         if(check() == "Drop") {
           "For få verdier for visse variabler. Gjør nytt utvalg. Se tabell i neste fane."
         }
         })
 
-      output$my_plot <- renderPlot({
+      output$my_plot <- shiny::renderPlot({
         if(check() == "Keep") {
           my_plot()
         }
         },  width = 800, height = 600)
 
       ##### NEDLASTING ###############################################################
-      output$download_gjennomsnittsfig <-  downloadHandler(
+      output$download_gjennomsnittsfig <-  shiny::downloadHandler(
         filename = function() {
           paste("Figur_", input$x_var, "_", Sys.Date(), ".pdf", sep = "")
         },
@@ -269,7 +269,7 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
           dev.off()
           })
 
-      output$download_gjennomsnittstbl <- downloadHandler(
+      output$download_gjennomsnittstbl <- shiny::downloadHandler(
         filename = function() {
           paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },

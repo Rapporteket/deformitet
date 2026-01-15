@@ -3,13 +3,13 @@
 #'@title module datadump ui
 #'@export
 module_datadump_UI <- function(id){
-  ns <- NS(id)
+  ns <- shiny::NS(id)
 
   shiny::tagList(
     shiny::fluidPage(
       shiny::sidebarPanel(
 
-        selectInput(
+        shiny::selectInput(
           inputId = ns("choice_datadump"),
           label = "Ønsket datautvalg:",
           choices = c(
@@ -18,9 +18,9 @@ module_datadump_UI <- function(id){
             "Datasett basert på skjematype og utvalg"),
           selected = "Datasett med selvvalgte navn"),
 
-        conditionalPanel(
+        shiny::conditionalPanel(
           condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
-          selectInput(
+          shiny::selectInput(
             inputId = ns("skjema_type"),
             label = "Data fra: ",
             choices = c("Pasientskjema",
@@ -28,7 +28,7 @@ module_datadump_UI <- function(id){
           )),
 
        #startDato <- paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01')
-        dateRangeInput(
+       shiny::dateRangeInput(
           inputId = ns("date"),
           label = "Tidsintervall:",
           start = paste0(as.numeric(format(Sys.Date()-100, "%Y")), '-01-01'),
@@ -41,26 +41,26 @@ module_datadump_UI <- function(id){
         shiny::downloadButton(ns("download_data"), "Last ned data")
       ),
 
-      mainPanel(
+      shiny::mainPanel(
         bslib::navset_card_underline(
           bslib::nav_panel("Info",
                            bslib::card(
                              bslib::card_header(
-                               h2("Her kan et utvalg av data fra registeret lastes ned")
+                               shiny::h2("Her kan et utvalg av data fra registeret lastes ned")
                              ),
                              bslib::card_body(
-                               h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
+                               shiny::h4("Dersom bruker ikke er i registerledelsen vil brukeren her kun få tilgang til
               data som allerede tilhører brukerens enhet (allerede journalført data, dvs. ikke PROM)"),
-                               h3("Datasett basert på utvalg"),
-                               p("Dersom 'Datasett basert på utvalg' velges, vil flere valg bli
+                               shiny::h3("Datasett basert på utvalg"),
+                               shiny::p("Dersom 'Datasett basert på utvalg' velges, vil flere valg bli
               tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra tidsintervall."),
-                               h3("Datasett basert på skjematype"),
-                               p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å laste ned et datasett fra hvert eller
+                               shiny::h3("Datasett basert på skjematype"),
+                               shiny::p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å laste ned et datasett fra hvert eller
                 flere av skjemaene som registeret sender inn. Det vil også her være mulig å begrense utvalget.",
-                                 tags$br(),
-                                 tags$br(),
+                                        shiny::tags$br(),
+                                        shiny::tags$br(),
                                  "- Pasientskjema: informasjon registrert om pasientene pre-operativt. Superbrukere (SC) har også tilgang til oppfølgingsskjema (PROM - 3-6, 12 og 60 mnd)",
-                                 tags$br(),
+                                 shiny::tags$br(),
                                  "- Kirurgskjema: informasjon registert av kirurg ved operasjon og ved oppfølging")
                              )
                            )
@@ -68,7 +68,7 @@ module_datadump_UI <- function(id){
           bslib::nav_panel("Forhåndsvisning",
                            bslib::card(
                              bslib::card_header(
-                               h3("Her er en forhåndsvisning av tabellen som lastes ned"),
+                               shiny::h3("Her er en forhåndsvisning av tabellen som lastes ned"),
                                DT::DTOutput(outputId = ns("datadump")),
                              )))
         )
@@ -81,11 +81,11 @@ module_datadump_UI <- function(id){
 #'@export
 
 module_datadump_server <- function(id, data, userRole, userUnitId){
-  moduleServer(
+  shiny::moduleServer(
     id,
     function(input, output, session){
 
-    datadumpEgneNavn <- reactive({
+    datadumpEgneNavn <- shiny::reactive({
         if (input$choice_datadump == "Datasett med selvvalgte navn") {
           data <- alleRegData(egneVarNavn=1) |>
             dplyr::filter(dplyr::between(.data$InnDato, as.Date(input$date[1]), as.Date(input$date[2])))
@@ -95,7 +95,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       # filtrering
 
-      Datadump_reactive <- reactive({
+      Datadump_reactive <- shiny::reactive({
         head(names(data))
         data <- filtrer_datadump(data,
                                              input$date[1],
@@ -113,13 +113,13 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
 
       # orgname = RegData$ShNavn[match(unique(RegData$ReshId), RegData$ReshId)])
 
-      select_datadump_reactive <- reactive ({
+      select_datadump_reactive <- shiny::reactive ({
         if (input$skjema_type == "Pasientskjema"){
           data <- Datadump_reactive() |>
-            dplyr::select(-any_of(colnames))
+            dplyr::select(-dplyr::any_of(colnames))
         } else {
           data <- Datadump_reactive() |>
-            dplyr::select(any_of(colnames))
+            dplyr::select(dplyr::any_of(colnames))
         }
       })
 
@@ -133,7 +133,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId){
            })
 
 
-      output$download_data <- downloadHandler(
+      output$download_data <- shiny::downloadHandler(
         filename = function() {
           paste0('deformitet-', Sys.Date(), '.csv')
         },

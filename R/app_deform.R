@@ -120,7 +120,6 @@ server_deform <- function(input, output, session) {
   library(tidyr)
   library(ggplot2)
   library(DT)
-  library(shiny)
   library(rapbase)
   library(bslib)
   library(shinyWidgets)

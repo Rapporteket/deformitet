@@ -3,11 +3,11 @@
 #'@export
 
 module_kvalitetsindikator_UI <- function(id){
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-      selectInput( # First select
+        shiny::selectInput( # First select
         inputId = ns("kval_var"),
         label = "Velg Kvalitetsindikator:",
         choices = c("SRS22 'Hvor fornøyd er du med behandlingen?' 3-6 mnd" = "SRS22_spm21_3mnd",
@@ -34,28 +34,26 @@ module_kvalitetsindikator_UI <- function(id){
         selected = "begge"),
 
 
-      conditionalPanel(
-        condition = "input.kval_var == 'CURRENT_SURGERY'",
+      shiny::conditionalPanel(
+        condition = paste0("input['", ns("kval_var"), "'] == 'CURRENT_SURGERY'"),
         shiny::radioButtons( # third select, not visible when looking at rate of re-operations
           inputId = ns("type_op"),
           label = "Type operasjon",
           choices = c("Begge"),
-          selected = "Begge"),
-        ns = NS(id)
+          selected = "Begge")
         ),
 
 
-      conditionalPanel(
-        condition = "input.kval_var != 'CURRENT_SURGERY'",
+      shiny::conditionalPanel(
+        condition = paste0("input['", ns("kval_var"), "'] != 'CURRENT_SURGERY'"),
         shiny::radioButtons( # third select, not visible when looking at rate of re-operations
           inputId = ns("type_op"),
           label = "Type operasjon",
           choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
-          selected = "Begge"),
-        ns = NS(id)
+          selected = "Begge")
       ),
 
-      sliderInput( # fourth select
+      shiny::sliderInput( # fourth select
         inputId = ns("alder_var"),
         label = "Aldersintervall:",
         min = 0,
@@ -63,7 +61,7 @@ module_kvalitetsindikator_UI <- function(id){
         value = c(10, 20),
         dragRange = TRUE),
 
-      dateRangeInput( # fifth select
+      shiny::dateRangeInput( # fifth select
         inputId = ns("date"),
         label = "Tidsintervall:",
         start = "2023-01-02",
@@ -85,9 +83,9 @@ module_kvalitetsindikator_UI <- function(id){
           #bslib::nav_panel("Over tid", plotOutput(outputId = "kval_over_tid"))
         ),
         bslib::navset_card_underline(
-          title = h4("Slik er kvalitetsindikatoren regnet ut:"),
+          title = shiny::h4("Slik er kvalitetsindikatoren regnet ut:"),
           bslib::card_header(
-            tags$em(
+            shiny::tags$em(
               shiny::textOutput(
                 outputId = ns("text_header")))),
           bslib::card_body(
@@ -103,14 +101,14 @@ module_kvalitetsindikator_UI <- function(id){
 #'@export
 
 module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map_data){
-  moduleServer(
+  shiny::moduleServer(
     id,
     function(input, output, session){
 
       # Make gg-data for plot
       gg_data <- data.frame(title = "") # Jeg skal legge alt dette inn i en funksjon
 
-      gg_data_reactive <- reactive({
+      gg_data_reactive <- shiny::reactive({
         gg_data <- gg_data |>
           dplyr::mutate(
             title = dplyr::case_match(
@@ -150,7 +148,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
 
       # Store reactive choices in data set for caption in ggplot
-      my_data_reactive <- reactive({
+      my_data_reactive <- shiny::reactive({
         #date <- format(c(date1_reactive(), date2_reactive(), "%d/%m/%y"))
         my_data <- data.frame(c(input$kval_var,
                                 if(input$kjonn_var == "nei"){"begge"}
@@ -166,7 +164,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       ###### COUNT KVALTITETSINDIKATORER #############################################
 
       # Basic utvalg
-      df_reactive <- reactive({
+      df_reactive <- shiny::reactive({
         utvalg_basic(data,
                                  userUnitId(),
                                  input$kjonn_var,
@@ -179,7 +177,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       })
 
 
-      kval_df_reactive <- reactive({
+      kval_df_reactive <- shiny::reactive({
         x <- count_kvalind(df_reactive(),
                                        input$kjonn_var,
                                        input$kval_var,
@@ -190,20 +188,20 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
       ###### PLOT ####################################################################
 
-      kval_plot_reactive <- reactive({
+      kval_plot_reactive <- shiny::reactive({
         kval_plot(kval_df_reactive(),
                               gg_data_reactive(),
                               my_data_reactive(),
                               input$kjonn_var)
       })
 
-      output$kval_plot <- renderPlot({
+      output$kval_plot <- shiny::renderPlot({
         kval_plot_reactive()
       })
 
       ##### TABLE ####################################################################
 
-      output$kval_table <- DT::renderDT({datatable(kval_df_reactive(),
+      output$kval_table <- DT::renderDT({DT::datatable(kval_df_reactive(),
                                                    class = 'white-space:nowrap compact',
                                                    colnames = c("Sykehus",
                                                                 "Kjonn",
@@ -216,7 +214,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
 
 
       ##### NEDLASTING ###############################################################
-      output$download_fig <-  downloadHandler(
+      output$download_fig <-  shiny::downloadHandler(
         filename = function(){
           paste("Figur_", input$kval_var,"_", Sys.Date(), ".pdf", sep = "")
         },
@@ -227,7 +225,7 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
         }
       )
 
-      output$download_tbl <- downloadHandler(
+      output$download_tbl <- shiny::downloadHandler(
         filename = function(){
           paste("Tabell_", input$kval_var, "_", Sys.Date(), ".csv", sep = "")
         },
@@ -237,12 +235,12 @@ module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map
       )
 
       #### RENDER TEXT ##############################################################
-      output$text_header <- renderText({
+      output$text_header <- shiny::renderText({
         data <- explanation_kvalind(input$kjonn_var, input$kval_var)
         data$header
       })
 
-      output$text_body <- renderText({
+      output$text_body <- shiny::renderText({
         data <- explanation_kvalind(input$kjonn_var, input$kval_var)
         data$text
       })

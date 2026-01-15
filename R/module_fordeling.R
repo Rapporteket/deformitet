@@ -2,7 +2,7 @@
 #'@export
 
 module_fordeling_UI <- function (id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tagList(
       shiny::sidebarLayout(
         shiny::sidebarPanel(
@@ -10,7 +10,7 @@ module_fordeling_UI <- function (id) {
 
 
           # Velg variabel for x-aksen
-          selectInput( # Første valg
+          shiny::selectInput( # Første valg
             inputId = ns("x_var"),
             label = "Variabel:",
             choices = c("Helsetilstand" = "Helsetilstand",
@@ -65,13 +65,13 @@ module_fordeling_UI <- function (id) {
             selected = "BMI_kategori"),
 
 
-          selectInput( # andre valg
+          shiny::selectInput( # andre valg
             inputId = ns("kjonn_var"),
             label = "Utvalg basert på kjønn",
             choices = c("begge", "mann", "kvinne"),
             selected = "begge"),
 
-          sliderInput( # tredje valg
+          shiny::sliderInput( # tredje valg
             inputId = ns("alder_var"),
             label = "Aldersintervall:",
             min = 0,
@@ -79,18 +79,18 @@ module_fordeling_UI <- function (id) {
             value = c(10, 20),
             dragRange = TRUE),
 
-          shinyjs::hidden(uiOutput(outputId = ns('reshid'))),
+          shinyjs::hidden(shiny::uiOutput(outputId = ns('reshid'))),
 
-          radioButtons( # fjerde valg
+          shiny::radioButtons( # fjerde valg
             inputId = ns("type_op"),
             label = "Type operasjon",
             choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
             selected = "Primæroperasjon"
             ),
 
-          shinyjs::hidden(uiOutput(outputId = ns('visning_type'))),
+          shinyjs::hidden(shiny::uiOutput(outputId = ns('visning_type'))),
 
-          dateRangeInput( # femte valg
+          shiny::dateRangeInput( # femte valg
             inputId = ns("dato"),
             label = "Tidsintervall:",
             start = "2023-01-02",
@@ -103,26 +103,26 @@ module_fordeling_UI <- function (id) {
 
 
 
-    mainPanel(
-      tabsetPanel(id = ns("tab"),
-                  tabPanel("Figur", value = "fig",
-                           plotOutput(outputId = ns("figur"), height = "auto"),
-                           downloadButton(ns("download_fordelingsfig"),
+        shiny::mainPanel(
+          shiny::tabsetPanel(id = ns("tab"),
+                             shiny::tabPanel("Figur", value = "fig",
+                                             shiny::plotOutput(outputId = ns("figur"), height = "auto"),
+                                             shiny::downloadButton(ns("download_fordelingsfig"),
                                           "Last ned figur")),
-                  tabPanel("Tabell", value = "tab",
+                             shiny::tabPanel("Tabell", value = "tab",
                            bslib::card_body(
                              bslib::card_header(
-                               textOutput(outputId = ns("tittel_tabell")
+                               shiny::textOutput(outputId = ns("tittel_tabell")
                                )
                              )
                            ),
                            DT::DTOutput(outputId = ns("tabell")),
-                           downloadButton(ns("download_fordelingstbl"),
+                           shiny::downloadButton(ns("download_fordelingstbl"),
                                           "Last ned tabell")
                   ),
-                  tabPanel("Gjennomsnitt", value = "gjen",
+                  shiny::tabPanel("Gjennomsnitt", value = "gjen",
                            DT::DTOutput(outputId = ns("gjen_tabell")),
-                           downloadButton(ns("download_fordelingsgjentabell"),
+                           shiny::downloadButton(ns("download_fordelingsgjentabell"),
                                           "Last ned tabell"),
                            bslib::card_body(
                              bslib::card_title("Om tabellen"),
@@ -145,7 +145,7 @@ module_fordeling_UI <- function (id) {
 #'@export
 
 module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, map_data) {
-  moduleServer(
+  shiny::moduleServer(
     id,
     function(input, output, session){
 
@@ -153,7 +153,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Definere konstant for komplikasjonstyper
       komplikasjon_typer <- c("Komplikasjonstype", "Komplikasjonstype_12mnd", "Komplikasjonstype_60mnd")
 
-      output$reshid <- renderUI({
+      output$reshid <- shiny::renderUI({
         ns <- session$ns
         if (userRole() == 'SC') { # sjette valg
           shiny::selectInput(
@@ -165,7 +165,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         }
       })
 
-      output$visning_type <- renderUI({
+      output$visning_type <- shiny::renderUI({
         ns <- session$ns
         if(userRole() == 'SC') {
           shiny::radioButtons( # sjuende valg
@@ -190,7 +190,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Klargjøring av data
       # data som sendes til modulen går gjennom prepVar()-funksjonen
 
-      prepVar_reactive <- reactive({
+      prepVar_reactive <- shiny::reactive({
         prepVar(
           data,
           input$x_var,
@@ -205,7 +205,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Lagring av ui-valg i dataramme
 
-      my_data_reactive <- reactive({
+      my_data_reactive <- shiny::reactive({
         x <- format(input$dato, "%d/%m/%y")
         my_data <- data.frame(c(input$x_var, input$kjonn_var, x[1], x[2], input$alder_var[1], input$alder_var[2], input$type_op))
       })
@@ -214,13 +214,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # prepVar() returnerer ei liste
       # Pakk ut del 1 av lista: data som har blitt filtrert
 
-      data_reactive <- reactive({
+      data_reactive <- shiny::reactive({
         data <- data.frame(prepVar_reactive()[1])
       })
 
       # Pakk ut del 2 av lista: gg-data - fine titler osv
 
-      gg_data_reactive <- reactive({
+      gg_data_reactive <- shiny::reactive({
         gg_data <- data.frame(prepVar_reactive()[2])
       })
 
@@ -230,20 +230,20 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Alle variabler utenom komplikasjonstype
       # Lagre data i tabellformat - bruker funksjonen lagTabell()
 
-      tabell_reactive <- reactive({
+      tabell_reactive <- shiny::reactive({
        if (userRole() == 'SC') {
          reshid = input$reshId_var
        } else {
          reshid = userUnitId()
        }
-        req(input$visning_type)
+        shiny::req(input$visning_type)
         lagTabell(data_reactive(), reshid, input$visning_type)
       })
 
       # Komplikasjonstyper:
       # Filtrer data
 
-        kompl_data_reative <- reactive({
+        kompl_data_reative <- shiny::reactive({
           kompl_data(data,
                                  input$x_var,
                                  input$kjonn_var,
@@ -257,7 +257,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
         # Få oversikt over antall pr. komplikasjonstype:
 
-        kompl_prepVar_reactive <- reactive({
+        kompl_prepVar_reactive <- shiny::reactive({
           if (input$x_var == "Komplikasjonstype") {
             var = "Komplikasjoner_3mnd"
           } else {
@@ -284,7 +284,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
         # Lagre det i tabellformat:
 
-        kompl_tbl_reactive <- reactive({
+        kompl_tbl_reactive <- shiny::reactive({
             if (userRole() == 'SC') {
               reshid = input$reshId_var
             } else {
@@ -307,7 +307,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         ### Tabell
         # Tittel på tabellen:
 
-      text_reactive <- reactive({
+      text_reactive <- shiny::reactive({
         if (! input$x_var %in% c("Komplikasjonstype", "Komplikasjonstype_12mnd")) {
           gg_data_4tbl <- data.frame(prepVar_reactive()[2])
           gg_data_4tbl$tittel
@@ -320,13 +320,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
         }
       })
 
-      output$tittel_tabell <- renderText(
+      output$tittel_tabell <- shiny::renderText(
        text_reactive()
       )
 
       # Lag tabellen:
 
-      tabell <- reactive ({
+      tabell <- shiny::reactive({
         if(input$x_var %in% komplikasjon_typer) { # hvis "komplikasjonstype" er valgt, bruk kompl_reactive()
           x <- kompl_tbl_reactive()
         }
@@ -338,13 +338,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       # Vis tabellen:
 
       output$tabell <- DT::renderDT({
-        datatable(tabell())
+        DT::datatable(tabell())
       })
 
       ### FIGUR ###
       # Lag figuren:
 
-      figur <- reactive ({
+      figur <- shiny::reactive({
         if(input$x_var %in% komplikasjon_typer) {
            kompl_plot(kompl_tbl_reactive(),
                                       input$x_var,
@@ -361,7 +361,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Vis figuren:
 
-      output$figur <- renderPlot({
+      output$figur <- shiny::renderPlot({
         figur()
       }, width = 800, height = 600)
 
@@ -372,11 +372,11 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Finne variabelen som bruker velger i datasettet:
 
-      navn_reactive <- reactive({
+      navn_reactive <- shiny::reactive({
        navn <- mapping_navn(raw_data, input$x_var)
        })
 
-      gjen_added_reactive <- reactive({
+      gjen_added_reactive <- shiny::reactive({
 
         if (input$x_var %in% c("Alder", "Knivtid", "Diff_prosent_kurve")) {
 
@@ -391,7 +391,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Filtrer basert på brukerens:
 
-      gjen_prepVar_reactive <- reactive({
+      gjen_prepVar_reactive <- shiny::reactive({
         prepVar(
           gjen_added_reactive(),
           "gjen_var",
@@ -406,13 +406,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       # Pakk ut lista som returnerers av prepVar()
 
-      gjen_data_reactive <- reactive({
+      gjen_data_reactive <- shiny::reactive({
         data <- data.frame(gjen_prepVar_reactive()[1])
       })
 
       # Lag tabell:
 
-      gjen_tabell_reactive <- reactive ({
+      gjen_tabell_reactive <- shiny::reactive ({
         gjen_data <- lag_gjen_tabell(gjen_data_reactive())
       })
 
@@ -420,13 +420,13 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
 
       output$gjen_tabell <- DT::renderDT({
         ns <- session$ns
-        datatable(gjen_tabell_reactive())
+        DT::datatable(gjen_tabell_reactive())
       })
 
 
       ###### NEDLASTING ########################################################
       # Figur:
-      output$download_fordelingsfig <-  downloadHandler(
+      output$download_fordelingsfig <-  shiny::downloadHandler(
         filename = function(){
           paste("Figur_", input$x_var,"_", Sys.Date(), ".pdf", sep = "")
         },
@@ -438,7 +438,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       )
 
       # Fordelingstabell:
-      output$download_fordelingstbl <- downloadHandler(
+      output$download_fordelingstbl <- shiny::downloadHandler(
         filename = function(){
           paste("Tabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },
@@ -448,7 +448,7 @@ module_fordeling_server <- function (id, userRole, userUnitId, data, raw_data, m
       )
 
       # Tabell nr. 2:
-      output$dowload_fordelingsgjentabell <- downloadHandler(
+      output$dowload_fordelingsgjentabell <- shiny::downloadHandler(
         filename = function(){
           paste("Gjennomsnittstabell_", input$x_var, "_", Sys.Date(), ".csv", sep = "")
         },

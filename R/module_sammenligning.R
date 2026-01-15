@@ -8,11 +8,11 @@
 #'@export
 
 module_sammenligning_UI <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        selectInput(# Første brukervalg
+        shiny::selectInput(# Første brukervalg
           inputId = ns("sam_var"),
           label = "Velg variabel",
           choices = c("SRS22 totalskår",
@@ -33,21 +33,20 @@ module_sammenligning_UI <- function(id) {
           ),
 
         # Vises kun hvis tetthetsplot er valgt og "tilfredshet" er valgt
-        conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
-          condition = "input.plot_valg == 'Tetthetsplot' && input.sam_var == 'Tilfredshet'",
+        shiny::conditionalPanel(
+          condition = paste0("input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] == 'Tilfredshet'"),
           shiny::selectInput( # Tredje brukervalg
             inputId = ns("valg_sammenligning"),
             label = "Velg sammenligning",
             choices = c("3 mnd - 12 mnd",
                         "3 mnd - 5 år",
-                        "12 mnd - 5 år")),
-            selected = "Før operasjon - 3 mnd",
-            ns = NS(id)
-          ),
+                        "12 mnd - 5 år"),
+            selected = "Før operasjon - 3 mnd"
+          )),
 
         # Vises kun hvis tetthetsplot er valgt og "tilfredshet" ikke er valgt
-        conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
-          condition = "input.plot_valg == 'Tetthetsplot' && input.sam_var != 'Tilfredshet'",
+        shiny::conditionalPanel( # Panel som kun vises om "Tetthetsplot" velges
+          condition = paste0("input['", ns("plot_valg"), "'] == 'Tetthetsplot' && input['", ns("sam_var"), "'] != 'Tilfredshet'"),
           shiny::selectInput( # Tredje brukervalg
             inputId = ns("valg_sammenligning"),
             label = "Velg sammenligning",
@@ -56,10 +55,9 @@ module_sammenligning_UI <- function(id) {
                         "Før operasjon - 5 år",
                         "3 mnd - 12 mnd",
                         "3 mnd - 5 år",
-                        "12 mnd - 5 år")),
-          selected = "Før operasjon - 3 mnd",
-          ns = NS(id)
-        ),
+                        "12 mnd - 5 år"),
+          selected = "Før operasjon - 3 mnd"
+        )),
 
       shiny::radioButtons( # Fjerde brukervalg
         inputId = ns("kjoenn_var"),
@@ -70,7 +68,7 @@ module_sammenligning_UI <- function(id) {
         selected = "begge"
         ),
 
-      sliderInput( # Femte brukervalg
+      shiny::sliderInput( # Femte brukervalg
         inputId = ns("alder_var"),
         label = "Aldersintervall:",
         min = 0,
@@ -79,9 +77,9 @@ module_sammenligning_UI <- function(id) {
         dragRange = TRUE
         ),
 
-      shinyjs::hidden(uiOutput(outputId = ns("reshid"))),
+      shinyjs::hidden(shiny::uiOutput(outputId = ns("reshid"))),
 
-      dateRangeInput( # Sjuende brukervalg
+      shiny::dateRangeInput( # Sjuende brukervalg
         inputId = ns("dato"),
         label = "Tidsintervall:",
         start = "2023-01-02",
@@ -114,14 +112,14 @@ module_sammenligning_UI <- function(id) {
 #'@export
 
 module_sammenligning_server <- function(id, data, userRole, userUnitId) {
-  moduleServer(
+  shiny::moduleServer(
     id,
     function(input, output, session) {
 
-      reshid <- reactiveValues(reshId_var = 111961) # Lagre dette som en reaktiv verdi
+      reshid <- shiny::reactiveValues(reshId_var = 111961) # Lagre dette som en reaktiv verdi
 
 
-      output$reshid <- renderUI({ # Åttende valg som kun vises dersom brukeren har SC-rolle
+      output$reshid <- shiny::renderUI({ # Åttende valg som kun vises dersom brukeren har SC-rolle
         ns <- session$ns
         if (userRole() == "SC") {
           shiny::selectInput(
@@ -133,15 +131,15 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
         }
       })
 
-      observe({ # Dersom brukerens rolle endrer seg endrer også den reaktive verdien seg
-        req(input$reshId_var)
+      shiny::observe({ # Dersom brukerens rolle endrer seg endrer også den reaktive verdien seg
+        shiny::req(input$reshId_var)
         reshid$reshId_var <- input$reshId_var
       })
 
 
       ##### Gjør hovedutvalg av dataen #########################################
 
-      data_sam_reactive <- reactive({
+      data_sam_reactive <- shiny::reactive({
 
         if (userRole() == "SC") {
           x <- utvalg_basic(data,
@@ -170,7 +168,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
     })
 
       # Lagre brukervalg i et datasett
-      brukervalg_reactive <- reactive({
+      brukervalg_reactive <- shiny::reactive({
         x <- format(input$dato, "%d/%m/%y")
         brukervalg <- tidyr::tibble(variabel = input$sam_var,
                                     kjoenn = input$kjoenn_var,
@@ -184,38 +182,38 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
 
 
       # Lag tabell til sammenligning
-      sam_tabell_reactive <- reactive({
+      sam_tabell_reactive <- shiny::reactive({
         lag_sam_tabell(data_sam_reactive(), input$sam_var)
       })
 
       # Lag nye navn
-      nye_navn_reactive <- reactive({
+      nye_navn_reactive <- shiny::reactive({
         nye_navn(sam_tabell_reactive())
       })
 
       # Vask datasett
-      ren_sam_tabell_reactive <- reactive({
+      ren_sam_tabell_reactive <- shiny::reactive({
         vask_sam_tabell(nye_navn_reactive(), input$sam_var)
       })
 
       # Finn konfidensintervall for variabler til density plot
-      sam_finn_konf_reactive <- reactive({
+      sam_finn_konf_reactive <- shiny::reactive({
         finn_sam_konfidensint(ren_sam_tabell_reactive())
       })
 
       # Lag fine navn til ggplot
-      gg_data_sam_reactive <- reactive({
+      gg_data_sam_reactive <- shiny::reactive({
         ggdata_sam_plot(input$sam_var)
       })
 
       # Finn variabler til density plot
-      sam_variabler_reactive <- reactive({
+      sam_variabler_reactive <- shiny::reactive({
         finn_sam_variabler(ren_sam_tabell_reactive(), input$valg_sammenligning)
       })
 
 
       # Lag plot
-      sam_plot_reactive <- reactive({
+      sam_plot_reactive <- shiny::reactive({
         if (input$plot_valg == "Boksplot") {
           boxplot_sam(ren_sam_tabell_reactive(), gg_data_sam_reactive(), brukervalg_reactive())
         } else {
@@ -224,7 +222,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
         })
 
       # Render plot
-      output$sam_plot <- renderPlot({
+      output$sam_plot <- shiny::renderPlot({
         sam_plot_reactive()
         })
 
@@ -233,7 +231,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       })
 
       # Lag nedlastning
-      output$nedlastning_sam_plot <-  downloadHandler(
+      output$nedlastning_sam_plot <-  shiny::downloadHandler(
         filename = function() {
           paste("plot_sammenligning", Sys.Date(), ".pdf", sep = "")
         },
