@@ -1,7 +1,7 @@
 #'@title Module gjennomsnitt
 #'@export
 
-module_gjennomsnitt_UI <- function(id) {
+module_gjennomsnitt_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(

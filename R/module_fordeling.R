@@ -1,7 +1,7 @@
 #'@title Fordelingsmodul
 #'@export
 
-module_fordeling_UI <- function (id) {
+module_fordeling_ui <- function (id) {
   ns <- shiny::NS(id)
   shiny::tagList(
       shiny::sidebarLayout(

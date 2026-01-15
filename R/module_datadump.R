@@ -2,7 +2,7 @@
 ### Module for creating data based on selection criteria
 #'@title module datadump ui
 #'@export
-module_datadump_UI <- function(id){
+module_datadump_ui <- function(id){
   ns <- shiny::NS(id)
 
   shiny::tagList(

@@ -39,7 +39,7 @@ ui_deform <- function() {
 
       shiny::tabPanel(
         title = "Fordelingsfigur og -tabell",
-        module_fordeling_UI("fordeling")
+        module_fordeling_ui("fordeling")
       ),
 
       ################################################################################
@@ -47,7 +47,7 @@ ui_deform <- function() {
 
       shiny::tabPanel(
         title = "Kvalitetsindikatorer",
-        module_kvalitetsindikator_UI("kval1")
+        module_kvalitetsindikator_ui("kval1")
       ),
 
 
@@ -65,7 +65,7 @@ ui_deform <- function() {
 
       shiny::tabPanel(
         title = "Registreringer",
-        module_registreringer_UI("reg1")
+        module_registreringer_ui("reg1")
       ),
 
       ################################################################################
@@ -81,7 +81,7 @@ ui_deform <- function() {
       shiny::tabPanel( # third tab
         title = "Registeradm",
         shiny::fluidPage(
-          module_datadump_UI(
+          module_datadump_ui(
             id = "mod_datadump"
           )
         )

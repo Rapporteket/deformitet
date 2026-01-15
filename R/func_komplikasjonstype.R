@@ -178,16 +178,16 @@ kompl_data <- function(RegData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
 kompl_tbl <- function (data1, data2, var_kjonn, type_view, reshId) {
 
-  data_based_on_UI_choices <- data1 |>
+  data_based_on_ui_choices <- data1 |>
     dplyr::mutate(Kjonn = case_when({{var_kjonn}} != "mann" |
                                       {{var_kjonn}} != "kvinne" ~ "begge"))
 
-  data_based_on_UI_choices <- data_based_on_UI_choices |>
+  data_based_on_ui_choices <- data_based_on_ui_choices |>
     dplyr::group_by(.data$Sykehus, .data$Kjonn) |>
     dplyr::tally()
 
 
-  kompl_tbl <- left_join(data_based_on_UI_choices, data2)
+  kompl_tbl <- left_join(data_based_on_ui_choices, data2)
 
   kompl_tbl <- kompl_tbl |>
     dplyr::mutate(andel = round(.data$antall / .data$n * 100, 2))

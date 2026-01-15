@@ -2,7 +2,7 @@
 #'@title kvalitetsindikator UI
 #'@export
 
-module_kvalitetsindikator_UI <- function(id){
+module_kvalitetsindikator_ui <- function(id){
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
