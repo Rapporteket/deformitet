@@ -33,7 +33,7 @@ filtrer_datadump <- function(data, dato1, dato2, userRole, userUnitId) { #
 #'
 #' @export
 
-utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, alder2, bruk_av_funk) {
+utvalg_basic <- function(data, user_unit, gender, type_op, tid1, tid2, alder1, alder2, bruk_av_funk) {
 
   # Filter by unit (if desirable)
 
@@ -48,8 +48,8 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
 
   data <- data |>
     dplyr::filter(.data$Kjonn == dplyr::case_when({{gender}} == "kvinne" ~ "kvinne",
-                                            {{gender}} == "mann" ~ "mann",
-                                            {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjonn))
+                                                  {{gender}} == "mann" ~ "mann",
+                                                  {{gender}} != "kvinne" | {{gender}} != "mann" ~ Kjonn))
 
   # Filter by operation type
 
@@ -74,7 +74,7 @@ utvalg_basic <- function (data, user_unit, gender, type_op, tid1, tid2, alder1, 
                                  {{alder2}}))
 
 
-  return (data)
+  return(data)
 
 }
 
