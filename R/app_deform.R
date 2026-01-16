@@ -47,7 +47,7 @@ ui_deform <- function() {
 
       shiny::tabPanel(
         title = "Kvalitetsindikatorer",
-        module_kvalitetsindikator_ui("kval1")
+        module_kvalind_ui("kval1")
       ),
 
 
@@ -184,7 +184,7 @@ server_deform <- function(input, output, session) {
   ##### TAB: Kvalitetsindikatorer ################################################
 
 
-  module_kvalitetsindikator_server(
+  module_kvalind_server(
     "kval1",
     data = regData,
     map_data = map_db_resh,

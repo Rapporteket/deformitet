@@ -2,7 +2,7 @@
 #'@title kvalitetsindikator UI
 #'@export
 
-module_kvalitetsindikator_ui <- function(id) {
+module_kvalind_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
@@ -110,7 +110,7 @@ module_kvalitetsindikator_ui <- function(id) {
 
 #'@export
 
-module_kvalitetsindikator_server <- function(id, data, userRole, userUnitId, map_data) {
+module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
