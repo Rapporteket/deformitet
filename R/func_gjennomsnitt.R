@@ -20,11 +20,12 @@
 #' @export
 
 tabell_gjen_tid <- function(data,
-                            var,
-                            map_data,
-                            tidsenhet = "kvartal",
-                            visning = "hele landet",
-                            userUnitId) {
+  var,
+  map_data,
+  tidsenhet = "kvartal",
+  visning = "hele landet",
+  userUnitId
+) {
   data$PID <- as.character(data$PID)
 
   if (tidsenhet == "kvartal") {
@@ -112,16 +113,19 @@ tabell_gjen_tid <- function(data,
   if (tidsenhet == "kvartal") {
     data <- data |>
       dplyr::mutate(tid1 = lubridate::year(.data$tid),
-             tid_as_character = as.character(tid),
-             tid = case_when(str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
-                             str_detect(tid, "04-01") == TRUE ~ paste(tid1, "2", sep = "-"),
-                             str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
-                             str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")))
+        tid_as_character = as.character(.data$tid),
+        tid = dplyr::case_when(
+          str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
+          str_detect(tid, "04-01") == TRUE ~ paste(tid1, "2", sep = "-"),
+          str_detect(tid, "07-01") == TRUE ~ paste(tid1, "3", sep = "-"),
+          str_detect(tid, "10-01") == TRUE ~ paste(tid1, "4", sep = "-")
+        )
+      )
 
     data$tid <- as.factor(data$tid)
 
     data <- data |>
-      select(-c("tid1", "tid_as_character"))
+      dplyr::select(-c("tid1", "tid_as_character"))
   }
   return(data)
 }
@@ -144,12 +148,12 @@ tabell_gjen_tid <- function(data,
 #' @export
 
 over_tid_plot <- function(data,
-                          visning,
-                          gg_data,
-                          map_var,
-                          tidsenhet,
-                          data_var
-                          ) {
+  visning,
+  gg_data,
+  map_var,
+  tidsenhet,
+  data_var
+) {
   data$Sykehus <- as.factor(data$Sykehus)
 
   if (visning == "hele landet") {
@@ -182,16 +186,20 @@ over_tid_plot <- function(data,
     ggplot2::xlab(tid) +
     ggplot2::ylab(gg_data$xlab) +
     ggplot2::ggtitle("Gjennomsnitt over tid") +
-    ggplot2::labs(caption = paste0("**Valgte variabler:**", "\n", data_var[1,], ", Kjønn: ", data_var[2,], "\n",
-                                   "Dato: ", data_var[3,], "-", data_var[4,], "\n",
-                                   "Alder: ", data_var[5,], "-", data_var[6,], "\n",
-                                   "Type operasjon: ", data_var[7,]))+
+    ggplot2::labs(caption = paste0(
+      "**Valgte variabler:**", "\n", data_var[1, ], ", Kjønn: ", data_var[2, ], "\n",
+      "Dato: ", data_var[3, ], "-", data_var[4, ], "\n",
+      "Alder: ", data_var[5, ], "-", data_var[6, ], "\n",
+      "Type operasjon: ", data_var[7, ]
+    )) +
 
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
       axis.title.y = ggplot2::element_text(size = 16),
       plot.caption = ggplot2::element_text(color = "#87189D", # add caption
-                                          face = "italic")) +
+        face = "italic"
+      )
+    ) +
 
     ggplot2::scale_color_manual(
       values = # adding chosen colors
@@ -449,7 +457,8 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
 
     sample_quarter <- sample_data$n_quarter[1]
 
-    check <- dplyr::if_else(true_quarter == 0, "Drop",
+    check <- dplyr::if_else(
+      true_quarter == 0, "Drop",
       dplyr::if_else(is.na(sample_quarter), "Drop", "Keep")
     )
     return(check)
@@ -472,7 +481,8 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
 
     sample_year <- sample_data$n_year[1]
 
-    check <- dplyr::if_else(true_year == 0, "Drop",
+    check <- dplyr::if_else(
+      true_year == 0, "Drop",
       dplyr::if_else(is.na(sample_year), "Drop", "Keep")
     )
 
