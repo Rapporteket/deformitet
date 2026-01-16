@@ -5,7 +5,7 @@
 \title{Komplikasjonstyper}
 \usage{
 kompl_data(
-  RegData,
+  regData,
   var,
   var_kjonn,
   time1,
