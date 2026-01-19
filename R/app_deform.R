@@ -27,8 +27,7 @@ ui_deform <- function() {
         shiny::mainPanel(
           width = 12,
           shiny::htmlOutput("veiledning", inline = TRUE), # This file is found in folder "inst"
-          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE),
-          shiny::tags$head(shiny::tags$link(rel = "shortcut icon", href = "rap/favicon.ico"))
+          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE)
         )
       ),
 

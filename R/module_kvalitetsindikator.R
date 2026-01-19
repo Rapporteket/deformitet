@@ -84,23 +84,17 @@ module_kvalind_ui <- function(id) {
           bslib::nav_panel(
             "Tabell",
             DT::DTOutput(outputId = ns("kval_table")),
-            shiny::downloadButton(ns("download_tbl"), "Last ned tabell", class = "butt2")
+            shiny::downloadButton(ns("download_tbl"), "Last ned tabell")
           )
         ),
-        bslib::navset_card_underline(
-          title = shiny::h4("Slik er kvalitetsindikatoren regnet ut:"),
-          bslib::card_header(
-            shiny::tags$em(
-              shiny::textOutput(
-                outputId = ns("text_header")
-              )
-            )
-          ),
-          bslib::card_body(
-            shiny::htmlOutput(
-              outputId = ns("text_body")
-            )
+        shiny::h4("Slik er kvalitetsindikatoren regnet ut"),
+        shiny::strong(
+          shiny::textOutput(
+            outputId = ns("text_header")
           )
+        ),
+        shiny::htmlOutput(
+          outputId = ns("text_body")
         )
       )
     )
