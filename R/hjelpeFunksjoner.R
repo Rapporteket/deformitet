@@ -1,10 +1,8 @@
-#' Run the imongr Shiny Application
+#' Run the Deformitet Shiny Application
 #'
-#' @return An object representeing the imongr app
+#' @return An object representeing the Deformitet app
 #' @export
 
-kjor_appDeform <- function() {
-  shiny::shinyApp(ui = ui_deform, server = server_deform)}
-
-# Dette angir funksjon og ikke fil
-
+kjor_app_deform <- function() {
+  shiny::shinyApp(ui = ui_deform, server = server_deform)
+}
