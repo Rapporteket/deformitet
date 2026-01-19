@@ -115,18 +115,6 @@ ui_deform <- function() {
 
 server_deform <- function(input, output, session) {
 
-
-  library(dplyr)
-  library(tidyr)
-  library(ggplot2)
-  library(DT)
-  library(rapbase)
-  library(bslib)
-  library(shinyWidgets)
-  library(lubridate)
-  library(stringr)
-  library(usethis)
-
   ######### DATA TIDYING----------------------------------------------------------
   ### Read in data:
   raw_regdata <- alleRegData()
