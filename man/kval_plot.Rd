@@ -4,14 +4,14 @@
 \alias{kval_plot}
 \title{Funksjon som lager kvalitetsindikatorplot}
 \usage{
-kval_plot(data, gg_data, data_var, choice_kjønn)
+kval_plot(data, gg_data, data_var, choice_kjonn)
 }
 \arguments{
 \item{data}{data som har vært gjennom count_kvalind()}
 
 \item{gg_data}{data som kommer fra perpVar()[2]}
 
-\item{choice_kjønn}{brukervalg på visning på kjønn}
+\item{choice_kjonn}{brukervalg på visning på kjønn}
 }
 \description{
 Funksjon som lager kvalitetsindikatorplot
