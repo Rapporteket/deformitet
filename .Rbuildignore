@@ -11,3 +11,4 @@
 ^renovate.json$
 ^README\.Rmd$
 ^dev$
+^data-raw$
