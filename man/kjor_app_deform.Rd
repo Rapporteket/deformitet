@@ -4,7 +4,12 @@
 \alias{kjor_app_deform}
 \title{Run the Deformitet Shiny Application}
 \usage{
-kjor_app_deform()
+kjor_app_deform(browser = FALSE, logAsJson = FALSE)
+}
+\arguments{
+\item{browser}{Open app in browser window}
+
+\item{logAsJson}{Log in json-format}
 }
 \value{
 An object representeing the Deformitet app
