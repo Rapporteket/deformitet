@@ -23,9 +23,13 @@ tbl_reg <- function(date1, date2, data) {
 
   data <- data |>
     dplyr::group_by(lubridate::year(.data$SURGERY_DATE), lubridate::month(.data$SURGERY_DATE)) |>
-    dplyr::count(Sykehus) |>
-    dplyr::rename(mnd = `lubridate::month(.data$SURGERY_DATE)`,
-           aar = `lubridate::year(.data$SURGERY_DATE)`)
+    dplyr::count(.data$Sykehus) |>
+    # nolint start object_usage_linter
+    dplyr::rename(
+      mnd = `lubridate::month(.data$SURGERY_DATE)`,
+      aar = `lubridate::year(.data$SURGERY_DATE)`
+    )
+  # nolint end
 
   reg_tbl <- data |>
     tidyr::pivot_wider(names_from = c("mnd", "aar"), names_sep = "-", values_from = "n") |>
@@ -33,9 +37,7 @@ tbl_reg <- function(date1, date2, data) {
     dplyr::mutate_all(~replace(., is.na(.), 0)) |>
     dplyr::mutate(Totalt = rowSums(dplyr::across(dplyr::where(is.numeric))))
 
-
-
-  return (reg_tbl)
+  return(reg_tbl)
 
 }
 
@@ -55,30 +57,36 @@ tbl_reg <- function(date1, date2, data) {
 #'
 #' @export
 
-tbl_skjema_reg <- function (date1, date2, data) {
+tbl_skjema_reg <- function(date1, date2, data) {
 
   tbl_skjema <- data |>
-    dplyr::filter(dplyr::between(.data$SURGERY_DATE,
-                                 as.Date({{date1}}, format = "%d-%m-%Y"),
-                                 as.Date({{date2}}, format = "%d-%m-%Y"))) |>
+    dplyr::filter(dplyr::between(
+      .data$SURGERY_DATE,
+      as.Date({{date1}}, format = "%d-%m-%Y"),
+      as.Date({{date2}}, format = "%d-%m-%Y")
+    )) |>
     dplyr::group_by(.data$Sykehus) |>
-    dplyr::mutate(personopplysninger = sum(!is.na(REGISTERED_DATE)),
-           Skjema_1a_Pasientoppl_preop = sum(!is.na(FILLING_DATE)),
-           Skjema_2a_Sykepleier_lege_preop = sum(!is.na(SURGERY_DATE)),
-           Skjema_1a_Pasientoppl_3mnd = sum(!is.na(FOLLOWUP)),
-           Skjema_2a_Sykepleier_lege_3mnd = sum(!is.na(FOLLOWUP_surgeon3mths)),
-           Skjema_1a_Pasientoppl_12mnd = sum(!is.na(FOLLOWUP_patient12mths)),
-           Skjema_2a_Sykepleier_lege_12mnd = sum(!is.na(FOLLOWUP_surgeon12mths)),
-           Skjema_1a_Pasientoppl_60mnd = sum(!is.na(FOLLOWUP_patient60mths))) |>
-    dplyr::select(c("Sykehus",
-             "personopplysninger",
-             "Skjema_1a_Pasientoppl_preop",
-             "Skjema_2a_Sykepleier_lege_preop",
-             "Skjema_1a_Pasientoppl_3mnd",
-             "Skjema_2a_Sykepleier_lege_3mnd",
-             "Skjema_1a_Pasientoppl_12mnd",
-             "Skjema_2a_Sykepleier_lege_12mnd",
-             "Skjema_1a_Pasientoppl_60mnd")) |>
+    dplyr::mutate(
+      personopplysninger = sum(!is.na(.data$REGISTERED_DATE)),
+      Skjema_1a_Pasientoppl_preop = sum(!is.na(.data$FILLING_DATE)),
+      Skjema_2a_Sykepleier_lege_preop = sum(!is.na(.data$SURGERY_DATE)),
+      Skjema_1a_Pasientoppl_3mnd = sum(!is.na(.data$FOLLOWUP)),
+      Skjema_2a_Sykepleier_lege_3mnd = sum(!is.na(.data$FOLLOWUP_surgeon3mths)),
+      Skjema_1a_Pasientoppl_12mnd = sum(!is.na(.data$FOLLOWUP_patient12mths)),
+      Skjema_2a_Sykepleier_lege_12mnd = sum(!is.na(.data$FOLLOWUP_surgeon12mths)),
+      Skjema_1a_Pasientoppl_60mnd = sum(!is.na(.data$FOLLOWUP_patient60mths))
+    ) |>
+    dplyr::select(
+      c("Sykehus",
+        "personopplysninger",
+        "Skjema_1a_Pasientoppl_preop",
+        "Skjema_2a_Sykepleier_lege_preop",
+        "Skjema_1a_Pasientoppl_3mnd",
+        "Skjema_2a_Sykepleier_lege_3mnd",
+        "Skjema_1a_Pasientoppl_12mnd",
+        "Skjema_2a_Sykepleier_lege_12mnd",
+        "Skjema_1a_Pasientoppl_60mnd")
+    ) |>
     unique()
 
   return(tbl_skjema)
