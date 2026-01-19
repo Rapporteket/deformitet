@@ -81,8 +81,8 @@ lag_sam_tabell <- function(data, var) {
 
   variables <- finn_variabler({{var}})
 
-  data_long <- data %>%
-    dplyr::select(Sykehus, dplyr::all_of(variables)) %>%
+  data_long <- data |>
+    dplyr::select("Sykehus", dplyr::all_of(variables)) |>
     tidyr::pivot_longer(cols = dplyr::all_of(variables), names_to = "Punkt", values_to = "Score")
 
   data_long
@@ -105,35 +105,37 @@ lag_sam_tabell <- function(data, var) {
 
 nye_navn <- function(data) {
 
-  data <- data %>%
-    dplyr::mutate(Punkt = dplyr::case_match(Punkt, c("SRS22_MAIN_SCORE",
-                                                     "SRS22_FUNCTION_SCORE",
-                                                     "SRS22_SELFIMAGE_SCORE",
-                                                     "SRS22_MENTALHEALTH_SCORE",
-                                                     "SRS22_PAIN_SCORE",
-                                                     "HELSETILSTAND_SCALE") ~ "Pre-operativt",
-                                            c("SRS22_FULL_SCORE",
-                                              "SRS22_FUNCTION_SCORE_patient3mths",
-                                              "SRS22_SELFIMAGE_SCORE_patient3mths",
-                                              "SRS22_MENTALHEALTH_SCORE_patient3mths",
-                                              "SRS22_PAIN_SCORE_patient3mths",
-                                              "HEALTH_CONDITION_SCALE",
-                                              "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
-                                            c("SRS22_FULL_SCORE_patient12mths",
-                                              "SRS22_FUNCTION_SCORE_patient12mths",
-                                              "SRS22_SELFIMAGE_SCORE_patient12mths",
-                                              "SRS22_MENTALHEALTH_SCORE_patient12mths",
-                                              "SRS22_PAIN_SCORE_patient12mths",
-                                              "HEALTH_CONDITION_SCALE_patient12mths",
-                                              "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
-                                            c("SRS22_FULL_SCORE_patient60mths",
-                                              "SRS22_FUNCTION_SCORE_patient60mths",
-                                              "SRS22_SELFIMAGE_SCORE_patient60mths",
-                                              "SRS22_MENTALHEALTH_SCORE_patient60mths",
-                                              "SRS22_PAIN_SCORE_patient60mths",
-                                              "HEALTH_CONDITION_SCALE_patient60mths",
-                                              "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"))
-
+  data <- data |>
+    dplyr::mutate(Punkt = dplyr::case_match(
+      .data$Punkt,
+      c("SRS22_MAIN_SCORE",
+        "SRS22_FUNCTION_SCORE",
+        "SRS22_SELFIMAGE_SCORE",
+        "SRS22_MENTALHEALTH_SCORE",
+        "SRS22_PAIN_SCORE",
+        "HELSETILSTAND_SCALE") ~ "Pre-operativt",
+      c("SRS22_FULL_SCORE",
+        "SRS22_FUNCTION_SCORE_patient3mths",
+        "SRS22_SELFIMAGE_SCORE_patient3mths",
+        "SRS22_MENTALHEALTH_SCORE_patient3mths",
+        "SRS22_PAIN_SCORE_patient3mths",
+        "HEALTH_CONDITION_SCALE",
+        "SRS22_SATISFACTION_SCORE") ~ "3 mnd",
+      c("SRS22_FULL_SCORE_patient12mths",
+        "SRS22_FUNCTION_SCORE_patient12mths",
+        "SRS22_SELFIMAGE_SCORE_patient12mths",
+        "SRS22_MENTALHEALTH_SCORE_patient12mths",
+        "SRS22_PAIN_SCORE_patient12mths",
+        "HEALTH_CONDITION_SCALE_patient12mths",
+        "SRS22_SATISFACTION_SCORE_patient12mths") ~ "12 mnd",
+      c("SRS22_FULL_SCORE_patient60mths",
+        "SRS22_FUNCTION_SCORE_patient60mths",
+        "SRS22_SELFIMAGE_SCORE_patient60mths",
+        "SRS22_MENTALHEALTH_SCORE_patient60mths",
+        "SRS22_PAIN_SCORE_patient60mths",
+        "HEALTH_CONDITION_SCALE_patient60mths",
+        "SRS22_SATISFACTION_SCORE_patient60mths") ~ "5 aar"
+    ))
   data
 }
 
@@ -152,8 +154,8 @@ nye_navn <- function(data) {
 
 vask_sam_tabell <- function(data, var) {
 
-  data <- data %>%
-    dplyr::mutate(Punkt = forcats::as_factor(Punkt),
+  data <- data |>
+    dplyr::mutate(Punkt = forcats::as_factor(.data$Punkt),
                   Punkt = dplyr::case_when({{var}} %in% c("SRS22 totalskår", "Funksjon",
                                                           "Selvbilde", "Mental helse",
                                                           "Smerte", "Helsetilstand") ~
@@ -163,15 +165,15 @@ vask_sam_tabell <- function(data, var) {
                                              forcats::fct_relevel(Punkt, "3 mnd",
                                                                   "12 mnd", "5 aar")))
 
-  data <- data %>%
-    dplyr::filter(!is.na(Score))
+  data <- data |>
+    dplyr::filter(!is.na(.data$Score))
 
-  data <- data %>%
-    dplyr::group_by(Punkt, Sykehus) %>%
-    dplyr::add_count(Punkt)
+  data <- data |>
+    dplyr::group_by(.data$Punkt, .data$Sykehus) |>
+    dplyr::add_count(.data$Punkt)
 
-  data <- data %>%
-    dplyr::filter(n > 5)
+  data <- data |>
+    dplyr::filter(.data$n > 5)
 
 }
 
@@ -188,12 +190,12 @@ vask_sam_tabell <- function(data, var) {
 
 finn_sam_konfidensint <- function(data) {
 
-  konf_data <- data %>%
-    dplyr::group_by(Punkt, Sykehus) %>%
-    dplyr::mutate(gjennomsnitt = round(mean(Score), 2),
-                  "konfidensintervall lav" = round(t.test(Score)$conf.int[1], 2),
-                  "konfidensintervall hoey" = round(t.test(Score)$conf.int[2], 2)) %>%
-    dplyr::select(-c(Score, n)) %>%
+  konf_data <- data |>
+    dplyr::group_by(.data$Punkt, .data$Sykehus) |>
+    dplyr::mutate(gjennomsnitt = round(mean(.data$Score), 2),
+                  "konfidensintervall lav" = round(t.test(.data$Score)$conf.int[1], 2),
+                  "konfidensintervall hoey" = round(t.test(.data$Score)$conf.int[2], 2)) |>
+    dplyr::select(-c("Score", "n")) |>
     dplyr::distinct()
 
   return(konf_data)
@@ -216,7 +218,7 @@ ggdata_sam_plot <- function(var) {
 
   gg_data <- data.frame(forklaring = "")
 
-  gg_data <- gg_data %>%
+  gg_data <- gg_data |>
     dplyr::mutate(forklaring = dplyr::case_when({{var}} == "SRS22 totalskår" ~
                                                   "SRS22 totalskår (1: dårlig - 5: bra)",
                                                 {{var}} == "Funksjon" ~
@@ -257,19 +259,19 @@ boxplot_sam <- function(data, gg_data, input_data) {
   boxplot_sam <- ggplot2::ggplot()
 
   boxplot_sam <- boxplot_sam +
-    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = Punkt, y = Score), fill = "#6CACE4") +
+    ggplot2::geom_boxplot(data = data, ggplot2::aes(x = .data$Punkt, y = .data$Score), fill = "#6CACE4") +
     ggplot2::ylab("Skår") +
     ggplot2::xlab("Utvikling over tid") +
     ggplot2::labs(title = gg_data$forklaring,
-                  caption = paste0("**Valgte variabler:**", "\n", input_data[,1], ", ", input_data[,2], "\n",
-                                   input_data[,3], "-", input_data[,4], "\n",
-                                   input_data[,5], "-", input_data[,6])) +
+                  caption = paste0("**Valgte variabler:**", "\n", input_data[, 1], ", ", input_data[, 2], "\n",
+                                   input_data[, 3], "-", input_data[, 4], "\n",
+                                   input_data[, 5], "-", input_data[, 6])) +
     ggplot2::theme_light(base_size = 16) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
                    plot.title = ggplot2::element_text(size = 10,
-                                             face = "bold"),
+                                                      face = "bold"),
                    plot.caption = ggplot2::element_text(size = 12,
-                                               face = "italic", color = "#87189D"))
+                                                        face = "italic", color = "#87189D"))
 
   return(boxplot_sam)
 
@@ -308,20 +310,21 @@ boxplot_sam <- function(data, gg_data, input_data) {
 
 finn_sam_variabler <- function(data, valg_sam) {
 
-  data <- data %>%
-    dplyr::filter(Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
-                                            {{valg_sam}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
-                                            {{valg_sam}} == "Før operasjon - 5 år" ~ "Pre-operativt",
-                                            {{valg_sam}} == "3 mnd - 12 mnd" ~ "3 mnd",
-                                            {{valg_sam}} == "3 mnd - 5 år" ~ "3 mnd",
-                                            {{valg_sam}} == "12 mnd - 5 år" ~ "12 mnd") |
-                    Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
-                                              {{valg_sam}} == "Før operasjon - 12 mnd" ~ "12 mnd",
-                                              {{valg_sam}} == "Før operasjon - 5 år" ~ "5 aar",
-                                              {{valg_sam}} == "3 mnd - 12 mnd" ~ "12 mnd",
-                                              {{valg_sam}} == "3 mnd - 5 år" ~ "5 aar",
-                                              {{valg_sam}} == "12 mnd - 5 år" ~ "5 aar")
-  )
+  data <- data |>
+    dplyr::filter(
+      .data$Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "Pre-operativt",
+                                      {{valg_sam}} == "Før operasjon - 12 mnd" ~ "Pre-operativt",
+                                      {{valg_sam}} == "Før operasjon - 5 år" ~ "Pre-operativt",
+                                      {{valg_sam}} == "3 mnd - 12 mnd" ~ "3 mnd",
+                                      {{valg_sam}} == "3 mnd - 5 år" ~ "3 mnd",
+                                      {{valg_sam}} == "12 mnd - 5 år" ~ "12 mnd") |
+        .data$Punkt == dplyr::case_when({{valg_sam}} == "Før operasjon - 3 mnd" ~ "3 mnd",
+                                        {{valg_sam}} == "Før operasjon - 12 mnd" ~ "12 mnd",
+                                        {{valg_sam}} == "Før operasjon - 5 år" ~ "5 aar",
+                                        {{valg_sam}} == "3 mnd - 12 mnd" ~ "12 mnd",
+                                        {{valg_sam}} == "3 mnd - 5 år" ~ "5 aar",
+                                        {{valg_sam}} == "12 mnd - 5 år" ~ "5 aar")
+    )
 
 }
 
@@ -345,22 +348,25 @@ finn_sam_variabler <- function(data, valg_sam) {
 
 density_sam <- function(data, gg_data, input_data) {
 
-   density_sam <- ggplot2::ggplot(data = data, ggplot2::aes(x = Score, fill = Punkt)) +
+  density_sam <- ggplot2::ggplot(data = data, ggplot2::aes(x = .data$Score, fill = .data$Punkt)) +
     ggplot2::geom_density(alpha = .3) +
 
-    ggplot2::scale_fill_manual(values = c("#6FA287","#6CACE4")) +
+    ggplot2::scale_fill_manual(values = c("#6FA287", "#6CACE4")) +
     ggplot2::xlab(gg_data$forklaring) +
     ggplot2::ylab("Tetthet") +
     ggplot2::labs(
-      caption = paste0("**Valgte variabler:**", "\n", input_data[,1], ", ", input_data[,2], "\n",
-                       input_data[,3], "-", input_data[,4], "\n",
-                       input_data[,5], "-", input_data[,6], "\n")) +
+      caption = paste0("**Valgte variabler:**", "\n", input_data[, 1], ", ", input_data[, 2], "\n",
+                       input_data[, 3], "-", input_data[, 4], "\n",
+                       input_data[, 5], "-", input_data[, 6], "\n")
+    ) +
     ggplot2::guides(fill = ggplot2::guide_legend("")) +
     ggplot2::theme_light(base_size = 16) +
-    ggplot2::theme(plot.title = ggplot2::element_text(size = 10,
-                                             face = "bold"),
-                   plot.caption = ggplot2::element_text(size = 12,
-                                               face = "italic", color = "#87189D"))
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(size = 10,
+                                         face = "bold"),
+      plot.caption = ggplot2::element_text(size = 12,
+                                           face = "italic", color = "#87189D")
+    )
 
   return(density_sam)
 

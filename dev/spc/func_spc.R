@@ -6,21 +6,21 @@ prepros_SPC <- function (data, var, time_grouping) {
 
 
   ## REMOVE ALL NS #############
-  spc_data <- data %>%
+  spc_data <- data |>
     dplyr::filter(!is.na(.data[[var]]))
 
   # ## GROUP BY CHOICE ###########
 
-  spc_data <- spc_data %>%
-    dplyr::group_by(tidsperiode = cut(.data$SURGERY_DATE, time_grouping)) %>%
-    dplyr::summarize(value = mean(.data[[var]]))  %>%
-    dplyr::mutate(value = round(value, 2))
+  spc_data <- spc_data |>
+    dplyr::group_by(tidsperiode = cut(.data$SURGERY_DATE, time_grouping)) |>
+    dplyr::summarize(value = mean(.data[[var]]))  |>
+    dplyr::mutate(value = round(.data$value, 2))
 
   spc_data$tidsperiode <- as.Date(spc_data$tidsperiode)
 
 
 
-  return (spc_data)
+  return(spc_data)
 
 }
 
@@ -39,7 +39,7 @@ spc_text <- function (var) {
   spc_text_df <- data.frame(y_axis_label = "")
 
 
-  spc_text_df <- spc_text_df %>%
+  spc_text_df <- spc_text_df |>
     dplyr::mutate(y_axis_label = dplyr::case_when({{var}} == "PRE_MAIN_CURVE" ~
                                                     "Grader, pre-operativ kurve",
                                                   {{var}} == "BED_DAYS_TOTALT" ~
@@ -70,11 +70,11 @@ spc_function <- function (data, spc_value, time, direction, var) { #, value, tim
 
   spc_text <- spc_text(var)
 
-  f <- data %>%
+  f <- data |>
     NHSRplotthedots::ptd_spc(
       value_field = {{spc_value}},
       date_field = {{time}},
-      improvement_direction = direction) %>%
+      improvement_direction = direction) |>
     NHSRplotthedots::ptd_create_ggplot(
       y_axis_label = spc_text$y_axis_label,
       main_title = spc_text$main_title

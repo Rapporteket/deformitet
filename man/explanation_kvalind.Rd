@@ -4,10 +4,10 @@
 \alias{explanation_kvalind}
 \title{Function for getting explanations for kvalitetsindikatorer}
 \usage{
-explanation_kvalind(kjønn_choice, var)
+explanation_kvalind(kjonn_choice, var)
 }
 \arguments{
-\item{kjønn_choice}{brukervalg på visning kjønn}
+\item{kjonn_choice}{brukervalg på visning kjønn}
 
 \item{var}{brukervalg på variabel}
 }

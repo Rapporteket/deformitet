@@ -72,11 +72,11 @@ module_spc_server <- function (id) {
     function(input, output, session){
 
       ### Read in data:
-      RegData <- deformitet::alleRegData()
+      RegData <- alleRegData()
 
       #### Clean and tidy data:
 
-      RegData <- deformitet::pre_pros(RegData)
+      RegData <- pre_pros(RegData)
 
       # RegData <- readRDS("../dev/fake_data_deformitet.rds")
       #
@@ -86,7 +86,7 @@ module_spc_server <- function (id) {
       ##### MAKE BASIC UTVALG ##################################################
 
       data_reactive <- reactive({
-        x <- deformitet::utvalg_basic(RegData,
+        x <- utvalg_basic(RegData,
                                       unit = input$unit,
                                       gender = "begge",
                                       type_op = "Begge",
@@ -100,7 +100,7 @@ module_spc_server <- function (id) {
       #### MAKE SPC DATA FRAME (SORTED BY TIME PERIOD) #########################
 
       data_spc_reactive <- reactive({
-        deformitet::prepros_SPC(data_reactive(), input$var, input$period)
+        prepros_SPC(data_reactive(), input$var, input$period)
       })
 
       #### MAKE SPC PLOT #######################################################
@@ -115,7 +115,7 @@ module_spc_server <- function (id) {
 
 
       spc_plot_reactive <- reactive({
-        deformitet::spc_function(data_spc_reactive(),
+        spc_function(data_spc_reactive(),
                                  value,
                                  tidsperiode,
                                  direction_reactive(),

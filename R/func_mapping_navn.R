@@ -13,7 +13,7 @@
 #'
 #' @export
 
-mapping_navn <- function (data, x_var) {
+mapping_navn <- function(data, x_var) {
 
 
   ny_data <- data.frame(gammelt_navn =
@@ -104,11 +104,11 @@ mapping_navn <- function (data, x_var) {
                                       "SRS22_SATISFACTION_SCORE_patient12mths",
                                       "SRS22_SATISFACTION_SCORE_patient60mths"))
 
-  valgt_data <- ny_data %>%
-    dplyr::filter(gammelt_navn == {{x_var}}) %>%
-    dplyr::select(nytt_navn)
+  valgt_data <- ny_data |>
+    dplyr::filter(.data$gammelt_navn == {{x_var}}) |>
+    dplyr::select("nytt_navn")
 
-  valgt_variabel <- valgt_data[1,1]
+  valgt_variabel <- valgt_data[1, 1]
 
-  return (valgt_variabel)
+  return(valgt_variabel)
 }
