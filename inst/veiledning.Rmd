@@ -37,61 +37,66 @@ regData <- deformitet::pre_pros(raw_regdata)
 #### PER SYKEHUS #####
 
 #Alder, kobbvinkel og antall opererte
-age_curve_data <- regData %>%
-  filter(!is.na(PRE_MAIN_CURVE)) %>%
-  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
-  mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>%
-  summarize(n_opererte = as.character(n_distinct(PID)),
-            pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
-            Alder_median = round(median(Alder_num), digits = 1),
-            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
-  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
-  select(-c(Alder_median, Alder_range))
+age_curve_data <- regData |>
+  dplyr::filter(!is.na(PRE_MAIN_CURVE)) |>
+  dplyr::group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) |>
+  dplyr::mutate(year = format(year, "%Y")) |>
+  dplyr::filter(year != 2025) |>
+  dplyr::summarize(
+    n_opererte = as.character(dplyr::n_distinct(PID)),
+    pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
+    Alder_median = round(median(Alder_num), digits = 1),
+    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = ""
+    )
+  ) |>
+  dplyr::mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) |>
+  dplyr::select(-c(Alder_median, Alder_range))
 
 
 # Kjønn
-gender_data <- regData %>%
-  group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
-  mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>%
-  count(f = Kjonn == "kvinne") %>%
-  mutate(total = sum(n)) %>%
-  filter(f == TRUE) %>%
-  mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%
-  select(pro_kvinne)
+gender_data <- regData |>
+  dplyr::group_by(Sykehus, year = lubridate::floor_date(SURGERY_DATE, "year")) |>
+  dplyr::mutate(year = format(year, "%Y")) |>
+  dplyr::filter(year != 2025) |>
+  dplyr::count(f = Kjonn == "kvinne") |>
+  dplyr::mutate(total = sum(n)) |>
+  dplyr::filter(f == TRUE) |>
+  dplyr::mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) |>
+  dplyr::select(pro_kvinne)
 
-key_data <- left_join(age_curve_data, gender_data)
+key_data <- dplyr::left_join(age_curve_data, gender_data)
 
 
 #### NASJONALT ####
 # Alder, kobbvinkel og antall opererte
-nasjonalt_age_curve_data <- regData %>%
-  filter(!is.na(PRE_MAIN_CURVE)) %>%
-  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
-  mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>%
-  summarize(n_opererte = as.character(n_distinct(PID)),
-            pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
-            Alder_median = round(median(Alder_num), digits = 1),
-            Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")) %>%
-  mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) %>%
-  select(-c(Alder_median, Alder_range))
+nasjonalt_age_curve_data <- regData |>
+  dplyr::filter(!is.na(PRE_MAIN_CURVE)) |>
+  dplyr::group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) |>
+  dplyr::mutate(year = format(year, "%Y")) |>
+  dplyr::filter(year != 2025) |>
+  dplyr::summarize(
+    n_opererte = as.character(dplyr::n_distinct(PID)),
+    pre_cobb = as.character(round(mean(PRE_MAIN_CURVE), digits = 0)),
+    Alder_median = round(median(Alder_num), digits = 1),
+    Alder_range = paste(min(Alder_num), "-", max(Alder_num), sep = "")
+  ) |>
+  dplyr::mutate("Alder (median, range)" = paste0(Alder_median, " (", Alder_range, ")")) |>
+  dplyr::select(-c(Alder_median, Alder_range))
 
 # Kjønn
-nasjonalt_gender_data <- regData %>%
-  group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) %>%
-  mutate(year = format(year, "%Y")) %>%
-  filter(year != 2025) %>%
-  count(f =  Kjonn == "kvinne") %>%
-  mutate(total = sum(n)) %>%
-  filter(f == TRUE) %>%
-  mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) %>%
-  select(pro_kvinne)
+nasjonalt_gender_data <- regData |>
+  dplyr::group_by(year = lubridate::floor_date(SURGERY_DATE, "year")) |>
+  dplyr::mutate(year = format(year, "%Y")) |>
+  dplyr::filter(year != 2025) |>
+  dplyr::count(f =  Kjonn == "kvinne") |>
+  dplyr::mutate(total = sum(n)) |>
+  dplyr::filter(f == TRUE) |>
+  dplyr::mutate(pro_kvinne = as.character(round((n / total * 100), digits = 0))) |>
+  dplyr::select(pro_kvinne)
 
-nasjonalt_key_data <- left_join(nasjonalt_age_curve_data, nasjonalt_gender_data) %>%
-  mutate(Sykehus = "Nasjonalt") %>%
-  relocate(Sykehus)
+nasjonalt_key_data <- dplyr::left_join(nasjonalt_age_curve_data, nasjonalt_gender_data) |>
+  dplyr::mutate(Sykehus = "Nasjonalt") |>
+  dplyr::relocate(Sykehus)
 
 ## Koble nasjonalt med sykehusvis
 
@@ -101,25 +106,29 @@ key_data <- rbind(key_data, nasjonalt_key_data)
 
 ```{r, include=FALSE, echo=FALSE}
 # Lag tabellen
-key_data_table <- key_data %>%
-  mutate(pro_kvinne = paste(pro_kvinne, "%", sep = ""),
-         pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")) %>%
-  rename("År" = "year",
-         "Prosentandel kvinner" = pro_kvinne,
-         "Preoperativ Cobbvinkel" = pre_cobb,
-         "Antall opererte" = n_opererte)
+key_data_table <- key_data |>
+  dplyr::mutate(
+    pro_kvinne = paste(pro_kvinne, "%", sep = ""),
+    pre_cobb = paste(pre_cobb, intToUtf8(176), sep = "")
+  ) |>
+  dplyr::rename(
+    "År" = "year",
+    "Prosentandel kvinner" = pro_kvinne,
+    "Preoperativ Cobbvinkel" = pre_cobb,
+    "Antall opererte" = n_opererte
+  )
 
 # Få ønsket rekkefølge på Sykehus
-key_data_table <- key_data_table %>%
-  arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) %>%
-  filter(Sykehus == "Nasjonalt") # lagt til denne filtreringen siden reg.leder kun ønsker visning av nasjonalt
+key_data_table <- key_data_table |>
+  dplyr::arrange(factor(Sykehus, levels = c("Nasjonalt", "Haukeland", "Rikshospitalet", "St.Olav"))) |>
+  dplyr::filter(Sykehus == "Nasjonalt") # lagt til denne filtreringen siden reg.leder kun ønsker visning av nasjonalt
 
 ```
 
 ```{r, echo=FALSE}
 
-key_data_table %>%
-  kableExtra::kbl() %>%
+key_data_table |>
+  kableExtra::kbl() |>
   kableExtra::kable_styling(bootstrap_options = c("bordered", "responsive", "condensed"))
 ```
 
