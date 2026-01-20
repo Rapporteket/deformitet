@@ -39,14 +39,10 @@ module_registreringer_ui <- function(id) {
               "Antall registreringer",
               DT::DTOutput(outputId = ns("reg_table")),
               shiny::downloadButton(ns("download_reg_table"), "Last ned tabell"),
-              bslib::navset_card_underline(
-                title = shiny::h4("Antall registreringer pr. operasjonsdato"),
-                bslib::card_body(
-                  paste0(
-                    "Denne tabellen gir en oversikt over antall registrerte operasjoner pr måned",
-                    "(i en gitt tidsperiode)."
-                  )
-                )
+              shiny::h5("Antall registreringer pr. operasjonsdato"),
+              paste0(
+                "Denne tabellen gir en oversikt over antall registrerte operasjoner pr måned",
+                "(i en gitt tidsperiode)."
               )
             ),
             bslib::nav_panel(
@@ -54,12 +50,8 @@ module_registreringer_ui <- function(id) {
               shiny::textOutput(outputId = ns("skjema_text")),
               DT::DTOutput(outputId = ns("reg_skjema_table")),
               shiny::downloadButton(ns("download_reg_skjema_table"), "Last ned tabell", class = "butt2"),
-              bslib::navset_card_underline(
-                title = shiny::h4("Antall registreringer pr. skjema"),
-                bslib::card_body(
-                  "Denne tabellen gir en oversikt over antall registrerte skjema (i en gitt tidsperiode)."
-                )
-              )
+              shiny::h5("Antall registreringer pr. skjema"),
+              "Denne tabellen gir en oversikt over antall registrerte skjema (i en gitt tidsperiode)."
             )
           )
         )
