@@ -245,9 +245,21 @@ server_deform <- function(input, output, session) {
 
 #' Run the Deformitet Shiny Application
 #'
+#' @param browser Open app in browser window
+#' @param logAsJson Log in json-format
+#'
 #' @return An object representeing the Deformitet app
 #' @export
 
-kjor_app_deform <- function() {
-  shiny::shinyApp(ui = ui_deform, server = server_deform)
+kjor_app_deform <- function(browser = FALSE, logAsJson = FALSE) {
+  if (logAsJson) {
+    rapbase::loggerSetup()
+  }
+  if (browser) {
+    options(shiny.launch.browser = TRUE)
+  }
+  shiny::shinyApp(
+    ui = ui_deform,
+    server = server_deform
+  )
 }
