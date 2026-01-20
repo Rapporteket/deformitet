@@ -163,7 +163,7 @@ server_deform <- function(input, output, session) {
     data = regData,
     raw_data = raw_regdata,
     userRole = user$role,
-    userUnitId = user$org(),
+    userUnitId = user$org,
     map_data = map_db_resh
   )
 
