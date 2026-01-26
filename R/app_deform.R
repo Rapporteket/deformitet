@@ -8,41 +8,50 @@
 ui_deform <- function() {
 
 
-  shiny::tagList( # Needed for "about the user" tags
-    shiny::navbarPage( # type of page
+  shiny::tagList(
+    shiny::navbarPage(
 
-      ###### Graphics ----------------------------------------------------------
+      ###### Graphics ######
       title = rapbase::title("Rapporteket for deformitet"),
       windowTitle = "Rapporteket for deformitet",
       theme = rapbase::theme(version = 5),
       id = "tabs",
 
-      ################################################################################
-      ######## TAB user info----------------------------------------------------------
+      ###############################
+      ######## TAB user info ########
+      ###############################
 
-      ##### Startside (info about Rapporteket and the registry)-----------------------
+      ##### Startside (info about Rapporteket and the registry) #####
 
-      shiny::tabPanel( # First tab
+      shiny::tabPanel(
         title = "Startside",
         shiny::mainPanel(
           width = 12,
-          shiny::htmlOutput("veiledning", inline = TRUE), # This file is found in folder "inst"
-          rapbase::navbarWidgetInput("deformitetNavbarWidget", selectOrganization = TRUE)
+          shiny::htmlOutput(
+            "veiledning",
+            inline = TRUE
+          ),
+          rapbase::navbarWidgetInput(
+            "deformitetNavbarWidget",
+            selectOrganization = TRUE
+          )
         )
       ),
 
-      ################################################################################
-      ##### TAB: Fordelingsfigur og -tabell ##########################################
 
-      ### Fordelingsfigur og -tabell--------------------------------------------------
+      ###########################################
+      ##### TAB: Fordelingsfigur og -tabell #####
+      ###########################################
 
       shiny::tabPanel(
         title = "Fordelingsfigur og -tabell",
         module_fordeling_ui("fordeling")
       ),
 
-      ################################################################################
-      ##### TAB: Kvalitetsindikatorer ################################################
+
+      #####################################
+      ##### TAB: Kvalitetsindikatorer #####
+      #####################################
 
       shiny::tabPanel(
         title = "Kvalitetsindikatorer",
@@ -50,32 +59,29 @@ ui_deform <- function() {
       ),
 
 
-
-      ################################################################################
-      ##### TAB: Sammenligning  ######################################################
+      ###############################
+      ##### TAB: Sammenligning  #####
+      ###############################
 
       shiny::tabPanel(
         title = "Sammenligning",
         module_sammenligning_ui("sam1")
       ),
 
-      ################################################################################
-      ##### TAB: Registreringer  #####################################################
+
+      ################################
+      ##### TAB: Registreringer  #####
+      ################################
 
       shiny::tabPanel(
         title = "Registreringer",
         module_registreringer_ui("reg1")
       ),
 
-      ################################################################################
-      ##### TAB: spc  ################################################################
 
-      # Add ready-made spc-module here if requested by the registry
-
-
-      ################################################################################
-      ##### TAB: Nestlasting av datadump #############################################
-
+      ########################################
+      ##### TAB: Nestlasting av datadump #####
+      ########################################
 
       shiny::tabPanel( # third tab
         title = "Registeradm",
@@ -114,7 +120,7 @@ ui_deform <- function() {
 
 server_deform <- function(input, output, session) {
 
-  ######### DATA TIDYING----------------------------------------------------------
+  ######### DATA TIDYING #########
   ### Read in data:
   raw_regdata <- alleRegData()
 
@@ -122,7 +128,7 @@ server_deform <- function(input, output, session) {
 
   regData <- pre_pros(raw_regdata)
 
-  ######## USER INFO--------------------------------------------------------------
+  ######## USER INFO ########
 
   # Make a df that can be used for mapping between resh-ids and hospital names
   # Must be organized as df with two columns: UnitId and orgname
@@ -144,8 +150,9 @@ server_deform <- function(input, output, session) {
   )
 
 
-  ################################################################################
-  ##### TAB: Startside ###########################################################
+  ##########################
+  ##### TAB: Startside #####
+  ##########################
 
   # Veiledning
   output$veiledning <- shiny::renderUI({
@@ -155,8 +162,10 @@ server_deform <- function(input, output, session) {
     )
   })
 
-  ################################################################################
-  ##### TAB: Fordelingsfigur- og tabell ##########################################
+
+  ###########################################
+  ##### TAB: Fordelingsfigur- og tabell #####
+  ###########################################
 
   module_fordeling_server(
     "fordeling",
@@ -167,9 +176,10 @@ server_deform <- function(input, output, session) {
     map_data = map_db_resh
   )
 
-  ################################################################################
-  ##### TAB: Kvalitetsindikatorer ################################################
 
+  #####################################
+  ##### TAB: Kvalitetsindikatorer #####
+  #####################################
 
   module_kvalind_server(
     "kval1",
@@ -179,9 +189,10 @@ server_deform <- function(input, output, session) {
     userUnitId = user$org
   )
 
-  ################################################################################
-  ##### TAB: Sammenligning #####################################################
 
+  ##############################
+  ##### TAB: Sammenligning #####
+  ##############################
 
   module_sammenligning_server(
     "sam1",
@@ -190,9 +201,10 @@ server_deform <- function(input, output, session) {
     userUnitId = user$org
   )
 
-  ################################################################################
-  ##### TAB: Registreringer #####################################################
 
+  ################################
+  ##### TAB: Registreringer ######
+  ################################
 
   module_registreringer_server(
     "reg1",
@@ -201,15 +213,10 @@ server_deform <- function(input, output, session) {
     userUnitId = user$org()
   )
 
-  ################################################################################
-  ##### TAB: SPC #################################################################
 
-  # Add ready-made module here if requested by registry
-
-
-  ################################################################################
-  ##### TAB: Nestlasting av datadump #############################################
-
+  #########################################
+  ##### TAB: Nestlasting av datadump ######
+  #########################################
 
   module_datadump_server(
     "mod_datadump",
@@ -218,8 +225,9 @@ server_deform <- function(input, output, session) {
     userUnitId = user$org()
   )
 
-  ################################################################################
-  ###### TAB: Exporting data #####################################################
+  ##################################
+  ###### TAB: Exporting data #######
+  ##################################
 
   shiny::observeEvent(
     shiny::req(user$role()), {
