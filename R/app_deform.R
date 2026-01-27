@@ -92,19 +92,6 @@ ui_deform <- function() {
         )
       ),
 
-      shiny::tabPanel(
-        title = "Eksport",
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            rapbase::exportUCInput("deformitetExport")
-          ),
-          shiny::mainPanel(
-            rapbase::exportGuideUI("deformitetExportGuide")
-          )
-        )
-      )
-
-
     ) # navbarPage
   ) # tagList
 }
@@ -232,9 +219,24 @@ server_deform <- function(input, output, session) {
   shiny::observeEvent(
     shiny::req(user$role()), {
       if (user$role() != "SC") {
-        shiny::hideTab("tabs", target = "Eksport")
+        shiny::removeTab("tabs", target = "Eksport")
       } else {
-        shiny::showTab("tabs", target = "Eksport")
+        shiny::insertTab(
+          "tabs",
+          shiny::tabPanel(
+            title = "Eksport",
+            shiny::sidebarLayout(
+              shiny::sidebarPanel(
+                rapbase::exportUCInput("deformitetExport")
+              ),
+              shiny::mainPanel(
+                rapbase::exportGuideUI("deformitetExportGuide")
+              )
+            )
+          ),
+          target = "Registeradm",
+          position = "after"
+        )
       }
     }
   )
