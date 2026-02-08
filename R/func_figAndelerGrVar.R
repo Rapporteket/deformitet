@@ -1,9 +1,9 @@
 #' Søylediagram med andeler for hver grupperingsenhet (sykehus, RHF, ...)
 #'
-#' Funksjon som genererer en figur med andeler av en variabel for en valgt grupperingsvariabel,
-#' f.eks. sykehus.
-#' Funksjonen er delvis skrevet for å kunne brukes til andre grupperingsvariable enn sykehus
-#'
+#' Funksjon som genererer en figur med andeler av en variabel for en valgt
+#' grupperingsvariabel, foreløpig bare sykehus.
+#' Funksjonen er delvis skrevet for å kunne brukes til andre grupperingsvariable
+#' enn sykehus
 #'
 #' @param Ngrense Minste antall registreringer for at ei gruppe skal bli vist
 #' @param valgtVar Variabelen det skal vises resultat for.
@@ -26,17 +26,17 @@
 
 NakkeFigAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
                                  valgtVar='Alder', minald=0, maxald=130,
-                                 datoFra='2018-01-01', datoTil=Sys.Date,
+                                 datoFra='2023-01-01', datoTil=Sys.Date(),
                                  erMann='', Ngrense=10,
                                  reshID=0, outfile='',...) { #tittel=1,
 
   if (hentData == 1) {
-    RegData <- alleRegData()
+    RegData <- alleRegData(egneVarNavn = 1)
   }
 
   # Preprosessere data
   if (preprosess==1){
-    RegData <- NakkePreprosess(RegData=RegData)
+    RegData <- preprosData(RegData=RegData)
   }
 
   '%i%' <- intersect

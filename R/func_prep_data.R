@@ -1,3 +1,62 @@
+#' Preprosesser data fra NKR Deformitet
+#'
+#' Denne funksjonen definerer og formaterer variabler
+#'
+#' @param RegData dataramme med registerets data
+#'
+#' @return RegData En dataramme med det preprosesserte datasettet
+#'
+#' @export
+
+preprosData <- function(RegData=RegData) {
+  #Kun ferdigstilte registreringer:
+#  RegData <- RegData[which(RegData$LegeskjemaStatus == 1), ]  #Vi ønsker kun ferdigstilte legeskjema
+
+   #Kjønnsvariabel:ErMann - vil senere benytte denne
+  RegData$ErMann <- RegData$Kjonn
+  RegData$ErMann[which(RegData$Kjonn == 2)] <- 0
+
+  #Riktig datoformat. Hoveddato = OpDato NB: OpDato er navnet om til Inndato i nakke.
+  #InnDato brukes her om innleggelsesdato
+  RegData$MndNum <- as.POSIXlt(RegData$OprDato, format="%Y-%m-%d")$mon +1
+  RegData$Kvartal <- ceiling(RegData$MndNum/3)
+  RegData$Halvaar <- ceiling(RegData$MndNum/6)
+  RegData$Aar <- 1900 + as.POSIXlt(RegData$OprDato, format="%Y-%m-%d")$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$MndAar <- format(RegData$OprDato, '%b%y')
+
+  # RegData$DiffUtFerdig <- as.numeric(difftime(as.Date(RegData$ForstLukketMed), RegData$UtDato,units = 'days'))
+
+  #Variabel som identifiserer avdelingas resh
+  names(RegData)[which(names(RegData) == 'AvdRESH')] <- 'ReshId'
+  class(RegData$ReshId) <- 'numeric'
+  RegData$ReshId[which(RegData$ReshId %in% c(999975, 4212372))] <- 107511
+
+  RegData$SykehusNavn <- as.character(RegData$SykehusNavn) #Får bort tomme navn
+  RegData$SykehusNavn <- trimws(as.character(RegData$SykehusNavn))  #Fjerner mellomrom etter navn
+  RegData$SykehusNavn[which(RegData$ReshId == 107511)] <- 'Aleris Oslo'
+  RegData$ShNavn <- RegData$SykehusNavn
+
+  #Tomme sykehusnavn får resh som navn:
+  indTom <- which(is.na(RegData$ShNavn) | RegData$ShNavn == '')
+  RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
+
+  #Sjekker om alle resh har egne enhetsnavn
+  dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
+  duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
+  duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
+
+  if (length(c(duplSh, duplResh)) > 0) {
+    ind <- union(which(RegData$ReshId %in% duplResh), which(RegData$ShNavn %in% duplSh))
+    RegData$ShNavn[ind] <- paste0(RegData$ShNavn[ind],' (', RegData$ReshId[ind], ')')
+  }
+
+
+  return(invisible(RegData))
+}
+
+
+
+
 
 #' @title prepvar-funksjon
 #' @return Funksjonen ser ut tiil både å filtrere og preprosessere

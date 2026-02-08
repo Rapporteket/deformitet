@@ -58,8 +58,7 @@ hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status =
 
     friendlyVarTab <- friendlyVarTab[
       !is.na(friendlyVarTab$USER_SUGGESTION),
-      c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")
-    ]
+      c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
 
 
     if (tabellnavn == "surgeonform") {tabell$KNIFE_TIME_CALCULATED <- 0}
