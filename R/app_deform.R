@@ -260,7 +260,7 @@ server_deform <- function(input, output, session) {
 #' @return An object representeing the Deformitet app
 #' @export
 
-kjor_app_deform <- function(browser = FALSE, logAsJson = FALSE) {
+kjorDeformApp <- function(browser = FALSE, logAsJson = FALSE) {
   if (logAsJson) {
     rapbase::loggerSetup()
   }
