@@ -1,14 +1,11 @@
-#Funksjon
 #' Endre variabelnavn/kolonnenavn til selvvalgte navn
-#'
 #' @param tabell datatabellnavn i databasen
 #' @param tabType REGISTRATION_TYPE
-#'
 #' @return tabell med selvvalgte variabelnavn spesifisert i friendlyvar
 #' @export
-#'
 
-mappingEgneNavn <- function(tabell, tabType) {
+#Funksjon
+mappingEgneNavnDum <- function(tabell, tabType) {
   indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
   navn <- friendlyVarTab$FIELD_NAME[indTabType]
   names(navn) <- friendlyVarTab$USER_SUGGESTION[indTabType]
@@ -16,7 +13,7 @@ mappingEgneNavn <- function(tabell, tabType) {
 }
 
 
-
+# LEGG INN FJERNING AV VARIABLER SOM GJENTAS I FLERE TABELLER. f.EKS. ReshId (CENTREID)
 
 #' Hent datatabell fra Deformitets database
 #'
@@ -60,10 +57,17 @@ hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status =
       !is.na(friendlyVarTab$USER_SUGGESTION),
       c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")]
 
-
     if (tabellnavn == "surgeonform") {tabell$KNIFE_TIME_CALCULATED <- 0}
 
-    if (tabellnavn %in% c("patientfollowup", "surgeonfollowup")) {
+    #Funksjon IKKE heldig at denne står inne i funksjon. Flytt..
+    mappingEgneNavn <- function(tabell, tabType) {
+      indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
+      navn <- friendlyVarTab$FIELD_NAME[indTabType]
+      names(navn) <- friendlyVarTab$USER_SUGGESTION[indTabType]
+      tabell <- dplyr::rename(tabell, dplyr::all_of(navn))
+    }
+
+        if (tabellnavn %in% c("patientfollowup", "surgeonfollowup")) {
 
       tabell12 <- tabell |> dplyr::filter(.data$FOLLOWUP == 12)
       tabell12 <- mappingEgneNavn(tabell = tabell12,
