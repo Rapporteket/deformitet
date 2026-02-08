@@ -14,6 +14,12 @@
 
 filtrer_datadump <- function(data, dato1, dato2, userRole, userUnitId) { #
 
+
+
+
+
+# Funksjonene under er fra Ingrid. Tror den er basert på ei preprossesseringa
+# prepVar som jeg ikke skjønner så mye av.
   data <- data |>
     dplyr::filter(dplyr::between(.data$SURGERY_DATE, as.Date({{dato1}}), as.Date({{dato2}})))
 

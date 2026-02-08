@@ -1,3 +1,23 @@
+#Funksjon
+#' Endre variabelnavn/kolonnenavn til selvvalgte navn
+#'
+#' @param tabell datatabellnavn i databasen
+#' @param tabType REGISTRATION_TYPE
+#'
+#' @return tabell med selvvalgte variabelnavn spesifisert i friendlyvar
+#' @export
+#'
+
+mappingEgneNavn <- function(tabell, tabType) {
+  indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
+  navn <- friendlyVarTab$FIELD_NAME[indTabType]
+  names(navn) <- friendlyVarTab$USER_SUGGESTION[indTabType]
+  tabell <- dplyr::rename(tabell, dplyr::all_of(navn))
+}
+
+
+
+
 #' Hent datatabell fra Deformitets database
 #'
 #' @param tabellnavn Navn på tabell som skal lastes inn.
@@ -18,10 +38,9 @@
 #' SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
 #' NB: Hvis egendefinerte navn velges for oppfølgingsskjema, flates skjemaet ut.
 #'
-#'
 #' @export
 
-defHentData <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status = 1) {
+hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status = 1) {
 
   query <- paste0("SELECT * FROM ", tabellnavn)
   tabell <- rapbase::loadRegData(registryName = "data",
@@ -42,30 +61,20 @@ defHentData <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status = 1)
       c("FIELD_NAME", "VAR_ID", "TABLE_NAME", "USER_SUGGESTION", "REGISTRATION_TYPE")
     ]
 
-    #Funksjon
-    tabMegneNavn <- function(tabell, tabType) {
-      indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
-      navn <- friendlyVarTab$FIELD_NAME[indTabType]
-      names(navn) <- friendlyVarTab$USER_SUGGESTION[indTabType]
-      tabell <- dplyr::rename(tabell, dplyr::all_of(navn))
-    }
 
-
-    if (tabellnavn == "surgeonform") {
-      tabell$KNIFE_TIME_CALCULATED <- 0
-    }
+    if (tabellnavn == "surgeonform") {tabell$KNIFE_TIME_CALCULATED <- 0}
 
     if (tabellnavn %in% c("patientfollowup", "surgeonfollowup")) {
 
       tabell12 <- tabell |> dplyr::filter(.data$FOLLOWUP == 12)
-      tabell12 <- tabMegneNavn(tabell = tabell12,
+      tabell12 <- mappingEgneNavn(tabell = tabell12,
                                tabType = paste0(toupper(tabellnavn), "12"))
       tabell3 <- tabell |> dplyr::filter(.data$FOLLOWUP == 3)
-      tabell3 <- tabMegneNavn(tabell = tabell3,
+      tabell3 <- mappingEgneNavn(tabell = tabell3,
                               tabType = toupper(tabellnavn))
       tabell <- merge(tabell3, tabell12, by = "MCEID", suffixes = c("3mnd", "12mnd"))
     } else {
-      tabell <- tabMegneNavn(tabell = tabell,
+      tabell <- mappingEgneNavn(tabell = tabell,
                              tabType = toupper(tabellnavn))
     }
   }
@@ -85,13 +94,13 @@ alleRegData <- function(egneVarNavn = 0) {
   # stopifnot(egneVarNavn %in% 0:1,
   #           'Ugyldig valg for parameter "egneVarNavn"')
 
-  mce <- defHentData("mce")
-  centre <- defHentData("centre")
-  patient <- defHentData("patient", egneVarNavn = egneVarNavn)
-  patient_followup <- defHentData("patientfollowup", egneVarNavn = egneVarNavn)
-  patient_form <- defHentData("patientform", egneVarNavn = egneVarNavn)
-  surgeon_followup <- defHentData("surgeonfollowup", egneVarNavn = egneVarNavn)
-  surgeon_form <- defHentData("surgeonform", egneVarNavn = egneVarNavn)
+  mce <- hentDataTabell("mce")
+  centre <- hentDataTabell("centre")
+  patient <- hentDataTabell("patient", egneVarNavn = egneVarNavn)
+  patient_followup <- hentDataTabell("patientfollowup", egneVarNavn = egneVarNavn)
+  patient_form <- hentDataTabell("patientform", egneVarNavn = egneVarNavn)
+  surgeon_followup <- hentDataTabell("surgeonfollowup", egneVarNavn = egneVarNavn)
+  surgeon_form <- hentDataTabell("surgeonform", egneVarNavn = egneVarNavn)
 
   if (egneVarNavn == 0) {
     regData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) |>
