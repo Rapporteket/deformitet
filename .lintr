@@ -2,5 +2,6 @@ linters: linters_with_defaults(
   object_name_linter(c("camelCase", "snake_case")),
   line_length_linter(120),
   pipe_consistency_linter = NULL,
+  with_defaults(quotes_linter = quotes_linter(allow)),
   return_linter = NULL)
 exclusions: list("tests")

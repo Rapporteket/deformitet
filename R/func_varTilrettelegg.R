@@ -8,7 +8,6 @@
 #' andre variabler. Det er også her man angir aksetekster og titler for den
 #' valgte variabelen.
 #'
-#' @inheritParams NakkeFigAndeler
 #' @param valgtVar parameter som angir hvilke(n) variabel man ønsker å
 #' tilrettelegge for videre beregning.
 #' @param figurtype Hvilken figurtype det skal tilrettelegges variabler for:
@@ -48,24 +47,30 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
   #-------------------------------------
 
   # reoperasjon, liggetid og fornøydhet
-  # 1.	1 års reoperasjonsrate
-  # Andel pasienter reoperert innen 1 år etter primæroperasjon.
-  # Høy måloppnåelse: < 5%
-  #
-  #
-  #
-  # 3.	Pasientfornøydhet etter 12mnd (2år)
-  # Andel pasienter som på SRS-22 spørsmål nr 21 svarer "svært godt fornøyd" (verdi 5) eller "ganske fornøyd" (verdi 4).
-  # Høy måloppnåelse: >90%
-  # Moderat: 70-90%
-  # Lav: <70%
 
 
-  if (valgtVar=='liggetidPostOp') {#fordeling, andelGrVar
+   if (valgtVar=='reOp') { #AndelGrVar,AndelTid,
+     # 1.	1 års reoperasjonsrate
+     # Andel pasienter reoperert innen 1 år etter primæroperasjon.
+     # Høy måloppnåelse: < 5%
+
+     tittel <- 'Reoperert innen 1 år etter primæroperasjon'
+
+     RegData <- RegData[which(RegData$BED_DAYS_POSTOPERATIVE>=0),]
+     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 5] <- 1
+     xAkseTxt <- 'Antall liggedøgn'
+     subtxt <- 'reoperasjon'
+     TittelVar <- 'Liggetid etter operasjon'
+     ytxt1 <- 'reoperasjon'
+     sortAvtagende <- TRUE
+   }
+
+
+  if (valgtVar=='liggetidPostOp') { #fordeling, andelGrVar
     # 2. Liggetid
     # Andel pasienter utskrevet innen (til og med) 5. postoperative dag
     # Høy måloppnåelse: >90%
-
+ # Finnes dagkirurgi for deformitet?
     #For opphold registrert som dagkirurgi uten at liggedogn er reg., settes liggedogn=0
     #dagind <- which(RegData$Dagkirurgi==1) - finnes dagkirurgi i for deformitet?
     #RegData$BED_DAYS_POSTOPERATIVE[dagind]<-0
@@ -74,18 +79,80 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
     RegData <- RegData[which(RegData$BED_DAYS_POSTOPERATIVE>=0),]
     # RegData$VariabelGr <- cut(RegData$BED_DAYS_POSTOPERATIVE, breaks=gr, include.lowest=TRUE, right=FALSE)
     # grtxt <- c(0:6, '7+')
-    # RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE > 5] <- 1
+     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 5] <- 1
     # gr <- c(0:7,100)
-    xAkseTxt <- 'Antall liggedøgn' #(subtxt
+    xAkseTxt <- 'Antall liggedøgn'
     subtxt <- 'døgn'
     TittelVar <- 'Liggetid etter operasjon'
     ytxt1 <- 'liggetid'
-    KIekstrem <- c(0, 20)
+    sortAvtagende <- TRUE
+  }
+
+  if (valgtVar %in% c('fornoydBeh3mnd','fornoydBeh2aar')) { #Andeler #AndelGrVar #AndelTid
+    # 3.	Pasientfornøydhet etter 12mnd (2år)
+    # Andel pasienter som på SRS-22 spørsmål nr 21 svarer "svært godt fornøyd" (verdi 5) eller "ganske fornøyd" (verdi 4).
+    # Høy måloppnåelse: >90%
+    # Moderat: 70-90%
+    # Lav: <70%
+ #   SRS22_21	Fornoyd2ar	21. Er du fornøyd med resultatet av behandlingen?	Ja
+    # [5,4,3,2,1,9]	["Svært godt fornøyd","Ganske fornøyd","Verken fornøyd eller misfornøyd","Litt misfornøyd","Svært misfornøyd","Ikke utfylt"]
+
+        #3/12mndSkjema. Andel med Fornøyd/litt fornøyd (1,2)
+    #Kode 1:5,9: 'Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
+    RegData$VariabelGr <- switch(valgtVar,
+                      fornoydBeh3mnd = RegData$SRS22_21,
+                      fornoydBeh2aar = RegData$SRS22_21_patient12mths)
+
+    grtxt <- c("Svært fornøyd","Ganske fornøyd","Verken eller","Litt misfornøyd","Svært misfornøyd","Ikke svart")
+    gr <- c(1:5,9)
+    RegData <- RegData[which(RegData$VariabelGr %in% gr), ]
+    retn <- 'H'
+
+    if (figurtype=='fordeling') {
+      RegData$VariabelGr <- factor(RegData$VariabelGr, levels = gr)
+      }
+
+    if (figurtype == 'andeler') {
+      RegData <- RegData[RegData$VariabelGr %in% 1:5, ]
+      RegData$Variabel[RegData$VariabelGr %in% 5:4] <- 1
+      varTxt <- 'fornøyde'
+      }
+    tittel <- switch(valgtVar,
+                     fornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
+                     fornoydBeh2aar = 'Fornøyd med behandlinga på sykehuset, 2 år')
+    sortAvtagende <- TRUE
   }
 
 
-  # ---------------------------- Eksempler fra nakke:--------------------
-  if (valgtVar=='Alder') {	#Fordeling, #AndelGrVar,AndelTid, GjsnGrVar, GjsnTid
+  # ---------------------------- Eksempler fra nakke: SKAL FJERNES! :-) --------------------
+  if (valgtVar %in% c('FornoydBeh3mnd','FornoydBeh12mnd')) { #Andeler #AndelGrVar #AndelTid
+    #3/12mndSkjema. Andel med Fornøyd/litt fornøyd (1,2)
+    #Kode 1:5,9: 'Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
+    grtxt <- c('Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
+    RegData <- switch(valgtVar,
+                      FornoydBeh3mnd = RegData[which(RegData$OppFolgStatus3mnd==1), ],
+                      FornoydBeh12mnd = RegData[which(RegData$OppFolgStatus12mnd==1), ])
+    indDum <- which(RegData[ ,valgtVar] %in% 1:5)
+    retn <- 'H'
+    RegData$VariabelGr <- 9
+    RegData$VariabelGr[indDum] <- RegData[indDum, valgtVar]
+    RegData$VariabelGr <- factor(RegData$VariabelGr, levels = c(1:5,9))
+    if (figurtype %in% c('andelGrVar', 'andelTid' )) {
+      RegData <- RegData[indDum, ]
+      RegData$Variabel[which(RegData[ ,valgtVar] %in% 1:2)] <- 1
+      varTxt <- 'fornøyde'
+      tittel <- switch(valgtVar,
+                       FornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
+                       FornoydBeh12mnd = 'Fornøyd med behandlinga på sykehuset, 12 mnd')
+    }
+    tittel <- switch(valgtVar,
+                     FornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
+                     FornoydBeh12mnd = 'Fornøyd med behandlinga på sykehuset, 12 mnd')
+    sortAvtagende <- TRUE
+  }
+
+
+    if (valgtVar=='Alder') {	#Fordeling, #AndelGrVar,AndelTid, GjsnGrVar, GjsnTid
     RegData <- RegData[which(RegData$Alder>=0), ]    #Tar bort alder<0
     xAkseTxt <- 'alder (år)'
     tittel <- 'Alder ved innleggelse'
@@ -155,43 +222,6 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
     varTxt <- 'komplikasjoner'
     tittel <- 'Komplikasjoner (totalt) 3 mnd. etter operasjon'
   }
-  	if (valgtVar=='EQ5Dendr3mnd') { #GjsnTid #GjsnGrVar
-		#Pasientkjema og 3mndskjema. Lav skår, mye plager -> Forbedring = økning.
-		#Kun myelopati-pasienter
-		KIekstrem <- c(-1.6, 1.6)
-		RegData$Variabel <- RegData$Eq5DScore3mnd - RegData$Eq5DScorePreOp
-		indVar <- which(RegData$Variabel >= KIekstrem[1])
-		indSkjema <- which(RegData$PasientSkjemaStatus==1 & RegData$OppFolgStatus3mnd==1)
-		RegData <- RegData[intersect(indVar, indSkjema), ]
-		tittel <- 'Forbedring av EQ5D, 3 mnd.'
- deltittel <- 'forbedring av EQ5D, 3 mnd.'
- 		ytxt1 <- '(endring av EQ5D-skår)'
-		}
-	if (valgtVar=='EQ5Dendr12mnd') { #GjsnTid #GjsnGrVar
-		#Pasientkjema og 12mndskjema. Lav skår, mye plager -> Forbedring = økning.
-		#Kun myelopati-pasienter
-		KIekstrem <- c(-1.6, 1.6)
-		RegData$Variabel <- RegData$Eq5DScore12mnd - RegData$Eq5DScorePreOp
-		indVar <- which(RegData$Variabel >= KIekstrem[1])
-		indSkjema <- which(RegData$PasientSkjemaStatus==1 & RegData$OppFolgStatus12mnd==1)
-		RegData <- RegData[intersect(indVar, indSkjema), ]
-		tittel <- 'Forbedring av EQ5D, 12 mnd.'
-  deltittel <- 'forbedring av EQ5D, 12 mnd.'
- 		ytxt1 <- '(endring av EQ5D-skår)'
-		}
-
-if (valgtVar=='Eq5DScorePreOp') { #gjsnTid, gjsnGrVar
-     #Pasientkjema.
-     KIekstrem <- c(-0.6, 1)
-     indVar <- which(RegData[ , valgtVar] >= KIekstrem[1])
-     indSkjema <- which(RegData$PasientSkjemaStatus==1)
-     RegData <- RegData[intersect(indVar, indSkjema), ]
-     RegData$Variabel <- RegData[, valgtVar]
-     tittel <- 'EQ5D før operasjon'
-     deltittel <- 'EQ5D før operasjon'
-     ytxt1 <- '(EQ5D-skåring)'
-}
-
   if (valgtVar == 'EqAngstPreOp') { #Andeler
     RegData <- RegData[which(RegData$PasientSkjemaStatus == 1), ]
     grtxt <- c('Ingen', 'Litt', 'Mye', 'Ukjent')
@@ -219,31 +249,6 @@ if (valgtVar=='Eq5DScorePreOp') { #gjsnTid, gjsnGrVar
     }
   }
 
-  if (valgtVar %in% c('FornoydBeh3mnd','FornoydBeh12mnd')) { #Andeler #AndelGrVar #AndelTid
-    #3/12mndSkjema. Andel med Fornøyd/litt fornøyd (1,2)
-    #Kode 1:5,9: 'Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
-    grtxt <- c('Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
-    RegData <- switch(valgtVar,
-                      FornoydBeh3mnd = RegData[which(RegData$OppFolgStatus3mnd==1), ],
-                      FornoydBeh12mnd = RegData[which(RegData$OppFolgStatus12mnd==1), ])
-    indDum <- which(RegData[ ,valgtVar] %in% 1:5)
-    retn <- 'H'
-    RegData$VariabelGr <- 9
-    RegData$VariabelGr[indDum] <- RegData[indDum, valgtVar]
-    RegData$VariabelGr <- factor(RegData$VariabelGr, levels = c(1:5,9))
-    if (figurtype %in% c('andelGrVar', 'andelTid' )) {
-      RegData <- RegData[indDum, ]
-      RegData$Variabel[which(RegData[ ,valgtVar] %in% 1:2)] <- 1
-      varTxt <- 'fornøyde'
-      tittel <- switch(valgtVar,
-                       FornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
-                       FornoydBeh12mnd = 'Fornøyd med behandlinga på sykehuset, 12 mnd')
-    }
-    tittel <- switch(valgtVar,
-                     FornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
-                     FornoydBeh12mnd = 'Fornøyd med behandlinga på sykehuset, 12 mnd')
-    sortAvtagende <- TRUE
-  }
 
   if (valgtVar == 'Inngrep'){
     grtxt <- c('Ikke klassifiserbar', 'Fremre diskektomi, prolaps', 'Bakre dekompresjon',
@@ -755,7 +760,7 @@ if (valgtVar=='KnivtidTotalMin') { #GjsnTid #GjsnGrVar#Legeskjema.
 
 
 
-    UtData <- list(RegData=RegData, grtxt=grtxt, cexgr=cexgr, varTxt=varTxt, xAkseTxt=xAkseTxt,
+    UtData <- list(RegData=RegData, grtxt=grtxt, varTxt=varTxt, xAkseTxt=xAkseTxt,
                    tittel=tittel, varTxt=varTxt, flerevar=flerevar, #KImaalGrenser=KImaalGrenser,
                    variabler=variabler, sortAvtagende=sortAvtagende,
                  retn=retn, ytxt1=ytxt1, deltittel=deltittel, KIekstrem=KIekstrem)

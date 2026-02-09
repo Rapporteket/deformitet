@@ -13,16 +13,17 @@ preprosData <- function(RegData=RegData, egneVarNavn = 0) {
 #  RegData <- RegData[which(RegData$LegeskjemaStatus == 1), ]  #Vi ønsker kun ferdigstilte legeskjema
 
   if (egneVarNavn==0){
-    dplyr::rename(
-      'OpDato' = 'SURGERY_DATE',
-      'Kjonn' = 'GENDER'
+    RegData <- dplyr::rename(RegData,
+                             OpDato = SURGERY_DATE,
+                             Kjonn = GENDER,
+                             PasientID = ID
     )
-
-  }
+    }
 
 
   #Kjønnsvariabel:ErMann
   RegData <- dplyr::mutate(RegData,ErMann = abs(Kjonn-2))
+  RegData$Alder <- (as.Date(RegData$OpDato) - as.Date(RegData$BIRTH_DATE))/365.25
 
   #Riktig datoformat. Hoveddato = OpDato NB: OpDato er navnet om til Inndato i nakke.
   #InnDato brukes her om innleggelsesdato
@@ -34,9 +35,9 @@ preprosData <- function(RegData=RegData, egneVarNavn = 0) {
 
   # RegData$DiffUtFerdig <- as.numeric(difftime(as.Date(RegData$ForstLukketMed), RegData$UtDato,units = 'days'))
 
-  dplyr::rename(
-    'ReshId' = 'CENTREID',
-    'ShNavn' = 'CENTRESHORTNAME'
+  RegData <- dplyr::rename(RegData,
+    ReshId = CENTREID,
+    ShNavn = CENTRESHORTNAME
   )
   class(RegData$ReshId) <- 'numeric'
   RegData$ShNavn <- trimws(as.character(RegData$ShNavn))  #Fjerner mellomrom etter navn

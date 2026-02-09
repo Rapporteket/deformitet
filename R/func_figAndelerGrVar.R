@@ -12,11 +12,12 @@
 #' @param preprosess preprosessere data? 0-nei, 1-ja
 #' @param minald minimum alder
 #' @param maxald maksimum alder
-#' @param datoFra
-#' @param datoTil
-#' @param erMann
-#' @param reshID
-#' @param outfile
+#' @param datoFra startdato
+#' @param datoTil sluttdato
+#' @param erMann kjønn 1=mann, 0=kvinne
+#' @param reshID avdelingas reshid
+#' @param outfile Format på figurfila: pdf, png,...
+#' ''-standard, viser figur på skjerm
 #' @param ... mulige tilleggsvariabler
 #'
 #' @return Figur som viser andel av en variabel for gitt grupperingsvariabel.
@@ -24,39 +25,37 @@
 #'
 #' @export
 
-NakkeFigAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
-                                 valgtVar='Alder', minald=0, maxald=130,
-                                 datoFra='2023-01-01', datoTil=Sys.Date(),
-                                 erMann='', Ngrense=10,
-                                 reshID=0, outfile='',...) { #tittel=1,
+figAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
+                            valgtVar='liggetidPostOp', minald=0, maxald=130, erMann=9,
+                            datoFra='2023-01-01', datoTil=Sys.Date(),
+                            Ngrense=10, reshID=0, outfile='',...) {
 
   if (hentData == 1) {
-    RegData <- alleRegData(egneVarNavn = 1)
+    RegData <- alleRegData(egneVarNavn = 0)
   }
 
   # Preprosessere data
   if (preprosess==1){
-    RegData <- preprosData(RegData=RegData)
+    RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
   }
 
   '%i%' <- intersect
   #----------- Figurparametre ------------------------------
 
-  DeformVarSpes <- varTilrettelegg(RegData=RegData, valgtVar=valgtVar, figurtype = 'andelGrVar')
+  DeformVarSpes <- varTilrettelegg(RegData=RegData, valgtVar=valgtVar,
+                                   figurtype = 'andeler')
   RegData <- DeformVarSpes$RegData
   sortAvtagende <- DeformVarSpes$sortAvtagende
   Tittel <- DeformVarSpes$tittel
   KImaalGrenser <- NA
 
   #Gjør utvalg
-  NakkeUtvalg <- NakkeUtvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
-                                minald=minald, maxald=maxald, erMann=erMann,
-                                myelopati=myelopati, fremBak=fremBak, inngrep = inngrep)
-  RegData <- NakkeUtvalg$RegData
-  utvalgTxt <- NakkeUtvalg$utvalgTxt
-
-  grVar <- 'SykehusNavn'
-  RegData[ ,grVar] <- factor(RegData[ ,grVar])
+  DeformUtvalg <- utvalgEnh(RegData=RegData, datoFra=datoFra, datoTil=datoTil,
+                                minald=minald, maxald=maxald, erMann=erMann)
+  RegData <- DeformUtvalg$RegData
+  utvalgTxt <- DeformUtvalg$utvalgTxt
+  fargepalett <- DeformUtvalg$fargepalett
+  grVar <- 'ShNavn'
 
   if(dim(RegData)[1] > 0) {
     RegData <- RegData[which(RegData[ ,grVar] != ''),] #Tar ut registreringer uten grupperingsnavn
@@ -83,12 +82,10 @@ NakkeFigAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
     GrNavn <- c(GrNavn[-indGrUt], GrUtNavn)
   }
 
-  if (valgtVar == 'Komplinfek') {KImaalGrenser <- c(0,2,100)}
-  if (valgtVar == 'NDIendr12mnd35pst' & fremBak == 1 & myelopati == 0) {KImaalGrenser <- c(0,40,70,100)}
-  if (valgtVar == 'KomplSvelging3mnd' & myelopati == 0) {KImaalGrenser <- c(0,17,100)}
-  if (valgtVar == 'KomplStemme3mnd' & myelopati == 0) {KImaalGrenser <- c(0,10,100)}
-  #KomplStemme3mnd og KomplSvelging3mnd - blir filtrert på fremre i tilrettelegging
-  fargepalett <- NakkeUtvalg$fargepalett
+  if (valgtVar == 'liggetidPostOp' ) {KImaalGrenser <- c(0,90,100)}
+  if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
+
+  fargepalett <- DeformUtvalg$fargepalett
 
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE)
 AndelerGrSort <- AndelerGr[sortInd]
@@ -130,7 +127,7 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
   #--------------------------FIGUR---------------------------------------------------
   #Innparametre: ...
   #----------- Figurparametre ------------------------------
-  cexShNavn <- 0.9 #0.85
+  cexShNavn <- 1.1
 
   FigTypUt <- rapFigurer::figtype(outfile, height=3*800, fargepalett=fargepalett)
   farger <- FigTypUt$farger
@@ -141,20 +138,17 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
   xmax <- min(max(AndelerGrSort, na.rm=T),100)*1.15
-  #paste0(GrNavnSort,' (',Ngrtxt , ')')
   pos <- rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4],
                      xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(GrNavnSort), font.main=1, #xlab='Andel (%)',
                      las=1, cex.names=cexShNavn*0.9))
   posOver <- max(pos)+0.7
-
-  #Legge på målnivå, Rygg
 
   #Legge på målnivå
   if (!is.na(KImaalGrenser[1])) {
     antMaalNivaa <- length(KImaalGrenser)-1
     rekkef <- 1:antMaalNivaa
     if (sortAvtagende == TRUE) {rekkef <- rev(rekkef)}
-    fargerMaalNiva <-  c('#4fc63f', '#fbf850', '#c6312a')[rekkef] #c('green','yellow')# #c('#ddffcc', '#ffffcc') #, '#fff0e6') #Grønn, gul, rød
+    fargerMaalNiva <-  c('#4fc63f', '#fbf850', '#c6312a')[rekkef]
     tetth <- c(100, 70,20)[rekkef]
     maalOppTxt <- c('Høy', 'Moderat til lav', 'Lav')[rekkef]
     if (antMaalNivaa==3) {maalOppTxt[2] <- 'Moderat' }
