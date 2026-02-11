@@ -54,10 +54,18 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
      # Andel pasienter reoperert innen 1 år etter primæroperasjon.
      # Høy måloppnåelse: < 5%
 
+     # Beregnes ved å se på differansen mellom CURRENT_SURGERY=1 og 2 for samme PasientID?
+    # •	Tilhører reoperasjon innen ett år samme forløp som den første operasjonen, eller blir det to forløp?
+        # Det blir opprettet et nytt forløp ved reoperasjon, men kun for registering av skjema ved reoperasjon.
+        # PROM data og kontroll intervaller følger fortsatt primæroperasjonen.
+# reoperert1år / alle pasienter
+
+
+
      tittel <- 'Reoperert innen 1 år etter primæroperasjon'
 
      RegData <- RegData[which(RegData$BED_DAYS_POSTOPERATIVE>=0),]
-     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 5] <- 1
+     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 6] <- 1
      xAkseTxt <- 'Antall liggedøgn'
      subtxt <- 'reoperasjon'
      TittelVar <- 'Liggetid etter operasjon'
@@ -67,19 +75,15 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
 
 
   if (valgtVar=='liggetidPostOp') { #fordeling, andelGrVar
-    # 2. Liggetid
-    # Andel pasienter utskrevet innen (til og med) 5. postoperative dag
+    # Andel pasienter utskrevet innen (til og med) 6. postoperative dag
     # Høy måloppnåelse: >90%
- # Finnes dagkirurgi for deformitet?
-    #For opphold registrert som dagkirurgi uten at liggedogn er reg., settes liggedogn=0
-    #dagind <- which(RegData$Dagkirurgi==1) - finnes dagkirurgi i for deformitet?
-    #RegData$BED_DAYS_POSTOPERATIVE[dagind]<-0
-    tittel <- 'Utskrevet i løpet av 5 dager'
+
+    tittel <- 'Utskrevet innen ei uke'
 
     RegData <- RegData[which(RegData$BED_DAYS_POSTOPERATIVE>=0),]
     # RegData$VariabelGr <- cut(RegData$BED_DAYS_POSTOPERATIVE, breaks=gr, include.lowest=TRUE, right=FALSE)
     # grtxt <- c(0:6, '7+')
-     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 5] <- 1
+     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 6] <- 1
     # gr <- c(0:7,100)
     xAkseTxt <- 'Antall liggedøgn'
     subtxt <- 'døgn'
@@ -91,14 +95,9 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
   if (valgtVar %in% c('fornoydBeh3mnd','fornoydBeh2aar')) { #Andeler #AndelGrVar #AndelTid
     # 3.	Pasientfornøydhet etter 12mnd (2år)
     # Andel pasienter som på SRS-22 spørsmål nr 21 svarer "svært godt fornøyd" (verdi 5) eller "ganske fornøyd" (verdi 4).
-    # Høy måloppnåelse: >90%
-    # Moderat: 70-90%
-    # Lav: <70%
- #   SRS22_21	Fornoyd2ar	21. Er du fornøyd med resultatet av behandlingen?	Ja
-    # [5,4,3,2,1,9]	["Svært godt fornøyd","Ganske fornøyd","Verken fornøyd eller misfornøyd","Litt misfornøyd","Svært misfornøyd","Ikke utfylt"]
+    # Høy måloppnåelse: >90%, # Moderat: 70-90%, # Lav: <70%
+    # SRS22_21	Fornoyd2ar	21. Er du fornøyd med resultatet av behandlingen?	Ja
 
-        #3/12mndSkjema. Andel med Fornøyd/litt fornøyd (1,2)
-    #Kode 1:5,9: 'Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
     RegData$VariabelGr <- switch(valgtVar,
                       fornoydBeh3mnd = RegData$SRS22_21,
                       fornoydBeh2aar = RegData$SRS22_21_patient12mths)
@@ -118,8 +117,8 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
       varTxt <- 'fornøyde'
       }
     tittel <- switch(valgtVar,
-                     fornoydBeh3mnd = 'Fornøyd med behandlinga på sykehuset, 3 mnd' ,
-                     fornoydBeh2aar = 'Fornøyd med behandlinga på sykehuset, 2 år')
+                     fornoydBeh3mnd = 'Fornøydhet med behandlinga på sykehuset, 3 mnd' ,
+                     fornoydBeh2aar = 'Fornøydhet med behandlinga på sykehuset, 2 år')
     sortAvtagende <- TRUE
   }
 

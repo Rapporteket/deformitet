@@ -85,15 +85,14 @@ figAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
   if (valgtVar == 'liggetidPostOp' ) {KImaalGrenser <- c(0,90,100)}
   if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
 
-  fargepalett <- DeformUtvalg$fargepalett
-
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE)
-AndelerGrSort <- AndelerGr[sortInd]
+AndelerGrSort <- c( NA, AndelerGr[sortInd])
 GrNavnSort <- GrNavn[sortInd]
 Ngrtxt <- Ngrtxt[sortInd]
 
 andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), ' %')
-andeltxt <- andeltxtUsort[sortInd]
+andeltxt <- c('', andeltxtUsort[sortInd])
+GrNavnOgAnt <- c('', paste0(GrNavnSort,' (',Ngrtxt , ')'))
 
 
 FigDataParam <- list(AggVerdier=AndelerGrSort,
@@ -133,15 +132,15 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
   farger <- FigTypUt$farger
   #Tilpasse marger for å kunne skrive utvalgsteksten
   NutvTxt <- length(utvalgTxt)
-  vmarg <- max(0, strwidth(GrNavnSort, units='figure', cex=cexShNavn)*0.8)
+  vmarg <- max(0, strwidth(GrNavnOgAnt, units='figure', cex=cexShNavn)*0.8)
   #NB: strwidth oppfører seg ulikt avh. av device...
   par('fig'=c(vmarg, 1, 0, 1-0.02*(NutvTxt-1)))	#Har alltid datoutvalg med
 
   xmax <- min(max(AndelerGrSort, na.rm=T),100)*1.15
   pos <- rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4],
-                     xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(GrNavnSort), font.main=1, #xlab='Andel (%)',
-                     las=1, cex.names=cexShNavn*0.9))
-  posOver <- max(pos)+0.7
+                     xlim=c(0,xmax), ylim=c(0.05, 1.25)*(length(GrNavnOgAnt)), font.main=1,
+                     las=1, cex.names=cexShNavn))
+  posOver <- max(pos)+0.5
 
   #Legge på målnivå
   if (!is.na(KImaalGrenser[1])) {
@@ -152,40 +151,32 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
     tetth <- c(100, 70,20)[rekkef]
     maalOppTxt <- c('Høy', 'Moderat til lav', 'Lav')[rekkef]
     if (antMaalNivaa==3) {maalOppTxt[2] <- 'Moderat' }
-    rect(xleft=KImaalGrenser[1:antMaalNivaa], ybottom=0, xright=KImaalGrenser[2:(antMaalNivaa+1)],
-         ytop=max(pos)+0.4, col = fargerMaalNiva[1:antMaalNivaa],
+    rect(xleft=KImaalGrenser[1:antMaalNivaa], xright=KImaalGrenser[2:(antMaalNivaa+1)],
+         ybottom=0, ytop=max(pos), col = fargerMaalNiva[1:antMaalNivaa],
          density = tetth, angle = 60, border = NA)
 
-    # legPos <- ifelse(AntGr < 31, ifelse(AntGr < 15, -1, -2.5), -3.5)
-    legend(x=1, y=posOver, yjust = 0.5, #x=xmax, y=posOver, xjust=1, yjust=0,
+    legend(x=1, y=posOver, yjust = 1,
            ncol=antMaalNivaa+1,
            density = c(NA, tetth),
            angle = c(NA,rep(60, antMaalNivaa)),
            fill=c('white', fargerMaalNiva[1:antMaalNivaa]),
-           xpd=TRUE, border=NA, box.col='white',cex=0.8, pt.cex=1.5,
+           xpd=TRUE, border=NA, box.col='white', pt.cex=1.5,
            legend=c('Måloppnåelse:', maalOppTxt[1:antMaalNivaa])) #,
-
-    # rect(xleft=KImaalGrenser[1:antMaalNivaa], ybottom=0, xright=KImaalGrenser[2:(antMaalNivaa+1)],
-    #      ytop=max(pos)+0.5, col = fargerMaalNiva[1:antMaalNivaa], border = NA)
-    # legend(x=1, y=posOver, yjust = 0.5,
-    #        pch=c(NA,rep(15, antMaalNivaa)), col=c(NA, fargerMaalNiva[1:antMaalNivaa]),
-    #        ncol=antMaalNivaa+1,
-    #        xpd=TRUE, border=NA, box.col='white',cex=0.8, pt.cex=1.5,
-    #        legend=c('Måloppnåelse:', maalOppTxt[1:antMaalNivaa])) #,
   }
-  pos <- rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4], #main=Tittel,
-                     xlim=c(0,xmax), ylim=c(0.05, 1.25)*length(GrNavnSort), font.main=1, #xlab='Andel (%)',
-                     las=1, cex.names=cexShNavn*0.9, add=T))
+  #pos <-
+    rev(barplot(rev(as.numeric(AndelerGrSort)), horiz=T, border=NA, col=farger[4],
+                     xlim=c(0,xmax), ylim=c(0.05, 1.4)*(length(GrNavnOgAnt)), # ylim=c(0.05, 1.25)*(length(GrNavnOgAnt)),
+                     font.main=1, las=1, cex.names=cexShNavn, add=T))
   mtext('Andel (%)', side=1, line=2)
-  ybunn <- 0.1
-  ytopp <- max(pos)+0.5
+
   #Linje for hele landet/utvalget:
-  lines(x=rep(AndelHele, 2), y=c(ybunn, ytopp), col=farger[2], lwd=2)
-  legend(x=max(AndelerGrSort, na.rm = T), y=posOver+0.5, xjust=1, yjust = 0.5,
+  lines(x=rep(AndelHele, 2), y=c(0.1, max(pos)), col=farger[2], lwd=2)
+  legend(x=max(AndelerGrSort, na.rm = T), y=posOver, xjust=1, yjust = 0.2,
          cex=0.95, lwd=2, col=farger[2],
          legend=paste0('Hele landet', ' (', sprintf('%.1f',AndelHele), '%), ', 'N=', N),
          bty='o', bg='white', box.col='white')
-  mtext(at=pos+max(pos)*0.0045, paste0(GrNavnSort,' (',Ngrtxt , ')'), side=2, las=1, cex=cexShNavn, adj=1, line=0.25)	#Legge på navn som eget steg
+  mtext(at=pos+max(pos)*0.0045, GrNavnOgAnt,
+        side=2, las=1, cex=cexShNavn, adj=1, line=0.25)	#Legge på navn som eget steg
 
 
   title(Tittel, line=1, font.main=1, cex.main=1.3)
@@ -193,7 +184,7 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
   text(x=AndelerGrSort+xmax*0.01, y=pos+0.1, andeltxt,
        las=1, cex=0.9, adj=0, col=farger[1])	#Andeler, hvert sykehus
 
-  mtext(at=posOver, paste0('(N)' ), side=2, las=1, cex=1, adj=1, line=0.25)
+  mtext(at=posOver-0.5, paste0('(N)' ), side=2, las=1, adj=1, line=0.25)
 
   #Tekst som angir hvilket utvalg som er gjort
   mtext(utvalgTxt, side=3, las=1, cex=1, adj=0, col=farger[1], line=c(3+0.8*((NutvTxt-1):0)))
