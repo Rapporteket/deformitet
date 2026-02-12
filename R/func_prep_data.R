@@ -16,7 +16,7 @@ preprosData <- function(RegData=RegData, egneVarNavn = 0) {
     RegData <- dplyr::rename(RegData,
                              OpDato = SURGERY_DATE,
                              Kjonn = GENDER,
-                             PasientID = ID
+                             PasientID = PATIENT_ID
     )
     }
 

@@ -4,7 +4,7 @@
 #' @return tabell med selvvalgte variabelnavn spesifisert i friendlyvar
 #' @export
 
-#Funksjon
+#Funksjon mappingEgneNavn Skal flyttes hit.
 mappingEgneNavnDum <- function(tabell, tabType) {
   indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
   navn <- friendlyVarTab$FIELD_NAME[indTabType]
@@ -37,9 +37,11 @@ mappingEgneNavnDum <- function(tabell, tabType) {
 #'
 #' @export
 
-hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status = 1) {
+hentDataTabell <- function(tabellnavn = "surgeonform",
+                           qVar = '*',
+                           egneVarNavn = 0, status = 1) {
 
-  query <- paste0("SELECT * FROM ", tabellnavn)
+  query <- paste0("SELECT ", qVar, " FROM ", tabellnavn)
   tabell <- rapbase::loadRegData(registryName = "data",
                                  query = query)
 
@@ -50,7 +52,6 @@ hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status =
   if (egneVarNavn == 1) {
     friendlyVarTab  <- rapbase::loadRegData(registryName = "data",
                                             query = "SELECT * FROM friendlyvars")
-
     friendlyVarTab$USER_SUGGESTION[friendlyVarTab$USER_SUGGESTION == 'NEINNICHTS'] <- NA
 
     friendlyVarTab <- friendlyVarTab[
@@ -93,13 +94,16 @@ hentDataTabell <- function(tabellnavn = "surgeonform", egneVarNavn = 0, status =
 #' @export
 alleRegData <- function(egneVarNavn = 0) {
 
-  #Endre så får med melding
-  # stopifnot(egneVarNavn %in% 0:1,
-  #           'Ugyldig valg for parameter "egneVarNavn"')
+  stopifnot(egneVarNavn %in% 0:1)
 
   mce <- hentDataTabell("mce")
   centre <- hentDataTabell("centre")
-  patient <- hentDataTabell("patient", egneVarNavn = egneVarNavn)
+  patient <- hentDataTabell(
+    "patient", egneVarNavn = egneVarNavn,
+    qVar =  'BIRTH_DATE, DECEASED, DECEASED_DATE, DISTRICTCODE, DISTRICTNAME,
+    EDUCATION, GENDER, ID, MARITAL_STATUS, NORWEGIAN, REGISTERED_DATE,
+    TSCREATED')   #Resterende variabler er tomme eller krypterte
+
   patient_followup <- hentDataTabell("patientfollowup", egneVarNavn = egneVarNavn)
   patient_form <- hentDataTabell("patientform", egneVarNavn = egneVarNavn)
   surgeon_followup <- hentDataTabell("surgeonfollowup", egneVarNavn = egneVarNavn)

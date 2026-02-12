@@ -60,11 +60,22 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
         # PROM data og kontroll intervaller følger fortsatt primæroperasjonen.
 # reoperert1år / alle pasienter
 
-
-
      tittel <- 'Reoperert innen 1 år etter primæroperasjon'
+     source("dev/sysSetenv.R")
+     RegData <- alleRegData(egneVarNavn = 0)
+     RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
+     RegData$Variabel <- 0
+     indOpr2 <- which(RegData$CURRENT_SURGERY==2)
+     pasID2 <- RegData$PasientID[indOpr2]
+     dato2 <- RegData$OpDato[indOpr2]
 
-     RegData <- RegData[which(RegData$BED_DAYS_POSTOPERATIVE>=0),]
+     RegData_pas2op <-  RegData[which(RegData$PasientID %in% pasID2),
+                                c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID",'PARENT')]
+     RegData_pas2op <-  RegData[ , #which(RegData$PATIENT_ID %in% pasID2),
+                                c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID",'PARENT')]
+
+     RegData <- RegData[which(RegData$CURRENT_SURGERY >= 0),]
+
      RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 6] <- 1
      xAkseTxt <- 'Antall liggedøgn'
      subtxt <- 'reoperasjon'
