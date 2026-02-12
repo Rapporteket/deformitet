@@ -84,6 +84,7 @@ figAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
 
   if (valgtVar == 'liggetidPostOp' ) {KImaalGrenser <- c(0,90,100)}
   if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
+  if (valgtVar == 'reOp') {KImaalGrenser <- c(0,5,100)}
 
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE)
 AndelerGrSort <- c( NA, AndelerGr[sortInd])
@@ -155,7 +156,7 @@ if 	( max(Ngr) < Ngrense)	{#Dvs. hvis ALLE er mindre enn grensa.
          ybottom=0, ytop=max(pos), col = fargerMaalNiva[1:antMaalNivaa],
          density = tetth, angle = 60, border = NA)
 
-    legend(x=1, y=posOver, yjust = 1,
+    legend(x=0.01*xmax, y=posOver, yjust = 1,
            ncol=antMaalNivaa+1,
            density = c(NA, tetth),
            angle = c(NA,rep(60, antMaalNivaa)),

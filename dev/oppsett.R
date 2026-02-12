@@ -26,7 +26,8 @@ regData <- pre_pros(raw_regdata)
 
 valgtVar <- 'liggetidPostOp' #
 valgtVar <- 'fornoydBeh2aar'
+valgtVar <- 'reOp'
 figAndelerGrVar(RegData=0, hentData=1, preprosess=1,
                             valgtVar=valgtVar, minald=0, maxald=130, erMann=9,
-                            datoFra='2023-01-01', datoTil=Sys.Date(),
+                            datoFra='2025-01-01', datoTil=Sys.Date(),
                             Ngrense=10, reshID=0, outfile='') # paste0(valgtVar, '.pdf'))

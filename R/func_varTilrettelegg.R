@@ -61,27 +61,28 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
 # reoperert1år / alle pasienter
 
      tittel <- 'Reoperert innen 1 år etter primæroperasjon'
-     source("dev/sysSetenv.R")
-     RegData <- alleRegData(egneVarNavn = 0)
-     RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
-     RegData$Variabel <- 0
-     indOpr2 <- which(RegData$CURRENT_SURGERY==2)
-     pasID2 <- RegData$PasientID[indOpr2]
-     dato2 <- RegData$OpDato[indOpr2]
+     # source("dev/sysSetenv.R")
+     # RegData <- alleRegData(egneVarNavn = 0)
+     # RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
+     # RegData$Variabel <- 0
+     pasIDreop <- unique(RegData$PasientID[which(RegData$CURRENT_SURGERY==2)])
 
-     RegData_pas2op <-  RegData[which(RegData$PasientID %in% pasID2),
-                                c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID",'PARENT')]
-     RegData_pas2op <-  RegData[ , #which(RegData$PATIENT_ID %in% pasID2),
+     RegData_pas2op <-  RegData[which(RegData$PasientID %in% pasIDreop),
                                 c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID",'PARENT')]
 
-     RegData <- RegData[which(RegData$CURRENT_SURGERY >= 0),]
+     RegDataPas <- RegData_pas2op |> dplyr::group_by(PasientID) |>
+       dplyr::summarise(
+         PasientID = PasientID[1],
+         Dager = sort(OpDato[CURRENT_SURGERY ==2])[1] - OpDato[CURRENT_SURGERY == 1]
+       )
+     RegData <- RegData[which(RegData$CURRENT_SURGERY == 1),]
+     RegData$Variabel[
+     RegData$PasientID %in% RegDataPas$PasientID[RegDataPas$Dager < 365]] <- 1
 
-     RegData$Variabel[RegData$BED_DAYS_POSTOPERATIVE <= 6] <- 1
-     xAkseTxt <- 'Antall liggedøgn'
      subtxt <- 'reoperasjon'
-     TittelVar <- 'Liggetid etter operasjon'
+     TittelVar <- 'Reoperert innen 1år'
      ytxt1 <- 'reoperasjon'
-     sortAvtagende <- TRUE
+
    }
 
 
