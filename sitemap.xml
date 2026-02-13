@@ -8,15 +8,16 @@
 <url><loc>/reference/alleRegData.html</loc></url>
 <url><loc>/reference/boxplot_sam.html</loc></url>
 <url><loc>/reference/count_kvalind.html</loc></url>
-<url><loc>/reference/defHentData.html</loc></url>
 <url><loc>/reference/density_sam.html</loc></url>
 <url><loc>/reference/explanation_kvalind.html</loc></url>
+<url><loc>/reference/figAndelerGrVar.html</loc></url>
 <url><loc>/reference/filtrer_datadump.html</loc></url>
 <url><loc>/reference/finn_sam_konfidensint.html</loc></url>
 <url><loc>/reference/finn_sam_variabler.html</loc></url>
 <url><loc>/reference/finn_variabler.html</loc></url>
 <url><loc>/reference/ggdata_sam_plot.html</loc></url>
 <url><loc>/reference/gjen_var_til_data.html</loc></url>
+<url><loc>/reference/hentDataTabell.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/kjorDeformApp.html</loc></url>
 <url><loc>/reference/kompl_data.html</loc></url>
@@ -27,6 +28,7 @@
 <url><loc>/reference/lag_ggplot_fordeling.html</loc></url>
 <url><loc>/reference/lag_gjen_tabell.html</loc></url>
 <url><loc>/reference/lag_sam_tabell.html</loc></url>
+<url><loc>/reference/mappingEgneNavnDum.html</loc></url>
 <url><loc>/reference/mapping_navn.html</loc></url>
 <url><loc>/reference/module_datadump_UI.html</loc></url>
 <url><loc>/reference/module_fordeling_UI.html</loc></url>
@@ -44,6 +46,7 @@
 <url><loc>/reference/pre_pros.html</loc></url>
 <url><loc>/reference/prepVar.html</loc></url>
 <url><loc>/reference/prep_var_na.html</loc></url>
+<url><loc>/reference/preprosData.html</loc></url>
 <url><loc>/reference/pronoun.html</loc></url>
 <url><loc>/reference/server_deform.html</loc></url>
 <url><loc>/reference/sjekk_antall.html</loc></url>
@@ -52,7 +55,9 @@
 <url><loc>/reference/tbl_reg.html</loc></url>
 <url><loc>/reference/tbl_skjema_reg.html</loc></url>
 <url><loc>/reference/ui_deform.html</loc></url>
+<url><loc>/reference/utvalgEnh.html</loc></url>
 <url><loc>/reference/utvalg_basic.html</loc></url>
+<url><loc>/reference/varTilrettelegg.html</loc></url>
 <url><loc>/reference/vask_sam_tabell.html</loc></url>
 <url><loc>/reference/y_limits_gjen.html</loc></url>
 </urlset>
