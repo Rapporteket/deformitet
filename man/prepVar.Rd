@@ -12,9 +12,12 @@ prepVar(
   time2,
   alder1,
   alder2,
-  type_op,
+  type_op = "Begge",
   visning = "uten_tid"
 )
+}
+\value{
+Funksjonen ser ut tiil både å filtrere og preprosessere
 }
 \description{
 prepvar-funksjon

@@ -116,8 +116,8 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
 
       #      -------------------------------------------------------------------
 
-      colnames_surgeonform <- colnames(defHentData("surgeonform"))
-      colnames_surgeonfollowup <- colnames(defHentData("surgeonfollowup"))
+      colnames_surgeonform <- colnames(hentDataTabell("surgeonform"))
+      colnames_surgeonfollowup <- colnames(hentDataTabell("surgeonfollowup"))
       colnames <- c(colnames_surgeonform, colnames_surgeonfollowup)
 
 

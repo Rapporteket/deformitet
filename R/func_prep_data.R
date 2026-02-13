@@ -1,6 +1,71 @@
+#' Preprosesser data fra NKR Deformitet
+#'
+#' Denne funksjonen definerer og formaterer variabler
+#'
+#' @param RegData dataramme med registerets data
+#'
+#' @return RegData En dataramme med det preprosesserte datasettet
+#'
+#' @export
+
+preprosData <- function(RegData=RegData, egneVarNavn = 0) {
+  #Kun ferdigstilte registreringer:
+#  RegData <- RegData[which(RegData$LegeskjemaStatus == 1), ]  #Vi ønsker kun ferdigstilte legeskjema
+
+  if (egneVarNavn==0){
+    RegData <- dplyr::rename(RegData,
+                             OpDato = SURGERY_DATE,
+                             Kjonn = GENDER,
+                             PasientID = PATIENT_ID
+    )
+    }
+
+
+  #Kjønnsvariabel:ErMann
+  RegData <- dplyr::mutate(RegData,ErMann = abs(Kjonn-2))
+  RegData$Alder <- (as.Date(RegData$OpDato) - as.Date(RegData$BIRTH_DATE))/365.25
+
+  #Riktig datoformat. Hoveddato = OpDato NB: OpDato er navnet om til Inndato i nakke.
+  #InnDato brukes her om innleggelsesdato
+  RegData$MndNum <- as.POSIXlt(RegData$OpDato, format="%Y-%m-%d")$mon +1
+  RegData$Kvartal <- ceiling(RegData$MndNum/3)
+  RegData$Halvaar <- ceiling(RegData$MndNum/6)
+  RegData$Aar <- 1900 + as.POSIXlt(RegData$OpDato, format="%Y-%m-%d")$year #strptime(RegData$Innleggelsestidspunkt, format="%Y")$year
+  RegData$MndAar <- format(RegData$OpDato, '%b%y')
+
+  # RegData$DiffUtFerdig <- as.numeric(difftime(as.Date(RegData$ForstLukketMed), RegData$UtDato,units = 'days'))
+
+  RegData <- dplyr::rename(RegData,
+    ReshId = CENTREID,
+    ShNavn = CENTRESHORTNAME
+  )
+  class(RegData$ReshId) <- 'numeric'
+  RegData$ShNavn <- trimws(as.character(RegData$ShNavn))  #Fjerner mellomrom etter navn
+
+  #Tomme sykehusnavn får resh som navn:
+  indTom <- which(is.na(RegData$ShNavn) | RegData$ShNavn == '')
+  RegData$ShNavn[indTom] <- RegData$ReshId[indTom]
+
+  #Sjekker om alle resh har egne enhetsnavn
+  dta <- unique(RegData[ ,c('ReshId', 'ShNavn')])
+  duplResh <- names(table(dta$ReshId)[which(table(dta$ReshId)>1)])
+  duplSh <- names(table(dta$ShNavn)[which(table(dta$ShNavn)>1)])
+
+  if (length(c(duplSh, duplResh)) > 0) {
+    ind <- union(which(RegData$ReshId %in% duplResh), which(RegData$ShNavn %in% duplSh))
+    RegData$ShNavn[ind] <- paste0(RegData$ShNavn[ind],' (', RegData$ReshId[ind], ')')
+  }
+
+
+  return(invisible(RegData))
+}
+
+
+
+
 
 #' @title prepvar-funksjon
-#'
+#' @return Funksjonen ser ut tiil både å filtrere og preprosessere
 #' @export
 #'
 
@@ -8,13 +73,12 @@ prepVar <- function(
   data, var, var_kjonn,
   time1, time2,
   alder1, alder2,
-  type_op,
+  type_op = "Begge",
   visning = "uten_tid"
 ) {
 
 
   data <- prep_var_na(data, var)
-
 
   # Filter by gender
 

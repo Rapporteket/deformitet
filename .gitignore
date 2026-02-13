@@ -54,7 +54,7 @@ rsconnect/
 
 .DS_Store
 
-/dev
+*.pdf
 
 # sql-files
 *.sql
