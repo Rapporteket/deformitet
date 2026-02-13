@@ -52,6 +52,7 @@ hentDataTabell <- function(tabellnavn = "surgeonform",
   if (egneVarNavn == 1) {
     friendlyVarTab  <- rapbase::loadRegData(registryName = "data",
                                             query = "SELECT * FROM friendlyvars")
+
     friendlyVarTab$USER_SUGGESTION[friendlyVarTab$USER_SUGGESTION == 'NEINNICHTS'] <- NA
 
     friendlyVarTab <- friendlyVarTab[
