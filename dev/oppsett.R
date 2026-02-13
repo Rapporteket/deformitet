@@ -24,10 +24,13 @@ RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
 #### Clean and tidy data:
 regData <- pre_pros(raw_regdata)
 
-valgtVar <- 'liggetidPostOp' #
-valgtVar <- 'fornoydBeh2aar'
-valgtVar <- 'reOp'
-figAndelerGrVar(RegData=0, hentData=1, preprosess=1,
-                            valgtVar=valgtVar, minald=0, maxald=130, erMann=9,
-                            datoFra='2025-01-01', datoTil=Sys.Date(),
-                            Ngrense=10, reshID=0, outfile='') # paste0(valgtVar, '.pdf'))
+RegData <- alleRegData(egneVarNavn = 0)
+RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
+kvalInd <- c('liggetidPostOp', 'fornoydBeh2aar', 'reOp')
+for (var in kvalInd) {
+  valgtVar <- var
+  figAndelerGrVar(RegData=RegData, hentData=0, preprosess=0,
+                valgtVar=valgtVar,
+                datoFra='2023-01-01', datoTil=Sys.Date(),
+                Ngrense=10, reshID=0, outfile=paste0(valgtVar, '.pdf'))
+}
