@@ -129,8 +129,8 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
       varTxt <- 'fornøyde'
       }
     tittel <- switch(valgtVar,
-                     fornoydBeh3mnd = 'Fornøydhet med behandlinga på sykehuset, 3 mnd' ,
-                     fornoydBeh2aar = 'Fornøydhet med behandlinga på sykehuset, 2 år')
+                     fornoydBeh3mnd = 'Fornøyd med resultatet av behandlingen, 3 mnd' ,
+                     fornoydBeh2aar = 'Fornøyd med resultatet av behandlingen, 2 år')
     sortAvtagende <- TRUE
   }
 
