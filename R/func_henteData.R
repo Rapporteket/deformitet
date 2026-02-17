@@ -66,7 +66,7 @@ hentDataTabell <- function(tabellnavn = "surgeonform",
       indTabType <- which(friendlyVarTab$REGISTRATION_TYPE %in% tabType)
       navn <- friendlyVarTab$FIELD_NAME[indTabType]
       names(navn) <- friendlyVarTab$USER_SUGGESTION[indTabType]
-      tabell <- dplyr::rename(tabell, dplyr::all_of(navn))
+      tabell <- dplyr::rename(tabell, dplyr::any_of(navn))
     }
 
         if (tabellnavn %in% c("patientfollowup", "surgeonfollowup")) {
