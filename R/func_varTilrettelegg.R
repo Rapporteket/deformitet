@@ -521,7 +521,7 @@ if (valgtVar=='KnivtidTotalMin') { #GjsnTid #GjsnGrVar#Legeskjema.
   if (valgtVar %in% c('Oppf3mnd', 'Oppf12mnd', 'Oppf3og12mnd')) { #AndelGrVar, -Tid
     #Oppfølgingsskjema: OppFolgStatus12mnd, OppFolgStatus3mnd
     trekkfraDager <- ifelse(valgtVar == 'Oppf3mnd', 100, 400)
-    RegData <- RegData[RegData$InnDato < min(max(RegData$InnDato), Sys.Date()-trekkfraDager), ]
+    RegData <- RegData[RegData$OpDato < min(max(RegData$OpDato), Sys.Date()-trekkfraDager), ]
     ind <- switch(valgtVar,
                   Oppf3mnd = which(RegData$OppFolgStatus3mnd==1),
                   Oppf12mnd = which(RegData$OppFolgStatus12mnd==1),

@@ -3,10 +3,10 @@ devtools::install(upgrade = FALSE)
 
 setwd("C:/Users/lro2402unn/RegistreGIT/nger")
 setwd('../data')
-sship::dec("c://Users/lro2402unn/RegistreGIT/data/intensiv16d066500.sql.gz__20260210_092836.tar.gz",
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql.gz__20260217_090623.tar.gz",
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
 
-# source c://Users/lro2402unn/RegistreGIT/data/intensiv16d066500.sql;
+# source c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql;
 
 library(deformitet)
 source("dev/sysSetenv.R")
