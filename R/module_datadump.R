@@ -98,7 +98,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
       datadumpEgneNavn <- shiny::reactive({
         if (input$choice_datadump == "Datasett med selvvalgte navn") {
           data <- alleRegData(egneVarNavn = 1) |>
-            dplyr::filter(dplyr::between(.data$InnDato, as.Date(input$date[1]), as.Date(input$date[2])))
+            dplyr::filter(dplyr::between(.data$OpDato, as.Date(input$date[1]), as.Date(input$date[2])))
         }
       })
 
