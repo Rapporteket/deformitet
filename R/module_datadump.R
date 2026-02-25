@@ -152,7 +152,7 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
           switch(input$choice_datadump,
                  "Datasett basert på skjematype og utvalg" = write.csv2(select_datadump_reactive(), file),
                  "Datasett med selvvalgte navn" = write.csv2(datadumpEgneNavn(), file),
-                 "Datasett basert på utvalg" = write.csv2(datadump_reactive()(), file))
+                 "Datasett basert på utvalg" = write.csv2(datadump_reactive(), file))
         }
       ) #download
 
