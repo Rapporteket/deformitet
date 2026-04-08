@@ -19,7 +19,7 @@
 #'
 
 varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
-   #grVar='',
+   #Funksjonen er kopiert fra Nakke
 
   "%i%" <- intersect
 

@@ -17,6 +17,7 @@ deformitet::kjorDeformApp(browser = TRUE)
 # Få andelGrVar opp å kjøre:
 
 raw_regdata <- alleRegData()
+surgeon_form <- hentDataTabell("surgeonform", egneVarNavn = 0)
 
 RegData <- alleRegData(egneVarNavn = 0)
 RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
