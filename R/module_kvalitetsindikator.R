@@ -1,6 +1,6 @@
 ####### MODULE FOR KVALITETSINDIKATORER ########################################
-#'@title kvalitetsindikator UI
-#'@export
+#' @title kvalitetsindikator UI
+#' @export
 
 module_kvalind_ui <- function(id) {
   ns <- shiny::NS(id)
@@ -19,19 +19,17 @@ module_kvalind_ui <- function(id) {
           ),
           selected = "SRS22_spm22_3mnd"
         ),
-
-
         shiny::radioButtons( # second select
           inputId = ns("kjonn_var"),
           label = "Dele på kjønn?",
-          choices = c("kvinne" = "kvinne",
-                      "mann" = "mann",
-                      "begge" = "begge",
-                      "se alle fordelinger" = "nei"),
+          choices = c(
+            "kvinne" = "kvinne",
+            "mann" = "mann",
+            "begge" = "begge",
+            "se alle fordelinger" = "nei"
+          ),
           selected = "begge"
         ),
-
-
         shiny::conditionalPanel(
           condition = paste0("input['", ns("kval_var"), "'] == 'CURRENT_SURGERY'"),
           shiny::radioButtons( # third select, not visible when looking at rate of re-operations
@@ -41,8 +39,6 @@ module_kvalind_ui <- function(id) {
             selected = "Begge"
           )
         ),
-
-
         shiny::conditionalPanel(
           condition = paste0("input['", ns("kval_var"), "'] != 'CURRENT_SURGERY'"),
           shiny::radioButtons( # third select, not visible when looking at rate of re-operations
@@ -52,7 +48,6 @@ module_kvalind_ui <- function(id) {
             selected = "Begge"
           )
         ),
-
         shiny::sliderInput( # fourth select
           inputId = ns("alder_var"),
           label = "Aldersintervall:",
@@ -61,7 +56,6 @@ module_kvalind_ui <- function(id) {
           value = c(10, 20),
           dragRange = TRUE
         ),
-
         shiny::dateRangeInput( # fifth select
           inputId = ns("date"),
           label = "Tidsintervall:",
@@ -73,7 +67,6 @@ module_kvalind_ui <- function(id) {
           separator = " - "
         )
       ),
-
       shiny::mainPanel(
         bslib::navset_card_underline(
           bslib::nav_panel(
@@ -102,13 +95,12 @@ module_kvalind_ui <- function(id) {
 }
 
 
-#'@export
+#' @export
 
 module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       # Make gg-data for plot
       gg_data <- data.frame(title = "") # Jeg skal legge alt dette inn i en funksjon
 
@@ -123,7 +115,6 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner (unntatt smerte) etter 3-6 måneder",
               "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"
             ),
-
             ylab = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
@@ -132,8 +123,6 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd (unntatt smerte)",
               "CURRENT_SURGERY" ~ "Reoperasjonsrate"
             ),
-
-
             ymin = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 70,
@@ -142,7 +131,6 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ 0,
               "CURRENT_SURGERY" ~ 0
             ),
-
             ymax = dplyr::case_match(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 100,
@@ -157,17 +145,19 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
 
       # Store reactive choices in data set for caption in ggplot
       my_data_reactive <- shiny::reactive({
-        data.frame(c(input$kval_var,
-                     if (input$kjonn_var == "nei") {
-                       "begge"
-                     } else {
-                       input$kjonn_var
-                     },
-                     format(input$date[1], "%d%m%y"),
-                     format(input$date[2], "%d%m%y"),
-                     input$alder_var[1],
-                     input$alder_var[2],
-                     input$type_op))
+        data.frame(c(
+          input$kval_var,
+          if (input$kjonn_var == "nei") {
+            "begge"
+          } else {
+            input$kjonn_var
+          },
+          format(input$date[1], "%d%m%y"),
+          format(input$date[2], "%d%m%y"),
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op
+        ))
       })
 
 
@@ -175,34 +165,40 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
 
       # Basic utvalg
       df_reactive <- shiny::reactive({
-        utvalg_basic(data,
-                     userUnitId(),
-                     input$kjonn_var,
-                     input$type_op,
-                     input$date[1],
-                     input$date[2],
-                     input$alder_var[1],
-                     input$alder_var[2],
-                     "ikke_filtrer_reshId")
+        utvalg_basic(
+          data,
+          userUnitId(),
+          input$kjonn_var,
+          input$type_op,
+          input$date[1],
+          input$date[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          "ikke_filtrer_reshId"
+        )
       })
 
 
       kval_df_reactive <- shiny::reactive({
-        count_kvalind(df_reactive(),
-                      input$kjonn_var,
-                      input$kval_var,
-                      userRole(),
-                      userUnitId(),
-                      map_data)
+        count_kvalind(
+          df_reactive(),
+          input$kjonn_var,
+          input$kval_var,
+          userRole(),
+          userUnitId(),
+          map_data
+        )
       })
 
       ###### PLOT ####################################################################
 
       kval_plot_reactive <- shiny::reactive({
-        kval_plot(kval_df_reactive(),
-                  gg_data_reactive(),
-                  my_data_reactive(),
-                  input$kjonn_var)
+        kval_plot(
+          kval_df_reactive(),
+          gg_data_reactive(),
+          my_data_reactive(),
+          input$kjonn_var
+        )
       })
 
       output$kval_plot <- shiny::renderPlot({
@@ -213,19 +209,22 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
 
       output$kval_table <- DT::renderDT({
         DT::datatable(kval_df_reactive(),
-                      class = "white-space:nowrap compact",
-                      colnames = c("Sykehus",
-                                   "Kjonn",
-                                   "Antall",
-                                   "Antall - kvalitetsindikator",
-                                   "Andel - kvalitetsindikator"))
+          class = "white-space:nowrap compact",
+          colnames = c(
+            "Sykehus",
+            "Kjonn",
+            "Antall",
+            "Antall - kvalitetsindikator",
+            "Andel - kvalitetsindikator"
+          )
+        )
       })
 
       ##### KVALITETSINDIKATORER over tid ############################################
 
 
       ##### NEDLASTING ###############################################################
-      output$download_fig <-  shiny::downloadHandler(
+      output$download_fig <- shiny::downloadHandler(
         filename = function() {
           paste("Figur_", input$kval_var, "_", Sys.Date(), ".pdf", sep = "")
         },
