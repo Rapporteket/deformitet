@@ -20,7 +20,6 @@ mappingEgneNavnDum <- function(tabell, tabType) {
 #' @param tabellnavn Navn på tabell som skal lastes inn.
 #'                   Kan ha følgende verdier:
 #'                   mce
-#'                   mce_patient_data
 #'                   patient
 #'                   patientform
 #'                   patientfollowup
@@ -29,7 +28,7 @@ mappingEgneNavnDum <- function(tabell, tabType) {
 #'
 #' @param egneVarNavn 0 - Qreg-navn benyttes.
 #'                    1 - selvvalgte navn fra Friendlyvar benyttes
-#' mce og mce_patient_data har ingen selvvalgte navn
+#' mce har ingen selvvalgte navn
 #' Egenvalgte navn omfatter REGISTRATION_TYPE:
 #' PATIENT, PATIENTFOLLOWUP, PATIENTFOLLOWUP12, ,
 #' SURGEONFORM, SURGEONFOLLOWUP SURGEONFOLLOWUP12
@@ -39,14 +38,17 @@ mappingEgneNavnDum <- function(tabell, tabType) {
 
 hentDataTabell <- function(tabellnavn = "surgeonform",
                            qVar = '*',
-                           egneVarNavn = 0, status = 1) {
+                           egneVarNavn = 0) {
 
   query <- paste0("SELECT ", qVar, " FROM ", tabellnavn)
   tabell <- rapbase::loadRegData(registryName = "data",
                                  query = query)
 
-  if ("STATUS" %in% names(tabell)) {
-    tabell <- tabell[tabell$STATUS == status, ]
+  # if ("STATUS" %in% names(tabell)) {
+  #   tabell <- tabell[tabell$STATUS == status, ]
+  # }
+  if (tabellnavn %in% c('surgeonform', 'patient_form')) {
+    tabell <- tabell[tabell$STATUS == 1, ]
   }
 
   if (egneVarNavn == 1) {
