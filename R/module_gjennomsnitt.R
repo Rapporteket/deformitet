@@ -1,11 +1,10 @@
-#'@title Module gjennomsnitt
-#'@export
+#' @title Module gjennomsnitt
+#' @export
 
 module_gjennomsnitt_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
-
       # Inputs: select variables to plot
       shiny::sidebarPanel(
         width = 3,
@@ -20,7 +19,7 @@ module_gjennomsnitt_ui <- function(id) {
             "Helsetilstand 12 mnd" = "Helsetilstand_12mnd",
             "SRS22 'Samme behandling på nytt?' 3-6 mnd" = "SRS22_spm22_3mnd",
             "SRS22 'Samme behandling på nytt?' 12 mnd" = "SRS22_spm22_12mnd",
-            "SRS22 'Fornøyd med resultatet?' 3-6 mnd" =  "SRS22_spm21_3mnd",
+            "SRS22 'Fornøyd med resultatet?' 3-6 mnd" = "SRS22_spm21_3mnd",
             "SRS22 'Fornøyd med resultatet?' 12 mdn" = "SRS22_spm21_12mnd",
             "BMI-kategori" = "BMI_kategori",
             "Alder" = "Alder",
@@ -49,47 +48,46 @@ module_gjennomsnitt_ui <- function(id) {
             "SRS22 tilfredshet, 12 mnd" = "SRS22_fornoyd_12mnd"
             # Variabler som kan vurderes lagt til:
             # nolint start
-            #"Helsetilstand 5 år" = "Helsetilstand_60mnd",
-            #"SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
-            #"SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
-            #"SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
-            #"SRS22 totalscore 5 år" = "SRS22_total_60mnd",
-            #"SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
-            #"SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
-            #"SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
-            #"SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
-            #"Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
-            #"Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
-            #"Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
-            #"Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
-            #"Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
-            #"Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
+            # "Helsetilstand 5 år" = "Helsetilstand_60mnd",
+            # "SRS22 'Samme behandling på nytt?' 5 år" = "SRS22_spm22_60mnd",
+            # "SRS22 tilfredshet, 5 år" = "SRS22_fornoyd_60mnd",
+            # "SRS22 'Fornøyd med resultatet?' 5 år" = "SRS22_spm21_60mnd",
+            # "SRS22 totalscore 5 år" = "SRS22_total_60mnd",
+            # "SRS22 funksjon, 5 år" = "SRS22_funksjon_60mnd",
+            # "SRS22 smerte, 5 år" = "SRS22_smerte_60mnd",
+            # "SRS22 selvbilde, 5 år" = "SRS22_selvbilde_60mnd",
+            # "SRS22 mental helse, 5 år" = "SRS22_mhelse_60mnd",
+            # "Komplikasjoner, 3-6 mnd" = "Komplikasjoner_3mnd",
+            # "Komplikasjoner, 12 mnd" = "Komplikasjoner_12mnd",
+            # "Komplikasjoner, 60 mnd" = "Komplikasjoner_60mnd",
+            # "Komplikasjonstyper, 3-6 mnd" = "Komplikasjonstype",
+            # "Komplikasjonstyper, 12 mnd" = "Komplikasjonstype_12mnd"
+            # "Komplikasjonstyper, 60 mnd" = "Komplikasjonstype_60mnd"
             # nolint end
           ),
           selected = "BMI_kategori"
         ),
-
         shinyjs::hidden(shiny::uiOutput(outputId = ns("view_type"))), # second select
 
         shiny::radioButtons( # second select
           inputId = ns("tidsenhet"),
           label = "Tidsenhet",
-          choices = c("År" = "aar",
-                      "Kvartal" = "kvartal"),
+          choices = c(
+            "År" = "aar",
+            "Kvartal" = "kvartal"
+          ),
           selected = "kvartal"
         ),
-
         shiny::dateRangeInput( # third select
           inputId = ns("dato"),
           label = "Tidsintervall:",
           start = "2023-01-02",
-          end = Sys.Date(),  #"2025-09-02",
+          end = Sys.Date(), # "2025-09-02",
           min = "2023-01-01",
-          max = Sys.Date(),  # "2025-09-02",
+          max = Sys.Date(), # "2025-09-02",
           format = "dd-mm-yyyy",
           separator = " - "
         ),
-
         shiny::sliderInput( # fourth select
           inputId = ns("alder_var"),
           label = "Aldersintervall:",
@@ -98,14 +96,12 @@ module_gjennomsnitt_ui <- function(id) {
           value = c(10, 20),
           dragRange = TRUE
         ),
-
         shiny::selectInput( # fifth select
           inputId = ns("kjonn_var"),
           label = "Utvalg basert på kjønn",
           choices = c("begge", "mann", "kvinne"),
           selected = "begge"
         ),
-
         shiny::radioButtons( # sixth select
           inputId = ns("type_op"),
           label = "Type operasjon",
@@ -113,20 +109,26 @@ module_gjennomsnitt_ui <- function(id) {
           selected = "Primæroperasjon"
         )
       ),
-
-
       shiny::mainPanel(
         shiny::tabsetPanel(
           id = ns("tab"),
-          shiny::tabPanel("Figur", value = "fig",
-                          shiny::textOutput(outputId = ns("my_text")),
-                          shiny::plotOutput(outputId = ns("my_plot"), height = "auto"),
-                          shiny::downloadButton(ns("download_gjennomsnittsfig"),
-                                                "Last ned figur")),
-          shiny::tabPanel("Tabell", value = "tab",
-                          shiny::tableOutput(outputId = ns("table")),
-                          shiny::downloadButton(ns("download_gjennomsnittstbl"),
-                                                "Last ned tabell"))
+          shiny::tabPanel("Figur",
+            value = "fig",
+            shiny::textOutput(outputId = ns("my_text")),
+            shiny::plotOutput(outputId = ns("my_plot"), height = "auto"),
+            shiny::downloadButton(
+              ns("download_gjennomsnittsfig"),
+              "Last ned figur"
+            )
+          ),
+          shiny::tabPanel("Tabell",
+            value = "tab",
+            shiny::tableOutput(outputId = ns("table")),
+            shiny::downloadButton(
+              ns("download_gjennomsnittstbl"),
+              "Last ned tabell"
+            )
+          )
         )
       )
     )
@@ -134,16 +136,14 @@ module_gjennomsnitt_ui <- function(id) {
 }
 
 
-
-#'@title Server gjennomsnitt
+#' @title Server gjennomsnitt
 #'
-#'@export
+#' @export
 
 module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       output$view_type <- shiny::renderUI({
         ns <- session$ns
         if (userRole() == "SC") {
@@ -194,13 +194,15 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
       my_data_reactive <- shiny::reactive({
         x <- format(input$dato, "%d/%m/%y")
-        data.frame(c(input$x_var,
-                     input$kjonn_var,
-                     x[1],
-                     x[2],
-                     input$alder_var[1],
-                     input$alder_var[2],
-                     input$type_op))
+        data.frame(c(
+          input$x_var,
+          input$kjonn_var,
+          x[1],
+          x[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op
+        ))
       })
 
       # prepVar() returns a list
@@ -218,15 +220,17 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
 
 
       ######## AGGREGATE DATA-------------------------------------------------------
-      #Aggregate data in table format
+      # Aggregate data in table format
 
       table_data <- shiny::reactive({
-        table <- tabell_gjen_tid(data_reactive(),
-                                 map_var_reactive(),
-                                 map_data,
-                                 input$tidsenhet,
-                                 input$visningstype,
-                                 userUnitId())
+        table <- tabell_gjen_tid(
+          data_reactive(),
+          map_var_reactive(),
+          map_data,
+          input$tidsenhet,
+          input$visningstype,
+          userUnitId()
+        )
         table <- table |>
           dplyr::rename("gjennomsnitt" = .data$gjen)
       })
@@ -242,20 +246,24 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
       ### FIGURE ###
 
       my_plot <- shiny::reactive({
-        over_tid_plot(table_data(),
-                      input$visningstype,
-                      gg_data_reactive(),
-                      map_var_reactive(),
-                      input$tidsenhet,
-                      my_data_reactive())
+        over_tid_plot(
+          table_data(),
+          input$visningstype,
+          gg_data_reactive(),
+          map_var_reactive(),
+          input$tidsenhet,
+          my_data_reactive()
+        )
       })
 
       check <- shiny::reactive({
-        sjekk_antall(data,
-                     table_data(),
-                     input$dato[1],
-                     input$dato[2],
-                     input$tidsenhet)
+        sjekk_antall(
+          data,
+          table_data(),
+          input$dato[1],
+          input$dato[2],
+          input$tidsenhet
+        )
       })
 
       output$my_text <- shiny::renderText({
@@ -264,14 +272,18 @@ module_gjennomsnitt_server <- function(id, userRole, userUnitId, data, map_data)
         }
       })
 
-      output$my_plot <- shiny::renderPlot({
-        if (check() == "Keep") {
-          my_plot()
-        }
-      },  width = 800, height = 600)
+      output$my_plot <- shiny::renderPlot(
+        {
+          if (check() == "Keep") {
+            my_plot()
+          }
+        },
+        width = 800,
+        height = 600
+      )
 
       ##### NEDLASTING ###############################################################
-      output$download_gjennomsnittsfig <-  shiny::downloadHandler(
+      output$download_gjennomsnittsfig <- shiny::downloadHandler(
         filename = function() {
           paste("Figur_", input$x_var, "_", Sys.Date(), ".pdf", sep = "")
         },
