@@ -6,11 +6,8 @@
 #' @export
 
 ui_deform <- function() {
-
-
   shiny::tagList(
     shiny::navbarPage(
-
       ###### Graphics ######
       title = rapbase::title("Rapporteket for deformitet"),
       windowTitle = "Rapporteket for deformitet",
@@ -91,7 +88,6 @@ ui_deform <- function() {
           )
         )
       ),
-
     ) # navbarPage
   ) # tagList
 }
@@ -106,7 +102,6 @@ ui_deform <- function() {
 #' @export
 
 server_deform <- function(input, output, session) {
-
   ######### DATA TIDYING #########
   ### Read in data:
   raw_regdata <- alleRegData()
@@ -121,7 +116,7 @@ server_deform <- function(input, output, session) {
   # Must be organized as df with two columns: UnitId and orgname
   # in order for navbarWidgetServer2 to work properly
 
-  map_db_resh <- data.frame(  #map_avdeling <-
+  map_db_resh <- data.frame( # map_avdeling <-
     UnitId = unique(regData$CENTREID),
     orgname = regData$Sykehus[match(
       unique(regData$CENTREID),
@@ -217,7 +212,8 @@ server_deform <- function(input, output, session) {
   ##################################
 
   shiny::observeEvent(
-    shiny::req(user$role()), {
+    shiny::req(user$role()),
+    {
       if (user$role() != "SC") {
         shiny::removeTab("tabs", target = "Eksport")
       } else {
@@ -248,8 +244,6 @@ server_deform <- function(input, output, session) {
   # Veiledning
 
   rapbase::exportGuideServer("deformitetExportGuide", "deformitet")
-
-
 }
 
 #' Run the Deformitet Shiny Application

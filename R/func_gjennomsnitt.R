@@ -19,7 +19,8 @@
 #'
 #' @export
 
-tabell_gjen_tid <- function(data,
+tabell_gjen_tid <- function(
+  data,
   var,
   map_data,
   tidsenhet = "kvartal",
@@ -112,7 +113,8 @@ tabell_gjen_tid <- function(data,
 
   if (tidsenhet == "kvartal") {
     data <- data |>
-      dplyr::mutate(tid1 = lubridate::year(.data$tid),
+      dplyr::mutate(
+        tid1 = lubridate::year(.data$tid),
         tid_as_character = as.character(.data$tid),
         tid = dplyr::case_when(
           str_detect(tid, "01-01") == TRUE ~ paste(tid1, "1", sep = "-"),
@@ -147,7 +149,8 @@ tabell_gjen_tid <- function(data,
 #'
 #' @export
 
-over_tid_plot <- function(data,
+over_tid_plot <- function(
+  data,
   visning,
   gg_data,
   map_var,
@@ -163,9 +166,9 @@ over_tid_plot <- function(data,
   }
 
   if (tidsenhet == "aar") {
-    tid = "År"
+    tid <- "År"
   } else {
-    tid = "Kvartal"
+    tid <- "Kvartal"
   }
 
   limits <- y_limits_gjen(map_var)
@@ -196,7 +199,8 @@ over_tid_plot <- function(data,
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
       axis.title.y = ggplot2::element_text(size = 16),
-      plot.caption = ggplot2::element_text(color = "#87189D", # add caption
+      plot.caption = ggplot2::element_text(
+        color = "#87189D", # add caption
         face = "italic"
       )
     ) +
@@ -253,7 +257,6 @@ y_limits_gjen <- function(var) {
 }
 
 
-
 #' @title Sjekke antall
 #' Funksjon for å sjekke størrelse på datagrunnlaget. Funksjonen gjør at man
 #' dropper å vise variabelen om det ikke finnes noen registreringer på gitt variabel
@@ -294,7 +297,6 @@ sjekk_antall <- function(data, data1, date1, date2, tidsenhet) {
       dplyr::if_else(is.na(sample_quarter), "Drop", "Keep")
     )
     return(check)
-
   } else {
     true_data <- data |>
       dplyr::filter(dplyr::between(.data$.data$SURGERY_DATE, as.Date(date1), as.Date(date2))) |>

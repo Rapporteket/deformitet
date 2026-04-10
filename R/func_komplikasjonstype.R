@@ -6,7 +6,6 @@
 # Returns a dataframe
 
 kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, type_op, map_data) {
-
   # Make data set smaller and more manageageble
   if (var == "Komplikasjonstype") {
     kompl <- regData |>
@@ -34,7 +33,6 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
         Annet =
           dplyr::case_match(.data$COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0")
       )
-
   }
   if (var == "Komplikasjonstype_12mnd") {
     kompl <- regData |>
@@ -93,30 +91,29 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
   }
 
 
-
   # Filter to match user choices:
 
   ### by gender:
 
   kompl <- kompl |>
     dplyr::filter(.data$Kjonn == dplyr::case_when(
-      {{var_kjonn}} == "kvinne" ~ "kvinne",
-      {{var_kjonn}} == "mann" ~ "mann",
-      {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn
+      {{ var_kjonn }} == "kvinne" ~ "kvinne",
+      {{ var_kjonn }} == "mann" ~ "mann",
+      {{ var_kjonn }} != "kvinne" | {{ var_kjonn }} != "mann" ~ Kjonn
     )) |>
     dplyr::mutate(Kjonn = dplyr::case_when(
-      {{var_kjonn}} == "kvinne" ~ "kvinne",
-      {{var_kjonn}} == "mann" ~ "mann",
-      {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ "begge"
+      {{ var_kjonn }} == "kvinne" ~ "kvinne",
+      {{ var_kjonn }} == "mann" ~ "mann",
+      {{ var_kjonn }} != "kvinne" | {{ var_kjonn }} != "mann" ~ "begge"
     ))
 
   ### by operation type:
 
   kompl <- kompl |>
     dplyr::filter(dplyr::case_when(
-      {{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
-      {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
-      {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)
+      {{ type_op }} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
+      {{ type_op }} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
+      {{ type_op }} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)
     ))
 
   ### by surgery date:
@@ -124,8 +121,8 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
   kompl <- kompl |>
     dplyr::filter(dplyr::between(
       .data$SURGERY_DATE,
-      as.Date({{time1}}),
-      as.Date({{time2}})
+      as.Date({{ time1 }}),
+      as.Date({{ time2 }})
     ))
 
   ### by age:
@@ -135,8 +132,8 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
   kompl <- kompl |>
     dplyr::filter(dplyr::between(
       .data$Alder_num,
-      {{alder1}},
-      {{alder2}}
+      {{ alder1 }},
+      {{ alder2 }}
     ))
 
   kompl <- kompl |>
@@ -181,9 +178,6 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # Add reshId based on hospital name
   kompl_df <- dplyr::left_join(kompl_df, map_data, dplyr::join_by(.data$Sykehus == .data$orgname))
-
-
-
 }
 
 # nolint start
@@ -200,12 +194,11 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
 # data 2 => komplikasjonstypedata (laget av kompl_data()-funksjonen)
 
 kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
-
   data_based_on_ui_choices <- data1 |>
     dplyr::mutate(
       Kjonn = dplyr::case_when(
-        {{var_kjonn}} != "mann" |
-          {{var_kjonn}} != "kvinne" ~ "begge"
+        {{ var_kjonn }} != "mann" |
+          {{ var_kjonn }} != "kvinne" ~ "begge"
       )
     )
 
@@ -228,7 +221,7 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
 
   if (type_view == "egen enhet") {
     kompl_tbl_hosp <- kompl_tbl |>
-      dplyr::filter(.data$UnitId == {{reshId}})
+      dplyr::filter(.data$UnitId == {{ reshId }})
 
     return(kompl_tbl_hosp)
   }
@@ -248,11 +241,9 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
       dplyr::distinct()
 
     return(kompl_tbl_all)
-
   } else {
     return(kompl_tbl)
   } # => hele landet med sammenligning
-
 }
 
 # nolint start
@@ -261,23 +252,21 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
 # nolint end
 
 
-
 #' @title Komplikasjonstyper - figur
 #' @export
 
 kompl_plot <- function(data, var, data_caption) {
-
   # Making labels
   if (var == "Komplikasjonstype") {
-    xlab = "Komplikasjonstype oppgitt ved 3-6 mndrs oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 3-6 mndrs oppfølging"
   }
 
   if (var == "Komplikasjonstype_12mnd") {
-    xlab = "Komplikasjonstype oppgitt ved 12 mndrs oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 12 mndrs oppfølging"
   }
 
   if (var == "Komplikasjonstype_60mnd") {
-    xlab = "Komplikasjonstype oppgitt ved 5 års oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 5 års oppfølging"
   }
 
   # Making plot
@@ -300,7 +289,6 @@ kompl_plot <- function(data, var, data_caption) {
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),
       axis.text.y = ggplot2::element_text(size = 14)
     )
-
 
 
   # Change names of labels
@@ -331,9 +319,7 @@ kompl_plot <- function(data, var, data_caption) {
     )
 
 
-
   return(kompl_plot)
-
 }
 
 # nolint start

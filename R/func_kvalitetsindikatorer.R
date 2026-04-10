@@ -18,7 +18,6 @@
 #' @export
 
 count_kvalind <- function(data, kjoenn, var, userRole, userUnitId, map_data) {
-
   # Legge til kolonne med telling av komplikasjoner der smerte er tatt ut
   data <- ny_komplikasjon3mnd_usmerte(data)
 
@@ -29,15 +28,15 @@ count_kvalind <- function(data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::add_tally(name = "n") |> # antall pasienter per sykehus per kjønn
     dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when(
-      {{var}} == "PRE_MAIN_CURVE" ~
+      {{ var }} == "PRE_MAIN_CURVE" ~
         PRE_MAIN_CURVE > 70,
-      {{var}} == "Komplikasjoner_3mnd" ~
+      {{ var }} == "Komplikasjoner_3mnd" ~
         komplikasjoner_uSmerte_3mnd == "ja",
-      {{var}} == "Liggetid" ~
+      {{ var }} == "Liggetid" ~
         Liggetid == "> 7" | Liggetid == "7",
-      {{var}} == "SRS22_spm21_3mnd" ~
+      {{ var }} == "SRS22_spm21_3mnd" ~
         SRS22_spm21_3mnd == "Ganske fornøyd" | SRS22_spm21_3mnd == "Svært godt fornøyd",
-      {{var}} == "CURRENT_SURGERY" ~
+      {{ var }} == "CURRENT_SURGERY" ~
         CURRENT_SURGERY == 2,
       TRUE ~
         CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2
@@ -55,15 +54,15 @@ count_kvalind <- function(data, kjoenn, var, userRole, userUnitId, map_data) {
     dplyr::relocate(.data$Sykehus, .before = .data$Kjonn) |>
     dplyr::ungroup() |>
     dplyr::filter(dplyr::case_when(
-      {{var}} == "PRE_MAIN_CURVE" ~
+      {{ var }} == "PRE_MAIN_CURVE" ~
         PRE_MAIN_CURVE > 70,
-      {{var}} == "Komplikasjoner_3mnd" ~
+      {{ var }} == "Komplikasjoner_3mnd" ~
         komplikasjoner_uSmerte_3mnd == "ja",
-      {{var}} == "Liggetid" ~
+      {{ var }} == "Liggetid" ~
         Liggetid == "> 7" | Liggetid == "7",
-      {{var}} == "SRS22_spm21_3mnd" ~
+      {{ var }} == "SRS22_spm21_3mnd" ~
         SRS22_spm21_3mnd == "Ganske fornøyd" | SRS22_spm21_3mnd == "Svært godt fornøyd",
-      {{var}} == "CURRENT_SURGERY" ~
+      {{ var }} == "CURRENT_SURGERY" ~
         CURRENT_SURGERY == 2,
       TRUE ~
         CURRENT_SURGERY == 1 | CURRENT_SURGERY == 2
@@ -131,7 +130,7 @@ count_kvalind <- function(data, kjoenn, var, userRole, userUnitId, map_data) {
 
   if (userRole != "SC") {
     data_total <- data_total |>
-      dplyr::filter(.data$CENTREID == {{userUnitId}} | .data$CENTREID == "0")
+      dplyr::filter(.data$CENTREID == {{ userUnitId }} | .data$CENTREID == "0")
   }
 
   data_total <- data_total |>
@@ -141,17 +140,16 @@ count_kvalind <- function(data, kjoenn, var, userRole, userUnitId, map_data) {
   return(data_total)
 }
 
-#'Funksjon som regner komplikasjoner
+#' Funksjon som regner komplikasjoner
 #'
-#'Funksjonen regner antall komplikasjoner med unntak av smerte.
+#' Funksjonen regner antall komplikasjoner med unntak av smerte.
 #'
-#'@param data data som har vært gjennom utvalg_basic()
+#' @param data data som har vært gjennom utvalg_basic()
 #'
 #'
-#'@export
+#' @export
 
 ny_komplikasjon3mnd_usmerte <- function(data) {
-
   data <- data |>
     dplyr::mutate(
       komplikasjoner_uSmerte_3mnd =
@@ -169,7 +167,8 @@ ny_komplikasjon3mnd_usmerte <- function(data) {
             .data$COMPLICATIONS_OTHER == 1, "ja", "nei"
         )
     ) |>
-    dplyr::mutate(komplikasjoner_uSmerte_3mnd =
+    dplyr::mutate(
+      komplikasjoner_uSmerte_3mnd =
         dplyr::if_else(is.na(.data$komplikasjoner_uSmerte_3mnd), "nei",
           dplyr::if_else(.data$komplikasjoner_uSmerte_3mnd == "nei", "nei", "ja")
         )
@@ -193,7 +192,6 @@ ny_komplikasjon3mnd_usmerte <- function(data) {
 #' @export
 
 kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
-
   data <- data |>
     dplyr::mutate(Sykehus = forcats::fct_relevel(.data$Sykehus, "Nasjonalt", after = Inf))
 
@@ -205,20 +203,17 @@ kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
         fill = .data$Sykehus
       )
     ) +
-
     ggplot2::annotate(
-      "rect", xmin = gg_data$ymin, xmax = gg_data$ymax,
+      "rect",
+      xmin = gg_data$ymin, xmax = gg_data$ymax,
       ymin = -Inf, ymax = Inf, alpha = 0.2, fill = "palegreen4"
     ) +
-
     ggplot2::geom_col(alpha = .7) +
-
     ggplot2::scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)) +
 
     # TITLES
 
     ggplot2::xlab(paste("Andel pasienter (%)", gg_data$ylab)) +
-
     ggplot2::labs(
       title = gg_data$title,
       caption = paste0(
@@ -228,17 +223,13 @@ kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
         "Alder: ", data_var[5, ], "-", data_var[6, ]
       )
     ) +
-
     ggplot2::geom_label(
       ggplot2::aes(x = 0, label = paste(.data$antall_kval_syk_kjønn, "av", .data$n)),
       fill = "#BFCED6", color = "#003087", fontface = "italic",
       position = ggplot2::position_dodge(.9), hjust = -.01, size = 3,
       alpha = .8
     ) +
-
     ggplot2::facet_wrap(~Kjonn) +
-
-
     ggplot2::theme_bw(base_size = 16) + # light theme
 
     ggplot2::theme(
@@ -247,7 +238,7 @@ kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
         face = "italic"
       ),
       legend.position = dplyr::case_when(
-        {{choice_kjonn}} == "begge" ~ "none",
+        {{ choice_kjonn }} == "begge" ~ "none",
         TRUE ~ "right"
       ),
       axis.text.x = ggplot2::element_text(size = 10),
@@ -255,12 +246,10 @@ kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
       axis.title.x = ggplot2::element_text(size = 12),
       plot.title = ggplot2::element_text(size = 16)
     ) +
-
     ggplot2::scale_fill_manual(
       values = c("#6CACE4", "#6FA287", "#BFCED6", "#003087"),
       guide = ggplot2::guide_legend(reverse = TRUE)
     )
-
 
 
   return(kval_plot)
@@ -280,16 +269,15 @@ kval_plot <- function(data, gg_data, data_var, choice_kjonn) {
 
 
 explanation_kvalind <- function(kjonn_choice, var) {
-
   data <- data.frame(header = "", text = "")
 
 
   data <- data |>
     dplyr::mutate(
       text = dplyr::case_when(
-        {{kjonn_choice}} == "begge" ~
+        {{ kjonn_choice }} == "begge" ~
           dplyr::case_match(
-            {{var}},
+            {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
                 "Figuren viser fordelingen av andel pasienter som svarte ",
@@ -337,10 +325,9 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall reoperasjoner / antall operasjoner *100", "<br/>"
               )
           ),
-
-        {{kjonn_choice}} == "mann" ~
+        {{ kjonn_choice }} == "mann" ~
           dplyr::case_match(
-            {{var}},
+            {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
                 "Figuren viser fordelingen av andel mannlige pasienter som svarte ",
@@ -389,10 +376,9 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall reopererte menn / antall opererte menn *100", "<br/>"
               )
           ),
-
-        {{kjonn_choice}} == "kvinne" ~
+        {{ kjonn_choice }} == "kvinne" ~
           dplyr::case_match(
-            {{var}},
+            {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
                 "Figuren viser fordelingen av andel kvinnelige pasienter som svarte ",
@@ -442,10 +428,9 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall reopererte kvinner / antall opererte kvinner *100", "<br/>"
               )
           ),
-
-        {{kjonn_choice}} == "nei" ~
+        {{ kjonn_choice }} == "nei" ~
           dplyr::case_match(
-            {{var}},
+            {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
                 "Figuren viser fordelinger av andel pasienter (av begge kjønn),
@@ -460,7 +445,6 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall mannlige pasienter som svarte
                      'definitivt ja' og 'sannsynligvis ja' / antall opererte menn * 100", "<br/>"
               ),
-
             "SRS22_spm21_3mnd" ~
               paste0(
                 "Figuren viser fordelinger av andel pasienter (av begge kjønn),
@@ -475,7 +459,6 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall mannlige pasienter som svarte
                      'svært godt fornøyd' og 'ganske fornøyd' / antall opererte menn * 100", "<br/>"
               ),
-
             "PRE_MAIN_CURVE" ~
               paste0(
                 "Figuren viser fordelinger av andel pasienter (av begge kjønn),
@@ -488,7 +471,6 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall mannlige pasienter med preoperativ kurve
                      > 70 grader / antall opererte menn *100", "<br/>"
               ),
-
             "Liggetid" ~
               paste0(
                 "Figuren viser fordelinger av andel pasienter (av begge kjønn),
@@ -502,7 +484,6 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall mannlige pasienter med post-operativ liggetid 7 dager
                      eller mer / antall opererte menn *100", "<br/>"
               ),
-
             "Komplikasjoner_3mnd" ~
               paste0(
                 "Figuren viser fordelinger av andel pasienter (av begge kjønn),
@@ -518,7 +499,6 @@ explanation_kvalind <- function(kjonn_choice, var) {
                 "antall mannlige pasienter som rapporterer komplikasjoner (unntatt smerte)
                      ved 3-6 mnds oppfølging / antall opererte menn *100", "<br/>"
               ),
-
             "CURRENT_SURGERY" ~
               paste0(
                 "Figuren viser reoperasjonsrate for begge kjønn,
@@ -531,7 +511,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
           )
       ),
       header = dplyr::case_match(
-        {{var}},
+        {{ var }},
         "SRS22_spm22_3mnd" ~ "SRS22 'Samme behandling på nytt?' 3-6 mnd:",
         "SRS22_spm21_3mnd" ~ "SRS22 'Fornøyd med behandlingen?' 3-6 mnd:",
         "PRE_MAIN_CURVE" ~ "Pre-operativ kurve:",
@@ -539,9 +519,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
         "Komplikasjoner_3mnd" ~ "Komplikasjoner 3-6 mnd:",
         "CURRENT_SURGERY" ~ "Reoperasjonsrate:"
       )
-
     )
 
   return(data)
-
 }
