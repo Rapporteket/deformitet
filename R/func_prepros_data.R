@@ -36,7 +36,7 @@ pre_pros <- function(regData) {
 
   # SYKEHUS:
   regData <- regData |>
-    dplyr::rename(Sykehus = .data$CENTRESHORTNAME,
+    dplyr::rename(Sykehus = .data$ShNavn,
                   Kjonn = .data$GENDER)
 
   # KJØNN:

@@ -101,7 +101,7 @@ alleRegData <- function(egneVarNavn = 0) {
   stopifnot(egneVarNavn %in% 0:1)
 
   mce <- hentDataTabell("mce")
-  centre <- hentDataTabell("centre")
+  #centre <- hentDataTabell("centre")
   patient <- hentDataTabell(
     "patient", egneVarNavn = egneVarNavn,
     qVar =  'BIRTH_DATE, DECEASED, DECEASED_DATE, DISTRICTCODE, DISTRICTNAME,
@@ -112,9 +112,12 @@ alleRegData <- function(egneVarNavn = 0) {
   patient_form <- hentDataTabell("patientform", egneVarNavn = egneVarNavn)
   surgeon_followup <- hentDataTabell("surgeonfollowup", egneVarNavn = egneVarNavn)
   surgeon_form <- hentDataTabell("surgeonform", egneVarNavn = egneVarNavn)
+  #Sykehusnavn
+  EnhetsNavn <- hentDataTabell(tabellnavn = "centreattribute",
+                               qVar = 'ID, ATTRIBUTEVALUE as ShNavn')
 
   if (egneVarNavn == 0) {
-    regData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID", all.y = TRUE) |>
+    regData <- merge(mce, EnhetsNavn, by.x = "CENTREID", by.y = "ID", all.x = TRUE) |>
       merge(surgeon_form,
             by = "MCEID", suffixes = c("", "_surgeon")) |>
       merge(patient_form,

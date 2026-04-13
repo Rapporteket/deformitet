@@ -36,8 +36,7 @@ preprosData <- function(RegData=RegData, egneVarNavn = 0) {
   # RegData$DiffUtFerdig <- as.numeric(difftime(as.Date(RegData$ForstLukketMed), RegData$UtDato,units = 'days'))
 
   RegData <- dplyr::rename(RegData,
-    ReshId = CENTREID,
-    ShNavn = CENTRESHORTNAME
+    ReshId = CENTREID
   )
   class(RegData$ReshId) <- 'numeric'
   RegData$ShNavn <- trimws(as.character(RegData$ShNavn))  #Fjerner mellomrom etter navn
