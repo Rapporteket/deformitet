@@ -138,7 +138,7 @@ alleRegData <- function(egneVarNavn = 0) {
 
   if (egneVarNavn == 1) {
     #NB: status-variabel har endret navn. Ta med filtrering på status før endrer navn
-    regData <- merge(mce, centre, by.x = "CENTREID", by.y = "ID",
+    regData <- merge(mce, EnhetsNavn, by.x = "CENTREID", by.y = "ID",
                      suffixes = c("", "Shus"), all.y = TRUE) |>
       merge(patient, by.x = "PATIENT_ID", suffixes = c("", "_pasOppl"),
             by.y = "PasientID") |>

@@ -9,7 +9,7 @@ sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql.gz__20
 # source c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql;
 
 library(deformitet)
-source("dev/sysSetenv.R")
+source("C:/Users/lro2402unn/RegistreGIT/deformitet/dev/sysSetenv.R")
 deformitet::kjorDeformApp(browser = TRUE)
 
 
