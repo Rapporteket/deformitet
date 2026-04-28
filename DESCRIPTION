@@ -23,6 +23,7 @@ Imports:
   ggplot2,
   magrittr,
   NHSRplotthedots,
+  rapbase (>= 3.6.0),
   rlang,
   shiny,
   shinyalert,

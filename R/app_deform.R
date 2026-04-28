@@ -9,9 +9,9 @@ ui_deform <- function() {
   shiny::tagList(
     shiny::navbarPage(
       ###### Graphics ######
-      title = rapbase::title("Rapporteket for deformitet"),
+      title = rapbase::regTitle("Rapporteket for deformitet"),
       windowTitle = "Rapporteket for deformitet",
-      theme = rapbase::theme(version = 5),
+      theme = rapbase::rapTheme(version = 5),
       id = "tabs",
 
       ###############################
