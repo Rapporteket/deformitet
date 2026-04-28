@@ -108,7 +108,7 @@ lag_sam_tabell <- function(data, var) {
 
 nye_navn <- function(data) {
   data <- data |>
-    dplyr::mutate(Punkt = dplyr::case_match(
+    dplyr::mutate(Punkt = dplyr::recode_values(
       .data$Punkt,
       c(
         "SRS22_MAIN_SCORE",
