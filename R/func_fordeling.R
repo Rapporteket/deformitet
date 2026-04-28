@@ -57,10 +57,10 @@ lagTabell <- function(data, var_reshid, visning) {
 
     data_alle <- data_alle |>
       dplyr::select(-c("CENTREID", "Kjonn", "CURRENT_SURGERY")) |>
-      dplyr::mutate(Sykehus = dplyr::recode(.data$Sykehus,
-        "Haukeland" = "Alle",
-        "Rikshospitalet" = "Alle",
-        "St.Olav" = "Alle"
+      dplyr::mutate(Sykehus = dplyr::replace_values(.data$Sykehus,
+        "Haukeland" ~ "Alle",
+        "Rikshospitalet" ~ "Alle",
+        "St.Olav" ~ "Alle"
       )) |>
       dplyr::add_tally(name = "n") |>
       dplyr::group_by(data_alle[3]) |>

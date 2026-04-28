@@ -43,7 +43,7 @@ pre_pros <- function(regData) {
   # KJØNN:
   regData$Kjonn <- as.character(regData$Kjonn)
   regData <- regData |>
-    dplyr::mutate(Kjonn = dplyr::recode(.data$Kjonn, "1" = "mann", "2" = "kvinne"))
+    dplyr::mutate(Kjonn = dplyr::replace_values(.data$Kjonn, "1" ~ "mann", "2" ~ "kvinne"))
 
 
   # (ii) FOR ALDER:
@@ -74,16 +74,16 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       BMI_kategori = as.factor(
-        dplyr::recode(
+        dplyr::replace_values(
           .data$BMI_CATEGORY,
-          "Alvorlig undervekt" = "Alvorlig undervekt < 16",
-          "Moderat undervekt" = "Undervekt (16-17)",
-          "Mild undervekt" = "Mild undervekt (17-18,5)",
-          "Normal" = "Normal (18,5-25)",
-          "Overvekt" = "Overvekt (25-30)",
-          "Moderat fedme, klasse I" = "Moderat fedme, klasse I (30-35)",
-          "Fedme, klasse II" = "Fedme, klasse II (35-40)",
-          "Fedme, klasse III" = "Fedme, klasse III (40-50)"
+          "Alvorlig undervekt" ~ "Alvorlig undervekt < 16",
+          "Moderat undervekt" ~ "Undervekt (16-17)",
+          "Mild undervekt" ~ "Mild undervekt (17-18,5)",
+          "Normal" ~ "Normal (18,5-25)",
+          "Overvekt" ~ "Overvekt (25-30)",
+          "Moderat fedme, klasse I" ~ "Moderat fedme, klasse I (30-35)",
+          "Fedme, klasse II" ~ "Fedme, klasse II (35-40)",
+          "Fedme, klasse III" ~ "Fedme, klasse III (40-50)"
         )
       )
     )
@@ -447,25 +447,25 @@ pre_pros <- function(regData) {
 
   regData <- regData |>
     dplyr::mutate(
-      Komplikasjoner_3mnd = dplyr::recode(
+      Komplikasjoner_3mnd = dplyr::replace_values(
         .data$PROCEDURE_COMPLICATIONS,
-        "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"
+        "0" ~ "Nei", "1" ~ "Ja", "9" ~ "Ikke utfylt"
       )
     )
 
   regData <- regData |>
     dplyr::mutate(
-      Komplikasjoner_12mnd = dplyr::recode(
+      Komplikasjoner_12mnd = dplyr::replace_values(
         .data$PROCEDURE_COMPLICATIONS_patient12mths,
-        "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"
+        "0" ~ "Nei", "1" ~ "Ja", "9" ~ "Ikke utfylt"
       )
     )
 
   regData <- regData |>
     dplyr::mutate(
-      Komplikasjoner_60mnd = dplyr::recode(
+      Komplikasjoner_60mnd = dplyr::replace_values(
         .data$PROCEDURE_COMPLICATIONS_patient60mths,
-        "0" = "Nei", "1" = "Ja", "9" = "Ikke utfylt"
+        "0" ~ "Nei", "1" ~ "Ja", "9" ~ "Ikke utfylt"
       )
     )
 
