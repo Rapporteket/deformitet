@@ -107,7 +107,7 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
       gg_data_reactive <- shiny::reactive({
         gg_data <- gg_data |>
           dplyr::mutate(
-            title = dplyr::case_match(
+            title = dplyr::recode_values(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ "Pasienter som har svart at de er fornøyd med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE" ~ "Pasienter med pre-operativ kurve over 70 grader",
@@ -115,7 +115,7 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ "Pasienter som har rapportert komplikasjoner (unntatt smerte) etter 3-6 måneder",
               "CURRENT_SURGERY" ~ "Andel pasienter som reopereres (reoperasjonsrate)"
             ),
-            ylab = dplyr::case_match(
+            ylab = dplyr::recode_values(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ "'Svært godt fornøyd' og 'ganske fornøyd' med behandlingen (3-6 mnd)",
               "PRE_MAIN_CURVE" ~ "Pre-operativ kurve over 70 grader",
@@ -123,7 +123,7 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ "Rapportert komplikasjoner 3-6 mnd (unntatt smerte)",
               "CURRENT_SURGERY" ~ "Reoperasjonsrate"
             ),
-            ymin = dplyr::case_match(
+            ymin = dplyr::recode_values(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 70,
               "PRE_MAIN_CURVE" ~ 0,
@@ -131,7 +131,7 @@ module_kvalind_server <- function(id, data, userRole, userUnitId, map_data) {
               "Komplikasjoner_3mnd" ~ 0,
               "CURRENT_SURGERY" ~ 0
             ),
-            ymax = dplyr::case_match(
+            ymax = dplyr::recode_values(
               input$kval_var,
               "SRS22_spm21_3mnd" ~ 100,
               "PRE_MAIN_CURVE" ~ 10,

@@ -276,7 +276,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
     dplyr::mutate(
       text = dplyr::case_when(
         {{ kjonn_choice }} == "begge" ~
-          dplyr::case_match(
+          dplyr::recode_values(
             {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
@@ -326,7 +326,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
               )
           ),
         {{ kjonn_choice }} == "mann" ~
-          dplyr::case_match(
+          dplyr::recode_values(
             {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
@@ -377,7 +377,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
               )
           ),
         {{ kjonn_choice }} == "kvinne" ~
-          dplyr::case_match(
+          dplyr::recode_values(
             {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
@@ -429,7 +429,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
               )
           ),
         {{ kjonn_choice }} == "nei" ~
-          dplyr::case_match(
+          dplyr::recode_values(
             {{ var }},
             "SRS22_spm22_3mnd" ~
               paste0(
@@ -510,7 +510,7 @@ explanation_kvalind <- function(kjonn_choice, var) {
               )
           )
       ),
-      header = dplyr::case_match(
+      header = dplyr::recode_values(
         {{ var }},
         "SRS22_spm22_3mnd" ~ "SRS22 'Samme behandling på nytt?' 3-6 mnd:",
         "SRS22_spm21_3mnd" ~ "SRS22 'Fornøyd med behandlingen?' 3-6 mnd:",
