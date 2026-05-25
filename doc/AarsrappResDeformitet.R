@@ -1,7 +1,7 @@
 # Årsrapportresultater
 
 #Deformitet
-#library(deformitet)
+library(deformitet)
 setwd('../Aarsrapp/NKR')
 library(xtable)
 aarsRappAar <- 2025

@@ -82,9 +82,9 @@ figAndelerGrVar <- function(RegData=0, hentData=0, preprosess=0,
     GrNavn <- c(GrNavn[-indGrUt], GrUtNavn)
   }
 
-  if (valgtVar == 'liggetidPostOp' ) {KImaalGrenser <- c(0,90,100)}
-  if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
-  if (valgtVar == 'reOp') {KImaalGrenser <- c(0,5,100)}
+  # if (valgtVar == 'liggetidPostOp' ) {KImaalGrenser <- c(0,90,100)}
+  # if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
+  # if (valgtVar == 'reOp') {KImaalGrenser <- c(0,5,100)}
 
 sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE)
 AndelerGrSort <- c( NA, AndelerGr[sortInd])

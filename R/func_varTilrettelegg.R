@@ -354,7 +354,7 @@ if (valgtVar=='KnivtidTotalMin') { #GjsnTid #GjsnGrVar#Legeskjema.
       tittel <- 'Registrert for sent for 3 mnd. oppfølging'
       varTxt <- 'for sent registrert'
       sortAvtagende <- F}
-    KImaalGrenser <- c(0,3,10,100)
+   # KImaalGrenser <- c(0,3,10,100)
   }
 
   if (valgtVar == 'SmertestillPreOp') { #AndelTid  #AndelGrVar
