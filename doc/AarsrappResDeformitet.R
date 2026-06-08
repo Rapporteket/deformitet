@@ -110,7 +110,31 @@ xtable::xtable(tab,
 
 
 
-#  Kompletthet for variabler i e-post 1.april
+#----------  Kompletthet for variabler i e-post 1.april
 
+DefDataRaa <- alleRegData(egneVarNavn = 1)
+#DefData <- preprosData(RegData=DefDataRaa, egneVarNavn = 1)
+DefData1aar <- DefDataRaa[DefDataRaa$OpDato <= '2025-12-31' & DefDataRaa$OpDato >'2025-01-01', ]
+DefData2aarBak <- DefDataRaa[DefDataRaa$OpDato <= '2023-12-31' & DefDataRaa$OpDato >'2023-01-01', ]
 
+variabler <- c("SmerteSisteMndPre", "MedisinerPre", "SRS22ScorePre",
+               "EQ5DTotPre", "HelsetilstPre", "BMI", "Diagnose", "PrimaerCobbPre",
+               "PostopCobb1", "ABProf", "LiggetidPostop", 'KnivTidMinu') # "KnivTid", 'KnivTidTime',
+var2aar <- c("Fornoyd2aar", "SRS22Score2aar", "EQ5DTot2aar", "Helsetilst2aar")
+
+test <- DefData1aar[,variabler]
+
+Kompletthet2025 <- 100*(1 - colSums(is.na(DefData1aar[,variabler]))/dim(DefData1aar)[1])
+as.data.frame(summary(DefData1aar[,variabler]))
+
+Kompletthet2aarOppf <-  100*(1 - colSums(is.na(DefData2aarBak[,var2aar]))/dim(DefData2aarBak)[1])
+summary(DefData2aarBak[,var2aar])
+
+tab <- as.table(c(Kompletthet2025, Kompletthet2aarOppf))
+#colnames(tab) <- c('Variabel', 'Utfyllingsgrad')
+xtable::xtable(tab,
+               digits = 1,
+               align = c('l','r'),
+               label = 'tab:DefKompl',
+               caption = 'Utfyllingsgrad, deformitet')
 
