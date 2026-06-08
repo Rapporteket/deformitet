@@ -113,7 +113,7 @@ xtable::xtable(tab,
 #----------  Kompletthet for variabler i e-post 1.april
 
 DefDataRaa <- alleRegData(egneVarNavn = 1)
-#DefData <- preprosData(RegData=DefDataRaa, egneVarNavn = 1)
+DefDataRaa <- DefDataRaa[DefDataRaa$OperasjonType ==1, ]
 DefData1aar <- DefDataRaa[DefDataRaa$OpDato <= '2025-12-31' & DefDataRaa$OpDato >'2025-01-01', ]
 DefData2aarBak <- DefDataRaa[DefDataRaa$OpDato <= '2023-12-31' & DefDataRaa$OpDato >'2023-01-01', ]
 

@@ -22,6 +22,8 @@ surgeon_form <- hentDataTabell("surgeonform", egneVarNavn = 0)
 RegData <- alleRegData(egneVarNavn = 0)
 RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
 
+length(unique(RegData))
+
 #### Clean and tidy data:
 regData <- pre_pros(raw_regdata)
 

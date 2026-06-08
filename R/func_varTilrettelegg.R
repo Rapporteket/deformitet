@@ -55,8 +55,7 @@ varTilrettelegg  <- function(RegData, valgtVar, figurtype='andeler'){
      # Høy måloppnåelse: < 5%
 
      # Beregnes ved å se på differansen mellom CURRENT_SURGERY=1 og 2 for samme PasientID?
-    # •	Tilhører reoperasjon innen ett år samme forløp som den første operasjonen, eller blir det to forløp?
-        # Det blir opprettet et nytt forløp ved reoperasjon, men kun for registering av skjema ved reoperasjon.
+    #   # Det blir opprettet et nytt forløp ved reoperasjon, men kun for registering av skjema ved reoperasjon.
         # PROM data og kontroll intervaller følger fortsatt primæroperasjonen.
 # reoperert1år / alle pasienter
 
