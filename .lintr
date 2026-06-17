@@ -1,7 +1,9 @@
 linters: linters_with_defaults(
-  object_name_linter(c("camelCase", "snake_case")),
+  #object_name_linter(c("camelCase", "snake_case")),
+  object_name_linter = NULL,
   line_length_linter(120),
   pipe_consistency_linter = NULL,
+  commented_code_linter = NULL,
   quotes_linter = NULL,
   return_linter = NULL)
 exclusions: list("tests")

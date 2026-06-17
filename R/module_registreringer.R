@@ -1,5 +1,5 @@
-#'@title Module registreringer
-#'@export
+#' @title Module registreringer
+#' @export
 
 
 module_registreringer_ui <- function(id) {
@@ -13,24 +13,27 @@ module_registreringer_ui <- function(id) {
             size = 10, selectize = FALSE,
             inputId = ns("registreringer"),
             label = "Velg tidsperiode",
-            choices = c("Siste år",
-                        "Siste måned",
-                        "Siste 6 måneder",
-                        "Egendefinert tidsperiode"),
+            choices = c(
+              "Siste år",
+              "Siste måned",
+              "Siste 6 måneder",
+              "Egendefinert tidsperiode"
+            ),
             selected = "Siste år"
           ),
-
           shiny::conditionalPanel(
             condition = paste0("input['", ns("registreringer"), "'] == 'Egendefinert tidsperiode'"),
-            shiny::dateRangeInput(width = "100%",
-                                  inputId = ns("date"),
-                                  label = "Egendefinert tidsintervall:",
-                                  start = "2024-01-01",
-                                  end = Sys.Date(), # "2025-12-01",
-                                  min = "2023-01-01",
-                                  max = Sys.Date(), #  "2025-12-01",
-                                  format = "dd-mm-yyyy",
-                                  separator = " - ")
+            shiny::dateRangeInput(
+              width = "100%",
+              inputId = ns("date"),
+              label = "Egendefinert tidsintervall:",
+              start = "2024-01-01",
+              end = Sys.Date(), # "2025-12-01",
+              min = "2023-01-01",
+              max = Sys.Date(), #  "2025-12-01",
+              format = "dd-mm-yyyy",
+              separator = " - "
+            )
           )
         ),
         shiny::mainPanel(
@@ -61,14 +64,13 @@ module_registreringer_ui <- function(id) {
 }
 
 
-#'@title Server sammenligningsmodul
-#'@export
+#' @title Server sammenligningsmodul
+#' @export
 
 module_registreringer_server <- function(id, userRole, userUnitId, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       ######## SET CONDITIONAL DATES BASED ON UI CHOICES #############################
       date1 <- shiny::reactive({
         if (input$registreringer == "Egendefinert tidsperiode") {

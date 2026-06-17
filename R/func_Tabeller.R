@@ -14,7 +14,6 @@
 #' @export
 
 tbl_reg <- function(date1, date2, data) {
-
   d1 <- as.Date(date1, format = "%d-%m-%Y")
   d2 <- as.Date(date2, format = "%d-%m-%Y")
 
@@ -33,12 +32,10 @@ tbl_reg <- function(date1, date2, data) {
 
   reg_tbl <- data |>
     tidyr::pivot_wider(names_from = c("mnd", "aar"), names_sep = "-", values_from = "n") |>
-
-    dplyr::mutate_all(~replace(., is.na(.), 0)) |>
+    dplyr::mutate_all(~ replace(., is.na(.), 0)) |>
     dplyr::mutate(Totalt = rowSums(dplyr::across(dplyr::where(is.numeric))))
 
   return(reg_tbl)
-
 }
 
 
@@ -58,12 +55,11 @@ tbl_reg <- function(date1, date2, data) {
 #' @export
 
 tbl_skjema_reg <- function(date1, date2, data) {
-
   tbl_skjema <- data |>
     dplyr::filter(dplyr::between(
       .data$SURGERY_DATE,
-      as.Date({{date1}}, format = "%d-%m-%Y"),
-      as.Date({{date2}}, format = "%d-%m-%Y")
+      as.Date({{ date1 }}, format = "%d-%m-%Y"),
+      as.Date({{ date2 }}, format = "%d-%m-%Y")
     )) |>
     dplyr::group_by(.data$Sykehus) |>
     dplyr::mutate(
@@ -77,7 +73,8 @@ tbl_skjema_reg <- function(date1, date2, data) {
       Skjema_1a_Pasientoppl_60mnd = sum(!is.na(.data$FOLLOWUP_patient60mths))
     ) |>
     dplyr::select(
-      c("Sykehus",
+      c(
+        "Sykehus",
         "personopplysninger",
         "Skjema_1a_Pasientoppl_preop",
         "Skjema_2a_Sykepleier_lege_preop",
@@ -85,7 +82,8 @@ tbl_skjema_reg <- function(date1, date2, data) {
         "Skjema_2a_Sykepleier_lege_3mnd",
         "Skjema_1a_Pasientoppl_12mnd",
         "Skjema_2a_Sykepleier_lege_12mnd",
-        "Skjema_1a_Pasientoppl_60mnd")
+        "Skjema_1a_Pasientoppl_60mnd"
+      )
     ) |>
     unique()
 

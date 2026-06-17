@@ -3,16 +3,16 @@
 # dataen skal fremstilles. Dataene kan fremstilles med boxplot og som density plot
 
 
-#'@title Ui sammenligningsmodul
+#' @title Ui sammenligningsmodul
 #'
-#'@export
+#' @export
 
 module_sammenligning_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        shiny::selectInput(# Første brukervalg
+        shiny::selectInput( # Første brukervalg
           inputId = ns("sam_var"),
           label = "Velg variabel",
           choices = c(
@@ -26,7 +26,6 @@ module_sammenligning_ui <- function(id) {
           ),
           selected = "SRS22 totalskår"
         ),
-
         shiny::selectInput( # Andre brukervalg
           inputId = ns("plot_valg"),
           label = "Velg plot-type",
@@ -70,7 +69,6 @@ module_sammenligning_ui <- function(id) {
             selected = "Før operasjon - 3 mnd"
           )
         ),
-
         shiny::radioButtons( # Fjerde brukervalg
           inputId = ns("kjoenn_var"),
           label = "Dele på kjønn?",
@@ -81,7 +79,6 @@ module_sammenligning_ui <- function(id) {
           ),
           selected = "begge"
         ),
-
         shiny::sliderInput( # Femte brukervalg
           inputId = ns("alder_var"),
           label = "Aldersintervall:",
@@ -90,9 +87,7 @@ module_sammenligning_ui <- function(id) {
           value = c(10, 20),
           dragRange = TRUE
         ),
-
         shinyjs::hidden(shiny::uiOutput(outputId = ns("reshid"))),
-
         shiny::dateRangeInput( # Sjuende brukervalg
           inputId = ns("dato"),
           label = "Tidsintervall:",
@@ -104,7 +99,6 @@ module_sammenligning_ui <- function(id) {
           separator = " - "
         )
       ),
-
       shiny::mainPanel(
         bslib::navset_card_underline(
           bslib::nav_panel(
@@ -122,15 +116,14 @@ module_sammenligning_ui <- function(id) {
   )
 }
 
-#'@title Server sammenligningsmodul
+#' @title Server sammenligningsmodul
 #'
-#'@export
+#' @export
 
 module_sammenligning_server <- function(id, data, userRole, userUnitId) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       reshid <- shiny::reactiveValues(reshId_var = 111961) # Lagre dette som en reaktiv verdi
 
 
@@ -155,7 +148,6 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       ##### Gjør hovedutvalg av dataen #########################################
 
       data_sam_reactive <- shiny::reactive({
-
         if (userRole() == "SC") {
           x <- utvalg_basic(
             data,
@@ -249,7 +241,7 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
       })
 
       # Lag nedlastning
-      output$nedlastning_sam_plot <-  shiny::downloadHandler(
+      output$nedlastning_sam_plot <- shiny::downloadHandler(
         filename = function() {
           paste("plot_sammenligning", Sys.Date(), ".pdf", sep = "")
         },
@@ -259,8 +251,6 @@ module_sammenligning_server <- function(id, data, userRole, userUnitId) {
           dev.off()
         }
       )
-
-
     }
   )
 }

@@ -6,61 +6,59 @@
 # Returns a dataframe
 
 kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, type_op, map_data) {
-
   # Make data set smaller and more manageageble
   if (var == "Komplikasjonstype") {
     kompl <- regData |>
       dplyr::mutate(
         Blødning =
-          dplyr::case_match(.data$COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_BLEEDING, 1 ~ "blødning", 0 ~ "0"),
         UVI =
-          dplyr::case_match(.data$COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_UTI, 1 ~ "uvi", 0 ~ "0"),
         Lunge =
-          dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PNEUMONIA, 1 ~ "lunge", 0 ~ "0"),
         DVT =
-          dplyr::case_match(.data$COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_DVT, 1 ~ "DVT", 0 ~ "0"),
         Emboli =
-          dplyr::case_match(.data$COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PE, 1 ~ "emboli", 0 ~ "0"),
         Inf_over =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_WOUND, 1 ~ "infeks. overfladisk", 0 ~ "0"),
         Inf_dyp =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP, 1 ~ "infeks. dyp", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_DEEP, 1 ~ "infeks. dyp", 0 ~ "0"),
         Inf_reop =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP, 1 ~ "infeks. reop", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_REOP, 1 ~ "infeks. reop", 0 ~ "0"),
         Lam =
-          dplyr::case_match(.data$COMPLICATIONS_NUMBNESS, 1 ~ "lam", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_NUMBNESS, 1 ~ "lam", 0 ~ "0"),
         Smerte =
-          dplyr::case_match(.data$COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PAIN, 1 ~ "smerte", 0 ~ "0"),
         Annet =
-          dplyr::case_match(.data$COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0")
+          dplyr::recode_values(.data$COMPLICATIONS_OTHER, 1 ~ "annet", 0 ~ "0")
       )
-
   }
   if (var == "Komplikasjonstype_12mnd") {
     kompl <- regData |>
       dplyr::mutate(
         Blødning =
-          dplyr::case_match(.data$COMPLICATIONS_BLEEDING_patient12mths, 1 ~ "blødning", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_BLEEDING_patient12mths, 1 ~ "blødning", 0 ~ "0"),
         UVI =
-          dplyr::case_match(.data$COMPLICATIONS_UTI_patient12mths, 1 ~ "uvi", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_UTI_patient12mths, 1 ~ "uvi", 0 ~ "0"),
         Lunge =
-          dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA_patient12mths, 1 ~ "lunge", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PNEUMONIA_patient12mths, 1 ~ "lunge", 0 ~ "0"),
         DVT =
-          dplyr::case_match(.data$COMPLICATIONS_DVT_patient12mths, 1 ~ "DVT", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_DVT_patient12mths, 1 ~ "DVT", 0 ~ "0"),
         Emboli =
-          dplyr::case_match(.data$COMPLICATIONS_PE_patient12mths, 1 ~ "emboli", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PE_patient12mths, 1 ~ "emboli", 0 ~ "0"),
         Inf_over =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND_patient12mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_WOUND_patient12mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
         Inf_dyp =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP_patient12mths, 1 ~ "infeks. dyp", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_DEEP_patient12mths, 1 ~ "infeks. dyp", 0 ~ "0"),
         Inf_reop =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP_patient12mths, 1 ~ "infeks. reop", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_REOP_patient12mths, 1 ~ "infeks. reop", 0 ~ "0"),
         Lam =
-          dplyr::case_match(.data$COMPLICATIONS_NUMBNESS_patient12mths, 1 ~ "lam", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_NUMBNESS_patient12mths, 1 ~ "lam", 0 ~ "0"),
         Smerte =
-          dplyr::case_match(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
         Annet =
-          dplyr::case_match(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0")
+          dplyr::recode_values(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0")
       )
   }
 
@@ -68,30 +66,29 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
     kompl <- regData |>
       dplyr::mutate(
         Blødning =
-          dplyr::case_match(.data$COMPLICATIONS_BLEEDING_patient60mths, 1 ~ "blødning", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_BLEEDING_patient60mths, 1 ~ "blødning", 0 ~ "0"),
         UVI =
-          dplyr::case_match(.data$COMPLICATIONS_UTI_patient60mths, 1 ~ "uvi", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_UTI_patient60mths, 1 ~ "uvi", 0 ~ "0"),
         Lunge =
-          dplyr::case_match(.data$COMPLICATIONS_PNEUMONIA_patient60mths, 1 ~ "lunge", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PNEUMONIA_patient60mths, 1 ~ "lunge", 0 ~ "0"),
         DVT =
-          dplyr::case_match(.data$COMPLICATIONS_DVT_patient60mths, 1 ~ "DVT", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_DVT_patient60mths, 1 ~ "DVT", 0 ~ "0"),
         Emboli =
-          dplyr::case_match(.data$COMPLICATIONS_PE_patient60mths, 1 ~ "emboli", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PE_patient60mths, 1 ~ "emboli", 0 ~ "0"),
         Inf_over =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_WOUND_patient60mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_WOUND_patient60mths, 1 ~ "infeks. overfladisk", 0 ~ "0"),
         Inf_dyp =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_DEEP_patient60mths, 1 ~ "infeks. dyp", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_DEEP_patient60mths, 1 ~ "infeks. dyp", 0 ~ "0"),
         Inf_reop =
-          dplyr::case_match(.data$COMPLICATIONS_INFECTION_REOP_patient60mths, 1 ~ "infeks. reop", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_INFECTION_REOP_patient60mths, 1 ~ "infeks. reop", 0 ~ "0"),
         Lam =
-          dplyr::case_match(.data$COMPLICATIONS_NUMBNESS_patient60mths, 1 ~ "lam", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_NUMBNESS_patient60mths, 1 ~ "lam", 0 ~ "0"),
         Smerte =
-          dplyr::case_match(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
+          dplyr::recode_values(.data$COMPLICATIONS_PAIN_patient12mths, 1 ~ "smerte", 0 ~ "0"),
         Annet =
-          dplyr::case_match(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0")
+          dplyr::recode_values(.data$COMPLICATIONS_OTHER_patient12mths, 1 ~ "annet", 0 ~ "0")
       )
   }
-
 
 
   # Filter to match user choices:
@@ -100,23 +97,23 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   kompl <- kompl |>
     dplyr::filter(.data$Kjonn == dplyr::case_when(
-      {{var_kjonn}} == "kvinne" ~ "kvinne",
-      {{var_kjonn}} == "mann" ~ "mann",
-      {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ Kjonn
+      {{ var_kjonn }} == "kvinne" ~ "kvinne",
+      {{ var_kjonn }} == "mann" ~ "mann",
+      {{ var_kjonn }} != "kvinne" | {{ var_kjonn }} != "mann" ~ Kjonn
     )) |>
     dplyr::mutate(Kjonn = dplyr::case_when(
-      {{var_kjonn}} == "kvinne" ~ "kvinne",
-      {{var_kjonn}} == "mann" ~ "mann",
-      {{var_kjonn}} != "kvinne" | {{var_kjonn}} != "mann" ~ "begge"
+      {{ var_kjonn }} == "kvinne" ~ "kvinne",
+      {{ var_kjonn }} == "mann" ~ "mann",
+      {{ var_kjonn }} != "kvinne" | {{ var_kjonn }} != "mann" ~ "begge"
     ))
 
   ### by operation type:
 
   kompl <- kompl |>
     dplyr::filter(dplyr::case_when(
-      {{type_op}} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
-      {{type_op}} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
-      {{type_op}} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)
+      {{ type_op }} == "Primæroperasjon" ~ CURRENT_SURGERY == 1,
+      {{ type_op }} == "Reoperasjon" ~ CURRENT_SURGERY == 2,
+      {{ type_op }} == "Begge" ~ CURRENT_SURGERY %in% c(1, 2)
     ))
 
   ### by surgery date:
@@ -124,8 +121,8 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
   kompl <- kompl |>
     dplyr::filter(dplyr::between(
       .data$SURGERY_DATE,
-      as.Date({{time1}}),
-      as.Date({{time2}})
+      as.Date({{ time1 }}),
+      as.Date({{ time2 }})
     ))
 
   ### by age:
@@ -135,8 +132,8 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
   kompl <- kompl |>
     dplyr::filter(dplyr::between(
       .data$Alder_num,
-      {{alder1}},
-      {{alder2}}
+      {{ alder1 }},
+      {{ alder2 }}
     ))
 
   kompl <- kompl |>
@@ -181,9 +178,6 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
 
   # Add reshId based on hospital name
   kompl_df <- dplyr::left_join(kompl_df, map_data, dplyr::join_by(.data$Sykehus == .data$orgname))
-
-
-
 }
 
 # nolint start
@@ -200,12 +194,11 @@ kompl_data <- function(regData, var, var_kjonn, time1, time2, alder1, alder2, ty
 # data 2 => komplikasjonstypedata (laget av kompl_data()-funksjonen)
 
 kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
-
   data_based_on_ui_choices <- data1 |>
     dplyr::mutate(
       Kjonn = dplyr::case_when(
-        {{var_kjonn}} != "mann" |
-          {{var_kjonn}} != "kvinne" ~ "begge"
+        {{ var_kjonn }} != "mann" |
+          {{ var_kjonn }} != "kvinne" ~ "begge"
       )
     )
 
@@ -228,7 +221,7 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
 
   if (type_view == "egen enhet") {
     kompl_tbl_hosp <- kompl_tbl |>
-      dplyr::filter(.data$UnitId == {{reshId}})
+      dplyr::filter(.data$UnitId == {{ reshId }})
 
     return(kompl_tbl_hosp)
   }
@@ -248,11 +241,9 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
       dplyr::distinct()
 
     return(kompl_tbl_all)
-
   } else {
     return(kompl_tbl)
   } # => hele landet med sammenligning
-
 }
 
 # nolint start
@@ -261,23 +252,21 @@ kompl_tbl <- function(data1, data2, var_kjonn, type_view, reshId) {
 # nolint end
 
 
-
 #' @title Komplikasjonstyper - figur
 #' @export
 
 kompl_plot <- function(data, var, data_caption) {
-
   # Making labels
   if (var == "Komplikasjonstype") {
-    xlab = "Komplikasjonstype oppgitt ved 3-6 mndrs oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 3-6 mndrs oppfølging"
   }
 
   if (var == "Komplikasjonstype_12mnd") {
-    xlab = "Komplikasjonstype oppgitt ved 12 mndrs oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 12 mndrs oppfølging"
   }
 
   if (var == "Komplikasjonstype_60mnd") {
-    xlab = "Komplikasjonstype oppgitt ved 5 års oppfølging"
+    xlab <- "Komplikasjonstype oppgitt ved 5 års oppfølging"
   }
 
   # Making plot
@@ -300,7 +289,6 @@ kompl_plot <- function(data, var, data_caption) {
       axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 10),
       axis.text.y = ggplot2::element_text(size = 14)
     )
-
 
 
   # Change names of labels
@@ -331,9 +319,7 @@ kompl_plot <- function(data, var, data_caption) {
     )
 
 
-
   return(kompl_plot)
-
 }
 
 # nolint start

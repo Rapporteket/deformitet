@@ -1,14 +1,12 @@
-
 ### Module for creating data based on selection criteria
-#'@title module datadump ui
-#'@export
+#' @title module datadump ui
+#' @export
 module_datadump_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
     shiny::fluidPage(
       shiny::sidebarPanel(
-
         shiny::selectInput(
           inputId = ns("choice_datadump"),
           label = "Ønsket datautvalg:",
@@ -19,17 +17,17 @@ module_datadump_ui <- function(id) {
           ),
           selected = "Datasett med selvvalgte navn"
         ),
-
         shiny::conditionalPanel(
           condition = paste0("input['", ns("choice_datadump"), "'] == 'Datasett basert på skjematype og utvalg'"),
           shiny::selectInput(
             inputId = ns("skjema_type"),
             label = "Data fra: ",
-            choices = c("Pasientskjema",
-                        "Kirurgskjema")
+            choices = c(
+              "Pasientskjema",
+              "Kirurgskjema"
+            )
           )
         ),
-
         shiny::dateRangeInput(
           inputId = ns("date"),
           label = "Tidsintervall:",
@@ -40,10 +38,8 @@ module_datadump_ui <- function(id) {
           format = "dd-mm-yyyy",
           separator = " - "
         ),
-
         shiny::downloadButton(ns("download_data"), "Last ned data")
       ),
-
       shiny::mainPanel(
         bslib::navset_card_underline(
           bslib::nav_panel(
@@ -59,16 +55,20 @@ module_datadump_ui <- function(id) {
                 shiny::p("Dersom 'Datasett basert på utvalg' velges, vil flere valg bli
               tilgjengelig slik at brukeren kan velge et begrenset datasett ut fra tidsintervall."),
                 shiny::h3("Datasett basert på skjematype"),
-                shiny::p("Dersom 'Datasett basert på skjematype' velges vil det være mulig å
+                shiny::p(
+                  "Dersom 'Datasett basert på skjematype' velges vil det være mulig å
                 laste ned et datasett fra hvert eller flere av skjemaene som registeret sender inn.
                 Det vil også her være mulig å begrense utvalget.",
-                         shiny::tags$br(),
-                         shiny::tags$br(),
-                         paste("- Pasientskjema: informasjon registrert om pasientene pre-operativt.",
-                               "Superbrukere (SC) har også tilgang til oppfølgingsskjema",
-                               "(PROM - 3-6, 12 og 60 mnd)"),
-                         shiny::tags$br(),
-                         "- Kirurgskjema: informasjon registert av kirurg ved operasjon og ved oppfølging")
+                  shiny::tags$br(),
+                  shiny::tags$br(),
+                  paste(
+                    "- Pasientskjema: informasjon registrert om pasientene pre-operativt.",
+                    "Superbrukere (SC) har også tilgang til oppfølgingsskjema",
+                    "(PROM - 3-6, 12 og 60 mnd)"
+                  ),
+                  shiny::tags$br(),
+                  "- Kirurgskjema: informasjon registert av kirurg ved operasjon og ved oppfølging"
+                )
               )
             )
           ),
@@ -88,13 +88,12 @@ module_datadump_ui <- function(id) {
 }
 
 
-#'@export
+#' @export
 
 module_datadump_server <- function(id, data, userRole, userUnitId) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-
       datadumpEgneNavn <- shiny::reactive({
         if (input$choice_datadump == "Datasett med selvvalgte navn") {
           data <- alleRegData(egneVarNavn = 1) |>
@@ -107,11 +106,13 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
 
       datadump_reactive <- shiny::reactive({
         head(names(data))
-        data <- filtrer_datadump(data,
-                                 input$date[1],
-                                 input$date[2],
-                                 userRole(),
-                                 userUnitId())
+        data <- filtrer_datadump(
+          data,
+          input$date[1],
+          input$date[2],
+          userRole(),
+          userUnitId()
+        )
       })
 
       #      -------------------------------------------------------------------
@@ -136,9 +137,10 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
       output$datadump <- DT::renderDT({
         DT::datatable(
           switch(input$choice_datadump,
-                 "Datasett basert på skjematype og utvalg" = select_datadump_reactive(),
-                 "Datasett basert på utvalg" = datadump_reactive(),
-                 "Datasett med selvvalgte navn" = datadumpEgneNavn()),
+            "Datasett basert på skjematype og utvalg" = select_datadump_reactive(),
+            "Datasett basert på utvalg" = datadump_reactive(),
+            "Datasett med selvvalgte navn" = datadumpEgneNavn()
+          ),
           class = "white-space:nowrap compact"
         )
       })
@@ -150,12 +152,12 @@ module_datadump_server <- function(id, data, userRole, userUnitId) {
         },
         content = function(file) {
           switch(input$choice_datadump,
-                 "Datasett basert på skjematype og utvalg" = write.csv2(select_datadump_reactive(), file),
-                 "Datasett med selvvalgte navn" = write.csv2(datadumpEgneNavn(), file),
-                 "Datasett basert på utvalg" = write.csv2(datadump_reactive(), file))
+            "Datasett basert på skjematype og utvalg" = write.csv2(select_datadump_reactive(), file),
+            "Datasett med selvvalgte navn" = write.csv2(datadumpEgneNavn(), file),
+            "Datasett basert på utvalg" = write.csv2(datadump_reactive(), file)
+          )
         }
-      ) #download
-
+      ) # download
     }
   )
 }

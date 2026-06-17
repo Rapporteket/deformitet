@@ -18,7 +18,6 @@
 ################## LAG PLOT ----------------------------------------------------
 
 lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
-
   tabell <- data.frame(data)
 
   tabell <- tabell |>
@@ -51,26 +50,38 @@ lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
   fig_plot <- ggplot2::ggplot()
 
   if (visning == "hele landet") { # => med sammenligning
-    fig_plot = fig_plot +
-      ggplot2::geom_col(data = tabell2,
-                        ggplot2::aes(x = var, y = .data$Prosent,
-                                     color = .data$Sykehus), fill = "#6CACE4") +
-      ggplot2::geom_point(data = tabell1,
-                          ggplot2::aes(x = var, y = .data$Prosent,
-                                       color = .data$Sykehus), shape = 23,
-                          fill = "#003087", size = 2.5) +
+    fig_plot <- fig_plot +
+      ggplot2::geom_col(
+        data = tabell2,
+        ggplot2::aes(
+          x = var, y = .data$Prosent,
+          color = .data$Sykehus
+        ), fill = "#6CACE4"
+      ) +
+      ggplot2::geom_point(
+        data = tabell1,
+        ggplot2::aes(
+          x = var, y = .data$Prosent,
+          color = .data$Sykehus
+        ), shape = 23,
+        fill = "#003087", size = 2.5
+      ) +
 
-      ggplot2::scale_color_manual(values = # adding chosen colors
-                                    c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087"))
+      ggplot2::scale_color_manual(
+        values = # adding chosen colors
+          c("#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#6CACE4", "#003087", "#003087")
+      )
   }
 
   if (visning != "hele landet") { # => hvert sykehus og hele landet uten sammenligning
-    fig_plot = fig_plot +
+    fig_plot <- fig_plot +
       ggplot2::geom_col(data = tabell, ggplot2::aes(x = var, y = .data$Prosent, fill = .data$Sykehus), alpha = .9) +
       ggplot2::facet_wrap(~Sykehus) +
 
-      ggplot2::scale_fill_manual(values = # adding chosen colors
-                                   c("#6CACE4", "#ADDFB3", "#87189D", "black"))
+      ggplot2::scale_fill_manual(
+        values = # adding chosen colors
+          c("#6CACE4", "#ADDFB3", "#87189D", "black")
+      )
   }
 
 
@@ -78,19 +89,27 @@ lag_ggplot_fordeling <- function(data, gg_data, data_var, visning) {
   fig_plot <- fig_plot +
     ggplot2::xlab(gg_data$xlab) +
     ggplot2::ylab("Andel") +
-    ggplot2::labs(title = gg_data$title,
-                  caption = paste0("**Valgte variabler:**", "\n", data_var[1, ], ", ", data_var[2, ], "\n",
-                                   data_var[3, ], "-", data_var[4, ], "\n",
-                                   data_var[5, ], "-", data_var[6, ])) +
+    ggplot2::labs(
+      title = gg_data$title,
+      caption = paste0(
+        "**Valgte variabler:**", "\n", data_var[1, ], ", ", data_var[2, ], "\n",
+        data_var[3, ], "-", data_var[4, ], "\n",
+        data_var[5, ], "-", data_var[6, ]
+      )
+    ) +
 
 
     ggplot2::theme_bw(base_size = 16) + # light theme
 
-    ggplot2::theme(plot.caption = ggplot2::element_text(color = "#87189D", # add caption
-                                                        face = "italic"),
-                   axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
-                   axis.text.y = ggplot2::element_text(size = 14),
-                   plot.title = ggplot2::element_text(size = 16))
+    ggplot2::theme(
+      plot.caption = ggplot2::element_text(
+        color = "#87189D", # add caption
+        face = "italic"
+      ),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+      axis.text.y = ggplot2::element_text(size = 14),
+      plot.title = ggplot2::element_text(size = 16)
+    )
 
   return(fig_plot)
 }
