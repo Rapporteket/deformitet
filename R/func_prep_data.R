@@ -36,8 +36,7 @@ preprosData <- function(RegData = RegData, egneVarNavn = 0) {
   # RegData$DiffUtFerdig <- as.numeric(difftime(as.Date(RegData$ForstLukketMed), RegData$UtDato,units = 'days'))
 
   RegData <- dplyr::rename(RegData,
-    ReshId = .data$CENTREID,
-    ShNavn = .data$CENTRESHORTNAME
+    ReshId = CENTREID
   )
   class(RegData$ReshId) <- "numeric"
   RegData$ShNavn <- trimws(as.character(RegData$ShNavn)) # Fjerner mellomrom etter navn
@@ -56,7 +55,13 @@ preprosData <- function(RegData = RegData, egneVarNavn = 0) {
     RegData$ShNavn[ind] <- paste0(RegData$ShNavn[ind], " (", RegData$ReshId[ind], ")")
   }
 
-
+#Beregnede variabler
+  #Tid fra operasjon til 1.kontroll og 2.kontroll
+  RegData$DagerOpKtr1 <- as.numeric(difftime(as.Date(RegData$FILLING_DATE_surgeon3mths),
+                                             RegData$OpDato, units = 'days'))
+  RegData$DagerOpKtr2 <- as.numeric(difftime(as.Date(RegData$FILLING_DATE_surgeon12mths),
+                                             RegData$OpDato, units = 'days'))
+  table(RegData$DagerOpKtr2)
   return(invisible(RegData))
 }
 

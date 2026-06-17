@@ -35,10 +35,8 @@ pre_pros <- function(regData) {
 
   # SYKEHUS:
   regData <- regData |>
-    dplyr::rename(
-      Sykehus = .data$CENTRESHORTNAME,
-      Kjonn = .data$GENDER
-    )
+    dplyr::rename(Sykehus = .data$ShNavn,
+                  Kjonn = .data$GENDER)
 
   # KJØNN:
   regData$Kjonn <- as.character(regData$Kjonn)
@@ -52,7 +50,7 @@ pre_pros <- function(regData) {
     dplyr::mutate(
       Alder =
         (difftime(.data$SURGERY_DATE, .data$BIRTH_DATE,
-          units = "days"
+                  units = "days"
         )) / 365.15
     )
 
@@ -64,8 +62,8 @@ pre_pros <- function(regData) {
   # -----------Tilrettelegge variabler-----------------------
 
   regData$Alder <- cut(regData$Alder,
-    breaks = c(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 100),
-    labels = c("<9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20+")
+                       breaks = c(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 100),
+                       labels = c("<9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20+")
   )
 
 
@@ -89,16 +87,16 @@ pre_pros <- function(regData) {
     )
 
   regData$BMI_kategori <- ordered(regData$BMI_kategori,
-    levels = c(
-      "Alvorlig undervekt < 16",
-      "Undervekt (16-17)",
-      "Mild undervekt (17-18,5)",
-      "Normal (18,5-25)",
-      "Overvekt (25-30)",
-      "Moderat fedme, klasse I (30-35)",
-      "Fedme, klasse II (35-40)",
-      "Fedme, klasse III (40-50)"
-    )
+                                  levels = c(
+                                    "Alvorlig undervekt < 16",
+                                    "Undervekt (16-17)",
+                                    "Mild undervekt (17-18,5)",
+                                    "Normal (18,5-25)",
+                                    "Overvekt (25-30)",
+                                    "Moderat fedme, klasse I (30-35)",
+                                    "Fedme, klasse II (35-40)",
+                                    "Fedme, klasse III (40-50)"
+                                  )
   )
 
 
@@ -109,8 +107,8 @@ pre_pros <- function(regData) {
   # b. Make curve groups (for easier visualization)
   regData <- regData |>
     dplyr::mutate(Kurve_pre = cut(.data$PRE_MAIN_CURVE,
-      breaks = c(0, 40, 44, 49, 54, 59, 64, 69, 110),
-      labels = c("< 40", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "> 70")
+                                  breaks = c(0, 40, 44, 49, 54, 59, 64, 69, 110),
+                                  labels = c("< 40", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "> 70")
     ))
 
 
@@ -121,8 +119,8 @@ pre_pros <- function(regData) {
   # b. Make curve groups (for easier visualization)
   regData <- regData |>
     dplyr::mutate(Kurve_post = cut(.data$POST_MAIN_CURVE,
-      breaks = c(0, 9, 19, 29, 39, 110),
-      labels = c("0-9", "10-19", "20-29", "30-39", "> 40")
+                                   breaks = c(0, 9, 19, 29, 39, 110),
+                                   labels = c("0-9", "10-19", "20-29", "30-39", "> 40")
     ))
 
   # b. FOR KURVE-DIFFERANSE PROSENT:
@@ -145,8 +143,8 @@ pre_pros <- function(regData) {
   # b. Make curve groups (for easier visualization)
   regData <- regData |>
     dplyr::mutate(Liggetid = cut(.data$BED_DAYS_POSTOPERATIVE,
-      breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 40),
-      labels = c("1", "2", "3", "4", "5", "6", "7", "> 7")
+                                 breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 40),
+                                 labels = c("1", "2", "3", "4", "5", "6", "7", "> 7")
     ))
 
 
@@ -178,14 +176,14 @@ pre_pros <- function(regData) {
 
   regData <- regData |>
     dplyr::mutate(Knivtid = cut(.data$kniv_tid,
-      breaks = c(
-        0, 60, 90, 120, 150, 180, 210, 240,
-        270, 300, 330, 360, 1000
-      ),
-      labels = c(
-        "1", "1.5", "2", "2.5", "3", "3.5",
-        "4", "4.5", "5", "5.5", "6", "> 6"
-      )
+                                breaks = c(
+                                  0, 60, 90, 120, 150, 180, 210, 240,
+                                  270, 300, 330, 360, 1000
+                                ),
+                                labels = c(
+                                  "1", "1.5", "2", "2.5", "3", "3.5",
+                                  "4", "4.5", "5", "5.5", "6", "> 6"
+                                )
     ))
 
 
@@ -235,21 +233,21 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_total_3mnd = cut(.data$SRS22_FULL_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                             breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                             labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       )
     )
 
   regData <- regData |>
     dplyr::mutate(SRS22_total_12mnd = cut(.data$SRS22_FULL_SCORE_patient12mths,
-      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
     ))
 
   regData <- regData |>
     dplyr::mutate(SRS22_total_60mnd = cut(.data$SRS22_FULL_SCORE_patient12mths,
-      breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-      labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                          breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                          labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
     ))
 
 
@@ -258,20 +256,20 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_funksjon = cut(.data$SRS22_FUNCTION_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                           breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                           labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_funksjon_3mnd = cut(.data$SRS22_FUNCTION_SCORE_patient3mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_funksjon_12mnd = cut(.data$SRS22_FUNCTION_SCORE_patient12mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_funksjon_60mnd = cut(.data$SRS22_FUNCTION_SCORE_patient60mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       )
     )
 
@@ -280,20 +278,20 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_smerte = cut(.data$SRS22_PAIN_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_smerte_3mnd = cut(.data$SRS22_PAIN_SCORE_patient3mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                              breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                              labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_smerte_12mnd = cut(.data$SRS22_PAIN_SCORE_patient12mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_smerte_60mnd = cut(.data$SRS22_PAIN_SCORE_patient60mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       )
     )
 
@@ -302,20 +300,20 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_selvbilde = cut(.data$SRS22_SELFIMAGE_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                            breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                            labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_selvbilde_3mnd = cut(.data$SRS22_SELFIMAGE_SCORE_patient3mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                 breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                 labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_selvbilde_12mnd = cut(.data$SRS22_SELFIMAGE_SCORE_patient12mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                  breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                  labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_selvbilde_60mnd = cut(.data$SRS22_SELFIMAGE_SCORE_patient60mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                  breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                  labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       )
     )
 
@@ -324,20 +322,20 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_mhelse = cut(.data$SRS22_MENTALHEALTH_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                         breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                         labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_mhelse_3mnd = cut(.data$SRS22_MENTALHEALTH_SCORE_patient3mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", " 3.5-3.9", "4-4.4", "4.5-5")
+                              breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                              labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", " 3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_mhelse_12mnd = cut(.data$SRS22_MENTALHEALTH_SCORE_patient12mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_mhelse_60mnd = cut(.data$SRS22_MENTALHEALTH_SCORE_patient60mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       )
     )
 
@@ -346,16 +344,16 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       SRS22_fornoyd_3mnd = cut(.data$SRS22_SATISFACTION_SCORE,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                               breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                               labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_fornoyd_12mnd = cut(.data$SRS22_SATISFACTION_SCORE_patient12mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
       SRS22_fornoyd_60mnd = cut(.data$SRS22_SATISFACTION_SCORE_patient60mths,
-        breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
-        labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
+                                breaks = c(0, 2, 2.4, 2.9, 3.4, 3.9, 4.4, 5),
+                                labels = c("< 2", "2-2.4", "2.5-2.9", "3-3.4", "3.5-3.9", "4-4.4", "4.5-5")
       ),
 
       # Question 22
@@ -418,23 +416,23 @@ pre_pros <- function(regData) {
   regData <- regData |>
     dplyr::mutate(
       Helsetilstand = cut(.data$HELSETILSTAND_SCALE,
-        breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
-        labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
+                          breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                          labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
       ),
       # 3-6 mnd
       Helsetilstand_3mnd = cut(.data$HEALTH_CONDITION_SCALE,
-        breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
-        labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
+                               breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                               labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
       ),
       # 12 mnd
       Helsetilstand_12mnd = cut(.data$HEALTH_CONDITION_SCALE_patient12mths,
-        breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
-        labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
+                                breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                                labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
       ),
       # 60 mnd
       Helsetilstand_60mnd = cut(.data$HEALTH_CONDITION_SCALE_patient60mths,
-        breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
-        labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
+                                breaks = c(0, 15, 30, 45, 60, 75, 90, 100),
+                                labels = c("> 15", "15-30", "31-45", "46-60", "61-75", "76-90", "> 90")
       )
     )
 
