@@ -88,28 +88,28 @@ figAndelerGrVar <- function(RegData = 0, hentData = 0, preprosess = 0,
   # if (valgtVar == 'fornoydBeh2aar' ) {KImaalGrenser <- c(0,70,90,100)}
   # if (valgtVar == 'reOp') {KImaalGrenser <- c(0,5,100)}
 
-  sortInd <- order(as.numeric(AndelerGr), decreasing=sortAvtagende, na.last = FALSE)
-  AndelerGrSort <- c( NA, AndelerGr[sortInd])
+  sortInd <- order(as.numeric(AndelerGr), decreasing = sortAvtagende, na.last = FALSE)
+  AndelerGrSort <- c(NA, AndelerGr[sortInd])
   GrNavnSort <- GrNavn[sortInd]
   Ngrtxt <- Ngrtxt[sortInd]
 
-  andeltxtUsort <- paste0(sprintf('%.1f',AndelerGr), ' %')
-  andeltxt <- c('', andeltxtUsort[sortInd])
-  GrNavnOgAnt <- c('', paste0(GrNavnSort,' (',Ngrtxt , ')'))
+  andeltxtUsort <- paste0(sprintf("%.1f", AndelerGr), " %")
+  andeltxt <- c("", andeltxtUsort[sortInd])
+  GrNavnOgAnt <- c("", paste0(GrNavnSort, " (", Ngrtxt, ")"))
 
 
-  FigDataParam <- list(AggVerdier=AndelerGrSort,
-                       AggTot=AndelHele,
-                       N=N,
-                       Ngr=as.numeric(Ngrtxt),
-                       Nvar=Nvar[sortInd],
-                       soyletxt=andeltxt,
-                       grtxt=GrNavnSort,
-                       Tittel=Tittel,
-                       utvalgTxt=utvalgTxt,
-                       fargepalett =fargepalett
+  FigDataParam <- list(
+    AggVerdier = AndelerGrSort,
+    AggTot = AndelHele,
+    N = N,
+    Ngr = as.numeric(Ngrtxt),
+    Nvar = Nvar[sortInd],
+    soyletxt = andeltxt,
+    grtxt = GrNavnSort,
+    Tittel = Tittel,
+    utvalgTxt = utvalgTxt,
+    fargepalett = fargepalett
   )
-
 
 
   #-----------Figur---------------------------------------
@@ -144,9 +144,9 @@ figAndelerGrVar <- function(RegData = 0, hentData = 0, preprosess = 0,
 
     xmax <- min(max(AndelerGrSort, na.rm = TRUE), 100) * 1.15
     pos <- rev(barplot(rev(as.numeric(AndelerGrSort)),
-                       horiz = TRUE, border = NA, col = farger[4],
-                       xlim = c(0, xmax), ylim = c(0.05, 1.25) * (length(GrNavnOgAnt)), font.main = 1,
-                       las = 1, cex.names = cexShNavn
+      horiz = TRUE, border = NA, col = farger[4],
+      xlim = c(0, xmax), ylim = c(0.05, 1.25) * (length(GrNavnOgAnt)), font.main = 1,
+      las = 1, cex.names = cexShNavn
     ))
     posOver <- max(pos) + 0.5
 
@@ -181,9 +181,9 @@ figAndelerGrVar <- function(RegData = 0, hentData = 0, preprosess = 0,
     }
     # pos <-
     rev(barplot(rev(as.numeric(AndelerGrSort)),
-                horiz = TRUE, border = NA, col = farger[4],
-                xlim = c(0, xmax), ylim = c(0.05, 1.4) * (length(GrNavnOgAnt)),
-                font.main = 1, las = 1, cex.names = cexShNavn, add = TRUE
+      horiz = TRUE, border = NA, col = farger[4],
+      xlim = c(0, xmax), ylim = c(0.05, 1.4) * (length(GrNavnOgAnt)),
+      font.main = 1, las = 1, cex.names = cexShNavn, add = TRUE
     ))
     mtext("Andel (%)", side = 1, line = 2)
 

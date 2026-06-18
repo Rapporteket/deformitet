@@ -70,14 +70,13 @@ module_fordeling_ui <- function(id) {
         ),
         shinyjs::hidden(shiny::uiOutput(outputId = ns("reshid"))),
 
-# Registerleder vil fjerne dette valget. April-26. Ønsker det tilbake igjen.
+        # Registerleder vil fjerne dette valget. April-26. Ønsker det tilbake igjen.
         shiny::radioButtons( # fjerde valg
           inputId = ns("type_op"),
           label = "Type operasjon",
           choices = c("Primæroperasjon", "Reoperasjon", "Begge"),
           selected = "Primæroperasjon"
         ),
-
         shinyjs::hidden(shiny::uiOutput(outputId = ns("visning_type"))),
         shiny::dateRangeInput( # femte valg
           inputId = ns("dato"),
@@ -212,8 +211,8 @@ module_fordeling_server <- function(id, userRole, userUnitId, data, raw_data, ma
         x <- format(input$dato, "%d/%m/%y")
         data.frame(c(
           input$x_var, input$kjonn_var, x[1], x[2],
-          input$alder_var[1], input$alder_var[2]
-          , input$type_op
+          input$alder_var[1], input$alder_var[2],
+          input$type_op
         ))
       })
 
@@ -251,15 +250,17 @@ module_fordeling_server <- function(id, userRole, userUnitId, data, raw_data, ma
       # Filtrer data
 
       kompl_data_reative <- shiny::reactive({
-        kompl_data(data,
-                   input$x_var,
-                   input$kjonn_var,
-                   input$dato[1],
-                   input$dato[2],
-                   input$alder_var[1],
-                   input$alder_var[2],
-                   input$type_op,
-                   map_data)
+        kompl_data(
+          data,
+          input$x_var,
+          input$kjonn_var,
+          input$dato[1],
+          input$dato[2],
+          input$alder_var[1],
+          input$alder_var[2],
+          input$type_op,
+          map_data
+        )
       })
 
       # Få oversikt over antall pr. komplikasjonstype:
@@ -406,8 +407,8 @@ module_fordeling_server <- function(id, userRole, userUnitId, data, raw_data, ma
           input$dato[1],
           input$dato[2],
           input$alder_var[1],
-          input$alder_var[2]
-           , input$type_op
+          input$alder_var[2],
+          input$type_op
         )
       })
 
