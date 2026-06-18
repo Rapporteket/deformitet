@@ -1,12 +1,12 @@
 devtools::install("../rapbase/.")
 devtools::install(upgrade = FALSE)
 
-setwd("C:/Users/lro2402unn/RegistreGIT/nger")
+setwd("C:/Users/lro2402unn/RegistreGIT/deformitet")
 setwd('../data')
-sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql.gz__20260217_090623.tar.gz",
+sship::dec("c://Users/lro2402unn/RegistreGIT/data/deformitet11a91614a.sql__20260617_144241.tar.gz",
            keyfile = "c://Users/lro2402unn/.ssh/id_rsa")
 
-# source c://Users/lro2402unn/RegistreGIT/data/deformitet12bfc19c0.sql;
+# source c://Users/lro2402unn/RegistreGIT/data/deformitet11a91614a.sql;
 
 library(deformitet)
 source("C:/Users/lro2402unn/RegistreGIT/deformitet/dev/sysSetenv.R")
