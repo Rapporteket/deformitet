@@ -60,29 +60,32 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     # PROM data og kontroll intervaller følger fortsatt primæroperasjonen.
     # reoperert1år / alle pasienter
 
-    tittel <- 'Reoperert innen 1 år etter primæroperasjon'
+    tittel <- "Reoperert innen 1 år etter primæroperasjon"
     # source("dev/sysSetenv.R")
     # RegData <- alleRegData(egneVarNavn = 0)
     # RegData <- preprosData(RegData=RegData, egneVarNavn = 0)
     # RegData$Variabel <- 0
-    pasIDreop <- unique(RegData$PasientID[which(RegData$CURRENT_SURGERY==2)])
+    pasIDreop <- unique(RegData$PasientID[which(RegData$CURRENT_SURGERY == 2)])
 
-    RegData_pas2op <-  RegData[which(RegData$PasientID %in% pasIDreop),
-                               c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID",'PARENT')]
+    RegData_pas2op <- RegData[
+      which(RegData$PasientID %in% pasIDreop),
+      c("OpDato", "PasientID", "CURRENT_SURGERY", "MCEID", "PARENT")
+    ]
 
-    RegDataPas <- RegData_pas2op |> dplyr::group_by(PasientID) |>
+    RegDataPas <- RegData_pas2op |>
+      dplyr::group_by(PasientID) |>
       dplyr::summarise(
         PasientID = PasientID[1],
-        Dager = sort(OpDato[CURRENT_SURGERY ==2])[1] - OpDato[CURRENT_SURGERY == 1]
+        Dager = sort(OpDato[CURRENT_SURGERY == 2])[1] - OpDato[CURRENT_SURGERY == 1]
       )
-    RegData <- RegData[which(RegData$CURRENT_SURGERY == 1),]
+    RegData <- RegData[which(RegData$CURRENT_SURGERY == 1), ]
     RegData$Variabel[
-      RegData$PasientID %in% RegDataPas$PasientID[RegDataPas$Dager < 365]] <- 1
+      RegData$PasientID %in% RegDataPas$PasientID[RegDataPas$Dager < 365]
+    ] <- 1
 
-    subtxt <- 'reoperasjon'
-    TittelVar <- 'Reoperert innen 1år'
-    ytxt1 <- 'reoperasjon'
-
+    subtxt <- "reoperasjon"
+    TittelVar <- "Reoperert innen 1år"
+    ytxt1 <- "reoperasjon"
   }
 
 
@@ -110,12 +113,12 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     # SRS22_21	Fornoyd2ar	21. Er du fornøyd med resultatet av behandlingen?	Ja
 
     RegData$VariabelGr <- switch(valgtVar,
-                                 fornoydBeh3mnd = RegData$SRS22_21,
-                                 fornoydBeh2aar = RegData$SRS22_21_patient12mths
+      fornoydBeh3mnd = RegData$SRS22_21,
+      fornoydBeh2aar = RegData$SRS22_21_patient12mths
     )
 
-    grtxt <- c("Svært misfornøyd","Litt misfornøyd","Verken eller","Ganske fornøyd","Svært fornøyd","Ikke svart")
-    gr <- c(1:5,9)
+    grtxt <- c("Svært misfornøyd", "Litt misfornøyd", "Verken eller", "Ganske fornøyd", "Svært fornøyd", "Ikke svart")
+    gr <- c(1:5, 9)
     RegData <- RegData[which(RegData$VariabelGr %in% gr), ]
     retn <- "H"
 
@@ -129,8 +132,9 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
       varTxt <- "fornøyde"
     }
     tittel <- switch(valgtVar,
-                     fornoydBeh3mnd = 'Svært/ganske fornøyd med beh. på sykehuset, 3 mnd etter' ,
-                     fornoydBeh2aar = 'Svært/ganske fornøyd med beh. på sykehuset, 2 år etter')
+      fornoydBeh3mnd = "Svært/ganske fornøyd med beh. på sykehuset, 3 mnd etter",
+      fornoydBeh2aar = "Svært/ganske fornøyd med beh. på sykehuset, 2 år etter"
+    )
     sortAvtagende <- TRUE
   }
 
@@ -141,8 +145,8 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     # Kode 1:5,9: 'Fornøyd', 'Litt fornøyd', 'Verken eller', 'Litt misfornøyd', 'Misfornøyd', 'Ukjent')
     grtxt <- c("Fornøyd", "Litt fornøyd", "Verken eller", "Litt misfornøyd", "Misfornøyd", "Ukjent")
     RegData <- switch(valgtVar,
-                      FornoydBeh3mnd = RegData[which(RegData$OppFolgStatus3mnd == 1), ],
-                      FornoydBeh12mnd = RegData[which(RegData$OppFolgStatus12mnd == 1), ]
+      FornoydBeh3mnd = RegData[which(RegData$OppFolgStatus3mnd == 1), ],
+      FornoydBeh12mnd = RegData[which(RegData$OppFolgStatus12mnd == 1), ]
     )
     indDum <- which(RegData[, valgtVar] %in% 1:5)
     retn <- "H"
@@ -154,13 +158,13 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
       RegData$Variabel[which(RegData[, valgtVar] %in% 1:2)] <- 1
       varTxt <- "fornøyde"
       tittel <- switch(valgtVar,
-                       FornoydBeh3mnd = "Fornøyd med behandlinga på sykehuset, 3 mnd",
-                       FornoydBeh12mnd = "Fornøyd med behandlinga på sykehuset, 12 mnd"
+        FornoydBeh3mnd = "Fornøyd med behandlinga på sykehuset, 3 mnd",
+        FornoydBeh12mnd = "Fornøyd med behandlinga på sykehuset, 12 mnd"
       )
     }
     tittel <- switch(valgtVar,
-                     FornoydBeh3mnd = "Fornøyd med behandlinga på sykehuset, 3 mnd",
-                     FornoydBeh12mnd = "Fornøyd med behandlinga på sykehuset, 12 mnd"
+      FornoydBeh3mnd = "Fornøyd med behandlinga på sykehuset, 3 mnd",
+      FornoydBeh12mnd = "Fornøyd med behandlinga på sykehuset, 12 mnd"
     )
     sortAvtagende <- TRUE
   }
@@ -271,72 +275,73 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     ) # for verdiene 0:6
     RegData <- RegData[which(RegData$Inngrep %in% 0:6), ]
     RegData$VariabelGr <- factor(RegData$Inngrep, levels = 0:6)
-    tittel <- 'Inngrepstyper'
-    retn <- 'H'
+    tittel <- "Inngrepstyper"
+    retn <- "H"
   }
-  if (valgtVar=='KnivtidTotalMin') { #GjsnTid #GjsnGrVar#Legeskjema.
-    RegData <- RegData[which(RegData[ ,valgtVar]>0), ]
-    RegData$Variabel <- RegData[ ,valgtVar]
+  if (valgtVar == "KnivtidTotalMin") { # GjsnTid #GjsnGrVar#Legeskjema.
+    RegData <- RegData[which(RegData[, valgtVar] > 0), ]
+    RegData$Variabel <- RegData[, valgtVar]
     KIekstrem <- c(0, 500)
-    tittel <- 'Total knivtid'
-    ytxt1 <- '(minutter)'
-    deltittel <- 'total knivtid'
-    xAkseTxt <- 'minutter'
+    tittel <- "Total knivtid"
+    ytxt1 <- "(minutter)"
+    deltittel <- "total knivtid"
+    xAkseTxt <- "minutter"
   }
 
 
-  if (valgtVar=='KomplStemme3mnd') { #AndelTid, #AndelGrVar
-    #3MndSkjema. Andel med KomplStemme3mnd=1
-    #Kode 0,1: Nei, Ja +tomme
-    RegData <- RegData[which(RegData$OppFolgStatus3mnd == 1) %i%
-                         which(RegData$KomplStemme3mnd %in% 0:1) %i%
-                         which(RegData$OprMetodeTilgangFremre==1) # %i%which(RegData$OprIndikMyelopati==0)
-                       , ]
-    RegData$Variabel <- RegData[ ,valgtVar]
-    varTxt <- 'med stemmevansker'
-    tittel <- 'Stemmevansker, fremre tilgang, 3 mnd.'
+  if (valgtVar == "KomplStemme3mnd") { # AndelTid, #AndelGrVar
+    # 3MndSkjema. Andel med KomplStemme3mnd=1
+    # Kode 0,1: Nei, Ja +tomme
+    RegData <- RegData[
+      which(RegData$OppFolgStatus3mnd == 1) %i%
+        which(RegData$KomplStemme3mnd %in% 0:1) %i%
+        which(RegData$OprMetodeTilgangFremre == 1) # %i%which(RegData$OprIndikMyelopati==0)
+      ,
+    ]
+    RegData$Variabel <- RegData[, valgtVar]
+    varTxt <- "med stemmevansker"
+    tittel <- "Stemmevansker, fremre tilgang, 3 mnd."
   }
-  if (valgtVar=='KomplStemme12mnd') { #AndelGrVar,
-    #3MndSkjema. Andel med KomplStemme12mnd=1
-    #Kode 0,1: Nei, Ja +tomme
+  if (valgtVar == "KomplStemme12mnd") { # AndelGrVar,
+    # 3MndSkjema. Andel med KomplStemme12mnd=1
+    # Kode 0,1: Nei, Ja +tomme
     RegData <- RegData[which(RegData$OppFolgStatus12mnd == 1) %i%
-                         which(RegData$KomplStemme12mnd %in% 0:1) %i%
-                         which(RegData$OprMetodeTilgangFremre==1), ]
-    RegData$Variabel <- RegData[ ,valgtVar]
-    tittel <- 'Stemmevansker, fremre tilgang, 12 mnd.'
+      which(RegData$KomplStemme12mnd %in% 0:1) %i%
+      which(RegData$OprMetodeTilgangFremre == 1), ]
+    RegData$Variabel <- RegData[, valgtVar]
+    tittel <- "Stemmevansker, fremre tilgang, 12 mnd."
   }
 
 
-
-  if (valgtVar=='NDIendr3mnd') { #GjsnTid, GjsnGrVar
-    #Pasientkjema og 3mndskjema. Lav skår, lite plager -> forbedring = nedgang.
-    KIekstrem <- c(-100,100)
+  if (valgtVar == "NDIendr3mnd") { # GjsnTid, GjsnGrVar
+    # Pasientkjema og 3mndskjema. Lav skår, lite plager -> forbedring = nedgang.
+    KIekstrem <- c(-100, 100)
     RegData$Variabel <- RegData$NDIscorePreOp - RegData$NDIscore3mnd
     indVar <- which(RegData$Variabel >= KIekstrem[1])
-    indSkjema <- which(RegData$PasientSkjemaStatus==1 & RegData$OppFolgStatus3mnd==1)
+    indSkjema <- which(RegData$PasientSkjemaStatus == 1 & RegData$OppFolgStatus3mnd == 1)
     RegData <- RegData[intersect(indVar, indSkjema), ]
-    tittel <- 'Forbedring av NDI, 3 mnd. etter operasjon'
-    deltittel <- 'forbedring av NDI, 3 mnd. etter operasjon'
-    ytxt1 <- '(endring av NDI-skår)'
+    tittel <- "Forbedring av NDI, 3 mnd. etter operasjon"
+    deltittel <- "forbedring av NDI, 3 mnd. etter operasjon"
+    ytxt1 <- "(endring av NDI-skår)"
   }
 
 
-  if (valgtVar == 'NRSsmerteArmPreOp') { #GjsnGrVar, GjsnTid
-    #Pasientskjema.
-    KIekstrem <- c(0,10)
-    indPas <- which(RegData$PasientSkjemaStatus==1)
-    indVar <- which(RegData[ ,valgtVar] >-1)
-    RegData <- RegData[intersect(indPas ,indVar), ]
-    RegData$Variabel <- RegData[ ,valgtVar]
-    deltittel <- 'NRS, arm før operasjon'
-    xAkseTxt <- 'skåring'
+  if (valgtVar == "NRSsmerteArmPreOp") { # GjsnGrVar, GjsnTid
+    # Pasientskjema.
+    KIekstrem <- c(0, 10)
+    indPas <- which(RegData$PasientSkjemaStatus == 1)
+    indVar <- which(RegData[, valgtVar] > -1)
+    RegData <- RegData[intersect(indPas, indVar), ]
+    RegData$Variabel <- RegData[, valgtVar]
+    deltittel <- "NRS, arm før operasjon"
+    xAkseTxt <- "skåring"
   }
 
-  if (valgtVar %in% c('NytteOpr3mnd', 'NytteOpr12mnd')) { #Andeler #AndelTid  #AndelGrVar
-    #3/12mndSkjema. Andel med helt bra/mye bedre (1:2)
-    #Kode 1:7,9: ''Helt bra', 'Mye bedre', 'Litt bedre', 'Uendret', 'Litt verre', 'Mye verre',
-    #				'Verre enn noen gang', 'Ukjent')
-    grtxt <- c('Klart bedre', 'Små endringer', 'Klart verre', 'Ukjent')
+  if (valgtVar %in% c("NytteOpr3mnd", "NytteOpr12mnd")) { # Andeler #AndelTid  #AndelGrVar
+    # 3/12mndSkjema. Andel med helt bra/mye bedre (1:2)
+    # Kode 1:7,9: ''Helt bra', 'Mye bedre', 'Litt bedre', 'Uendret', 'Litt verre', 'Mye verre',
+    # 				'Verre enn noen gang', 'Ukjent')
+    grtxt <- c("Klart bedre", "Små endringer", "Klart verre", "Ukjent")
     tittel <- "Inngrepstyper"
     retn <- "H"
   }
@@ -524,12 +529,12 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     # 				'Verre enn noen gang', 'Ukjent')
     grtxt <- c("Klart bedre", "Små endringer", "Klart verre", "Ukjent")
     tittel <- switch(valgtVar,
-                     NytteOpr3mnd = "Nytte av operasjon, 3 mnd",
-                     NytteOpr12mnd = "Nytte av operasjon, 12 mnd"
+      NytteOpr3mnd = "Nytte av operasjon, 3 mnd",
+      NytteOpr12mnd = "Nytte av operasjon, 12 mnd"
     )
     RegData <- switch(valgtVar,
-                      NytteOpr3mnd = RegData[which(RegData$OppFolgStatus3mnd == 1), ],
-                      NytteOpr12mnd = RegData[which(RegData$OppFolgStatus12mnd == 1), ]
+      NytteOpr3mnd = RegData[which(RegData$OppFolgStatus3mnd == 1), ],
+      NytteOpr12mnd = RegData[which(RegData$OppFolgStatus12mnd == 1), ]
     )
     retn <- "H"
     RegData$VariabelGr <- 9
@@ -545,17 +550,17 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
       RegData$Variabel[which(RegData[, valgtVar] %in% 1:2)] <- 1
       varTxt <- '"mye bedre" og "helt bra"'
       tittel <- switch(valgtVar,
-                       NytteOpr3mnd = "Helt bra eller mye bedre, 3 mnd.",
-                       NytteOpr12mnd = "Helt bra eller mye bedre, 12 mnd."
+        NytteOpr3mnd = "Helt bra eller mye bedre, 3 mnd.",
+        NytteOpr12mnd = "Helt bra eller mye bedre, 12 mnd."
       )
     }
   }
-  if (valgtVar == 'regForsinkelse') {  #Fordeling, Andeler
-    #Verdier: 0-3402
+  if (valgtVar == "regForsinkelse") { # Fordeling, Andeler
+    # Verdier: 0-3402
     RegData <- RegData[which(RegData$DiffUtFerdig > -1), ]
     tittel <- switch(figurtype,
-                     andeler = "Tid fra utskriving til ferdigstilt registrering",
-                     andelGrVar = "Mer enn 30 dager fra utskriving til ferdig registrering"
+      andeler = "Tid fra utskriving til ferdigstilt registrering",
+      andelGrVar = "Mer enn 30 dager fra utskriving til ferdig registrering"
     ) #
     xAkseTxt <- "dager"
     sortAvtagende <- FALSE
@@ -568,18 +573,19 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
       grtxt <- c(1:14, ">3 mnd.")
     }
 
-    if (figurtype %in% c('andelTid', 'andelGrVar')) {
-      RegData$Variabel[which(RegData$DiffUtFerdig >90)] <- 1
-      tittel <- 'Registrert for sent for 3 mnd. oppfølging'
-      varTxt <- 'for sent registrert'
-      sortAvtagende <- F}
+    if (figurtype %in% c("andelTid", "andelGrVar")) {
+      RegData$Variabel[which(RegData$DiffUtFerdig > 90)] <- 1
+      tittel <- "Registrert for sent for 3 mnd. oppfølging"
+      varTxt <- "for sent registrert"
+      sortAvtagende <- F
+    }
     # KImaalGrenser <- c(0,3,10,100)
   }
 
-  if (valgtVar == 'SmertestillPreOp') { #AndelTid  #AndelGrVar
-    #PasientSkjema. Andel med SmertestillPreOp=1
-    #Kode 0,1,9: Nei, Ja Ukjent
-    RegData <- RegData[intersect(which(RegData$SmertestillPreOp %in% 0:1), which(RegData$PasientSkjemaStatus ==1)), ]
+  if (valgtVar == "SmertestillPreOp") { # AndelTid  #AndelGrVar
+    # PasientSkjema. Andel med SmertestillPreOp=1
+    # Kode 0,1,9: Nei, Ja Ukjent
+    RegData <- RegData[intersect(which(RegData$SmertestillPreOp %in% 0:1), which(RegData$PasientSkjemaStatus == 1)), ]
     RegData$Variabel <- RegData$SmertestillPreOp
     varTxt <- "på smertestillende"
     tittel <- "Bruker smertestillende før operasjon"
@@ -613,71 +619,79 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
 
 
   #-------------- SAMMENSATTE variabler
-  #For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer
-  #(dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
+  # For flerevar=1 må vi omdefinere variablene slik at alle gyldige registreringer
+  # (dvs. alle registreringer som skal telles med) er 0 eller 1. De som har oppfylt spørsmålet
   # er 1, mens ugyldige registreringer er NA. Det betyr at hvis vi skal ta bort registreringer
   # som i kategorier av typen "Ukjent" kodes disse som NA, mens hvis de skal være med kodes de
   # som 0.
-  #Vi sender tilbake alle variabler som indikatorvariable, dvs. med 0,1,NA
+  # Vi sender tilbake alle variabler som indikatorvariable, dvs. med 0,1,NA
 
-  if (valgtVar=='reopAarsak') {
-    retn <- 'H'
+  if (valgtVar == "reopAarsak") {
+    retn <- "H"
     flerevar <- 1
-    tittel <- 'Årsak til reoperasjon'
-    grtxt <- c('Blødning', 'Koronal svikt',
-               'Implantatbrekkasje', 'Infeksjon',
-               'Løsning av implantat', 'Feilplassert implantat',
-               'Nevr. skade/durarift', 'Annen sykdom',
-               'Smerte', 'Sagittal svikt')
+    tittel <- "Årsak til reoperasjon"
+    grtxt <- c(
+      "Blødning", "Koronal svikt",
+      "Implantatbrekkasje", "Infeksjon",
+      "Løsning av implantat", "Feilplassert implantat",
+      "Nevr. skade/durarift", "Annen sykdom",
+      "Smerte", "Sagittal svikt"
+    )
 
-    variabler <- c('REOPERATION_BLEEDING', 'REOPERATION_CORONAL',
-                   'REOPERATION_IMPLANT_BREAKAGE', 'REOPERATION_INFECTION',
-                   'REOPERATION_LOOSE_UP_IMPLANT', 'REOPERATION_MISPLACED_IMPLANT',
-                   'REOPERATION_NEUROLOGICAL_INJURY', 'REOPERATION_OTHER_DISEASE',
-                   'REOPERATION_PAIN', 'REOPERATION_SAGITTAL')
-    ind01 <- which(RegData[ ,variabler] != -1, arr.ind = T) #Alle ja/nei
+    variabler <- c(
+      "REOPERATION_BLEEDING", "REOPERATION_CORONAL",
+      "REOPERATION_IMPLANT_BREAKAGE", "REOPERATION_INFECTION",
+      "REOPERATION_LOOSE_UP_IMPLANT", "REOPERATION_MISPLACED_IMPLANT",
+      "REOPERATION_NEUROLOGICAL_INJURY", "REOPERATION_OTHER_DISEASE",
+      "REOPERATION_PAIN", "REOPERATION_SAGITTAL"
+    )
+    ind01 <- which(RegData[, variabler] != -1, arr.ind = T) # Alle ja/nei
     # ind1 <- which(RegData[ ,variabler] == 1, arr.ind=T) #Ja i alle variabler
     # RegData[ ,variabler] <- NA
     # RegData[ ,variabler][ind01] <- 0
     # RegData[ ,variabler][ind1] <- 1
-    xAkseTxt <- 'Andel opphold (%)'
+    xAkseTxt <- "Andel opphold (%)"
   }
 
 
-  if (valgtVar=='Radiologi') {
-    retn <- 'H'
+  if (valgtVar == "Radiologi") {
+    retn <- "H"
     flerevar <- 1
-    #RadilogiUnderokelseUfylt  - tom variabel,
-    #RadiologiRtgCcolFunkOpptak  - tom variabel,
-    #Svært få har tom registrering. Setter derfor felles N lik alle reg.
-    tittel <- 'Radiologisk undersøkelse'
-    grtxt <- c('CT', 'MR', 'Myelografi', 'Røntgen-Ccol')
-    variabler <- c('RadiologiCt', 'RadiologiMr', 'RadiologiMyelografi', 'RadiologiRtgCcol')
-    ind01 <- which(RegData[ ,variabler] != -1, arr.ind = T) #Alle ja/nei
+    # RadilogiUnderokelseUfylt  - tom variabel,
+    # RadiologiRtgCcolFunkOpptak  - tom variabel,
+    # Svært få har tom registrering. Setter derfor felles N lik alle reg.
+    tittel <- "Radiologisk undersøkelse"
+    grtxt <- c("CT", "MR", "Myelografi", "Røntgen-Ccol")
+    variabler <- c("RadiologiCt", "RadiologiMr", "RadiologiMyelografi", "RadiologiRtgCcol")
+    ind01 <- which(RegData[, variabler] != -1, arr.ind = T) # Alle ja/nei
     # ind1 <- which(RegData[ ,variabler] == 1, arr.ind=T) #Ja i alle variabler
     # RegData[ ,variabler] <- NA
     # RegData[ ,variabler][ind01] <- 0
     # RegData[ ,variabler][ind1] <- 1
-    xAkseTxt <- 'Andel opphold (%)'
+    xAkseTxt <- "Andel opphold (%)"
   }
 
-  if (valgtVar=='Komorbiditet') {
-    tittel <- 'Komorbiditet'
-    retn <- 'H'
+  if (valgtVar == "Komorbiditet") {
+    tittel <- "Komorbiditet"
+    retn <- "H"
     flerevar <- 1
-    RegData <- RegData[which(RegData$AndreRelSykdommer %in% 0:1), ] #Alle videre variabler utfylt
-    variabler <- c('SykdReumatisk','SykdAnnenendokrin', 'SykdAnnet','SykdCarpalTunnelSyndr', 'SykdCerebrovaskular',
-                   'SykdDepresjonAngst', 'SykdHjertekar', 'SykdHodepine', 'SykdHypertensjon',
-                   'SykDiabetesMellitus', 'SykdKreft', 'SykdKroniskLunge', 'SykdKroniskNevrologisk',
-                   'SykdKrSmerterMuskelSkjelSyst', 'SykdOsteoporose', 'SykdSkulderImpigment',
-                   'SykdWhiplashNakke', 'AndreRelSykdommer')
-    grtxt <- c('Annen Reumatisk', 'Annen endokrin', 'Andre', 'Carpal TS', 'Cerebrovaskulær',
-               'Depresjon/Angst', 'Hjerte-/Karsykd.', 'Hodepine', 'Hypertensjon',
-               'Diabetes', 'Kreft', 'Kr. lungesykdom', 'Kr. nevrologisk',
-               'Kr. muskel/skjelettsm.', 'Osteoporose', 'Skuldersyndrom',
-               'Whiplash/skade', 'Tot. komorb')
+    RegData <- RegData[which(RegData$AndreRelSykdommer %in% 0:1), ] # Alle videre variabler utfylt
+    variabler <- c(
+      "SykdReumatisk", "SykdAnnenendokrin", "SykdAnnet", "SykdCarpalTunnelSyndr", "SykdCerebrovaskular",
+      "SykdDepresjonAngst", "SykdHjertekar", "SykdHodepine", "SykdHypertensjon",
+      "SykDiabetesMellitus", "SykdKreft", "SykdKroniskLunge", "SykdKroniskNevrologisk",
+      "SykdKrSmerterMuskelSkjelSyst", "SykdOsteoporose", "SykdSkulderImpigment",
+      "SykdWhiplashNakke", "AndreRelSykdommer"
+    )
+    grtxt <- c(
+      "Annen Reumatisk", "Annen endokrin", "Andre", "Carpal TS", "Cerebrovaskulær",
+      "Depresjon/Angst", "Hjerte-/Karsykd.", "Hodepine", "Hypertensjon",
+      "Diabetes", "Kreft", "Kr. lungesykdom", "Kr. nevrologisk",
+      "Kr. muskel/skjelettsm.", "Osteoporose", "Skuldersyndrom",
+      "Whiplash/skade", "Tot. komorb"
+    )
     RegData$SykdReumatisk <- 0
-    indSykdReumatisk <- (RegData$SykdAnnenreumatisk ==1 | (RegData$SykdBechtrew==1 | RegData$SykdReumatoidartritt==1))
+    indSykdReumatisk <- (RegData$SykdAnnenreumatisk == 1 | (RegData$SykdBechtrew == 1 | RegData$SykdReumatoidartritt == 1))
     RegData$SykdReumatisk[indSykdReumatisk] <- 1
     # ind01 <- which(RegData[ ,variabler] != -1, arr.ind = T) #Alle ja/nei
     # ind1 <- which(RegData[ ,variabler] == 1, arr.ind=T) #Ja i alle variabler
@@ -686,60 +700,71 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     # RegData[ ,variabler][ind1] <- 1
   }
 
-  if (valgtVar=='KomplOpr') {
-    tittel <- 'Komplikasjoner ved operasjon'
-    retn <- 'H'
+  if (valgtVar == "KomplOpr") {
+    tittel <- "Komplikasjoner ved operasjon"
+    retn <- "H"
     flerevar <- 1
-    variabler <- c('PerOpKomplAnafylaksiI','PerOpKomplAnnet','PerOpKomplBlodning','PerOpKomplDurarift',
-                   'PerOpKomplFeilplasseringImplant','PerOpKomplKardioVaskulare','PerOpKomplMedullaskade',
-                   'PerOpKomplNerverotSkade','PerOpKomplAnnenNerveskade','PerOpKomplOpFeilNivaa',
-                   'PerOpKomplRespiratorisk','PerOpKomplOsofagusSkade','PerOpEnhverKompl')
-    grtxt <- c('Anafylaksi','Annet','Blødning','Durarift','Feilplassering, impl.','Kardiovaskulære','Medullaskade',
-               'Nerverotskade','Nerveskade','Op. feil nivå','Respiratorisk','Øsofagusskade','Komplikasjoner, alle')
+    variabler <- c(
+      "PerOpKomplAnafylaksiI", "PerOpKomplAnnet", "PerOpKomplBlodning", "PerOpKomplDurarift",
+      "PerOpKomplFeilplasseringImplant", "PerOpKomplKardioVaskulare", "PerOpKomplMedullaskade",
+      "PerOpKomplNerverotSkade", "PerOpKomplAnnenNerveskade", "PerOpKomplOpFeilNivaa",
+      "PerOpKomplRespiratorisk", "PerOpKomplOsofagusSkade", "PerOpEnhverKompl"
+    )
+    grtxt <- c(
+      "Anafylaksi", "Annet", "Blødning", "Durarift", "Feilplassering, impl.", "Kardiovaskulære", "Medullaskade",
+      "Nerverotskade", "Nerveskade", "Op. feil nivå", "Respiratorisk", "Øsofagusskade", "Komplikasjoner, alle"
+    )
   }
 
-  if (valgtVar=='Kompl3mnd') {
-    tittel <- 'Komplikasjoner 3 mnd. etter operasjon'
-    retn <- 'H'
+  if (valgtVar == "Kompl3mnd") {
+    tittel <- "Komplikasjoner 3 mnd. etter operasjon"
+    retn <- "H"
     flerevar <- 1
     RegData <- RegData[which(RegData$OppFolgStatus3mnd == 1), ]
-    variabler <- c('KomplDVT3mnd', 'KomplinfekDyp3mnd', 'KomplLungeEmboli3mnd', 'KomplinfekOverfl3mnd',
-                   'KomplPneumoni3mnd', 'KomplStemme3mnd', 'KomplSvelging3mnd', 'KomplUVI3mnd', 'KomplKraftsvikt3mnd',
-                   'EnhverKompl3mnd')
-    grtxt <- c('DVT', 'Dyp infeksjon', 'Lungeemboli', 'Overfladisk infeksjon',
-               'Pneumoni', 'Stemmevansker', 'Svelgevansker', 'UVI', 'Kraftsvikt', 'Totalt, 3 mnd.')
+    variabler <- c(
+      "KomplDVT3mnd", "KomplinfekDyp3mnd", "KomplLungeEmboli3mnd", "KomplinfekOverfl3mnd",
+      "KomplPneumoni3mnd", "KomplStemme3mnd", "KomplSvelging3mnd", "KomplUVI3mnd", "KomplKraftsvikt3mnd",
+      "EnhverKompl3mnd"
+    )
+    grtxt <- c(
+      "DVT", "Dyp infeksjon", "Lungeemboli", "Overfladisk infeksjon",
+      "Pneumoni", "Stemmevansker", "Svelgevansker", "UVI", "Kraftsvikt", "Totalt, 3 mnd."
+    )
   }
 
-  if (valgtVar=='OprIndikSmerter') {
-    tittel <- 'Operasjonsårsak: Smerter'
-    retn <- 'H'
+  if (valgtVar == "OprIndikSmerter") {
+    tittel <- "Operasjonsårsak: Smerter"
+    retn <- "H"
     flerevar <- 1
     RegData <- RegData[which(RegData$OprIndikSmerter %in% 0:1), ]
-    variabler <- c('OprIndikSmerter', 'OprIndikSmerteLokArm', 'OprIndikSmerteLokNakke', 'SmerteArmNakke' )
-    grtxt <- c('Smerter', '...Arm', '...Nakke', '...Arm og Nakke')
+    variabler <- c("OprIndikSmerter", "OprIndikSmerteLokArm", "OprIndikSmerteLokNakke", "SmerteArmNakke")
+    grtxt <- c("Smerter", "...Arm", "...Nakke", "...Arm og Nakke")
     RegData$SmerteArmNakke <- 0
     RegData$SmerteArmNakke[RegData$OprIndikSmerteLokArm == 1 & RegData$OprIndikSmerteLokNakke == 1] <- 1
   }
 
-  if (valgtVar=='OprIndikMyelopati') {
-    tittel <- 'Operasjonsårsak: Myelopati'
-    retn <- 'H'
+  if (valgtVar == "OprIndikMyelopati") {
+    tittel <- "Operasjonsårsak: Myelopati"
+    retn <- "H"
     flerevar <- 1
     RegData <- RegData[which(RegData$OprIndikMyelopati %in% 0:1), ]
-    variabler <- c('OprIndikMyelopati', 'OprIndikMyelopatiMotorisk', 'OprIndikMyelopatiSensorisk',
-                   'MotorSensor')
-    grtxt <- c('Myelopati', '...Motorisk', '...Sensorisk', '...Begge deler')
+    variabler <- c(
+      "OprIndikMyelopati", "OprIndikMyelopatiMotorisk", "OprIndikMyelopatiSensorisk",
+      "MotorSensor"
+    )
+    grtxt <- c("Myelopati", "...Motorisk", "...Sensorisk", "...Begge deler")
     RegData$MotorSensor <- 0
     RegData$MotorSensor[RegData$OprIndikMyelopatiMotorisk & RegData$OprIndikMyelopatiSensorisk] <- 1
   }
 
 
-
-  UtData <- list(RegData=RegData, grtxt=grtxt, varTxt=varTxt, xAkseTxt=xAkseTxt,
-                 tittel=tittel, varTxt=varTxt, flerevar=flerevar, #KImaalGrenser=KImaalGrenser,
-                 variabler=variabler, sortAvtagende=sortAvtagende,
-                 retn=retn, ytxt1=ytxt1, deltittel=deltittel, KIekstrem=KIekstrem)
-  #RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
+  UtData <- list(
+    RegData = RegData, grtxt = grtxt, varTxt = varTxt, xAkseTxt = xAkseTxt,
+    tittel = tittel, varTxt = varTxt, flerevar = flerevar, # KImaalGrenser=KImaalGrenser,
+    variabler = variabler, sortAvtagende = sortAvtagende,
+    retn = retn, ytxt1 = ytxt1, deltittel = deltittel, KIekstrem = KIekstrem
+  )
+  # RegData inneholder nå variablene 'Variabel' og 'VariabelGr'
   return(invisible(UtData))
 
   if (valgtVar == "Radiologi") {
@@ -779,7 +804,7 @@ varTilrettelegg <- function(RegData, valgtVar, figurtype = "andeler") {
     )
     RegData$SykdReumatisk <- 0
     indSykdReumatisk <- (RegData$SykdAnnenreumatisk == 1 | (RegData$SykdBechtrew == 1 |
-                                                              RegData$SykdReumatoidartritt == 1))
+      RegData$SykdReumatoidartritt == 1))
     RegData$SykdReumatisk[indSykdReumatisk] <- 1
     # ind01 <- which(RegData[ ,variabler] != -1, arr.ind = T) #Alle ja/nei
     # ind1 <- which(RegData[ ,variabler] == 1, arr.ind=T) #Ja i alle variabler

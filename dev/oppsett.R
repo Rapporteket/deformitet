@@ -13,6 +13,8 @@ source("C:/Users/lro2402unn/RegistreGIT/deformitet/dev/sysSetenv.R")
 deformitet::kjorDeformApp(browser = TRUE)
 
 
+#Linting:
+styler::style_pkg()
 
 # Få andelGrVar opp å kjøre:
 
